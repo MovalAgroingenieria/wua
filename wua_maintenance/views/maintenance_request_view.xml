@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="hr_equipment_request_view_kanban" model="ir.ui.view">
+        <field name="name">equipment.request.kanban</field>
+        <field name="model">maintenance.request</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_request_view_kanban" />
+        <field name="arch" type="xml">
+            <xpath expr="//img[@class='oe_kanban_avatar pull-right']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//img[@class='oe_kanban_avatar pull-right']" position="after">
+                <img t-att-src="kanban_image('res.users', 'image_small', record.technician_user_id.raw_value)" t-att-title="record.technician_user_id.value" width="24" height="24" class="oe_kanban_avatar pull-right"/>
+                <div style=" font-size: 11px; background: white; color: #5f5e97; padding: 7px 5px; border-radius: 5px; font-weight: 600; margin-top: 0px;" class="badge badge-info">
+                    <i class="fa fa-calendar-o" aria-hidden="true" title="Days since creation"/>
+                    <field name="days_since_creation" widget="integer"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="hr_equipment_request_view_form" model="ir.ui.view">
+        <field name="name">equipment.request.form</field>
+        <field name="model">maintenance.request</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_request_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='owner_user_id']" position="before">
+                <field name="sequence" />
+            </xpath>
+            <xpath expr="//field[@name='request_date']" position="after">
+                <field name="days_since_creation"/>
+            </xpath>
+            <xpath expr="//field[@name='category_id']" position="after">
+                <field name="hydraulicsector_id" placeholder="Hydraulic Sector" />
+                <field name="related_element_extradata"/>
+            </xpath>
+            <xpath expr="//field[@name='close_date']" position="before">
+                <field name="created_on_field"/>
+                <field name="field_resolved"/>
+            </xpath>
+            <xpath expr="//field[@name='description']" position="replace">
+            </xpath>
+            <xpath expr="//sheet/*[last()]" position="after">
+                <group name="slave_data">
+                    <notebook name="slave_data_notebook">
+                        <page name="notes_page" string="Notes">
+                            <field name="description"/>
+                        </page>
+                        <page name="created_on_field_page" string="Origin"
+                              attrs="{'invisible': [('created_on_field', '=', False)]}">
+                            <group>
+                                <field name="field_image" widget="image" class="oe_img_259_160"/>
+                            </group>
+                        </page>
+                        <page name="field_resolved_page" string="Field Resolved"
+                              attrs="{'invisible': [('field_resolved', '=', False)]}">
+                            <group>
+                                <field name="resolved_by"/>
+                                <field name="resolution_time"/>
+                                <field name="resolution_description"/>
+                                <field name="resolution_dynamic_fields"/>
+                                <field name="resolution_image_before_filename" invisible="1"/>
+                                <field name="resolution_image_before" widget="image" class="oe_img_259_160" filename="resolution_image_before_filename"/>
+                                <field name="resolution_image_after_filename" invisible="1"/>
+                                <field name="resolution_image_after" widget="image" class="oe_img_259_160" filename="resolution_image_after_filename"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

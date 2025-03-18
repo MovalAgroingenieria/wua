@@ -17,228 +17,295 @@ class MaintenanceEquipment(models.Model):
         string='Equipment Tags',
         comodel_name='maintenance.equipmenttag',
         relation='equipment_tag_rel',
-        column1='equipment_id', column2='tag_id')
+        column1='equipment_id',
+        column2='tag_id',
+    )
 
     hydraulicsector_id = fields.Many2one(
         string='Hydraulic Sector',
         comodel_name='wua.hydraulicsector',
         compute='_compute_hydraulicsector',
-        store=False)
+        store=False,
+    )
 
-    is_wua = fields.Boolean(compute='_compute_is_wua', store=True)
+    is_wua = fields.Boolean(
+        string='Is WUA',
+        compute='_compute_is_wua',
+        store=True,
+    )
 
     infrastructure_type = fields.Selection(
         selection=[
             ('01_general', 'General Infrastructure'),
             ('02_pressurized', 'Pressurized Irrigation'),
-            ('03_gravity', 'Gravity Irrigation')
+            ('03_gravity', 'Gravity Irrigation'),
         ],
         compute='_compute_infrastructure_type',
-        store=True
+        store=True,
     )
 
-    is_primary = fields.Boolean(compute='_compute_is_primary',
-                                store=True)
-
-    active = fields.Boolean(default=True)
+    is_primary = fields.Boolean(
+        string='Is Primary',
+        compute='_compute_is_primary',
+        store=True,
+    )
 
     intake_ids = fields.One2many(
         string='Intakes',
         comodel_name='wua.intake',
-        inverse_name='equipment_id')
+        inverse_name='equipment_id',
+    )
 
     intake_id = fields.Many2one(
         string='Intake',
         comodel_name='wua.intake',
-        compute='_compute_intake_id',)
+        compute='_compute_intake_id',
+    )
 
     reservoir_ids = fields.One2many(
         string='Reservoirs',
         comodel_name='wua.reservoir',
-        inverse_name='equipment_id',)
+        inverse_name='equipment_id',
+    )
 
     reservoir_id = fields.Many2one(
         string='Reservoir',
         comodel_name='wua.reservoir',
-        compute='_compute_reservoir_id',)
+        compute='_compute_reservoir_id',
+    )
 
     pumpgroup_ids = fields.One2many(
         string='pumpgroups',
         comodel_name='wua.pumpgroup',
-        inverse_name='equipment_id',)
+        inverse_name='equipment_id',
+    )
 
     pumpgroup_id = fields.Many2one(
         string='pumpgroup',
         comodel_name='wua.pumpgroup',
-        compute='_compute_pumpgroup_id',)
+        compute='_compute_pumpgroup_id',
+    )
 
     photovoltaicplant_ids = fields.One2many(
         string='photovoltaicplants',
         comodel_name='wua.photovoltaicplant',
-        inverse_name='equipment_id',)
+        inverse_name='equipment_id',
+    )
 
     photovoltaicplant_id = fields.Many2one(
         string='photovoltaicplant',
         comodel_name='wua.photovoltaicplant',
-        compute='_compute_photovoltaicplant_id',)
+        compute='_compute_photovoltaicplant_id',
+    )
 
     flowmeter_ids = fields.One2many(
         string='flowmeters',
         comodel_name='wua.flowmeter',
-        inverse_name='equipment_id',)
+        inverse_name='equipment_id',
+    )
 
     flowmeter_id = fields.Many2one(
         string='flowmeter',
         comodel_name='wua.flowmeter',
-        compute='_compute_flowmeter_id',)
+        compute='_compute_flowmeter_id',
+    )
 
     pumpunit_ids = fields.One2many(
         string='pumps',
         comodel_name='wua.pumpunit',
-        inverse_name='equipment_id',)
+        inverse_name='equipment_id',
+    )
 
     pumpunit_id = fields.Many2one(
         string='pump',
         comodel_name='wua.pumpunit',
-        compute='_compute_pumpunit_id',)
+        compute='_compute_pumpunit_id',
+    )
 
     waterpipe_ids = fields.One2many(
         string='waterpipes',
         comodel_name='wua.waterpipe',
-        inverse_name='equipment_id',)
+        inverse_name='equipment_id',
+    )
 
     waterpipe_id = fields.Many2one(
         string='waterpipe',
         comodel_name='wua.waterpipe',
-        compute='_compute_waterpipe_id',)
+        compute='_compute_waterpipe_id',
+    )
 
     irrigationshed_ids = fields.One2many(
         string='irrigationsheds',
         comodel_name='wua.irrigationshed',
-        inverse_name='equipment_id',)
+        inverse_name='equipment_id',
+    )
 
     irrigationshed_id = fields.Many2one(
         string='irrigationshed',
         comodel_name='wua.irrigationshed',
-        compute='_compute_irrigationshed_id',)
+        compute='_compute_irrigationshed_id',
+    )
 
     waterconnection_ids = fields.One2many(
         string='waterconnections',
         comodel_name='wua.waterconnection',
-        inverse_name='equipment_id',)
+        inverse_name='equipment_id',
+    )
 
     waterconnection_id = fields.Many2one(
         string='waterconnection',
         comodel_name='wua.waterconnection',
-        compute='_compute_waterconnection_id',)
+        compute='_compute_waterconnection_id',
+    )
 
     watermeter_ids = fields.One2many(
         string='watermeters',
         comodel_name='wua.watermeter',
-        inverse_name='equipment_id',)
+        inverse_name='equipment_id',
+    )
 
     watermeter_id = fields.Many2one(
         string='watermeter',
         comodel_name='wua.watermeter',
-        compute='_compute_watermeter_id',)
+        compute='_compute_watermeter_id',
+    )
 
     pressuresensor_ids = fields.One2many(
         string='pressuresensors',
         comodel_name='wua.pressuresensor',
-        inverse_name='equipment_id',)
+        inverse_name='equipment_id',
+    )
 
     pressuresensor_id = fields.Many2one(
         string='pressuresensor',
         comodel_name='wua.pressuresensor',
-        compute='_compute_pressuresensor_id',)
+        compute='_compute_pressuresensor_id',
+    )
 
     irrigationditch_ids = fields.One2many(
         string='irrigationditchs',
         comodel_name='wua.irrigationditch',
-        inverse_name='equipment_id',)
+        inverse_name='equipment_id',
+    )
 
     irrigationditch_id = fields.Many2one(
         string='irrigationditch',
         comodel_name='wua.irrigationditch',
-        compute='_compute_irrigationditch_id',)
+        compute='_compute_irrigationditch_id',
+    )
 
     drainageditch_ids = fields.One2many(
         string='drainageditchs',
         comodel_name='wua.drainageditch',
-        inverse_name='equipment_id',)
+        inverse_name='equipment_id',
+    )
 
     drainageditch_id = fields.Many2one(
         string='drainageditch',
         comodel_name='wua.drainageditch',
-        compute='_compute_drainageditch_id',)
+        compute='_compute_drainageditch_id',
+    )
 
     flowdivider_ids = fields.One2many(
         string='flowdividers',
         comodel_name='wua.flowdivider',
-        inverse_name='equipment_id',)
+        inverse_name='equipment_id',
+    )
 
     flowdivider_id = fields.Many2one(
         string='flowdivider',
         comodel_name='wua.flowdivider',
-        compute='_compute_flowdivider_id',)
+        compute='_compute_flowdivider_id',
+    )
 
     irrigationgate_ids = fields.One2many(
         string='irrigationgates',
         comodel_name='wua.irrigationgate',
-        inverse_name='equipment_id',)
+        inverse_name='equipment_id',
+    )
 
     irrigationgate_id = fields.Many2one(
         string='irrigationgate',
         comodel_name='wua.irrigationgate',
-        compute='_compute_irrigationgate_id',)
+        compute='_compute_irrigationgate_id',
+    )
 
     airvalve_ids = fields.One2many(
         string='airvalves',
         comodel_name='wua.airvalve',
-        inverse_name='equipment_id',)
+        inverse_name='equipment_id',
+    )
 
     airvalve_id = fields.Many2one(
         string='airvalve',
         comodel_name='wua.airvalve',
-        compute='_compute_airvalve_id',)
+        compute='_compute_airvalve_id',
+    )
 
     drainagevalve_ids = fields.One2many(
         string='drainagevalves',
         comodel_name='wua.drainagevalve',
-        inverse_name='equipment_id',)
+        inverse_name='equipment_id',
+    )
 
     drainagevalve_id = fields.Many2one(
         string='drainagevalve',
         comodel_name='wua.drainagevalve',
-        compute='_compute_drainagevalve_id',)
+        compute='_compute_drainagevalve_id',
+    )
 
     valve_ids = fields.One2many(
         string='valves',
         comodel_name='wua.valve',
-        inverse_name='equipment_id',)
+        inverse_name='equipment_id',
+    )
 
     valve_id = fields.Many2one(
         string='valve',
         comodel_name='wua.valve',
-        compute='_compute_valve_id',)
+        compute='_compute_valve_id',
+    )
 
     filteringstation_ids = fields.One2many(
         string='filteringstations',
         comodel_name='wua.filteringstation',
-        inverse_name='equipment_id',)
+        inverse_name='equipment_id',
+    )
 
     filteringstation_id = fields.Many2one(
         string='filteringstation',
         comodel_name='wua.filteringstation',
-        compute='_compute_filteringstation_id',)
+        compute='_compute_filteringstation_id',
+    )
 
-    tag_html = fields.Html(string="Tag HTML", compute='_compute_tag_html')
+    tag_html = fields.Html(
+        string="Tag HTML",
+        compute='_compute_tag_html',
+    )
+
+    image = fields.Binary(
+        string='Photo / Image',
+        attachment=True,
+    )
 
     active = fields.Boolean(
         default=True,
-        help='If the active field is set to False, it will allow you to ' +
-        'hide the register without removing it. For see archived register, ' +
-        'go to "Search-Filters" in tree view')
+        help='If the active field is set to False, it will allow you to '
+        'hide the register without removing it. For see archived register, '
+        'go to "Search-Filters" in tree view',
+    )
+
+    parent_id = fields.Many2one(
+        string='Parent Equipment',
+        comodel_name='maintenance.equipment',
+        ondelete='set null',
+    )
+
+    child_ids = fields.One2many(
+        string='Child Equipments',
+        comodel_name='maintenance.equipment',
+        inverse_name='parent_id',
+    )
 
     @api.multi
     def _compute_hydraulicsector(self):
@@ -251,7 +318,7 @@ class MaintenanceEquipment(models.Model):
             'airvalve_id',
             'valve_id',
             'drainagevalve_id',
-            'filteringstation_id'
+            'filteringstation_id',
         ]
         for record in self:
             hydraulicsector_id = None
@@ -434,44 +501,68 @@ class MaintenanceEquipment(models.Model):
     def action_get_wua_infrastructure_item(self):
         self.ensure_one()
         current_equipment = self
-
         category_mapping = {
-            1: ('wua.intake', _('Intake')),
-            2: ('wua.reservoir', _('Reservoir')),
-            3: ('wua.pumpgroup', _('Pumpgroup')),
-            4: ('wua.photovoltaicplant', _('Photovoltaic Plant')),
-            5: ('wua.flowmeter', _('Flowmeter')),
-            6: ('wua.pumpunit', _('Pump')),
-            7: ('wua.waterpipe', _('Waterpipe')),
-            8: ('wua.irrigationshed', _('Irrigationshed')),
-            9: ('wua.waterconnection', _('Waterconnection')),
-            10: ('wua.watermeter', _('Watermeter')),
-            11: ('wua.pressuresensor', _('Pressuresensor')),
-            12: ('wua.irrigationditch', _('Irrigation Ditch')),
-            13: ('wua.drainageditch', _('Drainage Ditch')),
-            14: ('wua.flowdivider', _('Flowdivider')),
-            15: ('wua.irrigationgate', _('Irrigation Gate')),
-            16: ('wua.airvalve', _('Airvalve')),
-            17: ('wua.drainagevalve', _('Drainage Valve')),
-            18: ('wua.valve', _('Valve')),
-            19: ('wua.filteringstation', _('Filtering Station'))
+            self.env.ref('wua_maintenance.equipment_category_intake').id:
+                ('wua.intake', _('Intake')),
+            self.env.ref('wua_maintenance.equipment_category_reservoir').id:
+                ('wua.reservoir', _('Reservoir')),
+            self.env.ref('wua_maintenance.equipment_category_pumpgroup').id:
+                ('wua.pumpgroup', _('Pumpgroup')),
+            self.env.ref(
+                'wua_maintenance.equipment_category_photovoltaicplant').id:
+                ('wua.photovoltaicplant', _('Photovoltaic Plant')),
+            self.env.ref('wua_maintenance.equipment_category_flowmeter').id:
+                ('wua.flowmeter', _('Flowmeter')),
+            self.env.ref('wua_maintenance.equipment_category_pump').id:
+                ('wua.pumpunit', _('Pump')),
+            self.env.ref('wua_maintenance.equipment_category_waterpipe').id:
+                ('wua.waterpipe', _('Waterpipe')),
+            self.env.ref(
+                'wua_maintenance.equipment_category_irrigationshed').id:
+                ('wua.irrigationshed', _('Irrigationshed')),
+            self.env.ref(
+                'wua_maintenance.equipment_category_waterconnection').id:
+                ('wua.waterconnection', _('Waterconnection')),
+            self.env.ref('wua_maintenance.equipment_category_watermeter').id:
+                ('wua.watermeter', _('Watermeter')),
+            self.env.ref(
+                'wua_maintenance.equipment_category_pressuresensor').id:
+                ('wua.pressuresensor', _('Pressuresensor')),
+            self.env.ref(
+                'wua_maintenance.equipment_category_irrigationditch').id:
+                ('wua.irrigationditch', _('Irrigation Ditch')),
+            self.env.ref(
+                'wua_maintenance.equipment_category_drainageditch').id:
+                ('wua.drainageditch', _('Drainage Ditch')),
+            self.env.ref(
+                'wua_maintenance.equipment_category_flowdivider').id:
+                ('wua.flowdivider', _('Flowdivider')),
+            self.env.ref(
+                'wua_maintenance.equipment_category_irrigationgate').id:
+                ('wua.irrigationgate', _('Irrigation Gate')),
+            self.env.ref(
+                'wua_maintenance.equipment_category_airvalve').id:
+                ('wua.airvalve', _('Airvalve')),
+            self.env.ref(
+                'wua_maintenance.equipment_category_drainagevalve').id:
+                ('wua.drainagevalve', _('Drainage Valve')),
+            self.env.ref(
+                'wua_maintenance.equipment_category_valve').id:
+                ('wua.valve', _('Valve')),
+            self.env.ref(
+                'wua_maintenance.equipment_category_filteringstation').id:
+                ('wua.filteringstation', _('Filtering Station')),
         }
-
         res_model, name = category_mapping.get(
             current_equipment.category_id.id, (None, None))
-
         if not res_model:
             raise exceptions.UserError(_('Equipment No-WUA.'))
-
         domain = [('equipment_id', '=', current_equipment.id)]
         if not self.active:
             domain.append(('active', '=', False))
-
         res_id = self.env[res_model].search(domain, limit=1).id
-
         if not res_id:
             raise exceptions.UserError(_('Equipment No-WUA.'))
-
         act_window = {
             'type': 'ir.actions.act_window',
             'name': name,
@@ -482,3 +573,15 @@ class MaintenanceEquipment(models.Model):
         }
         return act_window
 
+    @api.multi
+    def action_get_equipment_childs(self):
+        self.ensure_one()
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Child Equipments'),
+            'res_model': 'maintenance.equipment',
+            'view_mode': 'tree,form',
+            'domain': [('parent_id', '=', self.id)],
+            'context': {'create': False},
+        }
+        return act_window

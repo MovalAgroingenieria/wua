@@ -15,16 +15,13 @@
             <t t-foreach="docs" t-as="o">
                 <t t-call="base_wua_report.wua_external_layout">
                     <div class="page">
-
                         <!-- Vars -->
                         <t t-set="report_style" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
-
                         <!-- Title -->
                         <div name="title" class="text-center">
                             <h4><b>Maintenance request report</b></h4>
                             <span>[<span t-field="o.name"></span>]</span>
                         </div>
-
                         <!-- Maintenance request data -->
                         <div name="maintenance_request_data">
                             <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">

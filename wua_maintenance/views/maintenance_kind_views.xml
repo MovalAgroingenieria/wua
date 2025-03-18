@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_maintenance_kind_form" model="ir.ui.view">
+        <field name="name">maintenance.kind.form</field>
+        <field name="model">maintenance.kind</field>
+        <field name="arch" type="xml">
+            <form string="Maintenance Kind">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="category_id"/>
+                        <notebook>
+                            <page string="Dynamic Fields">
+                                <field name="dynamic_field_ids">
+                                    <tree editable="bottom">
+                                        <field name="name"/>
+                                        <field name="field_type"/>
+                                        <field name="fixed_option_ids" widget="many2many_tags"/>
+                                        <field name="required"/>
+                                        <field name="field_path"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="maintenance_kind_view_tree" model="ir.ui.view">
+        <field name="name">maintenance.kind.tree</field>
+        <field name="model">maintenance.kind</field>
+        <field name="inherit_id" ref="maintenance_plan.maintenance_kind_view_tree" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='active']" position="after">
+                <field name="category_id"/>
+            </xpath>
+            <xpath expr="//tree" position="attributes">
+                <attribute name="editable">false</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="maintenance_plan.maintenance_kind_action" model="ir.actions.act_window">
+        <field name="name">Maintenance Kinds</field>
+        <field name="res_model">maintenance.kind</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_type">form</field>
+    </record>
+
+</odoo>

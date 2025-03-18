@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-02 09:52+0000\n"
-"PO-Revision-Date: 2024-07-02 09:52+0000\n"
+"POT-Creation-Date: 2025-02-14 08:49+0000\n"
+"PO-Revision-Date: 2025-02-14 08:49+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -29,6 +29,13 @@ msgstr "<b>Sol·licitud manteniment</b>"
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_report_document
 msgid "<b>Request</b>"
 msgstr "<b>Sol·licitud</b>"
+
+#. module: wua_maintenance
+#: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_category_view_form
+msgid "<span class=\"fa fa-retweet fa-lg\"/>\n"
+"                                            <span style=\"margin-left:8px;\">Resolve </span>"
+msgstr "<span class=\"fa fa-retweet fa-lg\"/>\n"
+"                                            <span style=\"margin-left:8px;\">Resoldre </span>"
 
 #. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.wua_airvalve_view_form
@@ -54,6 +61,13 @@ msgid "<span class=\"o_stat_text\">Associated</span>\n"
 "                        <span class=\"o_stat_text\">Equipment</span>"
 msgstr "<span class=\"o_stat_text\">Equips</span>\n"
 "                        <span class=\"o_stat_text\">associats</span>"
+
+#. module: wua_maintenance
+#: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_view_form
+msgid "<span class=\"o_stat_text\">Equipment</span>\n"
+"                        <span class=\"o_stat_text\">Childs</span>"
+msgstr "<span class=\"o_stat_text\">Equipament</span>\n"
+"                        <span class=\"o_stat_text\">dependent</span>"
 
 #. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_view_form
@@ -133,9 +147,30 @@ msgid "AIR VALVE"
 msgstr "VENTOSA"
 
 #. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_maintenance_kind_id
+msgid "Action type"
+msgstr "Tipus d'actuació"
+
+#. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_infrastructureitem_active
 msgid "Active"
 msgstr "Actiu"
+
+#. module: wua_maintenance
+#: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_category_view_form
+msgid "Additional Info"
+msgstr "Informació addicional"
+
+#. module: wua_maintenance
+#: code:addons/wua_maintenance/models/maintenance.py:515
+#, python-format
+msgid "Airvalve"
+msgstr "Ventosa"
+
+#. module: wua_maintenance
+#: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_category_view_form
+msgid "Any related infrastructureitem"
+msgstr "Qualsevol element d'infraestructura relacionat"
 
 #. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_view_form
@@ -148,7 +183,12 @@ msgid "Asset Category"
 msgstr "Categoria d'actiu"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:40
+#: model:ir.ui.view,arch_db:wua_maintenance.wizard_massive_maintenance_requests_view_form
+msgid "Cancel"
+msgstr "Cancel·la"
+
+#. module: wua_maintenance
+#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:82
 #, python-format
 msgid "Cannot delete a WUA infrastructure category."
 msgstr "No es pot eliminar una categoria d'infraestructura WUA."
@@ -162,6 +202,13 @@ msgid "Category"
 msgstr "Categoria"
 
 #. module: wua_maintenance
+#: code:addons/wua_maintenance/models/maintenance.py:545
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_child_ids
+#, python-format
+msgid "Child Equipments"
+msgstr "Equipament dependent"
+
+#. module: wua_maintenance
 #: model:ir.actions.act_window,help:wua_maintenance.maintenance_dashboard_action
 msgid "Click to add a stage in the maintenance request."
 msgstr "Faci clic per crear una nova etapa en la petició de manteniment."
@@ -172,12 +219,25 @@ msgid "Color Index"
 msgstr "Índex de color"
 
 #. module: wua_maintenance
+#: selection:wizard.massive.maintenance.requests,maintenance_type:0
+msgid "Corrective"
+msgstr "Correctiu"
+
+#. module: wua_maintenance
+#: model:ir.actions.act_window,name:wua_maintenance.action_add_partners_to_file
+#: model:ir.ui.view,arch_db:wua_maintenance.wizard_massive_maintenance_requests_view_form
+msgid "Create Maintenance Requests"
+msgstr "Crear sol·licituds de manteniment"
+
+#. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipmenttag_create_uid
+#: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_create_uid
 msgid "Created by"
 msgstr "Creat per"
 
 #. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipmenttag_create_date
+#: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_create_date
 msgid "Created on"
 msgstr "Creat el"
 
@@ -192,15 +252,38 @@ msgid "DRAINAGE VALVE"
 msgstr "DESGUÀS"
 
 #. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_days_since_creation
+msgid "Days since creation"
+msgstr "Dies des de la creació"
+
+#. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_equipment_view_search_inherit_hr
 msgid "Department"
 msgstr "Departament"
 
 #. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipmenttag_display_name
+#: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_display_name
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_infrastructureitem_display_name
 msgid "Display Name"
 msgstr "Mostrar Nom"
+
+#. module: wua_maintenance
+#: code:addons/wua_maintenance/models/maintenance.py:512
+#, python-format
+msgid "Drainage Ditch"
+msgstr "Azarbe"
+
+#. module: wua_maintenance
+#: code:addons/wua_maintenance/models/maintenance.py:516
+#, python-forma
+msgid "Drainage Valve"
+msgstr "Desguàs"
+
+#. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_duration
+msgid "Duration"
+msgstr "Duració"
 
 #. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_equipment_view_search_inherit_hr
@@ -298,7 +381,7 @@ msgid "Entity (water meter)"
 msgstr "Element (comptador)"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/wua_infrastructureitem.py:62
+#: code:addons/wua_maintenance/models/wua_infrastructureitem.py:65
 #: model:ir.model,name:wua_maintenance.model_maintenance_equipment
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_airvalve_equipment_id
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_drainageditch_equipment_id
@@ -330,8 +413,8 @@ msgid "Equipment Category"
 msgstr "Categoria d'equips"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance.py:473
-#: code:addons/wua_maintenance/models/maintenance.py:482
+#: code:addons/wua_maintenance/models/maintenance.py:523
+#: code:addons/wua_maintenance/models/maintenance.py:529
 #, python-format
 msgid "Equipment No-WUA."
 msgstr "Equipament No-WUA."
@@ -350,10 +433,26 @@ msgid "Equipment Tags"
 msgstr "Etiquetes d'equips"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/wua_infrastructureitem.py:59
+#: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_category_view_form
+msgid "Equipment name"
+msgstr "Nom de l'equipament"
+
+#. module: wua_maintenance
+#: code:addons/wua_maintenance/models/wua_infrastructureitem.py:62
 #, python-format
 msgid "Equipment not available."
 msgstr "Element no disponible."
+
+#. module: wua_maintenance
+#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:74
+#, python-format
+msgid "Error resolving template: {}"
+msgstr "Error en resoldre la plantilla: {}"
+
+#. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_category_extradata_template
+msgid "Extradata Template"
+msgstr "Plantilla extradata"
 
 #. module: wua_maintenance
 #: model:maintenance.equipment.category,name:wua_maintenance.equipment_category_filteringstation
@@ -368,7 +467,25 @@ msgstr "Divisor de flux"
 #. module: wua_maintenance
 #: model:maintenance.equipment.category,name:wua_maintenance.equipment_category_flowmeter
 msgid "FLOWMETER"
-msgstr "Calculador de flux"
+msgstr "CABALÍMETRE"
+
+#. module: wua_maintenance
+#: code:addons/wua_maintenance/models/maintenance.py:518
+#, python-format
+msgid "Filtering Station"
+msgstr "Filtre"
+
+#. module: wua_maintenance
+#: code:addons/wua_maintenance/models/maintenance.py:513
+#, python-format
+msgid "Flowdivider"
+msgstr "Divisor de flux"
+
+#. module: wua_maintenance
+#: code:addons/wua_maintenance/models/maintenance.py:504
+#, python-format
+msgid "Flowmeter"
+msgstr "Cabalímetre"
 
 #. module: wua_maintenance
 #: selection:maintenance.equipment,infrastructure_type:0
@@ -383,14 +500,21 @@ msgid "Gravity Irrigation"
 msgstr "Reg de gravetat"
 
 #. module: wua_maintenance
+#: selection:wizard.massive.maintenance.requests,priority:0
+msgid "High"
+msgstr "Alt"
+
+#. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_hydraulicsector_id
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_hydraulicsector_id
+#: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_request_view_form
 #: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_view_form
 msgid "Hydraulic Sector"
 msgstr "Sector hidràulic"
 
 #. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipmenttag_id
+#: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_id
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_infrastructureitem_id
 msgid "ID"
 msgstr "ID"
@@ -433,7 +557,7 @@ msgid "Infrastructure type"
 msgstr "Tipus d’infraestructura"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance.py:431
+#: code:addons/wua_maintenance/models/maintenance.py:500
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_intake_id
 #, python-format
 msgid "Intake"
@@ -443,6 +567,34 @@ msgstr "Captació"
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_intake_ids
 msgid "Intakes"
 msgstr "Captacions"
+
+#. module: wua_maintenance
+#: code:addons/wua_maintenance/models/maintenance.py:511
+#, python-format
+msgid "Irrigation Ditch"
+msgstr "Sèquia"
+
+#. module: wua_maintenance
+#: code:addons/wua_maintenance/models/maintenance.py:514
+#, python-format
+msgid "Irrigation Gate"
+msgstr "Taulet"
+
+#. module: wua_maintenance
+#: code:addons/wua_maintenance/models/maintenance.py:507
+#, python-format
+msgid "Irrigationshed"
+msgstr "Caseta"
+
+#. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_is_primary
+msgid "Is Primary"
+msgstr "És primari"
+
+#. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_is_wua
+msgid "Is WUA"
+msgstr "És WUA"
 
 #. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_category_view_search
@@ -457,30 +609,28 @@ msgid "Is WUA: Yes"
 msgstr "Es WUA: Sí"
 
 #. module: wua_maintenance
-#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_is_primary
-msgid "Is primary"
-msgstr "És primari"
-
-#. module: wua_maintenance
-#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_is_wua
-msgid "Is wua"
-msgstr "És wua"
-
-#. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipmenttag___last_update
+#: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests___last_update
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_infrastructureitem___last_update
 msgid "Last Modified on"
 msgstr "Última modificació el "
 
 #. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipmenttag_write_uid
+#: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_write_uid
 msgid "Last Updated by"
 msgstr "Última actualització per"
 
 #. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipmenttag_write_date
+#: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_write_date
 msgid "Last Updated on"
 msgstr "Última actualització el"
+
+#. module: wua_maintenance
+#: selection:wizard.massive.maintenance.requests,priority:0
+msgid "Low"
+msgstr "Baix"
 
 #. module: wua_maintenance
 #: model:ir.model,name:wua_maintenance.model_maintenance_equipmenttag
@@ -498,7 +648,9 @@ msgid "Maintenance Request Report"
 msgstr "Informe de sol·licitud de manteniment"
 
 #. module: wua_maintenance
+#: code:addons/wua_maintenance/wizard/wizard_massive_maintenance_requests.py:110
 #: model:ir.model,name:wua_maintenance.model_maintenance_request
+#, python-format
 msgid "Maintenance Requests"
 msgstr "Sol·licituds manteniment"
 
@@ -524,11 +676,21 @@ msgid "Maintenance category"
 msgstr "Categoria de manteniment"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:33
+#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:47
 #: sql_constraint:maintenance.equipment.category:0
 #, python-format
 msgid "Maintenance category already exists."
 msgstr "La categoria de manteniment ja existeix."
+
+#. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_maintenance_equipment_ids
+msgid "Maintenance equipments"
+msgstr "Equips de manteniment"
+
+#. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_maintenance_subject
+msgid "Maintenance subject"
+msgstr "Subjecte"
 
 #. module: wua_maintenance
 #: code:addons/wua_maintenance/models/maintenance_equipmenttag.py:20
@@ -538,7 +700,29 @@ msgid "Maintenance tag already exists."
 msgstr "L’etiqueta de manteniment ja existeix."
 
 #. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_maintenance_team_id
+msgid "Maintenance team"
+msgstr "Equip"
+
+#. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_maintenance_type
+msgid "Maintenance type"
+msgstr "Tipus de manteniment"
+
+#. module: wua_maintenance
+#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:59
+#, python-format
+msgid "No equipment found"
+msgstr "No s'ha trobat cap equip"
+
+#. module: wua_maintenance
+#: selection:wizard.massive.maintenance.requests,priority:0
+msgid "Normal"
+msgstr "Normal"
+
+#. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipmenttag_notes
+#: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_category_view_form
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_equipmenttag_view_form
 msgid "Notes"
 msgstr "Notes"
@@ -569,6 +753,11 @@ msgid "PUMP GROUP"
 msgstr "Grup de bomba"
 
 #. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_parent_id
+msgid "Parent Equipment"
+msgstr "Equipament pare"
+
+#. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_category_is_wua
 msgid "Part of WUA infrastructure?"
 msgstr "Part de la infraestructura WUA?"
@@ -579,10 +768,27 @@ msgid "Partners"
 msgstr "Empreses"
 
 #. module: wua_maintenance
+#: code:addons/wua_maintenance/models/maintenance.py:503
+#, python-format
+msgid "Photovoltaic Plant"
+msgstr "Planta fotovoltaica"
+
+#. module: wua_maintenance
+#: code:addons/wua_maintenance/models/maintenance.py:510
+#, python-format
+msgid "Pressuresensor"
+msgstr "Sensor de pressió"
+
+#. module: wua_maintenance
 #: selection:maintenance.equipment,infrastructure_type:0
 #: selection:maintenance.equipment.category,infrastructure_type:0
 msgid "Pressurized Irrigation"
 msgstr "Reg a pressió"
+
+#. module: wua_maintenance
+#: selection:wizard.massive.maintenance.requests,maintenance_type:0
+msgid "Preventive"
+msgstr "Preventiu"
 
 #. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_category_view_search
@@ -596,12 +802,87 @@ msgid "Primary infrastructure?"
 msgstr "Infraestructura primària?"
 
 #. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_priority
+msgid "Priority"
+msgstr "Prioritat"
+
+#. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_project_id
+msgid "Project"
+msgstr "Projecte"
+
+#. module: wua_maintenance
+#: code:addons/wua_maintenance/models/maintenance.py:505
+#, python-format
+msgid "Pump"
+msgstr "Bomba"
+
+#. module: wua_maintenance
+#: code:addons/wua_maintenance/models/maintenance.py:502
+#, python-format
+msgid "Pumpgroup"
+msgstr "Bombeig"
+
+#. module: wua_maintenance
 #: model:maintenance.equipment.category,name:wua_maintenance.equipment_category_reservoir
 msgid "RESERVOIR"
 msgstr "Dipòsit"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance.py:433
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_related_element_extradata
+msgid "Related element extradata"
+msgstr "Extradades d'elements relacionats"
+
+#. module: wua_maintenance
+#: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_category_view_form
+msgid "Related element: {{ equipment.irrigationshed_id or\n"
+"                                                                        equipment.waterconnection_id or\n"
+"                                                                        equipment.watermeter_id or\n"
+"                                                                        equipment.flowmeter_id or\n"
+"                                                                        equipment.intake_id or\n"
+"                                                                        equipment.reservoir_id or\n"
+"                                                                        equipment.pumpgroup_id or\n"
+"                                                                        equipment.photovoltaicplant_id or\n"
+"                                                                        equipment.pumpunit_id or\n"
+"                                                                        equipment.waterpipe_id or\n"
+"                                                                        equipment.pressuresensor_id or\n"
+"                                                                        equipment.irrigationditch_id or\n"
+"                                                                        equipment.drainageditch_id or\n"
+"                                                                        equipment.flowdivider_id or\n"
+"                                                                        equipment.irrigationgate_id or\n"
+"                                                                        equipment.airvalve_id or\n"
+"                                                                        equipment.drainagevalve_id or\n"
+"                                                                        equipment.valve_id or\n"
+"                                                                        equipment.filteringstation_id\n"
+"                                                                        }}"
+msgstr "Element relacionat: {{ equipment.irrigationshed_id or\n"
+"                                                                        equipment.waterconnection_id or\n"
+"                                                                        equipment.watermeter_id or\n"
+"                                                                        equipment.flowmeter_id or\n"
+"                                                                        equipment.intake_id or\n"
+"                                                                        equipment.reservoir_id or\n"
+"                                                                        equipment.pumpgroup_id or\n"
+"                                                                        equipment.photovoltaicplant_id or\n"
+"                                                                        equipment.pumpunit_id or\n"
+"                                                                        equipment.waterpipe_id or\n"
+"                                                                        equipment.pressuresensor_id or\n"
+"                                                                        equipment.irrigationditch_id or\n"
+"                                                                        equipment.drainageditch_id or\n"
+"                                                                        equipment.flowdivider_id or\n"
+"                                                                        equipment.irrigationgate_id or\n"
+"                                                                        equipment.airvalve_id or\n"
+"                                                                        equipment.drainagevalve_id or\n"
+"                                                                        equipment.valve_id or\n"
+"                                                                        equipment.filteringstation_id\n"
+"                                                                        }}"
+
+#. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_request_date
+msgid "Request date"
+msgstr "Data de sol·licitud"
+
+#. module: wua_maintenance
+#: code:addons/wua_maintenance/models/maintenance.py:501
 #: model:ir.model,name:wua_maintenance.model_wua_reservoir
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_reservoir_id
 #, python-format
@@ -619,6 +900,11 @@ msgstr "Embassaments"
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_team_view_tree
 msgid "Responsible"
 msgstr "Responsable"
+
+#. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_scheduled_date
+msgid "Scheduled date"
+msgstr "Data prevista"
 
 #. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_sequence
@@ -641,9 +927,45 @@ msgid "Tag HTML"
 msgstr "Etiqueta HTML"
 
 #. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_technician_user_id
+msgid "Technician"
+msgstr "Tècnic"
+
+#. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_equipment_view_search_inherit_hr
 msgid "Technicians"
 msgstr "Tècnics"
+
+#. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_category_extradata_template_resolved
+msgid "Template resolved"
+msgstr "Plantilla resolta"
+
+#. module: wua_maintenance
+#: model:ir.model.fields,help:wua_maintenance.field_maintenance_equipment_category_extradata_template
+msgid "Template with jinja2 variables."
+msgstr "Plantilla amb variables jinja2."
+
+#. module: wua_maintenance
+#: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_category_view_form
+msgid "Templates use jinja2 variables: {{ object.attribute }}. The available objects is 'equipment' for equipments templates.\n"
+"                                        The object 'datetime' is also available to regionally format dates.\n"
+"                                        <br/>\n"
+"                                        Commonly used expressions and variables:<br/>"
+msgstr "Les plantilles utilitzen variables jinja2: {{ object.attribute }}. Els objectes disponibles són 'equipment' per a les plantilles d'equips.\n"
+" L'objecte 'datetime' també està disponible per a les dates de format regional.\n"
+" <br/>\n"
+" Expressions i variables d'ús habitual:<br/>"
+
+#. module: wua_maintenance
+#: model:ir.model.fields,help:wua_maintenance.field_maintenance_equipment_category_extradata_template_resolved
+msgid "The template after resolve variables using random item."
+msgstr "La plantilla després de resoldre les variables fent servir un element aleatori."
+
+#. module: wua_maintenance
+#: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_category_view_form
+msgid "Try to resolve the template using a random equipment.                                             Note that not all error are catch by the system."
+msgstr "Intenta resoldre la plantilla utilitzant un equip aleatori.                                             Note that not all error are catch by the system."
 
 #. module: wua_maintenance
 #: model:maintenance.equipment.category,name:wua_maintenance.equipment_category_valve
@@ -651,24 +973,41 @@ msgid "VALVE"
 msgstr "VÀLVULA"
 
 #. module: wua_maintenance
+#: code:addons/wua_maintenance/models/maintenance.py:517
+#, python-format
+msgid "Valve"
+msgstr "Vàlvula"
+
+#. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_equipment_view_search_inherit_hr
 msgid "Vendor"
 msgstr "Proveïdor "
 
 #. module: wua_maintenance
+#: selection:wizard.massive.maintenance.requests,priority:0
+msgid "Very Low"
+msgstr "Molt baix"
+
+#. module: wua_maintenance
 #: model:maintenance.equipment.category,name:wua_maintenance.equipment_category_waterconnection
 msgid "WATER CONNECTION"
-msgstr "Connexió d'aigua"
+msgstr "PRESA"
 
 #. module: wua_maintenance
 #: model:maintenance.equipment.category,name:wua_maintenance.equipment_category_watermeter
 msgid "WATER METER"
-msgstr "Mesurador d'aigua"
+msgstr "COMPTADOR"
 
 #. module: wua_maintenance
 #: model:maintenance.equipment.category,name:wua_maintenance.equipment_category_waterpipe
 msgid "WATERPIPE"
 msgstr "CANONADA D'AIGUA"
+
+#. module: wua_maintenance
+#: code:addons/wua_maintenance/models/maintenance.py:508
+#, python-format
+msgid "Waterconnection"
+msgstr "Presa"
 
 #. module: wua_maintenance
 #: model:maintenance.kind,name:wua_maintenance.maintenance_kind_waterconnection_closure
@@ -681,14 +1020,24 @@ msgid "Waterconnection opening"
 msgstr "Obertura de Watermonnection"
 
 #. module: wua_maintenance
+#: code:addons/wua_maintenance/models/maintenance.py:509
+#, python-format
+msgid "Watermeter"
+msgstr "Comptador"
+
+#. module: wua_maintenance
 #: model:maintenance.kind,name:wua_maintenance.maintenance_kind_watermeter_replacement
 msgid "Watermeter replacement"
 msgstr "Substitució de telefonal Watermeter"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance.py:461
-#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_airvalve_id
+#: code:addons/wua_maintenance/models/maintenance.py:506
 #, python-format
+msgid "Waterpipe"
+msgstr "Waterpipe"
+
+#. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_airvalve_id
 msgid "airvalve"
 msgstr "ventosa"
 
@@ -698,9 +1047,7 @@ msgid "airvalves"
 msgstr "ventosa"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance.py:455
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_drainageditch_id
-#, python-format
 msgid "drainageditch"
 msgstr "Rasa de drenatge"
 
@@ -710,9 +1057,7 @@ msgid "drainageditchs"
 msgstr "Fosses de drenatge"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance.py:465
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_drainagevalve_id
-#, python-format
 msgid "drainagevalve"
 msgstr "drainagevalve"
 
@@ -722,9 +1067,7 @@ msgid "drainagevalves"
 msgstr "drainagevalves"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance.py:467
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_filteringstation_id
-#, python-format
 msgid "filteringstation"
 msgstr "filteringstation"
 
@@ -734,9 +1077,7 @@ msgid "filteringstations"
 msgstr "filteringstations"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance.py:457
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_flowdivider_id
-#, python-format
 msgid "flowdivider"
 msgstr "Divisor de flux"
 
@@ -746,9 +1087,7 @@ msgid "flowdividers"
 msgstr "Divisors de flux"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance.py:439
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_flowmeter_id
-#, python-format
 msgid "flowmeter"
 msgstr "Mesurador de flux"
 
@@ -758,9 +1097,7 @@ msgid "flowmeters"
 msgstr "Mestres de flux"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance.py:453
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_irrigationditch_id
-#, python-format
 msgid "irrigationditch"
 msgstr "Rasa de reg"
 
@@ -770,9 +1107,7 @@ msgid "irrigationditchs"
 msgstr "Fosses de reg"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance.py:459
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_irrigationgate_id
-#, python-format
 msgid "irrigationgate"
 msgstr "Porta de reg"
 
@@ -782,9 +1117,7 @@ msgid "irrigationgates"
 msgstr "Portes de reg"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance.py:445
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_irrigationshed_id
-#, python-format
 msgid "irrigationshed"
 msgstr "Cobert de reg"
 
@@ -799,9 +1132,7 @@ msgid "maintenance.config.settings"
 msgstr "maintenance.config.settings"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance.py:437
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_photovoltaicplant_id
-#, python-format
 msgid "photovoltaicplant"
 msgstr "Planta fotovoltaica"
 
@@ -811,9 +1142,7 @@ msgid "photovoltaicplants"
 msgstr "Plantes fotovoltaiques"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance.py:451
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_pressuresensor_id
-#, python-format
 msgid "pressuresensor"
 msgstr "Sensor de pressió"
 
@@ -823,16 +1152,12 @@ msgid "pressuresensors"
 msgstr "Sensors de pressió"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance.py:441
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_pumpunit_id
-#, python-format
 msgid "pump"
 msgstr "Bomba"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance.py:435
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_pumpgroup_id
-#, python-format
 msgid "pumpgroup"
 msgstr "Grup de bomba"
 
@@ -847,9 +1172,7 @@ msgid "pumps"
 msgstr "Bombes"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance.py:463
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_valve_id
-#, python-format
 msgid "valve"
 msgstr "vàlvula"
 
@@ -859,9 +1182,7 @@ msgid "valves"
 msgstr "vàlvules"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance.py:447
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_waterconnection_id
-#, python-format
 msgid "waterconnection"
 msgstr "Connexió d'aigua"
 
@@ -871,9 +1192,7 @@ msgid "waterconnections"
 msgstr "Connexions d’aigua"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance.py:449
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_watermeter_id
-#, python-format
 msgid "watermeter"
 msgstr "Mesurador d'aigua"
 
@@ -883,9 +1202,7 @@ msgid "watermeters"
 msgstr "Mestres d'aigua"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance.py:443
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_waterpipe_id
-#, python-format
 msgid "waterpipe"
 msgstr "Canonada d'aigua"
 
@@ -893,4 +1210,14 @@ msgstr "Canonada d'aigua"
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_waterpipe_ids
 msgid "waterpipes"
 msgstr "Canonades d'aigua"
+
+#. module: wua_maintenance
+#: model:ir.model,name:wua_maintenance.model_wizard_massive_maintenance_requests
+msgid "wizard.massive.maintenance.requests"
+msgstr "wizard.massive.maintenance.requests"
+
+#. module: wua_maintenance
+#: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_category_view_form
+msgid "{{ equipment.name }}"
+msgstr "{{ equipment.name }}"
 

@@ -12,9 +12,12 @@ class WuaInfrastructureitem(models.AbstractModel):
     equipment_id = fields.Many2one(
         string='Equipment',
         comodel_name='maintenance.equipment',
-        ondelete='cascade',)
+        ondelete='cascade',
+    )
 
-    active = fields.Boolean(default=True)
+    active = fields.Boolean(
+        default=True,
+    )
 
     @api.model
     def create(self, vals):
@@ -63,7 +66,9 @@ class WuaInfrastructureitem(models.AbstractModel):
             'res_model': 'maintenance.equipment',
             'view_mode': 'form',
             'res_id': self.equipment_id.id,
-            'context': {'create': False, },
+            'context': {
+                'create': False,
+            },
         }
         return act_window
 

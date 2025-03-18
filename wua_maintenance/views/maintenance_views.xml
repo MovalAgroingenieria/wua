@@ -1,54 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="hr_equipment_view_form" model="ir.ui.view">
-        <field name="name">hr.equipment.view.form.inherit</field>
-        <field name="model">maintenance.equipment</field>
-        <field name="inherit_id" ref="maintenance.hr_equipment_view_form" />
-        <field name="arch" type="xml">
-            <xpath expr="//form" position="attributes">
-                <attribute name="duplicate">0</attribute>
-            </xpath>
-            <xpath expr="//div[@name='button_box']/button[1]" position="before">
-                <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive" confirm="Are you sure you want to toggle visibility?" groups="base_maintenance_config.group_maintenance_manager">
-                    <field name="active" widget="boolean_button" options='{"terminology": "archive"}' />
-                </button>
-            </xpath>
-            <xpath expr="//div[@name='button_box']" position="inside">
-                <field name="is_wua" invisible="1" />
-                <button name="action_get_wua_infrastructure_item" type="object" class="oe_stat_button" icon="fa-cogs" attrs="{'invisible': [('is_wua','=',False)]}" groups="base_wua.group_wua_user">
-                    <div class="o_form_field o_stat_info">
-                        <span class="o_stat_text">Infrastructure</span>
-                        <span class="o_stat_text">Item</span>
-                    </div>
-                </button>
-            </xpath>
-            <xpath expr="//field[@name='name']" position="attributes">
-                <attribute name="attrs">{'readonly': [('is_wua', '=', True)]}</attribute>
-            </xpath>
-            <xpath expr="//field[@name='category_id']" position="attributes">
-                <attribute name="attrs">{'readonly': [('is_wua', '=', True)]}</attribute>
-            </xpath>
-            <xpath expr="//field[@name='category_id']" position="after">
-                <field name="hydraulicsector_id" placeholder="Hydraulic Sector" />
-            </xpath>
-            <xpath expr="//field[@name='owner_user_id']" position="after">
-                <field name="tag_ids" widget="many2many_tags" />
-            </xpath>
-        </field>
-    </record>
-
-    <record id="hr_equipment_request_view_form" model="ir.ui.view">
-        <field name="name">hr.equipment.request.view.form.inherit</field>
-        <field name="model">maintenance.request</field>
-        <field name="inherit_id" ref="maintenance.hr_equipment_request_view_form" />
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='category_id']" position="after">
-                <field name="hydraulicsector_id" placeholder="Hydraulic Sector" />
-            </xpath>
-        </field>
-    </record>
-
     <record id="maintenance_equipmenttag_view_form" model="ir.ui.view">
         <field name="name">Equipment Tags (form view)</field>
         <field name="model">maintenance.equipmenttag</field>
@@ -414,48 +366,6 @@
         </field>
     </record>
 
-    <record id="hr_equipment_category_view_search" model="ir.ui.view">
-        <field name="name">equipment.category.search.inherit</field>
-        <field name="model">maintenance.equipment.category</field>
-        <field name="inherit_id" ref="maintenance.hr_equipment_category_view_search" />
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='name']" position="after">
-                <filter string='Is WUA: Yes' name="filter_is_wua_true" domain="[('is_wua', '!=', False)]" />
-                <filter string='Is WUA: No' name="filter_is_wua_false" domain="[('is_wua', '!=', True)]" />
-                <filter string='Primary' name="filter_is_primary" domain="[('is_primary', '!=', False)]" />
-            </xpath>
-            <xpath expr="(//group[1]/filter)[last()]" position="after">
-                <filter string='Infrastructure Type' domain="[]" context="{'group_by' : 'infrastructure_type'}" />
-            </xpath>
-        </field>
-    </record>
-
-    <record id="maintenance_equipment_view_search_inherit_hr" model="ir.ui.view">
-        <field name="name">equipment.search.inherit</field>
-        <field name="model">maintenance.equipment</field>
-        <field name="inherit_id" ref="hr_maintenance.maintenance_equipment_view_search_inherit_hr" />
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='owner_user_id']" position="after">
-                <filter string='Is WUA: Yes' name="filter_is_wua_true" domain="[('is_wua', '!=', False)]" />
-                <filter string='Is WUA: No' name="filter_is_wua_false" domain="[('is_wua', '!=', True)]" />
-                <filter string='Primary' name="filter_is_primary" domain="[('is_primary', '!=', False)]" />
-            </xpath>
-            <xpath expr="//group[1]" position="replace">
-                <filter string="Technicians" domain="[]" context="{'group_by': 'technician_user_id'}" />
-                <filter string="Category" domain="[]" name="group_by_category_id" context="{'group_by': 'category_id'}" />
-                <filter string="Owner" domain="[]" context="{'group_by': 'owner_user_id'}" />
-                <filter string="Vendor" domain="[]" context="{'group_by': 'partner_id'}" />
-                <filter string="Employee" domain="[]" context="{'group_by': 'employee_id'}" />
-                <filter string="Department" domain="[]" context="{'group_by': 'department_id'}" />
-                <filter string='Infrastructure Type' domain="[]" context="{'group_by' : 'infrastructure_type'}" />
-            </xpath>
-            <xpath expr="//search" position="inside">
-                <field name="tag_ids" placeholder="Equipment Tag"/>
-                <field name="category_id"/>
-            </xpath>
-        </field>
-    </record>
-
     <record id="maintenance.menu_maintenance_configuration" model="ir.ui.menu">
         <field name="groups_id" eval="[(4, ref('base_maintenance_config.group_maintenance_user'))]" />
     </record>
@@ -469,65 +379,17 @@
         <field name="search_view_id" ref="maintenance_equipmenttag_view_search" />
     </record>
 
-    <record id="hr_equipment_view_tree" model="ir.ui.view">
-        <field name="name">equipment.tree</field>
-        <field name="model">maintenance.equipment</field>
-        <field name="inherit_id" ref="maintenance.hr_equipment_view_tree" />
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='category_id']" position="replace">
-                <field name="category_id" string="Equipment Category" />
-            </xpath>
-        </field>
-    </record>
-
     <record id="maintenance_plan.menu_maintenance_kind_configuration" model="ir.ui.menu">
         <field name="name">Maintenance kinds</field>
     </record>
 
     <menuitem id="maintenance_equipmenttag_menu" name="Equipment Tags" parent="maintenance.menu_maintenance_configuration" action="maintenance_equipmenttag_action" sequence="4" />
 
-    <record id="hr_equipment_view_kanban" model="ir.ui.view">
-        <field name="name">equipment.kanban.inherit</field>
-        <field name="model">maintenance.equipment</field>
-        <field name="inherit_id" ref="maintenance.hr_equipment_view_kanban" />
-        <field name="arch" type="xml">
-            <xpath expr="//div[@class='mt4']" position="before">
-                <field name="tag_html" invisible="1" />
-                <div class="o_kanban_tags" t-raw="record.tag_html.value" />
-            </xpath>
-        </field>
-    </record>
-
     <record id="maintenance.hr_equipment_action" model="ir.actions.act_window">
         <field name="view_mode">tree,kanban,form</field>
         <field name="view_id" ref="wua_maintenance.hr_equipment_view_tree" />
         <field name="search_view_id" ref="wua_maintenance.maintenance_equipment_view_search_inherit_hr" />
         <field name="context">{}</field>
-    </record>
-
-    <!-- Sequence config -->
-    <record id="maintenance_config_settings_view_form" model="ir.ui.view">
-        <field name="name">Settings</field>
-        <field name="model">maintenance.config.settings</field>
-        <field name="inherit_id" ref="base_maintenance_config.view_maintenance_config_settings" />
-        <field name="arch" type="xml">
-            <xpath expr="//header" position="after">
-                <group name="maintenance_request_parameters" string="Maintenance Requests Management">
-                    <field name="sequence_maintenance_request_code_id" string="Sequence for maintenance requests" options="{'no_quick_create':True,'no_create_edit':True}" style="width:300px" />
-                </group>
-            </xpath>
-        </field>
-    </record>
-
-    <record id="hr_equipment_request_view_form" model="ir.ui.view">
-        <field name="name">Maintenance Requests</field>
-        <field name="model">maintenance.request</field>
-        <field name="inherit_id" ref="maintenance.hr_equipment_request_view_form" />
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='owner_user_id']" position="before">
-                <field name="sequence" />
-            </xpath>
-        </field>
     </record>
 
     <record id="maintenance_team_view_form" model="ir.ui.view">

@@ -9,9 +9,13 @@ from odoo import models, fields
 class MaintenanceTeam(models.Model):
     _inherit = "maintenance.team"
 
-    category_id = fields.Many2one(comodel_name='maintenance.'
-                                               'equipment.category',
-                                  string='Maintenance category',
-                                  store=True)
+    category_id = fields.Many2one(
+        string='Maintenance category',
+        comodel_name='maintenance.equipment.category',
+        store=True,
+    )
 
-    partner_ids = fields.Many2many('res.partner', string='Partners')
+    partner_ids = fields.Many2many(
+        string='Partners',
+        comodel_name='res.partner',
+    )

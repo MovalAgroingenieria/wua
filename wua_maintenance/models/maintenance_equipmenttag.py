@@ -23,8 +23,11 @@ class MaintenanceEquipmentTag(models.Model):
 
     color = fields.Integer(
         string='Color Index',
-        help='0:grey, 1:green, 2:yellow, ' +
-        '3:orange, 4:red, 5:purple, 6:blue, ' +
-        '7:cyan, 8:light-green, 9:magenta')
+        help='0:grey, 1:green, 2:yellow, '
+        '3:orange, 4:red, 5:purple, 6:blue, '
+        '7:cyan, 8:light-green, 9:magenta',
+    )
 
-    notes = fields.Html(string="Notes")
+    notes = fields.Html(
+        string="Notes",
+    )

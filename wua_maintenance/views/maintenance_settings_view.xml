@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <!-- Sequence config -->
+    <record id="maintenance_config_settings_view_form" model="ir.ui.view">
+        <field name="name">Settings</field>
+        <field name="model">maintenance.config.settings</field>
+        <field name="inherit_id" ref="base_maintenance_config.view_maintenance_config_settings" />
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="after">
+                <group name="maintenance_request_parameters" string="Maintenance Requests Management">
+                    <field name="sequence_maintenance_request_code_id" string="Sequence for maintenance requests" options="{'no_quick_create':True,'no_create_edit':True}" style="width:300px" />
+                    <field name="default_gis_refresh_interval"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

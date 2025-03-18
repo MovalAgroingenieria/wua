@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wizard_massive_maintenance_requests_view_form" model="ir.ui.view">
+        <field name="name">Wizard Massive Maintenance Requests</field>
+        <field name="model">wizard.massive.maintenance.requests</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="maintenance_subject"/>
+                </group>
+                <group colspan="6" col="4">
+                    <field name="request_date"/>
+                    <field name="scheduled_date"/>
+                    <field name="duration"/>
+                    <field name="maintenance_type" widget="radio"/>
+                    <field name="maintenance_kind_id"/>
+                    <field name="maintenance_team_id"/>
+                    <field name="technician_user_id"/>
+                    <field name="priority" widget="priority"/>
+                    <field name="project_id"/>
+                    <field name="description"/>
+                </group>
+                <footer>
+                    <button
+                        name="create_requests"
+                        type="object"
+                        class="oe_highlight"
+                        string="Create Maintenance Requests">
+                    </button>
+                    <button string="Cancel" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+   <!-- Droplist action -->
+    <act_window id="action_acreate_massive_requests"
+        name="Create Maintenance Requests"
+        res_model="wizard.massive.maintenance.requests"
+        src_model="maintenance.equipment"
+        key2="client_action_multi"
+        view_mode="form"
+        target="new"/>
+
+</odoo>

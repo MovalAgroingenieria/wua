@@ -8,6 +8,7 @@
             <field name="is_wua">True</field>
             <field name="infrastructure_type">01_general</field>
             <field name="is_primary">True</field>
+            <field name="model_id" ref="base_wua_infrastructure_primary.model_wua_intake"/>
         </record>
 
         <record id="equipment_category_reservoir" model="maintenance.equipment.category" forcecreate="False">
@@ -15,6 +16,7 @@
             <field name="is_wua">True</field>
             <field name="infrastructure_type">01_general</field>
             <field name="is_primary">True</field>
+            <field name="model_id" ref="base_wua_reservoir.model_wua_reservoir"/>
         </record>
 
         <record id="equipment_category_pumpgroup" model="maintenance.equipment.category" forcecreate="False">
@@ -22,6 +24,7 @@
             <field name="is_wua">True</field>
             <field name="infrastructure_type">01_general</field>
             <field name="is_primary">True</field>
+            <field name="model_id" ref="base_wua_infrastructure_pump.model_wua_pumpgroup"/>
         </record>
 
         <record id="equipment_category_photovoltaicplant" model="maintenance.equipment.category" forcecreate="False">
@@ -29,6 +32,7 @@
             <field name="is_wua">True</field>
             <field name="infrastructure_type">01_general</field>
             <field name="is_primary">True</field>
+            <field name="model_id" ref="base_wua_infrastructure_pump.model_wua_photovoltaicplant"/>
         </record>
 
         <record id="equipment_category_flowmeter" model="maintenance.equipment.category" forcecreate="False">
@@ -36,6 +40,7 @@
             <field name="is_wua">True</field>
             <field name="infrastructure_type">01_general</field>
             <field name="is_primary">False</field>
+            <field name="model_id" ref="base_wua_infrastructure_primary.model_wua_flowmeter"/>
         </record>
 
         <record id="equipment_category_pump" model="maintenance.equipment.category" forcecreate="False">
@@ -43,6 +48,7 @@
             <field name="is_wua">True</field>
             <field name="infrastructure_type">01_general</field>
             <field name="is_primary">False</field>
+            <field name="model_id" ref="base_wua_infrastructure_pump.model_wua_pumpunit"/>
         </record>
 
         <record id="equipment_category_waterpipe" model="maintenance.equipment.category" forcecreate="False">
@@ -50,6 +56,7 @@
             <field name="is_wua">True</field>
             <field name="infrastructure_type">02_pressurized</field>
             <field name="is_primary">True</field>
+            <field name="model_id" ref="base_wua_infrastructure_pressurized_hierarchy.model_wua_waterpipe"/>
         </record>
 
         <record id="equipment_category_irrigationshed" model="maintenance.equipment.category" forcecreate="False">
@@ -57,6 +64,7 @@
             <field name="is_wua">True</field>
             <field name="infrastructure_type">02_pressurized</field>
             <field name="is_primary">False</field>
+            <field name="model_id" ref="base_wua_infrastructure.model_wua_irrigationshed"/>
         </record>
 
         <record id="equipment_category_waterconnection" model="maintenance.equipment.category" forcecreate="False">
@@ -64,6 +72,7 @@
             <field name="is_wua">True</field>
             <field name="infrastructure_type">02_pressurized</field>
             <field name="is_primary">False</field>
+            <field name="model_id" ref="base_wua_infrastructure.model_wua_waterconnection"/>
         </record>
 
         <record id="equipment_category_watermeter" model="maintenance.equipment.category" forcecreate="False">
@@ -71,6 +80,7 @@
             <field name="is_wua">True</field>
             <field name="infrastructure_type">02_pressurized</field>
             <field name="is_primary">False</field>
+            <field name="model_id" ref="base_wua_pressurized_irrigation.model_wua_watermeter"/>
         </record>
 
         <record id="equipment_category_pressuresensor" model="maintenance.equipment.category" forcecreate="False">
@@ -78,6 +88,7 @@
             <field name="is_wua">True</field>
             <field name="infrastructure_type">02_pressurized</field>
             <field name="is_primary">False</field>
+            <field name="model_id" ref="base_wua_pressurized_irrigation.model_wua_pressuresensor"/>
         </record>
 
         <record id="equipment_category_irrigationditch" model="maintenance.equipment.category" forcecreate="False">
@@ -85,6 +96,7 @@
             <field name="is_wua">True</field>
             <field name="infrastructure_type">03_gravity</field>
             <field name="is_primary">True</field>
+            <field name="model_id" ref="base_wua_infrastructure.model_wua_irrigationditch"/>
         </record>
 
         <record id="equipment_category_drainageditch" model="maintenance.equipment.category" forcecreate="False">
@@ -92,6 +104,7 @@
             <field name="is_wua">True</field>
             <field name="infrastructure_type">03_gravity</field>
             <field name="is_primary">True</field>
+            <field name="model_id" ref="base_wua_infrastructure_gravity_hierarchy.model_wua_drainageditch"/>
         </record>
 
         <record id="equipment_category_flowdivider" model="maintenance.equipment.category" forcecreate="False">
@@ -99,6 +112,7 @@
             <field name="is_wua">True</field>
             <field name="infrastructure_type">03_gravity</field>
             <field name="is_primary">False</field>
+            <field name="model_id" ref="base_wua_infrastructure.model_wua_flowdivider"/>
         </record>
 
         <record id="equipment_category_irrigationgate" model="maintenance.equipment.category" forcecreate="False">
@@ -106,6 +120,7 @@
             <field name="is_wua">True</field>
             <field name="infrastructure_type">03_gravity</field>
             <field name="is_primary">False</field>
+            <field name="model_id" ref="base_wua_infrastructure.model_wua_irrigationgate"/>
         </record>
 
         <record id="equipment_category_airvalve" model="maintenance.equipment.category" forcecreate="False">
@@ -113,6 +128,7 @@
             <field name="is_wua">True</field>
             <field name="infrastructure_type">03_gravity</field>
             <field name="is_primary">False</field>
+            <field name="model_id" ref="base_wua_infrastructure.model_wua_airvalve"/>
         </record>
 
         <record id="equipment_category_drainagevalve" model="maintenance.equipment.category" forcecreate="False">
@@ -120,6 +136,7 @@
             <field name="is_wua">True</field>
             <field name="infrastructure_type">03_gravity</field>
             <field name="is_primary">False</field>
+            <field name="model_id" ref="base_wua_infrastructure.model_wua_drainagevalve"/>
         </record>
 
         <record id="equipment_category_valve" model="maintenance.equipment.category" forcecreate="False">
@@ -127,6 +144,7 @@
             <field name="is_wua">True</field>
             <field name="infrastructure_type">03_gravity</field>
             <field name="is_primary">False</field>
+            <field name="model_id" ref="base_wua_infrastructure.model_wua_valve"/>
         </record>
 
         <record id="equipment_category_filteringstation" model="maintenance.equipment.category" forcecreate="False">
@@ -134,6 +152,7 @@
             <field name="is_wua">True</field>
             <field name="infrastructure_type">01_general</field>
             <field name="is_primary">False</field>
+            <field name="model_id" ref="base_wua_infrastructure_primary.model_wua_filteringstation"/>
         </record>
 
     </data>

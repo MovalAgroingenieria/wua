@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="hr_equipment_category_view_form" model="ir.ui.view">
+        <field name="name">equipment.category.form</field>
+        <field name="model">maintenance.equipment.category</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_category_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='technician_user_id']" position="after">
+                <field name="is_wua" invisible="1"/>
+                <field name="model_id" attrs="{'readonly': [('is_wua','=',True)]}"/>
+            </xpath>
+            <xpath expr="//field[@name='note']" position="replace">
+            </xpath>
+            <xpath expr="//sheet/*[last()]" position="after">
+                <group name="slave_data">
+                    <notebook name="slave_data_notebook">
+                        <page name="notes_page" string="Notes">
+                            <field name="note"/>
+                        </page>
+                        <page name="viewer_page" string="Viewer">
+                            <group>
+                                <field name="geojson_style"/>
+                                <field name="legend_symbology"/>
+                            </group>
+                        </page>
+                        <page name="template_page" string="Additional Info">
+                            <group>
+                                <field name="extradata_template"/>
+                            </group>
+                            <group>
+                                <div>
+                                    <div name="help_invoice" style="margin-top: 0px;" class="oe_edit_only">
+                                        Templates use jinja2 variables: {{ object.attribute }}. The available objects is 'equipment' for equipments templates.
+                                        The object 'datetime' is also available to regionally format dates.
+                                        <br/>
+                                        Commonly used expressions and variables:<br/>
+                                        <table style="border-style: hidden; margin-left:8px;padding: 4px 0px;">
+                                            <tr name="equipment_name">
+                                                <td>Equipment name</td>
+                                                <td>{{ equipment.name }}</td>
+                                            </tr>
+                                            <tr name="equipment_related_elements">
+                                                <td>Any related infrastructureitem</td>
+                                                <td>Related element: {{ equipment.irrigationshed_id or
+                                                                        equipment.waterconnection_id or
+                                                                        equipment.watermeter_id or
+                                                                        equipment.flowmeter_id or
+                                                                        equipment.intake_id or
+                                                                        equipment.reservoir_id or
+                                                                        equipment.pumpgroup_id or
+                                                                        equipment.photovoltaicplant_id or
+                                                                        equipment.pumpunit_id or
+                                                                        equipment.waterpipe_id or
+                                                                        equipment.pressuresensor_id or
+                                                                        equipment.irrigationditch_id or
+                                                                        equipment.drainageditch_id or
+                                                                        equipment.flowdivider_id or
+                                                                        equipment.irrigationgate_id or
+                                                                        equipment.airvalve_id or
+                                                                        equipment.drainagevalve_id or
+                                                                        equipment.valve_id or
+                                                                        equipment.filteringstation_id
+                                                                        }}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div>
+                                        <div style="background-color: #F8F8F8; margin-bottom: 2%; margin-right:2%; padding: 10px;
+                                            border-top-right-radius: 15px; border-top-left-radius: 15px; border-bottom-left-radius: 15px;">
+                                            <field name="extradata_template_resolved" nolabel="1"/>
+                                        </div>
+                                    </div>
+                                    <button name="action_resolve_template" type="object" class="oe_highlight"
+                                        help="Try to resolve the template using a random equipment.
+                                            Note that not all error are catch by the system.">
+                                        <div class="o_form_field">
+                                            <span class="fa fa-retweet fa-lg"/>
+                                            <span style="margin-left:8px;">Resolve </span>
+                                        </div>
+                                    </button>
+                                </div>
+                            </group>
+                        </page>
+                    </notebook>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="hr_equipment_category_view_search" model="ir.ui.view">
+        <field name="name">equipment.category.search.inherit</field>
+        <field name="model">maintenance.equipment.category</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_category_view_search" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <filter string='Is WUA: Yes' name="filter_is_wua_true" domain="[('is_wua', '!=', False)]" />
+                <filter string='Is WUA: No' name="filter_is_wua_false" domain="[('is_wua', '!=', True)]" />
+                <filter string='Primary' name="filter_is_primary" domain="[('is_primary', '!=', False)]" />
+            </xpath>
+            <xpath expr="(//group[1]/filter)[last()]" position="after">
+                <filter string='Infrastructure Type' domain="[]" context="{'group_by' : 'infrastructure_type'}" />
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
