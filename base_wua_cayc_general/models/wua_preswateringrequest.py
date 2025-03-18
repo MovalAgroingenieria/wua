@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import models, fields, api, _
+from datetime import timedelta, datetime
 
 
 class WuaPresreswateringrequest(models.Model):
@@ -20,6 +21,27 @@ class WuaPresreswateringrequest(models.Model):
         store=True,
         compute='_compute_partner_parcel_owner_area',
     )
+
+    is_recurrence = fields.Boolean(
+        default=True,
+    )
+
+    @api.onchange('initial_date')
+    def _onchange_initial_date(self):
+        if self.initial_date:
+            period = self.env['wua.preswateringperiod'].search(
+                [('initial_date', '<=', self.initial_date),
+                 ('end_date', '>=', self.initial_date)], limit=1)
+            self.preswateringperiod_id = period
+            self.recurrence_end_date = fields.Datetime.to_string(
+                fields.Datetime.from_string(self.initial_date) +
+                timedelta(days=1),
+            )
+
+    @api.constrains('recurrence_end_date', 'preswateringperiod_id',
+                    'is_recurrence')
+    def _check_recurrence_end_date_within_period(self):
+        pass
 
     @api.depends('partner_id', 'partner_id.parent_partner_id')
     def _compute_parent_partner_id(self):
@@ -66,18 +88,88 @@ class WuaPresreswateringrequest(models.Model):
         for preswateringrequest in preswateringrequests:
             preswateringrequest.change_state_validated()
 
+    def _copy_single_request(self, request, copy_date):
+        copy_date_str = copy_date.strftime('%Y-%m-%d')
+        preswateringperiod = self.env['wua.preswateringperiod'].search([
+            ('initial_date', '<=', copy_date_str),
+            ('end_date', '>=', copy_date_str),
+        ], limit=1)
+        new_request_vals = {
+            'preswateringperiod_id': preswateringperiod.id,
+            'initial_date': copy_date_str,
+            'partner_id': request.partner_id.id,
+            'user_id': request.user_id.id,
+            'is_recurrence': True,
+            'recurrence_end_date': fields.Datetime.to_string(
+                fields.Datetime.from_string(copy_date_str) + timedelta(days=1),
+            ),
+        }
+        if request.presresconsumption_ids:
+            presresconsumption_vals = []
+            for presresconsumption in request.presresconsumption_ids:
+                presresconsumption_vals.append((0, 0, {
+                    'waterconnection_id':
+                        presresconsumption.waterconnection_id.id,
+                    'watering_duration':
+                        presresconsumption.watering_duration,
+                    'nominal_flow':
+                        presresconsumption.nominal_flow,
+                    'nominal_flow_ls':
+                        presresconsumption.nominal_flow_ls,
+                    'initial_hour':
+                        presresconsumption.initial_hour,
+                }))
+            new_request_vals['presresconsumption_ids'] = \
+                presresconsumption_vals
+        self.env['wua.preswateringrequest'].create(new_request_vals)
+
+    @api.multi
+    def generate_recurrences_preswateringrequests(self):
+        preswaternigrequests = self.env['wua.preswateringrequest'].search([
+            ('initial_date', '=', fields.Date.today()),
+        ])
+        next_day = datetime.strptime(fields.Date.today(), '%Y-%m-%d')
+        next_day += timedelta(days=1)
+        for record in preswaternigrequests:
+            next_day_request = self.env['wua.preswateringrequest'].search([
+                ('initial_date', '=', next_day),
+                ('partner_id', '=', record.partner_id.id),
+            ], limit=1)
+            if not next_day_request:
+                record_to_copy = None
+                if (record.is_recurrence):
+                    record_to_copy = record
+                # Not recurrence, search for the last recurrence data
+                else:
+                    last_recurrence = self.env['wua.preswateringrequest'].\
+                        search([
+                            ('is_recurrence', '=', True),
+                            ('partner_id', '=', record.partner_id.id),
+                            ('initial_date', '<', record.initial_date),
+                        ], order='initial_date desc', limit=1)
+                    record_to_copy = last_recurrence
+                if record_to_copy:
+                    self._copy_single_request(record_to_copy, next_day)
+
     @api.model
     def create(self, vals):
+        lang = 'es_ES'
+        if (self.env and self.env.user and self.env.user.lang):
+            lang = self.env.user.lang
         record = super(WuaPresreswateringrequest, self).create(vals)
         if record.parent_partner_id:
             record.message_subscribe(partner_ids=[record.parent_partner_id.id])
+            subject = self.env['ir.translation']._get_source(
+                False, 'code', lang, u'New Preswatering Request') or \
+                _('New Preswatering Request')
+            body_str = _(u'A new preswatering request has been created by '
+                         u'user: %s on %s.')
+            body = (self.env['ir.translation']._get_source(
+                False, 'code', lang, body_str) or body_str) % (
+                    record.create_uid.name, record.create_date)
             message = self.env['mail.message'].sudo().create({
-                'body': _(
-                    'A new preswatering request has been created by user: '
-                    '%s on %s.' %
-                    (record.create_uid.name, record.create_date),
-                ),
-                'subject': _('New Preswatering Request'),
+                'body': body,
+                'subject': subject,
                 'model': record._name,
                 'res_id': record.id,
                 'message_type': 'comment',
@@ -86,7 +178,7 @@ class WuaPresreswateringrequest(models.Model):
             })
             if record.parent_partner_id.email:
                 mail_values = {
-                    'subject': _('New Preswatering Request'),
+                    'subject': subject,
                     'body_html': message.body,
                     'email_to': record.parent_partner_id.email,
                     'email_from':

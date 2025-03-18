@@ -11,6 +11,7 @@ from odoo import models, fields, api, _, exceptions
 
 class WuaPresresconsumption(models.Model):
     _name = 'wua.presresconsumption'
+    _inherit = 'mail.thread'
     _description = 'Request Consumption'
     _order = 'request_time'
 
@@ -135,6 +136,7 @@ class WuaPresresconsumption(models.Model):
         digits=(32, 4),
         readonly=True,
         default=0.0,
+        track_visibility='onchange',
     )
 
     nominal_flow_ls_issued = fields.Float(
@@ -142,6 +144,7 @@ class WuaPresresconsumption(models.Model):
         digits=(32, 4),
         readonly=True,
         default=0.0,
+        track_visibility='onchange',
     )
 
     watering_volume = fields.Float(
@@ -249,6 +252,11 @@ class WuaPresresconsumption(models.Model):
         store=False,
     )
 
+    issued_presresconumption_manual_edit = fields.Boolean(
+        string='Issued consumption modified',
+        default=False,
+    )
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE(name)',
             'The consumption code must be unique.'),
@@ -286,6 +294,10 @@ class WuaPresresconsumption(models.Model):
         self.nominal_flow = nominal_flow
         self.watering_duration = irrigation_duration
         self.initial_hour = initial_hour
+
+    @api.onchange('nominal_flow_ls_issued')
+    def _onchange_nominal_flow_ls_issued(self):
+        self.issued_presresconumption_manual_edit = True
 
     @api.depends(
         'preswateringrequest_id', 'preswateringrequest_id.name',

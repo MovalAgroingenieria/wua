@@ -142,6 +142,11 @@
                 <filter string="Closed" name="isclosed"
                         domain="[('is_open', '=', False)]"/>
                 <separator/>
+                <filter string="Draft" name="state_draft"
+                        domain="[('state', '=', '01_draft')]"/>
+                <filter string="Validated" name="state_validated"
+                        domain="[('state', '=', '02_validated')]"/>
+                <separator/>
                 <group expand="0" string="Group By">
                     <filter string="Watering Period" name="watering_period"
                             context="{'group_by': 'preswateringperiod_id'}"/>
