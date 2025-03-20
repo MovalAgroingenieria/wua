@@ -268,10 +268,19 @@ class WuaPresreswatering(models.Model):
         if last_preswatering:
             initial_time = fields.Datetime.from_string(
                 last_preswatering.initial_time) + timedelta(days=1)
-            preswatering_period = last_preswatering.preswateringperiod_id
+            preswatering_period = self.env['wua.preswateringperiod'].search([
+                ('initial_date', '<=', str(today)),
+                ('end_date', '>=', str(today)),
+            ], limit=1)
+            number = 1
+            if (preswatering_period and
+                    preswatering_period.preswatering_ids):
+                number = sorted(
+                    preswatering_period.preswatering_ids,
+                    key=lambda x: x.number)[-1].number
             new_preswatering = self.create({
                 'preswateringperiod_id': preswatering_period.id,
-                'number': last_preswatering.number + 1,
+                'number': number,
                 'state': '01_draft',
                 'initial_time': initial_time,
                 'proration': preswatering_period.proration,

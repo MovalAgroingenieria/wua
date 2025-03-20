@@ -154,19 +154,40 @@ class WuaPresreswateringrequest(models.Model):
     @api.model
     def create(self, vals):
         lang = 'es_ES'
-        if (self.env and self.env.user and self.env.user.lang):
+        if self.env and self.env.user and self.env.user.lang:
             lang = self.env.user.lang
         record = super(WuaPresreswateringrequest, self).create(vals)
-        if record.parent_partner_id:
-            record.message_subscribe(partner_ids=[record.parent_partner_id.id])
-            subject = self.env['ir.translation']._get_source(
-                False, 'code', lang, u'New Preswatering Request') or \
-                _('New Preswatering Request')
-            body_str = _(u'A new preswatering request has been created by '
-                         u'user: %s on %s.')
-            body = (self.env['ir.translation']._get_source(
-                False, 'code', lang, body_str) or body_str) % (
-                    record.create_uid.name, record.create_date)
+        if record.create_uid.id != 1:
+            subject = (self.env['ir.translation']._get_source(
+                False, 'code', lang, u'New Preswatering Request - %s') or _(
+                    'New Preswatering Request - %s')) % record.initial_date
+            body_intro_str = _(u'A new preswatering request has been created '
+                               u'by user: %s.')
+            body_intro = (self.env['ir.translation']._get_source(
+                False, 'code', lang, body_intro_str) or body_intro_str) % (
+                    record.create_uid.name)
+            waterconnection_label = self.env['ir.translation']._get_source(
+                False, 'code', lang, u'Water Connection') or \
+                _('Water Connection')
+            nominal_flow_label = self.env['ir.translation']._get_source(
+                False, 'code', lang, u'Nominal Flow Requested (l/s)') or \
+                _('Nominal Flow Requested (l/s)')
+            table_html = '''
+                <br/><table border="1" cellpadding="4" cellspacing="0"
+                    style="border-collapse: collapse; margin: 20px auto;">
+                <tr><th style="padding: 10px; margin: 0;">%s</th>
+                    <th style="padding: 10px; margin: 0;">%s</th></tr>
+            ''' % (waterconnection_label, nominal_flow_label)
+            for consumption in record.presresconsumption_ids:
+                table_html += '''
+                <tr><td style="padding: 8px; margin: 0;">%s</td>
+                <td style="padding: 8px; margin: 0;">%.0f</td></tr>
+                ''' % (
+                    consumption.waterconnection_id.name or '',
+                    consumption.nominal_flow_ls or 0.0,
+                )
+            table_html += '</table>'
+            body = '%s<br/>%s' % (body_intro, table_html)
             message = self.env['mail.message'].sudo().create({
                 'body': body,
                 'subject': subject,
@@ -174,17 +195,32 @@ class WuaPresreswateringrequest(models.Model):
                 'res_id': record.id,
                 'message_type': 'comment',
                 'subtype_id': self.env.ref('mail.mt_comment').id,
-                'partner_ids': [(4, record.parent_partner_id.id)],
+                'partner_ids': [(4, record.parent_partner_id.id)] if
+                record.parent_partner_id else [],
             })
-            if record.parent_partner_id.email:
+            if record.user_id and record.user_id.email:
+                mail_values = {
+                    'subject': subject,
+                    'body_html': message.body,
+                    'email_to': record.user_id.email,
+                    'email_from': 'no-reply@cayc.es',
+                    'auto_delete': False,
+                    'notification': True,
+                    'model': record._name,
+                    'res_id': record.id,
+                }
+                mail = self.env['mail.mail'].sudo().create(mail_values)
+                mail.send()
+            if record.parent_partner_id and record.parent_partner_id.email:
                 mail_values = {
                     'subject': subject,
                     'body_html': message.body,
                     'email_to': record.parent_partner_id.email,
-                    'email_from':
-                        self.env.user.email or 'no-reply@yourdomain.com',
+                    'email_from': 'no-reply@cayc.es',
                     'auto_delete': False,
                     'notification': True,
+                    'model': record._name,
+                    'res_id': record.id,
                 }
                 mail = self.env['mail.mail'].sudo().create(mail_values)
                 mail.send()

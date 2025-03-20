@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-10 15:16+0000\n"
-"PO-Revision-Date: 2025-03-10 15:16+0000\n"
+"POT-Creation-Date: 2025-03-20 15:43+0000\n"
+"PO-Revision-Date: 2025-03-20 15:43+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -71,10 +71,10 @@ msgid "A che parcel must have at least one class associated."
 msgstr "Una parcela padrón CHE debe tener al menos una clase asociada."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:78
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:164
 #, python-format
-msgid "A new preswatering request has been created by user: %s on %s."
-msgstr "El usuario %s ha creado una nueva solictud el %s."
+msgid "A new preswatering request has been created by user: %s."
+msgstr "El usuario %s ha dado de alta una nueva solicitud."
 
 #. module: base_wua_cayc_general
 #: code:addons/base_wua_cayc_general/models/wua_parcel.py:59
@@ -365,17 +365,22 @@ msgid "Modules"
 msgstr "Módulos"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:80
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:89
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:162
 #, python-format
-msgid "New Preswatering Request"
-msgstr "Nueva solicitud"
+msgid "New Preswatering Request - %s"
+msgstr "Nueva solicitud - %s"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswatering.py:209
+#: code:addons/base_wua_cayc_general/models/wua_preswatering.py:228
 #, python-format
 msgid "No valid consumption data received from SINEMA."
 msgstr "No se ha recibido consumos por SINEMA."
+
+#. module: base_wua_cayc_general
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:174
+#, python-format
+msgid "Nominal Flow Requested (l/s)"
+msgstr "Caudal solicitado (l/s)"
 
 #. module: base_wua_cayc_general
 #: model:ir.ui.view,arch_db:base_wua_cayc_general.wua_octroi_view_form
@@ -643,6 +648,12 @@ msgid "WUA Partners"
 msgstr "Socios"
 
 #. module: base_wua_cayc_general
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:171
+#, python-format
+msgid "Water Connection"
+msgstr "Toma"
+
+#. module: base_wua_cayc_general
 #: model:ir.ui.view,arch_db:base_wua_cayc_general.wua_watermeter_module_view_search
 msgid "Water Meter"
 msgstr "Contador"
@@ -683,7 +694,7 @@ msgid "Waterchannels"
 msgstr "Canales"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:53
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:75
 #, python-format
 msgid "Waterconnection: %s, Flow: %s %s"
 msgstr "Toma: %s, Caudal: %s %s"
@@ -705,13 +716,13 @@ msgid "Watermeter position already exists."
 msgstr "Posición dentro del contador ya existente."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswatering.py:172
+#: code:addons/base_wua_cayc_general/models/wua_preswatering.py:191
 #, python-format
 msgid "You can only issue the consumptions from the previous day until 08:00 of the current day"
 msgstr "Solo puedes obtener los consumos servidos del día anterior hasta las 08:00 del día actual."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswatering.py:148
+#: code:addons/base_wua_cayc_general/models/wua_preswatering.py:167
 #, python-format
 msgid "You can only validate the consumptions starting from 12:00 on the previous day until 08:00 of the request date."
 msgstr "Solo puede validar los consumos desde las 12:00 del día anterior hasta las 08:00 del día del prorrateo ."
