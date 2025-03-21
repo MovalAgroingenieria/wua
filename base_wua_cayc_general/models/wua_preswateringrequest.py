@@ -151,24 +151,107 @@ class WuaPresreswateringrequest(models.Model):
                 if record_to_copy:
                     self._copy_single_request(record_to_copy, next_day)
 
+    @api.multi
+    def write(self, vals):
+        res = super(WuaPresreswateringrequest, self).write(vals)
+        lang = 'es_ES'
+        if self.env and self.env.user and self.env.user.lang:
+            lang = self.env.user.lang
+        current_user = self.env.user
+        for record in self:
+            if current_user.id != 1 and 'presresconsumption_ids' in vals:
+                subject_template = _('Preswatering Request Modified - %s - %s')
+                subject_translated = self.env['ir.translation']._get_source(
+                    False, 'code', lang, subject_template) or subject_template
+                subject = subject_translated % (
+                    record.initial_date, record.partner_id.display_name)
+                body_intro_str = _(u'The request from %s for %s has been '
+                                   u'modified by user: %s.')
+                body_intro = (self.env['ir.translation']._get_source(
+                    False, 'code', lang, body_intro_str) or body_intro_str) % (
+                    record.partner_id.display_name, record.initial_date,
+                    current_user.name)
+                waterconnection_label = self.env['ir.translation']._get_source(
+                    False, 'code', lang, u'Water Connection') or _(
+                        'Water Connection')
+                nominal_flow_label = self.env['ir.translation']._get_source(
+                    False, 'code', lang, u'Nominal Flow Requested (l/s)') or \
+                    _('Nominal Flow Requested (l/s)')
+                table_html = '''
+                    <br/><table border="1" cellpadding="4" cellspacing="0"
+                        style="border-collapse: collapse; margin: 20px auto;">
+                    <tr><th style="padding: 10px; margin: 0;">%s</th>
+                        <th style="padding: 10px; margin: 0;">%s</th></tr>
+                ''' % (waterconnection_label, nominal_flow_label)
+                for consumption in record.presresconsumption_ids:
+                    table_html += '''
+                    <tr><td style="padding: 8px; margin: 0;">%s</td>
+                    <td style="padding: 8px; margin: 0;">%.0f</td></tr>
+                    ''' % (
+                        consumption.waterconnection_id.name or '',
+                        consumption.nominal_flow_ls or 0.0,
+                    )
+                table_html += '</table>'
+                body = '%s<br/>%s' % (body_intro, table_html)
+                message = self.env['mail.message'].sudo().create({
+                    'body': body,
+                    'subject': subject,
+                    'model': record._name,
+                    'res_id': record.id,
+                    'message_type': 'comment',
+                    'subtype_id': self.env.ref('mail.mt_comment').id,
+                    'partner_ids': [(4, record.parent_partner_id.id)] if
+                    record.parent_partner_id else [],
+                })
+                if record.user_id and record.user_id.email:
+                    mail_values = {
+                        'subject': subject,
+                        'body_html': message.body,
+                        'email_to': record.user_id.email,
+                        'email_from': 'no-reply@cayc.es',
+                        'auto_delete': False,
+                        'notification': True,
+                        'model': record._name,
+                        'res_id': record.id,
+                    }
+                    mail = self.env['mail.mail'].sudo().create(mail_values)
+                    mail.send()
+                if record.parent_partner_id and record.parent_partner_id.email:
+                    mail_values = {
+                        'subject': subject,
+                        'body_html': message.body,
+                        'email_to': record.parent_partner_id.email,
+                        'email_from': 'no-reply@cayc.es',
+                        'auto_delete': False,
+                        'notification': True,
+                        'model': record._name,
+                        'res_id': record.id,
+                    }
+                    mail = self.env['mail.mail'].sudo().create(mail_values)
+                    mail.send()
+        return res
+
     @api.model
     def create(self, vals):
         lang = 'es_ES'
         if self.env and self.env.user and self.env.user.lang:
             lang = self.env.user.lang
         record = super(WuaPresreswateringrequest, self).create(vals)
-        if record.create_uid.id != 1:
-            subject = (self.env['ir.translation']._get_source(
-                False, 'code', lang, u'New Preswatering Request - %s') or _(
-                    'New Preswatering Request - %s')) % record.initial_date
+        if self.env.user.id != 1:
+            subject_template = u'New Preswatering Request - %s - %s'
+            subject_translated = self.env['ir.translation']._get_source(
+                False, 'code', lang, subject_template) or _(subject_template)
+            subject = subject_translated % (
+                record.initial_date, record.partner_id.display_name)
             body_intro_str = _(u'A new preswatering request has been created '
-                               u'by user: %s.')
+                               u'for %s on %s by user: %s.')
             body_intro = (self.env['ir.translation']._get_source(
                 False, 'code', lang, body_intro_str) or body_intro_str) % (
-                    record.create_uid.name)
+                record.partner_id.display_name, record.initial_date,
+                record.create_uid.name)
             waterconnection_label = self.env['ir.translation']._get_source(
-                False, 'code', lang, u'Water Connection') or \
-                _('Water Connection')
+                False, 'code', lang, u'Water Connection') or _(
+                    'Water Connection')
             nominal_flow_label = self.env['ir.translation']._get_source(
                 False, 'code', lang, u'Nominal Flow Requested (l/s)') or \
                 _('Nominal Flow Requested (l/s)')

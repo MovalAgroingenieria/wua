@@ -1,0 +1,61 @@
+<odoo>
+    <data noupdate="1">
+        <record id="wua_preswatering_parent_partner_email_template" model="mail.template">
+            <field name="name">Preswatering Parent Partner Notification</field>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="subject">Water Consumption Report for Parent Partner ${object.display_name} - ${ctx['tomorrow_str']}</field>
+            <field name="email_from">${(user.email or 'no-reply@yourdomain.com')|safe}</field>
+            <field name="email_to">${object.email|safe}</field>
+            <field name="lang">es_ES</field>
+            <field name="body_html">
+                <![CDATA[
+                    <p>Dear <strong>${object.display_name}</strong>,</p>
+                    <p>Below is the summary of the watering requests for your associated partners for <strong>${ctx['tomorrow_str']}</strong>:</p>
+                    <table border="1" style="width: 100%; border-collapse: collapse; text-align: left;">
+                        <thead>
+                            <tr style="background-color: #f2f2f2;">
+                                <th style="padding: 8px;"></th>
+                                <th style="padding: 8px;"></th>
+                                <th style="padding: 8px;"></th>
+                                <th style="padding: 8px;"></th>
+                                <th style="padding: 8px;">${ctx['yesterday_str']}</th>
+                                <th style="padding: 8px;">${ctx['tomorrow_str']}</th>
+                                <th style="padding: 8px;"></th>
+                            </tr>
+                            <tr style="background-color: #f2f2f2;">
+                                <th style="padding: 8px;">N.</th>
+                                <th style="padding: 8px;">Partner</th>
+                                <th style="padding: 8px;">Hectares (ha)</th>
+                                <th style="padding: 8px;">Water Connection</th>
+                                <th style="padding: 8px;">Issued</th>
+                                <th style="padding: 8px;">Requested</th>
+                                <th style="padding: 8px;">Modified</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            % for consumption in ctx['data']['consumptions']:
+                                <tr style="background-color: ${'#cce5ff' if consumption.get('nominal_flow_ls', 0) > 0 else 'white'};">
+                                    <td style="padding: 8px;">${consumption.get('partner_code', '-')}</td>
+                                    <td style="padding: 8px;">${consumption.get('partner_name', '-')}</td>
+                                    <td style="padding: 8px;">
+                                        ${"{:,.2f}".format(consumption.get('total_affected_area_official_hec', 0.0)).replace(",", "X").replace(".", ",").replace("X", ".")}
+                                    </td>
+                                    <td style="padding: 8px;">${consumption.get('water_connection', '-')}</td>
+                                    <td style="padding: 8px;">
+                                        ${"{:,.0f}".format(consumption.get('nominal_flow_issued_ls', 0)).replace(",", "X").replace(".", ",").replace("X", ".")}
+                                    </td>
+                                    <td style="padding: 8px;">
+                                        ${"{:,.0f}".format(consumption.get('nominal_flow_ls', 0)).replace(",", "X").replace(".", ",").replace("X", ".")}
+                                    </td>
+                                    <td style="padding: 8px; color: ${'red' if consumption.get('modified', False) else '#555'};">
+                                        ${'True' if consumption.get('modified', False) else 'False'}
+                                    </td>
+                                </tr>
+                            % endfor
+                        </tbody>
+                    </table>
+                ]]>
+            </field>
+        </record>
+    </data>
+</odoo>

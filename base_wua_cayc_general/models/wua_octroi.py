@@ -30,3 +30,8 @@ class WuaOctroi(models.Model):
         comodel_name='wua.parcel',
         inverse_name='octroi_id',
     )
+
+    responsible_person_id = fields.Many2one(
+        string='Responsible Person',
+        comodel_name='res.partner',
+    )

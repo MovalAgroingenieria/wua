@@ -6,14 +6,212 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-20 15:41+0000\n"
-"PO-Revision-Date: 2025-03-20 15:41+0000\n"
+"POT-Creation-Date: 2025-03-21 11:58+0000\n"
+"PO-Revision-Date: 2025-03-21 11:58+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: base_wua_cayc_general
+#: model:mail.template,body_html:base_wua_cayc_general.wua_preswatering_parent_partner_email_template
+msgid "\n"
+"                \n"
+"                    <p>Dear <strong>${object.display_name}</strong>,</p>\n"
+"                    <p>Below is the summary of the watering requests for your associated partners for <strong>${ctx['tomorrow_str']}</strong>:</p>\n"
+"                    <table border=\"1\" style=\"width: 100%; border-collapse: collapse; text-align: left;\">\n"
+"                        <thead>\n"
+"                            <tr style=\"background-color: #f2f2f2;\">\n"
+"                                <th style=\"padding: 8px;\"></th>\n"
+"                                <th style=\"padding: 8px;\"></th>\n"
+"                                <th style=\"padding: 8px;\"></th>\n"
+"                                <th style=\"padding: 8px;\"></th>\n"
+"                                <th style=\"padding: 8px;\">${ctx['yesterday_str']}</th>\n"
+"                                <th style=\"padding: 8px;\">${ctx['tomorrow_str']}</th>\n"
+"                                <th style=\"padding: 8px;\"></th>\n"
+"                            </tr>\n"
+"                            <tr style=\"background-color: #f2f2f2;\">\n"
+"                                <th style=\"padding: 8px;\">N.</th>\n"
+"                                <th style=\"padding: 8px;\">Partner</th>\n"
+"                                <th style=\"padding: 8px;\">Hectares (ha)</th>\n"
+"                                <th style=\"padding: 8px;\">Water Connection</th>\n"
+"                                <th style=\"padding: 8px;\">Issued</th>\n"
+"                                <th style=\"padding: 8px;\">Requested</th>\n"
+"                                <th style=\"padding: 8px;\">Modified</th>\n"
+"                            </tr>\n"
+"                        </thead>\n"
+"                        <tbody>\n"
+"                            % for consumption in ctx['data']['consumptions']:\n"
+"                                <tr style=\"background-color: ${'#cce5ff' if consumption.get('nominal_flow_ls', 0) > 0 else 'white'};\">\n"
+"                                    <td style=\"padding: 8px;\">${consumption.get('partner_code', '-')}</td>\n"
+"                                    <td style=\"padding: 8px;\">${consumption.get('partner_name', '-')}</td>\n"
+"                                    <td style=\"padding: 8px;\">\n"
+"                                        ${\"{:,.2f}\".format(consumption.get('total_affected_area_official_hec', 0.0)).replace(\",\", \"X\").replace(\".\", \",\").replace(\"X\", \".\")}\n"
+"                                    </td>\n"
+"                                    <td style=\"padding: 8px;\">${consumption.get('water_connection', '-')}</td>\n"
+"                                    <td style=\"padding: 8px;\">\n"
+"                                        ${\"{:,.0f}\".format(consumption.get('nominal_flow_issued_ls', 0)).replace(\",\", \"X\").replace(\".\", \",\").replace(\"X\", \".\")}\n"
+"                                    </td>\n"
+"                                    <td style=\"padding: 8px;\">\n"
+"                                        ${\"{:,.0f}\".format(consumption.get('nominal_flow_ls', 0)).replace(\",\", \"X\").replace(\".\", \",\").replace(\"X\", \".\")}\n"
+"                                    </td>\n"
+"                                    <td style=\"padding: 8px; color: ${'red' if consumption.get('modified', False) else '#555'};\">\n"
+"                                        ${'True' if consumption.get('modified', False) else 'False'}\n"
+"                                    </td>\n"
+"                                </tr>\n"
+"                            % endfor\n"
+"                        </tbody>\n"
+"                    </table>\n"
+"                \n"
+"            "
+msgstr "\n"
+"                \n"
+"                    <p>Benvolgut/da <strong>${object.display_name}</strong>,</p>\n"
+"                    <p>A continuació trobaràs el resum de les sol·licituds de reg dels teus socis associats per al dia <strong>${ctx['tomorrow_str']}</strong>:</p>\n"
+"                    <table border=\"1\" style=\"width: 100%; border-collapse: collapse; text-align: left;\">\n"
+"                        <thead>\n"
+"                            <tr style=\"background-color: #f2f2f2;\">\n"
+"                                <th style=\"padding: 8px;\"></th>\n"
+"                                <th style=\"padding: 8px;\"></th>\n"
+"                                <th style=\"padding: 8px;\"></th>\n"
+"                                <th style=\"padding: 8px;\"></th>\n"
+"                                <th style=\"padding: 8px;\">${ctx['yesterday_str']}</th>\n"
+"                                <th style=\"padding: 8px;\">${ctx['tomorrow_str']}</th>\n"
+"                                <th style=\"padding: 8px;\"></th>\n"
+"                            </tr>\n"
+"                            <tr style=\"background-color: #f2f2f2;\">\n"
+"                                <th style=\"padding: 8px;\">N.</th>\n"
+"                                <th style=\"padding: 8px;\">Soci</th>\n"
+"                                <th style=\"padding: 8px;\">Hectàrees (ha)</th>\n"
+"                                <th style=\"padding: 8px;\">Connexió d’aigua</th>\n"
+"                                <th style=\"padding: 8px;\">Emès</th>\n"
+"                                <th style=\"padding: 8px;\">Sol·licitat</th>\n"
+"                                <th style=\"padding: 8px;\">Modificat</th>\n"
+"                            </tr>\n"
+"                        </thead>\n"
+"                        <tbody>\n"
+"                            % for consumption in ctx['data']['consumptions']:\n"
+"                                <tr style=\"background-color: ${'#cce5ff' if consumption.get('nominal_flow_ls', 0) > 0 else 'white'};\">\n"
+"                                    <td style=\"padding: 8px;\">${consumption.get('partner_code', '-')}</td>\n"
+"                                    <td style=\"padding: 8px;\">${consumption.get('partner_name', '-')}</td>\n"
+"                                    <td style=\"padding: 8px;\">\n"
+"                                        ${\"{:,.2f}\".format(consumption.get('total_affected_area_official_hec', 0.0)).replace(\",\", \"X\").replace(\".\", \",\").replace(\"X\", \".\")}\n"
+"                                    </td>\n"
+"                                    <td style=\"padding: 8px;\">${consumption.get('water_connection', '-')}</td>\n"
+"                                    <td style=\"padding: 8px;\">\n"
+"                                        ${\"{:,.0f}\".format(consumption.get('nominal_flow_issued_ls', 0)).replace(\",\", \"X\").replace(\".\", \",\").replace(\"X\", \".\")}\n"
+"                                    </td>\n"
+"                                    <td style=\"padding: 8px;\">\n"
+"                                        ${\"{:,.0f}\".format(consumption.get('nominal_flow_ls', 0)).replace(\",\", \"X\").replace(\".\", \",\").replace(\"X\", \".\")}\n"
+"                                    </td>\n"
+"                                    <td style=\"padding: 8px; color: ${'red' if consumption.get('modified', False) else '#555'};\">\n"
+"                                        ${'Sí' if consumption.get('modified', False) else 'No'}\n"
+"                                    </td>\n"
+"                                </tr>\n"
+"                            % endfor\n"
+"                        </tbody>\n"
+"                    </table>\n"
+"                \n"
+"            "
+
+#. module: base_wua_cayc_general
+#: model:mail.template,body_html:base_wua_cayc_general.wua_preswatering_octroi_email_template
+msgid "\n"
+"                \n"
+"                    <table border=\"1\" style=\"width: 100%; border-collapse: collapse; text-align: left;\">\n"
+"                        <thead>\n"
+"                            <tr style=\"background-color: #f2f2f2;\">\n"
+"                                <th style=\"padding: 8px;\"></th>\n"
+"                                <th style=\"padding: 8px;\"></th>\n"
+"                                <th style=\"padding: 8px;\"></th>\n"
+"                                <th style=\"padding: 8px;\"></th>\n"
+"                                <th style=\"padding: 8px;\">${ctx['yesterday_str']}</th>\n"
+"                                <th style=\"padding: 8px;\">${ctx['tomorrow_str']}</th>\n"
+"                                <th style=\"padding: 8px;\"></th>\n"
+"                            </tr>\n"
+"                            <tr style=\"background-color: #f2f2f2;\">\n"
+"                                <th style=\"padding: 8px;\">N.</th>\n"
+"                                <th style=\"padding: 8px;\">Partner</th>\n"
+"                                <th style=\"padding: 8px;\">Hectares (ha)</th>\n"
+"                                <th style=\"padding: 8px;\">Water Connection</th>\n"
+"                                <th style=\"padding: 8px;\">Issued</th>\n"
+"                                <th style=\"padding: 8px;\">Requested</th>\n"
+"                                <th style=\"padding: 8px;\">Modified</th>\n"
+"                            </tr>\n"
+"                        </thead>\n"
+"                        <tbody>\n"
+"                            % for consumption in ctx['data']['consumptions']:\n"
+"                                <tr style=\"background-color: ${'#cce5ff' if consumption.get('nominal_flow_ls', 0) > 0 else 'white'};\">\n"
+"                                    <td style=\"padding: 8px;\">${consumption.get('partner_code', '-')}</td>\n"
+"                                    <td style=\"padding: 8px;\">${consumption.get('partner_name', '-')}</td>\n"
+"                                    <td style=\"padding: 8px;\">\n"
+"                                        ${\"{:,.2f}\".format(consumption.get('total_affected_area_official_hec', 0.0)).replace(\",\", \"X\").replace(\".\", \",\").replace(\"X\", \".\")}\n"
+"                                    </td>\n"
+"                                    <td style=\"padding: 8px;\">${consumption.get('water_connection', '-')}</td>\n"
+"                                    <td style=\"padding: 8px;\">\n"
+"                                        ${\"{:,.0f}\".format(consumption.get('nominal_flow_issued_ls', 0)).replace(\",\", \"X\").replace(\".\", \",\").replace(\"X\", \".\")}\n"
+"                                    </td>\n"
+"                                    <td style=\"padding: 8px;\">\n"
+"                                        ${\"{:,.0f}\".format(consumption.get('nominal_flow_ls', 0)).replace(\",\", \"X\").replace(\".\", \",\").replace(\"X\", \".\")}\n"
+"                                    </td>\n"
+"                                    <td style=\"padding: 8px; color: ${'red' if consumption.get('modified', False) else '#555'};\">\n"
+"                                        ${'True' if consumption.get('modified', False) else 'False'}\n"
+"                                    </td>\n"
+"                                </tr>\n"
+"                            % endfor\n"
+"                        </tbody>\n"
+"                    </table>\n"
+"                \n"
+"            "
+msgstr "\n"
+"                \n"
+"                    <table border=\"1\" style=\"width: 100%; border-collapse: collapse; text-align: left;\">\n"
+"                        <thead>\n"
+"                            <tr style=\"background-color: #f2f2f2;\">\n"
+"                                <th style=\"padding: 8px;\"></th>\n"
+"                                <th style=\"padding: 8px;\"></th>\n"
+"                                <th style=\"padding: 8px;\"></th>\n"
+"                                <th style=\"padding: 8px;\"></th>\n"
+"                                <th style=\"padding: 8px;\">${ctx['yesterday_str']}</th>\n"
+"                                <th style=\"padding: 8px;\">${ctx['tomorrow_str']}</th>\n"
+"                                <th style=\"padding: 8px;\"></th>\n"
+"                            </tr>\n"
+"                            <tr style=\"background-color: #f2f2f2;\">\n"
+"                                <th style=\"padding: 8px;\">N.</th>\n"
+"                                <th style=\"padding: 8px;\">Soci</th>\n"
+"                                <th style=\"padding: 8px;\">Hectàrees (ha)</th>\n"
+"                                <th style=\"padding: 8px;\">Connexió d’aigua</th>\n"
+"                                <th style=\"padding: 8px;\">Emès</th>\n"
+"                                <th style=\"padding: 8px;\">Sol·licitat</th>\n"
+"                                <th style=\"padding: 8px;\">Modificat</th>\n"
+"                            </tr>\n"
+"                        </thead>\n"
+"                        <tbody>\n"
+"                            % for consumption in ctx['data']['consumptions']:\n"
+"                                <tr style=\"background-color: ${'#cce5ff' if consumption.get('nominal_flow_ls', 0) > 0 else 'white'};\">\n"
+"                                    <td style=\"padding: 8px;\">${consumption.get('partner_code', '-')}</td>\n"
+"                                    <td style=\"padding: 8px;\">${consumption.get('partner_name', '-')}</td>\n"
+"                                    <td style=\"padding: 8px;\">\n"
+"                                        ${\"{:,.2f}\".format(consumption.get('total_affected_area_official_hec', 0.0)).replace(\",\", \"X\").replace(\".\", \",\").replace(\"X\", \".\")}\n"
+"                                    </td>\n"
+"                                    <td style=\"padding: 8px;\">${consumption.get('water_connection', '-')}</td>\n"
+"                                    <td style=\"padding: 8px;\">\n"
+"                                        ${\"{:,.0f}\".format(consumption.get('nominal_flow_issued_ls', 0)).replace(\",\", \"X\").replace(\".\", \",\").replace(\"X\", \".\")}\n"
+"                                    </td>\n"
+"                                    <td style=\"padding: 8px;\">\n"
+"                                        ${\"{:,.0f}\".format(consumption.get('nominal_flow_ls', 0)).replace(\",\", \"X\").replace(\".\", \",\").replace(\"X\", \".\")}\n"
+"                                    </td>\n"
+"                                    <td style=\"padding: 8px; color: ${'red' if consumption.get('modified', False) else '#555'};\">\n"
+"                                        ${'Sí' if consumption.get('modified', False) else 'No'}\n"
+"                                    </td>\n"
+"                                </tr>\n"
+"                            % endfor\n"
+"                        </tbody>\n"
+"                    </table>\n"
+"                \n"
+"            "
 
 #. module: base_wua_cayc_general
 #: model:ir.ui.view,arch_db:base_wua_cayc_general.wua_partner_report_document
@@ -71,10 +269,10 @@ msgid "A che parcel must have at least one class associated."
 msgstr "Una parcel·la che ha de tenir almenys una classe assignada."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:164
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:246
 #, python-format
-msgid "A new preswatering request has been created by user: %s."
-msgstr "L'usuari: %s ha creat una nova sol·licitud d'aigua prèvia."
+msgid "A new preswatering request has been created for %s on %s by user: %s."
+msgstr "msgstr "S’ha creat una nova sol·licitud de pre-reg per a %s en data %s per l'usuari: %s."
 
 #. module: base_wua_cayc_general
 #: code:addons/base_wua_cayc_general/models/wua_parcel.py:59
@@ -365,19 +563,14 @@ msgid "Modules"
 msgstr "Mòduls"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:162
-#, python-format
-msgid "New Preswatering Request - %s"
-msgstr "Nova sol·licitud - %s"
-
-#. module: base_wua_cayc_general
 #: code:addons/base_wua_cayc_general/models/wua_preswatering.py:228
 #, python-format
 msgid "No valid consumption data received from SINEMA."
 msgstr "No s'han rebut dades de consum vàlides de SINEMA."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:174
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:179
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:257
 #, python-format
 msgid "Nominal Flow Requested (l/s)"
 msgstr "Caudal sol·licitat (l/s)"
@@ -503,6 +696,12 @@ msgid "Preswatering Request"
 msgstr "Sol·licitud de reg a pressió"
 
 #. module: base_wua_cayc_general
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:163
+#, python-format
+msgid "Preswatering Request Modified - %s - %s"
+msgstr "Sol·licitud Modificada - %s - %s"
+
+#. module: base_wua_cayc_general
 #: model:ir.actions.act_window,name:base_wua_cayc_general.wua_wuabase_action
 #: model:ir.ui.menu,name:base_wua_cayc_general.wua_wuabase_menu
 msgid "Primary Entities"
@@ -543,6 +742,11 @@ msgstr "Cabal rebombeat (l/s)"
 #: model:ir.model,name:base_wua_cayc_general.model_wua_presresconsumption
 msgid "Request Consumption"
 msgstr "Consum de sol·licitud"
+
+#. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_octroi_responsible_person_id
+msgid "Responsible Person"
+msgstr "Persona responsable"
 
 #. module: base_wua_cayc_general
 #: model:ir.ui.view,arch_db:base_wua_cayc_general.view_partner_form
@@ -619,6 +823,12 @@ msgid "The nominal flow of %s is not a combination of the watermeter modules (%s
 msgstr "The nominal flow of %s is not a combination of the watermeter modules (%s -> %s)."
 
 #. module: base_wua_cayc_general
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:168
+#, python-format
+msgid "The request from %s for %s has been modified by user: %s."
+msgstr "La sol·licitud de %s per al dia %s ha estat modificada per l'usuari: %s."
+
+#. module: base_wua_cayc_general
 #: code:addons/base_wua_cayc_general/models/res_partner.py:111
 #, python-format
 msgid "The secondary partner code must not end at 0."
@@ -648,10 +858,21 @@ msgid "WUA Partners"
 msgstr "Socis"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:171
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:175
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:253
 #, python-format
 msgid "Water Connection"
 msgstr "Toma"
+
+#. module: base_wua_cayc_general
+#: model:mail.template,subject:base_wua_cayc_general.wua_preswatering_octroi_email_template
+msgid "Water Consumption Report for Octroi ${object.name} - ${ctx['today_str']}"
+msgstr "Informe de consum d’aigua per al Fielat ${object.name} - ${ctx['today_str']}"
+
+#. module: base_wua_cayc_general
+#: model:mail.template,subject:base_wua_cayc_general.wua_preswatering_parent_partner_email_template
+msgid "Water Consumption Report for Parent Partner ${object.display_name} - ${ctx['tomorrow_str']}"
+msgstr "Informe de consum d’aigua per al soci pare ${object.display_name} - ${ctx['tomorrow_str']}"
 
 #. module: base_wua_cayc_general
 #: model:ir.ui.view,arch_db:base_wua_cayc_general.wua_watermeter_module_view_search

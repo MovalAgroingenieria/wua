@@ -27,9 +27,12 @@
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
+        "data/wua_preswatering_octroi_email_template.xml",
+        "data/wua_preswatering_parent_partner_email_template.xml",
         "data/res_partner_cron.xml",
         "data/wua_preswateringrequest_change_state_cron.xml",
         "data/wua_preswatering_generate_daily_cron.xml",
+        "data/wua_preswateringperiod_send_notifications_cron.xml",
         "data/wua_wuabase_data.xml",
         "data/wua_preswatering_issue_cron.xml",
         "data/wua_octroi_data.xml",

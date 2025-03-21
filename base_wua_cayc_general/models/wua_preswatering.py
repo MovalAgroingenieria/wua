@@ -277,7 +277,7 @@ class WuaPresreswatering(models.Model):
                     preswatering_period.preswatering_ids):
                 number = sorted(
                     preswatering_period.preswatering_ids,
-                    key=lambda x: x.number)[-1].number
+                    key=lambda x: x.number)[-1].number + 1
             new_preswatering = self.create({
                 'preswateringperiod_id': preswatering_period.id,
                 'number': number,
