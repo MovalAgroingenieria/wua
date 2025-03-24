@@ -114,7 +114,7 @@ class WizardMassiveMaintenanceReequests(models.TransientModel):
             'type': 'ir.actions.act_window',
             'name': _('Maintenance Requests'),
             'res_model': 'maintenance.request',
-            'view_type': 'tree,form',
+            'view_mode': 'tree,form',
             'target': 'current',
             'domain': [('id', 'in', maintenance_request_ids)],
             'context': {'create': False},
