@@ -43,6 +43,11 @@ class ResFileCategoryReport(models.Model):
     notes = fields.Html(
         string='Notes')
 
+    show_file_name = fields.Boolean(
+        string='Show File Name',
+        default=True,
+    )
+
     _sql_constraints = [
         ('unique_name',
          'UNIQUE (name)',
