@@ -203,11 +203,11 @@ class WuaPresreswateringrequest(models.Model):
                     'partner_ids': [(4, record.parent_partner_id.id)] if
                     record.parent_partner_id else [],
                 })
-                if record.user_id and record.user_id.email:
+                if record.partner_id and record.partner_id.email:
                     mail_values = {
                         'subject': subject,
                         'body_html': message.body,
-                        'email_to': record.user_id.email,
+                        'email_to': record.partner_id.email,
                         'email_from': 'no-reply@cayc.es',
                         'auto_delete': False,
                         'notification': True,
@@ -281,11 +281,11 @@ class WuaPresreswateringrequest(models.Model):
                 'partner_ids': [(4, record.parent_partner_id.id)] if
                 record.parent_partner_id else [],
             })
-            if record.user_id and record.user_id.email:
+            if record.partner_id and record.partner_id.email:
                 mail_values = {
                     'subject': subject,
                     'body_html': message.body,
-                    'email_to': record.user_id.email,
+                    'email_to': record.partner_id.email,
                     'email_from': 'no-reply@cayc.es',
                     'auto_delete': False,
                     'notification': True,

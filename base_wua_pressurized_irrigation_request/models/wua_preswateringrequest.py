@@ -469,14 +469,25 @@ class WuaPreswateringrequest(models.Model):
             presresconsumptions = []
             waterconnections = self.partner_id.waterconnectionlink_ids.mapped(
                 lambda x: x.waterconnection_id)
+            global_irrigation_duration = self.env['ir.values'].sudo().\
+                get_default('wua.irrigation.configuration',
+                            'default_irrigation_duration')
+            global_initial_hour = self.env['ir.values'].sudo().get_default(
+                'wua.irrigation.configuration',
+                'default_presresconsumption_initial_hour')
             for wc in waterconnections:
+                irrigation_duration = wc.default_request_duration or \
+                    global_irrigation_duration or 0
+                initial_hour = wc.default_request_initial_hour or \
+                    global_initial_hour or 0.0
                 presresconsumptions.append((0, 0, {
                     'waterconnection_id': wc.id,
                     # TODO: Needed with 0,0?
                     'preswateringrequest_id': self.id,
-                    'nominal_flow': 0,
-                    'nominal_flow_ls': 0,
-                    'initial_hour': 0,
+                    'nominal_flow': 0.0,
+                    'nominal_flow_ls': 0.0,
+                    'initial_hour': initial_hour,
+                    'watering_duration': irrigation_duration,
                 }))
             self.presresconsumption_ids = presresconsumptions
             for pres in self.presresconsumption_ids:

@@ -460,6 +460,15 @@ class ResPartner(models.Model):
             if some_error:
                 break
 
+    @api.model
+    def name_search(self, name='', args=None, operator='ilike', limit=100):
+        args = args or []
+        if self.env.user.has_group('base_wua_cayc_general.'
+                                   'group_wua_octroi_user'):
+            args += [('octroi_id', '=', self.env.user.octroi_id.id)]
+        return super(ResPartner, self).name_search(
+            name=name, args=args, operator=operator, limit=limit)
+
     @api.multi
     def action_see_secondary_parcels(self):
         self.ensure_one()

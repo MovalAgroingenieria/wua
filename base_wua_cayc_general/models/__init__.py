@@ -18,3 +18,4 @@ from . import wua_watermeter
 from . import wua_quotaperiod
 from . import wua_assembly
 from . import wua_invoiceset
+from . import res_users

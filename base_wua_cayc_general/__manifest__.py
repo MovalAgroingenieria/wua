@@ -52,6 +52,7 @@
         "views/wua_negative_reading_view.xml",
         "views/wua_watermeter_view.xml",
         "views/res_partner_view.xml",
+        "views/res_users_view.xml",
         "views/wua_parcel_view.xml",
         "views/wua_intake_view.xml",
         "views/wua_wuabase_view.xml",
