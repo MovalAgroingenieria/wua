@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-27 10:52+0000\n"
-"PO-Revision-Date: 2021-04-27 10:52+0000\n"
+"POT-Creation-Date: 2025-02-19 14:23+0000\n"
+"PO-Revision-Date: 2025-02-19 14:23+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -138,7 +138,7 @@ msgid "Entity (watering)"
 msgstr "Element (entande)"
 
 #. module: base_wua_invoicing_gravity_irrigation
-#: code:addons/base_wua_invoicing_gravity_irrigation/models/wua_invoiceset.py:352
+#: code:addons/base_wua_invoicing_gravity_irrigation/models/wua_invoiceset.py:353
 #, python-format
 msgid "Error when updating records."
 msgstr "Error actualitzant els registres."
@@ -155,10 +155,15 @@ msgid "Gate"
 msgstr "Tablacho"
 
 #. module: base_wua_invoicing_gravity_irrigation
-#: code:addons/base_wua_invoicing_gravity_irrigation/models/wua_invoiceset.py:356
+#: code:addons/base_wua_invoicing_gravity_irrigation/models/wua_invoiceset.py:357
 #, python-format
 msgid "Gravity Consumptions"
 msgstr "Consums de gravetat"
+
+#. module: base_wua_invoicing_gravity_irrigation
+#: model:product.template,name:base_wua_invoicing_gravity_irrigation.product_08
+msgid "Gravity Irrigation Water"
+msgstr "Aigua reg gravetat"
 
 #. module: base_wua_invoicing_gravity_irrigation
 #: model:ir.model,name:base_wua_invoicing_gravity_irrigation.model_wua_invoiceset_line_gravconsumption
@@ -202,7 +207,7 @@ msgid "Invoice Set"
 msgstr "Lot"
 
 #. module: base_wua_invoicing_gravity_irrigation
-#: code:addons/base_wua_invoicing_gravity_irrigation/models/wua_gravconsumption.py:71
+#: code:addons/base_wua_invoicing_gravity_irrigation/models/wua_gravconsumption.py:83
 #: model:ir.model.fields,field_description:base_wua_invoicing_gravity_irrigation.field_wua_gravconsumption_invoiced_consumption
 #: model:ir.ui.view,arch_db:base_wua_invoicing_gravity_irrigation.wua_gravconsumption_view_search
 #, python-format
@@ -221,7 +226,7 @@ msgid "Irrigation Ditch"
 msgstr "Sèquia"
 
 #. module: base_wua_invoicing_gravity_irrigation
-#: code:addons/base_wua_invoicing_gravity_irrigation/models/wua_invoiceset.py:132
+#: code:addons/base_wua_invoicing_gravity_irrigation/models/wua_invoiceset.py:133
 #: model:ir.model.fields,field_description:base_wua_invoicing_gravity_irrigation.field_wua_invoiceset_line_gravconsumption_irrigationgate_id
 #, python-format
 msgid "Irrigation Gate"
@@ -264,7 +269,7 @@ msgid "Lines for gravity consumptions"
 msgstr "Línies per a consums de gravetat"
 
 #. module: base_wua_invoicing_gravity_irrigation
-#: code:addons/base_wua_invoicing_gravity_irrigation/models/wua_gravconsumption.py:73
+#: code:addons/base_wua_invoicing_gravity_irrigation/models/wua_gravconsumption.py:85
 #, python-format
 msgid "Not Invoiced"
 msgstr "No facturat"
@@ -285,12 +290,17 @@ msgid "Number of invoiced consumptions"
 msgstr "Number of invoiced consumptions"
 
 #. module: base_wua_invoicing_gravity_irrigation
+#: model:ir.model.fields,field_description:base_wua_invoicing_gravity_irrigation.field_wua_gravconsumption_overdue
+msgid "Overdue"
+msgstr "Endarrerit"
+
+#. module: base_wua_invoicing_gravity_irrigation
 #: model:ir.model.fields,field_description:base_wua_invoicing_gravity_irrigation.field_wua_irrigation_configuration_overprice_with_irrigation_worker
 msgid "Overprice for assist. irrig."
 msgstr "Preu extra si hi ha regador"
 
 #. module: base_wua_invoicing_gravity_irrigation
-#: code:addons/base_wua_invoicing_gravity_irrigation/models/wua_invoiceset.py:133
+#: code:addons/base_wua_invoicing_gravity_irrigation/models/wua_invoiceset.py:134
 #: model:ir.model.fields,field_description:base_wua_invoicing_gravity_irrigation.field_wua_invoiceset_line_gravconsumption_parcel_id
 #, python-format
 msgid "Parcel"
@@ -329,12 +339,7 @@ msgstr "Temps (min)"
 #. module: base_wua_invoicing_gravity_irrigation
 #: model:ir.model.fields,field_description:base_wua_invoicing_gravity_irrigation.field_wua_invoiceset_line_gravconsumption_watering_volume_real
 msgid "Total Vol. (m3)"
-msgstr "Total Vol. (m3)"
-
-#. module: base_wua_invoicing_gravity_irrigation
-#: model:product.template,name:base_wua_invoicing_gravity_irrigation.product_08
-msgid "Trasvase Gravedad (h)"
-msgstr "Trasvase Gravedad (h)"
+msgstr "Vol. Total (m3)"
 
 #. module: base_wua_invoicing_gravity_irrigation
 #: model:ir.model.fields,field_description:base_wua_invoicing_gravity_irrigation.field_wua_invoiceset_line_gravconsumption_gravconsumption_type
@@ -399,6 +404,13 @@ msgid "With Irrigation Worker"
 msgstr "Amb regador"
 
 #. module: base_wua_invoicing_gravity_irrigation
+#: code:addons/base_wua_invoicing_gravity_irrigation/models/wua_invoiceset.py:480
+#: code:addons/base_wua_invoicing_gravity_irrigation/models/wua_invoiceset.py:491
+#, python-format
+msgid "You cannot add or remove because the invoice set state is 'generated'."
+msgstr "No podeu afegir ni eliminar perquè l'estat de conjunt de factures està 'generat'."
+
+#. module: base_wua_invoicing_gravity_irrigation
 #: model:ir.model.fields,help:base_wua_invoicing_gravity_irrigation.field_wua_irrigation_configuration_overprice_with_irrigation_worker
 msgid "if the parcel has a irrigation worker, the price of water will be increase in this value"
 msgstr "Si la parcel·la té regador, el preu de l'aigua s'incrementarà en aquest valor"
@@ -409,20 +421,19 @@ msgid "m3"
 msgstr "m3"
 
 #. module: base_wua_invoicing_gravity_irrigation
-#: code:addons/base_wua_invoicing_gravity_irrigation/models/wua_invoiceset.py:137
+#: code:addons/base_wua_invoicing_gravity_irrigation/models/wua_invoiceset.py:138
 #, python-format
 msgid "of water payment for the parcel"
 msgstr "del pagament d'aigua a la parcel·la"
 
 #. module: base_wua_invoicing_gravity_irrigation
-#: code:addons/base_wua_invoicing_gravity_irrigation/models/wua_invoiceset.py:134
+#: code:addons/base_wua_invoicing_gravity_irrigation/models/wua_invoiceset.py:135
 #, python-format
 msgid "profile"
 msgstr "perfil"
 
 #. module: base_wua_invoicing_gravity_irrigation
-#: code:addons/base_wua_invoicing_gravity_irrigation/models/wua_invoiceset.py:135
+#: code:addons/base_wua_invoicing_gravity_irrigation/models/wua_invoiceset.py:136
 #, python-format
 msgid "total consumption"
 msgstr "consum total"
-

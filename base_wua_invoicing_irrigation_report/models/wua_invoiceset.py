@@ -5,7 +5,7 @@
 import pytz
 import datetime
 from odoo import models, fields, api, _
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, UserError
 
 
 class WuaInvoiceset(models.Model):
@@ -434,10 +434,22 @@ class WuaInvoicesetLineIrrigationreport(models.Model):
 
     @api.multi
     def add_to_invoiceset(self):
-        vals = {'selected': True, }
-        self.write(vals)
+        if (len(self) > 0):
+            if (self[0].invoicesetline_id.invoiceset_id.state == 'generated'):
+                raise UserError(_("You cannot add or remove because "
+                                  "the invoice set state is 'generated'."))
+            vals = {
+                'selected': True,
+                }
+            self.write(vals)
 
     @api.multi
     def remove_from_invoiceset(self):
-        vals = {'selected': False, }
-        self.write(vals)
+        if (len(self) > 0):
+            if (self[0].invoicesetline_id.invoiceset_id.state == 'generated'):
+                raise UserError(_("You cannot add or remove because "
+                                  "the invoice set state is 'generated'."))
+            vals = {
+                'selected': False,
+                }
+            self.write(vals)

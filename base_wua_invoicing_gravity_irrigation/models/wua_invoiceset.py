@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import models, fields, api, exceptions, _
+from odoo.exceptions import UserError
 from operator import itemgetter
 
 
@@ -474,14 +475,22 @@ class WuaInvoicesetLineGravconsumption(models.Model):
 
     @api.multi
     def add_to_invoiceset(self):
-        vals = {
-            'selected': True,
-            }
-        self.write(vals)
+        if (len(self) > 0):
+            if (self[0].invoicesetline_id.invoiceset_id.state == 'generated'):
+                raise UserError(_("You cannot add or remove because "
+                                  "the invoice set state is 'generated'."))
+            vals = {
+                'selected': True,
+                }
+            self.write(vals)
 
     @api.multi
     def remove_from_invoiceset(self):
-        vals = {
-            'selected': False,
-            }
-        self.write(vals)
+        if (len(self) > 0):
+            if (self[0].invoicesetline_id.invoiceset_id.state == 'generated'):
+                raise UserError(_("You cannot add or remove because "
+                                  "the invoice set state is 'generated'."))
+            vals = {
+                'selected': False,
+                }
+            self.write(vals)

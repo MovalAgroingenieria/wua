@@ -4,6 +4,7 @@
 
 
 from odoo import models, fields, api, exceptions, _
+from odoo.exceptions import UserError
 from lxml import etree
 
 
@@ -378,17 +379,25 @@ class WuaInvoicesetLineEnrolledsubparcel(models.Model):
 
     @api.multi
     def add_to_invoiceset(self):
-        vals = {
-            'selected': True,
-            }
-        self.write(vals)
+        if (len(self) > 0):
+            if (self[0].invoicesetline_id.invoiceset_id.state == 'generated'):
+                raise UserError(_("You cannot add or remove because "
+                                  "the invoice set state is 'generated'."))
+            vals = {
+                'selected': True,
+                }
+            self.write(vals)
 
     @api.multi
     def remove_from_invoiceset(self):
-        vals = {
-            'selected': False,
-            }
-        self.write(vals)
+        if (len(self) > 0):
+            if (self[0].invoicesetline_id.invoiceset_id.state == 'generated'):
+                raise UserError(_("You cannot add or remove because "
+                                  "the invoice set state is 'generated'."))
+            vals = {
+                'selected': False,
+                }
+            self.write(vals)
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False,

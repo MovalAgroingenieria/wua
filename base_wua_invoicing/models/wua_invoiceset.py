@@ -5,6 +5,7 @@
 import logging
 import datetime
 from odoo import models, fields, api, exceptions, _
+from odoo.exceptions import UserError
 from operator import itemgetter
 from lxml import etree
 
@@ -319,6 +320,23 @@ class WuaInvoiceset(models.Model):
         act_window = {
             'type': 'ir.actions.act_window',
             'name': _('Configuration of Invoice-Set Lines'),
+            'res_model': 'wua.invoiceset',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'target': 'new',
+            'view_id': view_id.id,
+            'res_id': self.id,
+            }
+        return act_window
+
+    @api.multi
+    def consult_invoiceset(self):
+        self.ensure_one()
+        view_id = self.env.ref(
+            'base_wua_invoicing.wua_config_invoiceset_view_form')
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Consultation of Invoice-Set Lines'),
             'res_model': 'wua.invoiceset',
             'view_type': 'form',
             'view_mode': 'form',
@@ -2079,17 +2097,25 @@ class WuaInvoicesetLineParcel(models.Model):
 
     @api.multi
     def add_to_invoiceset(self):
-        vals = {
-            'selected': True,
-            }
-        self.write(vals)
+        if (len(self) > 0):
+            if (self[0].invoicesetline_id.invoiceset_id.state == 'generated'):
+                raise UserError(_("You cannot add or remove because "
+                                  "the invoice set state is 'generated'."))
+            vals = {
+                'selected': True,
+                }
+            self.write(vals)
 
     @api.multi
     def remove_from_invoiceset(self):
-        vals = {
-            'selected': False,
-            }
-        self.write(vals)
+        if (len(self) > 0):
+            if (self[0].invoicesetline_id.invoiceset_id.state == 'generated'):
+                raise UserError(_("You cannot add or remove because "
+                                  "the invoice set state is 'generated'."))
+            vals = {
+                'selected': False,
+                }
+            self.write(vals)
 
 
 class WuaInvoicesetLinePartner(models.Model):
@@ -2157,17 +2183,25 @@ class WuaInvoicesetLinePartner(models.Model):
 
     @api.multi
     def add_to_invoiceset(self):
-        vals = {
-            'selected': True,
-            }
-        self.write(vals)
+        if (len(self) > 0):
+            if (self[0].invoicesetline_id.invoiceset_id.state == 'generated'):
+                raise UserError(_("You cannot add or remove because "
+                                  "the invoice set state is 'generated'."))
+            vals = {
+                'selected': True,
+                }
+            self.write(vals)
 
     @api.multi
     def remove_from_invoiceset(self):
-        vals = {
-            'selected': False,
-            }
-        self.write(vals)
+        if (len(self) > 0):
+            if (self[0].invoicesetline_id.invoiceset_id.state == 'generated'):
+                raise UserError(_("You cannot add or remove because "
+                                  "the invoice set state is 'generated'."))
+            vals = {
+                'selected': False,
+                }
+            self.write(vals)
 
 
 class WuaInvoicesetLineWaterconnection(models.Model):
@@ -2213,17 +2247,25 @@ class WuaInvoicesetLineWaterconnection(models.Model):
 
     @api.multi
     def add_to_invoiceset(self):
-        vals = {
-            'selected': True,
-            }
-        self.write(vals)
+        if (len(self) > 0):
+            if (self[0].invoicesetline_id.invoiceset_id.state == 'generated'):
+                raise UserError(_("You cannot add or remove because "
+                                  "the invoice set state is 'generated'."))
+            vals = {
+                'selected': True,
+                }
+            self.write(vals)
 
     @api.multi
     def remove_from_invoiceset(self):
-        vals = {
-            'selected': False,
-            }
-        self.write(vals)
+        if (len(self) > 0):
+            if (self[0].invoicesetline_id.invoiceset_id.state == 'generated'):
+                raise UserError(_("You cannot add or remove because "
+                                  "the invoice set state is 'generated'."))
+            vals = {
+                'selected': False,
+                }
+            self.write(vals)
 
 
 class WuaInvoicesetLineIrrigationgate(models.Model):
@@ -2264,14 +2306,22 @@ class WuaInvoicesetLineIrrigationgate(models.Model):
 
     @api.multi
     def add_to_invoiceset(self):
-        vals = {
-            'selected': True,
-            }
-        self.write(vals)
+        if (len(self) > 0):
+            if (self[0].invoicesetline_id.invoiceset_id.state == 'generated'):
+                raise UserError(_("You cannot add or remove because "
+                                  "the invoice set state is 'generated'."))
+            vals = {
+                'selected': True,
+                }
+            self.write(vals)
 
     @api.multi
     def remove_from_invoiceset(self):
-        vals = {
-            'selected': False,
-            }
-        self.write(vals)
+        if (len(self) > 0):
+            if (self[0].invoicesetline_id.invoiceset_id.state == 'generated'):
+                raise UserError(_("You cannot add or remove because "
+                                  "the invoice set state is 'generated'."))
+            vals = {
+                'selected': False,
+                }
+            self.write(vals)

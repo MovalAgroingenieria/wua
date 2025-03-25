@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-27 07:43+0000\n"
-"PO-Revision-Date: 2024-02-27 07:43+0000\n"
+"POT-Creation-Date: 2025-02-19 14:33+0000\n"
+"PO-Revision-Date: 2025-02-19 14:33+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -29,6 +29,11 @@ msgstr "Añadir al lote"
 #: model:ir.ui.view,arch_db:base_wua_invoicing_hydricmovement.report_invoice_document
 msgid "Adjust. (m³)"
 msgstr "Aj. Reg. (m³)"
+
+#. module: base_wua_invoicing_hydricmovement
+#: model:product.template,name:base_wua_invoicing_hydricmovement.product_14
+msgid "Agua Trasvase (Cupo)"
+msgstr "Agua Trasvase (Cupo)"
 
 #. module: base_wua_invoicing_hydricmovement
 #: model:ir.model.fields,field_description:base_wua_invoicing_hydricmovement.field_wua_hydricmovement_number_of_invoices
@@ -122,7 +127,18 @@ msgid "Entity (pressure reading)"
 msgstr "Elemento (lectura de presión)"
 
 #. module: base_wua_invoicing_hydricmovement
-#: code:addons/base_wua_invoicing_hydricmovement/models/wua_invoiceset.py:354
+#: model:ir.model,name:base_wua_invoicing_hydricmovement.model_wua_waterconnection
+msgid "Entity (water connection)"
+msgstr "Elemento (toma)"
+
+#. module: base_wua_invoicing_hydricmovement
+#: code:addons/base_wua_invoicing_hydricmovement/models/wua_invoiceset.py:96
+#, python-format
+msgid "Error when updating hydric movement invoice info: {}"
+msgstr "Error actualizando movimiento hídrico información factura: {}"
+
+#. module: base_wua_invoicing_hydricmovement
+#: code:addons/base_wua_invoicing_hydricmovement/models/wua_invoiceset.py:460
 #: code:addons/base_wua_invoicing_hydricmovement/models/wua_quotaperiod.py:44
 #, python-format
 msgid "Error when updating records."
@@ -164,7 +180,7 @@ msgid "Hydric movement"
 msgstr "Movimiento hídrico"
 
 #. module: base_wua_invoicing_hydricmovement
-#: code:addons/base_wua_invoicing_hydricmovement/models/wua_invoiceset.py:410
+#: code:addons/base_wua_invoicing_hydricmovement/models/wua_invoiceset.py:524
 #: model:ir.model.fields,field_description:base_wua_invoicing_hydricmovement.field_wua_invoiceset_line_hydricmovement_hydricmovement_id
 #, python-format
 msgid "Hydricmovement"
@@ -412,7 +428,7 @@ msgstr "Seleccionado"
 #. module: base_wua_invoicing_hydricmovement
 #: model:ir.model.fields,field_description:base_wua_invoicing_hydricmovement.field_wua_invoiceset_line_line_hydricmovement_ids
 msgid "Selected items for invoice-set line"
-msgstr "Elementos seleccionados para la línea de factura"
+msgstr "Artículos seleccionados para la línea de lote de facturas"
 
 #. module: base_wua_invoicing_hydricmovement
 #: model:ir.model.fields,field_description:base_wua_invoicing_hydricmovement.field_wua_invoiceset_line_hydricmovement_superproduct_id
@@ -502,7 +518,8 @@ msgid "Water Connection"
 msgstr "Toma"
 
 #. module: base_wua_invoicing_hydricmovement
-#: model:product.template,name:base_wua_invoicing_hydricmovement.product_14
-msgid "Water of hydric movements"
-msgstr "Agua Riego"
-
+#: code:addons/base_wua_invoicing_hydricmovement/models/wua_invoiceset.py:622
+#: code:addons/base_wua_invoicing_hydricmovement/models/wua_invoiceset.py:633
+#, python-format
+msgid "You cannot add or remove because the invoice set state is 'generated'."
+msgstr "No puedes añadir o eliminar porque el lote de facturas está en estado 'generado'."
