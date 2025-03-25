@@ -4,6 +4,8 @@
 
 import datetime
 import pytz
+import json
+from lxml import etree
 from odoo import models, fields, api, exceptions, _
 
 
@@ -122,6 +124,16 @@ class WuaReading(models.Model):
     last_reading_time = fields.Datetime(
         string='Last Reading (time)',
         compute='_compute_last_reading_time',
+    )
+
+    reading_type = fields.Selection(
+        [
+            ('01_estimated', 'Estimated Reading'),
+            ('02_real_worker', 'Real Worker Reading'),
+            ('03_real_partner', 'Real Partner Reading'),
+        ],
+        string='Reading Type',
+        default='01_estimated',
     )
 
     _sql_constraints = [
@@ -304,6 +316,8 @@ class WuaReading(models.Model):
                     'last_reading_time': reading_end_time,
                     'last_reading_value': end_volume,
                     'last_reading_consumption': 0}
+            if 'reading_type' in vals:
+                vals_watermeter['last_reading_type'] = vals['reading_type']
             watermeter.write(vals_watermeter)
         # Creation of reading.
         new_reading = super(WuaReading, self).create(vals)
@@ -312,6 +326,35 @@ class WuaReading(models.Model):
         if (pres_id):
             pres_id.update_volume_perunitareas()
         return new_reading
+
+    @api.model
+    def fields_view_get(
+            self, view_id=None, view_type='form', toolbar=False,
+            submenu=False):
+        res = super(WuaReading, self).fields_view_get(
+            view_id=view_id, view_type=view_type, toolbar=toolbar,
+            submenu=submenu)
+        management_of_reading_type = self.env['ir.values'].\
+            get_default('wua.irrigation.configuration',
+                        'management_of_reading_type')
+        if not management_of_reading_type and view_type in [
+                'form', 'tree', 'search']:
+            doc = etree.XML(res['arch'])
+            for node in doc.xpath("//field[@name='reading_type']"):
+                node.set('invisible', '1')
+                modifiers = json.loads(node.get('modifiers', '{}'))
+                modifiers['tree_invisible'] = True
+                modifiers['column_invisible'] = True
+                modifiers['invisible'] = True
+                node.set('modifiers', json.dumps(modifiers))
+            if view_type == 'search':
+                for filter_node in doc.xpath(
+                        "//filter[@domain][contains(@domain, "
+                        "'reading_type')]"):
+                    parent = filter_node.getparent()
+                    parent.remove(filter_node)
+            res['arch'] = etree.tostring(doc, encoding='unicode')
+        return res
 
     @api.multi
     def write(self, vals):

@@ -3,6 +3,8 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
+import json
+from lxml import etree
 from odoo import models, fields, api, tools, _
 
 
@@ -101,6 +103,28 @@ class WuaWaterconnection(models.Model):
         compute='_compute_zone_id',
     )
 
+    estimated_monthly_consumption = fields.Integer(
+        string='Estimated monthly consumption (m³)',
+        default=0,
+    )
+
+    last_reading_type = fields.Selection(
+        [
+            ('01_estimated', 'Estimated Reading'),
+            ('02_real_worker', 'Real Worker Reading'),
+            ('03_real_partner', 'Real Partner Reading'),
+        ],
+        string='Last Reading (type)',
+        store=True,
+        compute='_compute_last_reading_type',
+    )
+
+    _sql_constraints = [
+        ('estimated_monthly_consumption_positive',
+         'CHECK(estimated_monthly_consumption >= 0)',
+         'The estimated monthly consumption must be positive.'),
+    ]
+
     @api.depends('irrigationshed_id', 'irrigationshed_id.zone_id')
     def _compute_zone_id(self):
         for record in self:
@@ -187,12 +211,49 @@ class WuaWaterconnection(models.Model):
                     record.watermeter_id.last_reading_consumption
             record.last_reading_consumption = last_reading_consumption
 
+    @api.depends('watermeter_id', 'watermeter_id.last_reading_type')
+    def _compute_last_reading_type(self):
+        for record in self:
+            last_reading_type = False
+            if record.watermeter_id.last_reading_type:
+                last_reading_type = record.watermeter_id.last_reading_type
+            record.last_reading_type = last_reading_type
+
     @api.model
     def create(self, vals):
         waterconnection = super(WuaWaterconnection, self).create(vals)
         if vals['watermeter_id']:
             self.update_wua_wc_wm(waterconnection.id, vals['watermeter_id'])
         return waterconnection
+
+    @api.model
+    def fields_view_get(
+            self, view_id=None, view_type='form', toolbar=False,
+            submenu=False):
+        res = super(WuaWaterconnection, self).fields_view_get(
+            view_id=view_id, view_type=view_type, toolbar=toolbar,
+            submenu=submenu)
+        management_of_reading_type = self.env['ir.values'].\
+            get_default('wua.irrigation.configuration',
+                        'management_of_reading_type')
+        if not management_of_reading_type and view_type in [
+                'form', 'tree', 'search']:
+            doc = etree.XML(res['arch'])
+            for node in doc.xpath("//field[@name='last_reading_type']"):
+                node.set('invisible', '1')
+                modifiers = json.loads(node.get('modifiers', '{}'))
+                modifiers['tree_invisible'] = True
+                modifiers['column_invisible'] = True
+                modifiers['invisible'] = True
+                node.set('modifiers', json.dumps(modifiers))
+            if view_type == 'search':
+                for filter_node in doc.xpath(
+                        "//filter[@domain][contains(@domain, "
+                        "'last_reading_type')]"):
+                    parent = filter_node.getparent()
+                    parent.remove(filter_node)
+            res['arch'] = etree.tostring(doc, encoding='unicode')
+        return res
 
     @api.multi
     def write(self, vals):

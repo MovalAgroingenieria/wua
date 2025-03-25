@@ -19,6 +19,7 @@
         "security/ir.model.access.csv",
         "wizard/wizard_remove_readings_view.xml",
         "wizard/wizard_edit_reading_time_view.xml",
+        "wizard/wizard_generate_estimated_readings_view.xml",
         "data/wua_irrigation_config_settings_data.xml",
         "data/wua_negative_reading_notice_mail.xml",
         "data/wua_negative_reading_notice_action.xml",

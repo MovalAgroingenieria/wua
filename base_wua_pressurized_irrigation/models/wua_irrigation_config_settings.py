@@ -35,6 +35,10 @@ class WuaIrrigationConfiguration(models.TransientModel):
         digits=(32, 2),
     )
 
+    management_of_reading_type = fields.Boolean(
+        string='Management of reading type',
+    )
+
     @api.multi
     def set_default_values(self):
         values = self.env['ir.values'].sudo()
@@ -68,6 +72,9 @@ class WuaIrrigationConfiguration(models.TransientModel):
         values.set_default('wua.irrigation.configuration',
                            'lack_irrigation_percentage',
                            self.lack_irrigation_percentage)
+        values.set_default('wua.irrigation.configuration',
+                           'management_of_reading_type',
+                           self.management_of_reading_type)
         if (old_number_of_presconsumptions_for_average !=
                 self.number_of_presconsumptions_for_average):
             self.recalculate_average_consumption_of_watermeters()

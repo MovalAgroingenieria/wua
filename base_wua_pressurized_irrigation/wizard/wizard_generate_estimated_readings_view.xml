@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="wizard_generate_estimated_readings_view" model="ir.ui.view">
+        <field name="name">Wizard to generate estimated reading</field>
+        <field name="model">wizard.generate.estimated.readings</field>
+        <field name="arch" type="xml">
+            <form string="Generate Estimated Readings">
+                <group>
+                    <field name="date" widget="datetime"/>
+                </group>
+                <footer>
+                    <button string="Generate" type="object" class="btn-primary" name="action_generate_readings"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window id="action_generate_readings"
+        name="Generate Estimated Readings"
+        res_model="wizard.generate.estimated.readings"
+        src_model="wua.waterconnection"
+        key2="client_action_multi"
+        view_mode="form"
+        target="new"
+        groups="base_wua.group_wua_manager"/>
+
+</odoo>

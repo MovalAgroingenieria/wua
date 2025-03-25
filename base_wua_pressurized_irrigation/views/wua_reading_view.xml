@@ -29,6 +29,10 @@
                                             ('is_last_reading', '!=', True)]}"/>
                             <field name="reading_time"
                                    attrs="{'readonly': [('id', '>', 0)]}"/>
+                            <field name="reading_type"
+                                   attrs="{'readonly': [
+                                            ('validated', '=', True),
+                                            ('id', '>', 0)]}"/>
                             <field name="initialization_reading"
                                    attrs="{'readonly': [('id', '>', 0)]}"/>
                         </group>
@@ -63,6 +67,7 @@
                 <field name="watermeter_id"/>
                 <field name="waterconnection_id"/>
                 <field name="partner_id" invisible="1"/>
+                <field name="reading_type"/>
                 <field name="reading_time"/>
                 <field name="volume"/>
                 <field name="initialization_reading" string="Init. Reading"/>
@@ -100,6 +105,13 @@
                  domain="[('validated','=',True)]"/>
                 <filter string="Validated Reading: No" name="isvalidatedno"
                  domain="[('validated','=',False)]"/>
+                <separator/>
+                <filter string="Reading Type: Estimated" name="reading_type_estimated"
+                    domain="[('reading_type','=','01_estimated')]"/>
+                <filter string="Reading Type: Real Worker" name="reading_type_real_worker"
+                    domain="[('reading_type','=','02_real_worker')]"/>
+                <filter string="Reading Type: Real Partner" name="reading_real_partner"
+                    domain="[('reading_type','=','03_real_partner')]"/>
                 <group expand="0" string="Group By">
                     <filter string="Hydraulic Sector"
                      name="hydraulicsector"
@@ -113,6 +125,9 @@
                     <filter string="Water Meter"
                      name="watermeter"
                      context="{'group_by':'watermeter_id'}"/>
+                    <filter string="Reading Type"
+                     name="reading_type"
+                     context="{'group_by':'reading_type'}"/>
                 </group>
             </search>
         </field>

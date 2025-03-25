@@ -3,7 +3,8 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import models, fields, api, _
-
+import json
+from lxml import etree
 
 class WuaWatermeter(models.Model):
     _inherit = 'mail.thread'
@@ -166,6 +167,15 @@ class WuaWatermeter(models.Model):
         compute='_compute_zone_id',
     )
 
+    last_reading_type = fields.Selection(
+        [
+            ('01_estimated', 'Estimated Reading'),
+            ('02_real_worker', 'Real Worker Reading'),
+            ('03_real_partner', 'Real Partner Reading'),
+        ],
+        string='Last Reading (type)',
+    )
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing Name.'),
         ('valid_nominal_diameter',
@@ -259,6 +269,35 @@ class WuaWatermeter(models.Model):
             'target': 'current',
             }
         return act_window
+
+    @api.model
+    def fields_view_get(
+            self, view_id=None, view_type='form', toolbar=False,
+            submenu=False):
+        res = super(WuaWatermeter, self).fields_view_get(
+            view_id=view_id, view_type=view_type, toolbar=toolbar,
+            submenu=submenu)
+        management_of_reading_type = self.env['ir.values'].\
+            get_default('wua.irrigation.configuration',
+                        'management_of_reading_type')
+        if not management_of_reading_type and view_type in [
+                'form', 'tree', 'search']:
+            doc = etree.XML(res['arch'])
+            for node in doc.xpath("//field[@name='last_reading_type']"):
+                node.set('invisible', '1')
+                modifiers = json.loads(node.get('modifiers', '{}'))
+                modifiers['tree_invisible'] = True
+                modifiers['column_invisible'] = True
+                modifiers['invisible'] = True
+                node.set('modifiers', json.dumps(modifiers))
+            if view_type == 'search':
+                for filter_node in doc.xpath(
+                        "//filter[@domain][contains(@domain, "
+                        "'last_reading_type')]"):
+                    parent = filter_node.getparent()
+                    parent.remove(filter_node)
+            res['arch'] = etree.tostring(doc, encoding='unicode')
+        return res
 
     # For report
     def _get_or_generate_watermeter_link(self):

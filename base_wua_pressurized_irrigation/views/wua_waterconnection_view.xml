@@ -64,6 +64,8 @@
                 <newline/>
                 <field name="last_reading_time"/>
                 <field name="average_consumption"/>
+                <field name="estimated_monthly_consumption"/>
+                <field name="last_reading_type"/>
                 <newline/>
                 <field name="last_reading_value"/>
                 <newline/>
@@ -139,6 +141,8 @@
                 <field name="last_reading_value" string="Last Reading (value)"/>
                 <field name="last_reading_consumption" string="Last Reading (consumption)"/>
                 <field name="average_consumption"/>
+                <field name="estimated_monthly_consumption" invisible="1"/>
+                <field name="last_reading_type"/>
             </xpath>
         </field>
     </record>
@@ -155,24 +159,26 @@
                  domain="[('with_watermeter','=',True)]"/>
                 <filter string="Without water meter" name="withoutwatermeter"
                  domain="[('with_watermeter','=',False)]"/>
+                 <separator/>
+                <filter string="Last Reading (type): Estimated" name="last_reading_type_estimated"
+                    domain="[('last_reading_type','=','01_estimated')]"/>
+                <filter string="Last Reading (type): Real Worker" name="last_reading_type_real_worker"
+                    domain="[('last_reading_type','=','02_real_worker')]"/>
+                <filter string="Last Reading (type): Real Partner" name="reading_real_partner"
+                    domain="[('last_reading_type','=','03_real_partner')]"/>
             </xpath>
             <xpath expr="//search" position="inside">
                 <field name="zone_id" string="Zone"/>
+                <filter string="Last Reading (type)"
+                    name="last_reading_type"
+                    context="{'group_by':'last_reading_type'}"/>
                 <group expand="1" string="Group By">
                     <filter string="Zone" name="zone" context="{'group_by':'zone_id'}"/>
                 </group>
             </xpath>
-
-            <!-- Al cambiar a many2many ya no se puede filtrar por este campo
-            <xpath expr="//filter[@name='irrigation_shed']" position="after">
-
-                    <filter string="Irrigation Shift"
-                        name="irrigation_shift"
-                        context="{'group_by':'irrigation_shift_id'}"/>
-            </xpath>
-            -->
         </field>
     </record>
+
     <record id="wua_technical_irrigationshiftlinks_view_tree" model="ir.ui.view">
         <field name="name">Irrigation Shifts Links(tree view)</field>
         <field name="model">wua.waterconnection.irrigation.shiftlink</field>

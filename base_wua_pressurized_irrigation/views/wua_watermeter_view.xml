@@ -50,6 +50,7 @@
                             <field name="last_reading_consumption"
                                     attrs="{'readonly': [('id','>',0)]}"/>
                             <field name="average_consumption"/>
+                            <field name="last_reading_type"/>
                         </group>
                         <group name="related_master_data_left">
                             <field name="watermeter_brand" placeholder="Watermeter brand"/>
@@ -111,6 +112,7 @@
                 <field name="last_reading_value" string="Last Reading (m³)"/>
                 <field name="last_reading_consumption" string="Last Consumption (m³)"/>
                 <field name="average_consumption"/>
+                <field name="last_reading_type"/>
                 <field name="state"/>
             </tree>
         </field>
@@ -145,6 +147,13 @@
                  domain="[('state','=','stored')]"/>
                 <filter string="Discarted" name="discarted_state"
                  domain="[('state','=','discarted')]"/>
+                <separator/>
+                <filter string="Last Reading (type): Estimated" name="last_reading_type_estimated"
+                 domain="[('last_reading_type','=','01_estimated')]"/>
+                <filter string="Last Reading (type): Real Worker" name="last_reading_type_real_worker"
+                 domain="[('last_reading_type','=','02_real_worker')]"/>
+                <filter string="Last Reading (type): Real Partner" name="reading_real_partner"
+                 domain="[('last_reading_type','=','03_real_partner')]"/>
                 <group expand="0" string="Group By">
                     <filter string="Hydraulic Sector"
                      name="waterconnection"
@@ -158,6 +167,9 @@
                     <filter string="Zone"
                             name="zone"
                             context="{'group_by':'zone_id'}"/>
+                    <filter string="Last Reading (type)"
+                            name="last_reading_type"
+                            context="{'group_by':'last_reading_type'}"/>
                 </group>
             </search>
         </field>
