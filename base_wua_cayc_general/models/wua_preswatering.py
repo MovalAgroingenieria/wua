@@ -91,43 +91,77 @@ class WuaPresreswatering(models.Model):
                 if preswatering.number >= number_to_set:
                     number_to_set = preswatering.number + 1
             self.number = number_to_set
+            condition_lines = []
+            for condition in self.preswateringperiod_id.condition_ids:
+                condition_lines.append((0, 0, {
+                    'condition_id': condition.id,
+                    'specific_proration': self.proration,
+                    'state': '01_not_checked',
+                }))
+            self.condition_line_ids = condition_lines
+
+    @api.multi
+    def write(self, vals):
+        if 'proration' in vals:
+            self.mapped('condition_line_ids').write({
+                'specific_proration': vals['proration'],
+            })
+        return super(WuaPresreswatering, self).write(vals)
 
     def _process_granted_nominal_flows(
             self, presresconsumptions, preswatering):
         presres_grouped = {}
-        # Group by wateringrequest
         for presresconsumption in presresconsumptions:
             key = presresconsumption.preswateringrequest_id
             if key not in presres_grouped:
                 presres_grouped[key] = []
             presres_grouped[key].append(presresconsumption)
-        # Calculation
         for preswateringrequest_id, consumptions in presres_grouped.items():
             partner_area = preswateringrequest_id.partner_parcel_owner_area
             is_wua_type = preswateringrequest_id.partner_id.partner_type == \
                 '01_WUA'
-            max_nominal_flow = partner_area * preswatering.proration
-            total_nominal_flow_ls = sum(
-                c.nominal_flow_ls for c in consumptions)
-            # Proration
-            if total_nominal_flow_ls > max_nominal_flow and is_wua_type:
-                for consumption in consumptions:
-                    requested_flow = consumption.nominal_flow_ls
-                    prorated_flow = (requested_flow * max_nominal_flow) / \
-                        total_nominal_flow_ls
-                    # Floor to the nearest 5
-                    prorated_flow_rounded = 5 * (
-                        (prorated_flow + 2.5) // 5)
-                    consumption.write({
-                        'nominal_flow_granted': prorated_flow_rounded * 3.6,
-                        'nominal_flow_ls_granted': prorated_flow_rounded,
-                    })
-            else:
-                for consumption in consumptions:
-                    consumption.write({
-                        'nominal_flow_granted': consumption.nominal_flow,
-                        'nominal_flow_ls_granted': consumption.nominal_flow_ls,
-                    })
+            condition_lines = self.env[
+                'wua.preswatering.condition.line'].search([
+                    ('preswatering_id', '=', preswatering.id),
+                ])
+            specific_prorations = {}
+            for line in condition_lines:
+                for wc in line.condition_id.waterconnection_ids:
+                    specific_prorations[wc.id] = line.specific_proration
+            consumptions_by_proration = {}
+            for consumption in consumptions:
+                wc_id = consumption.waterconnection_id.id
+                if is_wua_type and wc_id in specific_prorations:
+                    proration = specific_prorations[wc_id]
+                else:
+                    proration = preswatering.proration
+                if proration not in consumptions_by_proration:
+                    consumptions_by_proration[proration] = []
+                consumptions_by_proration[proration].append(consumption)
+            for proration, grouped_consumptions in \
+                    consumptions_by_proration.items():
+                max_nominal_flow = partner_area * proration
+                total_nominal_flow_ls = sum(
+                    c.nominal_flow_ls for c in grouped_consumptions)
+                if total_nominal_flow_ls > max_nominal_flow and is_wua_type:
+                    for consumption in grouped_consumptions:
+                        requested_flow = consumption.nominal_flow_ls
+                        prorated_flow = (requested_flow * max_nominal_flow) / \
+                            total_nominal_flow_ls
+                        prorated_flow_rounded = 5 * (
+                            (prorated_flow + 2.5) // 5)
+                        consumption.write({
+                            'nominal_flow_granted':
+                                prorated_flow_rounded * 3.6,
+                            'nominal_flow_ls_granted': prorated_flow_rounded,
+                        })
+                else:
+                    for consumption in grouped_consumptions:
+                        consumption.write({
+                            'nominal_flow_granted': consumption.nominal_flow,
+                            'nominal_flow_ls_granted':
+                                consumption.nominal_flow_ls,
+                        })
 
     # Hook: Ensure only the same day is setted for the initial_time
     def _update_condition(self, condition):
@@ -278,12 +312,20 @@ class WuaPresreswatering(models.Model):
                 number = sorted(
                     preswatering_period.preswatering_ids,
                     key=lambda x: x.number)[-1].number + 1
+            condition_lines = []
+            for condition in last_preswatering.condition_line_ids:
+                condition_lines.append((0, 0, {
+                    'condition_id': condition.condition_id.id,
+                    'specific_proration': preswatering_period.proration,
+                    'state': '01_not_checked',
+                }))
             new_preswatering = self.create({
                 'preswateringperiod_id': preswatering_period.id,
                 'number': number,
                 'state': '01_draft',
                 'initial_time': initial_time,
                 'proration': preswatering_period.proration,
+                'condition_line_ids': condition_lines,
             })
             new_preswatering._onchange_preswateringperiod_id()
             new_preswatering.select_presresconsumptions()
@@ -362,3 +404,23 @@ class WuaPresreswatering(models.Model):
                             'from_remotecontrol': True,
                         })
         return response
+
+
+class WuaPreswateringConditionLine(models.Model):
+
+    _inherit = 'wua.preswatering.condition.line'
+
+    specific_proration = fields.Float(
+        string='Specific Proration',
+        required=True,
+        digits=(32, 2),
+        default=1.0,
+    )
+
+    @api.model
+    def create(self, vals):
+        if 'preswatering_id' in vals:
+            preswatering = self.env['wua.preswatering'].browse(
+                vals['preswatering_id'])
+            vals['specific_proration'] = preswatering.proration
+        return super(WuaPreswateringConditionLine, self).create(vals)

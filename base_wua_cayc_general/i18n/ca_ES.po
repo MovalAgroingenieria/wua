@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-21 11:58+0000\n"
-"PO-Revision-Date: 2025-03-21 11:58+0000\n"
+"POT-Creation-Date: 2025-03-26 11:40+0000\n"
+"PO-Revision-Date: 2025-03-26 11:40+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -272,7 +272,7 @@ msgstr "Una parcel·la che ha de tenir almenys una classe assignada."
 #: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:246
 #, python-format
 msgid "A new preswatering request has been created for %s on %s by user: %s."
-msgstr "msgstr "S’ha creat una nova sol·licitud de pre-reg per a %s en data %s per l'usuari: %s."
+msgstr "msgstr \"S’ha creat una nova sol·licitud de pre-reg per a %s en data %s per l'usuari: %s."
 
 #. module: base_wua_cayc_general
 #: code:addons/base_wua_cayc_general/models/wua_parcel.py:59
@@ -402,6 +402,11 @@ msgstr "Element (línia de lot de factures)"
 #: model:ir.model,name:base_wua_cayc_general.model_wua_parcel
 msgid "Entity (parcel)"
 msgstr "Element (parcel·la)"
+
+#. module: base_wua_cayc_general
+#: model:ir.model,name:base_wua_cayc_general.model_wua_preswatering_condition_line
+msgid "Entity (preswatering condition line)"
+msgstr "Element (línia condició)"
 
 #. module: base_wua_cayc_general
 #: model:ir.model,name:base_wua_cayc_general.model_wua_preswatering
@@ -563,7 +568,7 @@ msgid "Modules"
 msgstr "Mòduls"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswatering.py:228
+#: code:addons/base_wua_cayc_general/models/wua_preswatering.py:262
 #, python-format
 msgid "No valid consumption data received from SINEMA."
 msgstr "No s'han rebut dades de consum vàlides de SINEMA."
@@ -605,20 +610,25 @@ msgid "Octroi (GIS)"
 msgstr "Fielat (GIS)"
 
 #. module: base_wua_cayc_general
+#: model:res.groups,name:base_wua_cayc_general.group_wua_octroi_user
+msgid "Octroi User"
+msgstr "Usuari Fielat"
+
+#. module: base_wua_cayc_general
 #: model:ir.actions.act_window,name:base_wua_cayc_general.wua_octroi_action
 #: model:ir.ui.menu,name:base_wua_cayc_general.wua_octroi_menu
 msgid "Octrois"
 msgstr "Fielats"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/res_partner.py:515
+#: code:addons/base_wua_cayc_general/models/res_partner.py:524
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase_parcel_class_ids
 #, python-format
 msgid "Parcel Classes"
 msgstr "Classes"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/res_partner.py:482
+#: code:addons/base_wua_cayc_general/models/res_partner.py:491
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_octroi_parcel_ids
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_waterchannel_parcel_ids
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase_parcel_ids
@@ -779,6 +789,11 @@ msgid "Server Remote Port"
 msgstr "Port remot del servidor"
 
 #. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_condition_line_specific_proration
+msgid "Specific Proration"
+msgstr "Prorrateig específic"
+
+#. module: base_wua_cayc_general
 #: model:ir.ui.view,arch_db:base_wua_cayc_general.wua_wuabase_view_form
 msgid "Synchronize"
 msgstr "Sincronitzar"
@@ -853,6 +868,11 @@ msgid "The value of 'Proration' must be greater than 0."
 msgstr "El valor de \"Prorració\" ha de ser superior a 0."
 
 #. module: base_wua_cayc_general
+#: model:ir.model,name:base_wua_cayc_general.model_res_users
+msgid "User of WUA (MR)"
+msgstr "Usuari CR"
+
+#. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase_partner_ids
 msgid "WUA Partners"
 msgstr "Socis"
@@ -866,8 +886,8 @@ msgstr "Toma"
 
 #. module: base_wua_cayc_general
 #: model:mail.template,subject:base_wua_cayc_general.wua_preswatering_octroi_email_template
-msgid "Water Consumption Report for Octroi ${object.name} - ${ctx['today_str']}"
-msgstr "Informe de consum d’aigua per al Fielat ${object.name} - ${ctx['today_str']}"
+msgid "Water Consumption Report for Octroi ${object.name} - ${ctx['tomorrow_str']}"
+msgstr "Informe de consum d’aigua per al Fielat ${object.name} - ${ctx['tomorrow_str']}"
 
 #. module: base_wua_cayc_general
 #: model:mail.template,subject:base_wua_cayc_general.wua_preswatering_parent_partner_email_template
@@ -937,13 +957,13 @@ msgid "Watermeter position already exists."
 msgstr "Watermeter position already exists."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswatering.py:191
+#: code:addons/base_wua_cayc_general/models/wua_preswatering.py:225
 #, python-format
 msgid "You can only issue the consumptions from the previous day until 08:00 of the current day"
 msgstr "Només pots obtenir els consums servits del dia anterior fins a les 08:00 del dia actual."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswatering.py:167
+#: code:addons/base_wua_cayc_general/models/wua_preswatering.py:201
 #, python-format
 msgid "You can only validate the consumptions starting from 12:00 on the previous day until 08:00 of the request date."
 msgstr "Només es poden validar les consumicions a partir de les 12:00 del dia anterior fins a les 08:00 de la data de sol·licitud."

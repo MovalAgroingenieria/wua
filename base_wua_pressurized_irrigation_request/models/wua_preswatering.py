@@ -5,6 +5,7 @@
 import datetime
 from datetime import timedelta
 from odoo import models, fields, api, exceptions, _
+from odoo.tools.safe_eval import safe_eval
 from lxml import etree
 
 
@@ -188,6 +189,12 @@ class WuaPreswatering(models.Model):
 
     notes = fields.Html(
         string='Notes',
+    )
+
+    condition_line_ids = fields.One2many(
+        string='Condition Lines',
+        comodel_name='wua.preswatering.condition.line',
+        inverse_name='preswatering_id',
     )
 
     _sql_constraints = [
@@ -536,12 +543,44 @@ class WuaPreswatering(models.Model):
             })
         return True
 
+    def update_conditions(self):
+        for line in self.condition_line_ids:
+            field = line.condition_id.field_to_check.name
+            operator = line.condition_id.comparison_operator
+            value_to_check = line.check_value
+            grouped_value = 0.0
+            group_operator = line.condition_id.group_operator
+            waterconnections = line.condition_id.waterconnection_ids
+            presresconsumptions = self.env['wua.presresconsumption'].search(
+                [('preswatering_id', '=', self.id),
+                 ('selected', '=', True),
+                 ('waterconnection_id', 'in', waterconnections.ids)])
+            if group_operator == 'sum':
+                grouped_value = sum(
+                    presresconsumptions.mapped(lambda x: x[field]))
+            # Check if the operator between value_to_check and grouped_value
+            # is true and then state == '02_ok', in other case 03_not_ok
+            expression = "%s %s %s" % (grouped_value, operator, value_to_check)
+            condition_state = '02_ok'
+            try:
+                result = safe_eval(expression)
+                if not result:
+                    condition_state = '03_not_ok'
+            except Exception:
+                condition_state = '03_not_ok'
+            condition_vals = {
+                'result_value': grouped_value,
+                'state': condition_state,
+            }
+            line.write(condition_vals)
+
     @api.multi
     def calculate_presresconsumptions(self):
         self.ensure_one()
         presresconsumptions = self.env['wua.presresconsumption'].search(
             [('preswatering_id', '=', self.id),
              ('selected', '=', True)])
+        self.condition_line_ids
         if presresconsumptions:
             # Assign the granted flow
             self._process_granted_nominal_flows(presresconsumptions, self)
@@ -572,10 +611,17 @@ class WuaPreswatering(models.Model):
                 'state': '02_calculated',
                 }
             self.write(watering_vals)
+            self.update_conditions()
 
     @api.multi
     def validate_presresconsumptions(self):
         self.ensure_one()
+        conditions_not_met = self.condition_line_ids.filtered(
+            lambda x: x.state == '03_not_ok')
+        if (len(conditions_not_met) > 0):
+            raise exceptions.UserError(_(
+                'The conditions %s are not met.') %
+                ', '.join(conditions_not_met.mapped('condition_id.name')))
         presresconsumptions_to_unjoin = \
             self.env['wua.presresconsumption'].search(
                 [('preswatering_id', '=', self.id),
@@ -657,3 +703,112 @@ class WuaPreswatering(models.Model):
                     )
         res['arch'] = etree.tostring(doc, encoding='unicode')
         return res
+
+
+class WuaPreswateringCondition(models.Model):
+
+    _name = 'wua.preswatering.condition'
+    _description = 'Entity (preswatering condition)'
+    _order = 'name'
+
+    name = fields.Char(
+        string='Name',
+        required=True,
+    )
+
+    field_to_check = fields.Many2one(
+        string='Field to Check',
+        comodel_name='ir.model.fields',
+        required=True,
+        ondelete='restrict',
+        domain="[('model_id', '=', 'wua.presresconsumption')]",
+    )
+
+    comparison_operator = fields.Selection(
+        [
+            ('=', '='),
+            ('!=', '!='),
+            ('>', '>'),
+            ('<', '<'),
+            ('>=', '>='),
+            ('<=', '<='),
+        ],
+        string='Operator',
+        required=True,
+    )
+
+    value = fields.Float(
+        string='Value',
+        required=True,
+    )
+
+    group_operator = fields.Selection(
+        [
+            ('sum', 'Sum'),
+        ],
+        string='Group Operator',
+        required=True,
+    )
+
+    waterconnection_ids = fields.Many2many(
+        comodel_name='wua.waterconnection',
+        relation='wua_preswatering_condition_waterconnection_rel',
+        column1='condition_id',
+        column2='waterconnection_id',
+        string='Water Connections',
+    )
+
+
+class WuaPreswateringConditionLine(models.Model):
+
+    _name = 'wua.preswatering.condition.line'
+    _description = 'Entity (preswatering condition line)'
+    _order = 'sequence'
+
+    preswatering_id = fields.Many2one(
+        string='Preswatering',
+        comodel_name='wua.preswatering',
+        required=True,
+        ondelete='cascade',
+    )
+
+    condition_id = fields.Many2one(
+        string='Condition',
+        comodel_name='wua.preswatering.condition',
+        required=True,
+        ondelete='restrict',
+    )
+
+    state = fields.Selection(
+        [
+            ('01_not_checked', 'Not Checked'),
+            ('02_ok', 'Ok'),
+            ('03_not_ok', 'Not Ok'),
+        ],
+        string='State',
+        default='01_not_checked',
+    )
+
+    check_value = fields.Float(
+        string='Check Value',
+        compute='_compute_check_value',
+        store=True,
+    )
+
+    result_value = fields.Float(
+        string='Result Value',
+    )
+
+    sequence = fields.Integer(
+        string='Sequence',
+        required=True,
+        default=1,
+    )
+
+    @api.depends('condition_id', 'condition_id.value')
+    def _compute_check_value(self):
+        for record in self:
+            check_value = 0.0
+            if record.condition_id and record.condition_id.value:
+                check_value = record.condition_id.value
+            record.check_value = check_value

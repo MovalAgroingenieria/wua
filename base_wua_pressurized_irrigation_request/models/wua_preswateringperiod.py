@@ -82,6 +82,14 @@ class WuaPreswateringperiod(models.Model):
         store=True,
     )
 
+    condition_ids = fields.Many2many(
+        comodel_name='wua.preswatering.condition',
+        relation='wua_preswateringpreiod_condition_rel',
+        column1='preswateringperiod_id',
+        column2='condition_id',
+        string='Default Conditions',
+    )
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing Preswatering Period.'),
         ('valid_dates', 'CHECK (initial_date <= end_date)',

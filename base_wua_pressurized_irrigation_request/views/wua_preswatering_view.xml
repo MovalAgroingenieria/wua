@@ -107,6 +107,19 @@
                                     </group>
                                 </group>
                             </page>
+                            <page name="condition_line_page" string="Condition Lines">
+                                <group name="condition_line_group">
+                                    <field name="condition_line_ids" attrs="{'readonly':[('state', '=', '03_validated')]}">
+                                        <tree editable="bottom">
+                                            <field name="sequence" widget="handle"/>
+                                            <field name="condition_id"/>
+                                            <field name="check_value"/>
+                                            <field name="result_value" readonly="1"/>
+                                            <field name="state" readonly="1"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
                             <page name="notes_page" string="Notes">
                                 <field name="notes"/>
                             </page>
@@ -280,5 +293,81 @@
               action="wua_preswatering_action"
               sequence="23"
               groups="base_wua.group_wua_user"/>
+
+    <!-- PreswateringCondition -->
+
+    <record id="wua_preswatering_condition_view_form" model="ir.ui.view">
+        <field name="name">Preswatering Conditions (form view)</field>
+        <field name="model">wua.preswatering.condition</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <sheet>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="name"/>
+                            <field name="field_to_check"/>
+                            <field name="group_operator"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="comparison_operator"/>
+                            <field name="value"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="waterconnections_page" string="Waterconnections">
+                                <group name="values_horizontal_group">
+                                    <field name="waterconnection_ids"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_preswatering_condition_view_tree" model="ir.ui.view">
+        <field name="name">Preswatering Conditions (tree view)</field>
+        <field name="model">wua.preswatering.condition</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="field_to_check"/>
+                <field name="group_operator"/>
+                <field name="comparison_operator"/>
+                <field name="value"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_preswatering_condition_view_search" model="ir.ui.view">
+        <field name="name">Preswatering Conditions (search view)</field>
+        <field name="model">wua.preswatering.condition</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_preswatering_condition_action" model="ir.actions.act_window">
+        <field name="name">Preswatering Conditions</field>
+        <field name="res_model">wua.preswatering.condition</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_preswatering_condition_view_tree"/>
+        <field name="search_view_id"
+         ref="wua_preswatering_condition_view_search"/>
+    </record>
+
+    <menuitem id="wua_preswatering_condition_menu"
+              name="Preswatering Conditions"
+              parent="wua_structure_irrigation.base_wua_irrigation_configuration_menu"
+              action="wua_preswatering_condition_action"
+              sequence="3"/>
 
 </odoo>
