@@ -56,7 +56,17 @@ class WuaInvoiceset(models.Model):
         grouped_same_payer = self.env['ir.values'].get_default(
             'wua.invoicing.configuration',
             'group_detail_lines_of_wc_if_same_payer')
+        invoicing_of_wc_with_factor = self.env['ir.values'].get_default(
+            'wua.invoicing.configuration',
+            'invoicing_of_wc_with_factor')
         for waterconnection in waterconnections:
+            # Normally 1, but quantity can be modified by the factor
+            waterconnection_line_quantity = 1
+            if invoicing_of_wc_with_factor:
+                waterconnection_line_quantity = \
+                    waterconnection.invoicing_factor
+            waterconnection_line_quantity_str = (
+                '%.1f' % waterconnection_line_quantity).replace('.', ',')
             waterconnection_code = waterconnection.name
             irrigationpoints_of_waterconnection = irrigationpoints.filtered(
                 lambda x: x.waterconnection_id.id == waterconnection.id)
@@ -90,13 +100,27 @@ class WuaInvoiceset(models.Model):
                             partner_payer.lang)
                     description = waterconnection_label + ' ' + \
                         waterconnection_code
+                    if (invoicing_of_wc_with_factor):
+                        default_partner_multiplier_label = _(
+                            'Partner Multiplier')
+                        partner_multiplier_label = \
+                            self.get_value_from_translation(
+                                'base_wua_invoicing_waterconnection_by_'
+                                'watercosts', 'Partner Multiplier',
+                                partner_payer.lang)
+                        if not partner_multiplier_label:
+                            partner_multiplier_label = \
+                                default_partner_multiplier_label
+                        description = description + u' (' + \
+                            partner_multiplier_label + u': ' + \
+                            waterconnection_line_quantity_str + u')'
                     result = {
                         'partner_id': partner_payer.id,
                         'product_id': product_id,
                         'categ_code': categ_code,
                         'key1': waterconnection.id,
                         'key2': biggest_parcel.id,
-                        'quantity': 1,
+                        'quantity': waterconnection_line_quantity,
                         'description': description,
                         }
                     invoice_details_categ10.append(result)

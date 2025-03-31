@@ -215,7 +215,7 @@ class WuaInvoiceset(models.Model):
                                 partnerlink, parcel, waterconnection,
                                 volume_real_of_waterconnection,
                                 presconsumption_quantity, product,
-                                presconsumptions
+                                presconsumptions,
                             )
                             partner_id = partnerlink.partner_id.id
                             percentage = partnerlink.water_costs_percentage
@@ -442,29 +442,45 @@ class WuaInvoiceset(models.Model):
 
     def group_invoice_details_by_wc(self, invoice_details):
         invoices_data = []
-        wc_ids = []
-        for item in invoice_details:
-            wc_ids.append(item['key1'])
-        wc_ids = sorted(list(set(wc_ids)))
-        waterconnections = \
-            self.env['wua.waterconnection'].browse(wc_ids).sorted(
-                key=lambda x: x.name)
+        wc_ids = list(set(item['key1'] for item in invoice_details))
+        waterconnections = self.env['wua.waterconnection'].browse(wc_ids).\
+            sorted(key=lambda x: x.name)
         for waterconnection in waterconnections:
-            invoice_details_of_wc = filter(
-                lambda x: x['key1'] == waterconnection.id, invoice_details)
-            partner = self.env['res.partner'].browse(
-                invoice_details_of_wc[0]['partner_id'])
-            result = {
-                'partner_id': partner.id,
-                'partner_code': partner.partner_code,
-                'account_id': partner.property_account_receivable_id.id,
-                'payment_term_id': partner.property_payment_term_id.id,
-                'payment_mode_id': partner.customer_payment_mode_id.id,
-                'customer_invoice_transmit_method_id':
-                    partner.customer_invoice_transmit_method_id.id,
-                'detail': invoice_details_of_wc,
-                }
-            invoices_data.append(result)
+            invoice_details_of_wc = list(filter(
+                lambda x: x['key1'] == waterconnection.id, invoice_details))
+            lines_cat10 = [
+                line for line in invoice_details_of_wc if line.get(
+                    'categ_code') == 10]
+            lines_others = [line for line in invoice_details_of_wc if line.get(
+                'categ_code') != 10]
+            main_partner_id = None
+            # Get the partner_id for group by
+            if lines_others:
+                main_partner_id = lines_others[0]['partner_id']
+            grouped_lines = {}
+            if main_partner_id:
+                grouped_lines[main_partner_id] = lines_others.copy()
+                # Get lines of category 10 for the main partner
+                grouped_lines[main_partner_id] += [
+                    line for line in lines_cat10 if line['partner_id'] ==
+                    main_partner_id
+                ]
+            for line in lines_cat10:
+                partner_id = line['partner_id']
+                if partner_id != main_partner_id:
+                    grouped_lines.setdefault(partner_id, []).append(line)
+            for partner_id, lines in grouped_lines.items():
+                partner = self.env['res.partner'].browse(partner_id)
+                invoices_data.append({
+                    'partner_id': partner.id,
+                    'partner_code': partner.partner_code,
+                    'account_id': partner.property_account_receivable_id.id,
+                    'payment_term_id': partner.property_payment_term_id.id,
+                    'payment_mode_id': partner.customer_payment_mode_id.id,
+                    'customer_invoice_transmit_method_id':
+                        partner.customer_invoice_transmit_method_id.id,
+                    'detail': lines,
+                })
         return invoices_data
 
     def after_calculate_invoiceset(self, invoiceset):

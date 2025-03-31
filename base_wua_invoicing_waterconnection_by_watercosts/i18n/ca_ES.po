@@ -1,13 +1,13 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#	* base_wua_invoicing_separate_waterconnection_billing
+#	* base_wua_invoicing_waterconnection_by_watercosts
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-24 16:45+0000\n"
-"PO-Revision-Date: 2020-08-24 16:45+0000\n"
+"POT-Creation-Date: 2025-03-31 07:00+0000\n"
+"PO-Revision-Date: 2025-03-31 07:00+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -15,234 +15,104 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
 
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.ui.view,arch_db:base_wua_invoicing_separate_waterconnection_billing.wua_partner_infrastructure_report_document
-msgid "<span>DEF</span>"
-msgstr "<span>DEF</span>"
+#. module: base_wua_invoicing_waterconnection_by_watercosts
+#: model:ir.model.fields,field_description:base_wua_invoicing_waterconnection_by_watercosts.field_wua_invoicing_configuration_invoicing_of_wc_with_factor
+msgid "Apply conversion factor to invoicing of WC"
+msgstr "Aplicar el factor de conversió a la facturació de la pressa"
 
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.ui.view,arch_db:base_wua_invoicing_separate_waterconnection_billing.wua_partner_infrastructure_report_document
-msgid "<strong>Irrigation points with separated billing</strong>"
-msgstr "<strong>Tomas amb facturació separada</strong>"
+#. module: base_wua_invoicing_waterconnection_by_watercosts
+#: model:ir.model.fields,field_description:base_wua_invoicing_waterconnection_by_watercosts.field_account_invoice_amount_untaxed_categ10
+msgid "C10: Water Conn. (water costs)"
+msgstr "C10: Pressa (costos d'aigua)"
 
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.model,name:base_wua_invoicing_separate_waterconnection_billing.model_account_banking_mandate
-msgid "A generic banking mandate"
-msgstr "Un mandat bancari genèric"
+#. module: base_wua_invoicing_waterconnection_by_watercosts
+#: model:ir.model,name:base_wua_invoicing_waterconnection_by_watercosts.model_wua_invoicing_configuration
+msgid "Configuration of base_wua_invoicing module"
+msgstr "Configuració del mòdul base_wua_invoicing"
 
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.ui.view,arch_db:base_wua_invoicing_separate_waterconnection_billing.wua_waterconnection_view_form
-msgid "Direct Debit Mandate"
-msgstr "Mandat"
+#. module: base_wua_invoicing_waterconnection_by_watercosts
+#: model:ir.model,name:base_wua_invoicing_waterconnection_by_watercosts.model_product_category
+msgid "Entity (WUA Product Category)"
+msgstr "Entitat (Categoria de producte WUA)"
 
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.model.fields,field_description:base_wua_invoicing_separate_waterconnection_billing.field_account_invoice_line_wc_mandate_id
-msgid "Direct Debit Mandate (wc separate billing)"
-msgstr "Mandat de Dèbit directe (wc separat enunciar)"
+#. module: base_wua_invoicing_waterconnection_by_watercosts
+#: model:ir.model,name:base_wua_invoicing_waterconnection_by_watercosts.model_product_template
+msgid "Entity (WUA Product Template)"
+msgstr "Entitat (Plantilla de producte WUA)"
 
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.model,name:base_wua_invoicing_separate_waterconnection_billing.model_wua_invoiceset
+#. module: base_wua_invoicing_waterconnection_by_watercosts
+#: model:ir.model,name:base_wua_invoicing_waterconnection_by_watercosts.model_wua_invoiceset
 msgid "Entity (invoice set)"
 msgstr "Element (facture lot)"
 
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.model,name:base_wua_invoicing_separate_waterconnection_billing.model_wua_waterconnection
+#. module: base_wua_invoicing_waterconnection_by_watercosts
+#: model:ir.model,name:base_wua_invoicing_waterconnection_by_watercosts.model_wua_invoiceset_line
+msgid "Entity (line of a WUA invoice set)"
+msgstr "Element (línia d’un lot de factures WUA)"
+
+#. module: base_wua_invoicing_waterconnection_by_watercosts
+#: model:ir.model,name:base_wua_invoicing_waterconnection_by_watercosts.model_wua_waterconnection
 msgid "Entity (water connection)"
-msgstr "Element (toma)"
+msgstr "Element (pressa)"
 
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.ui.view,arch_db:base_wua_invoicing_separate_waterconnection_billing.wua_partner_infrastructure_report_document
-msgid "Individual others payment account"
-msgstr "Compte per a mètode de pagament individual altres despeses"
+#. module: base_wua_invoicing_waterconnection_by_watercosts
+#: model:ir.model.fields,help:base_wua_invoicing_waterconnection_by_watercosts.field_wua_waterconnection_invoicing_factor
+msgid "Factor to apply to the water consumption to calculate the invoiced amount"
+msgstr "Factor a aplicar al consum d’aigua per calcular l’import facturat"
 
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.ui.view,arch_db:base_wua_invoicing_separate_waterconnection_billing.wua_partner_infrastructure_report_document
-msgid "Individual others payment mode"
-msgstr "Mètode de pagament individual altres despeses"
+#. module: base_wua_invoicing_waterconnection_by_watercosts
+#: model:ir.model,name:base_wua_invoicing_waterconnection_by_watercosts.model_account_invoice
+msgid "Invoice"
+msgstr "Factura"
 
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.ui.view,arch_db:base_wua_invoicing_separate_waterconnection_billing.wua_partner_infrastructure_report_document
-msgid "Individual water payment account"
-msgstr "Compte per a mètode de pagament individual aigua"
+#. module: base_wua_invoicing_waterconnection_by_watercosts
+#: model:ir.model.fields,field_description:base_wua_invoicing_waterconnection_by_watercosts.field_wua_waterconnection_invoicing_factor
+msgid "Invoicing Factor"
+msgstr "Factor de facturació"
 
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.ui.view,arch_db:base_wua_invoicing_separate_waterconnection_billing.wua_partner_infrastructure_report_document
-msgid "Individual water payment mode"
-msgstr "Mètode de pagament individual aigua"
+#. module: base_wua_invoicing_waterconnection_by_watercosts
+#: model:ir.model.fields,field_description:base_wua_invoicing_waterconnection_by_watercosts.field_wua_invoiceset_line_line_waterconnectionbywatercosts_ids
+msgid "Lines for water connections (by water costs)"
+msgstr "Línies per a presses (segons els costos d’aigua)"
 
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.model,name:base_wua_invoicing_separate_waterconnection_billing.model_account_invoice_line
-msgid "Invoice Line"
-msgstr "Línia de factura"
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.ui.view,arch_db:base_wua_invoicing_separate_waterconnection_billing.wua_partner_infrastructure_report_document
-msgid "Irrigation Point"
-msgstr "Toma"
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.ui.view,arch_db:base_wua_invoicing_separate_waterconnection_billing.wua_waterconnection_view_form
-msgid "Other Costs"
-msgstr "Altres despeses"
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.model.fields,field_description:base_wua_invoicing_separate_waterconnection_billing.field_wua_waterconnection_othercosts_mandate_id
-msgid "Other Costs: Direct Debit Mandate"
-msgstr "Altres despreses: Mandat"
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.model.fields,field_description:base_wua_invoicing_separate_waterconnection_billing.field_wua_waterconnection_othercosts_mandate_required
-msgid "Other Costs: Mandate Required"
-msgstr "Altres despeses: Mandat requerit"
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.model.fields,field_description:base_wua_invoicing_separate_waterconnection_billing.field_wua_waterconnection_othercosts_payment_mode_id
-msgid "Other Costs: Payment Mode"
-msgstr "Altres despeses: Mode de pagament"
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.model.fields,field_description:base_wua_invoicing_separate_waterconnection_billing.field_account_banking_mandate_othercosts_waterconnection_ids
-msgid "Other Costs: Water connections associated with this mandate"
-msgstr "Altres despeses: Tomes associades amb aquest mandat"
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.ui.view,arch_db:base_wua_invoicing_separate_waterconnection_billing.wua_waterconnection_view_form
-msgid "Partner"
-msgstr "Empresa"
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.model.fields,field_description:base_wua_invoicing_separate_waterconnection_billing.field_wua_waterconnection_othercosts_partner_id
-msgid "Partner for other costs"
-msgstr "Soci per a altres despeses"
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.model.fields,field_description:base_wua_invoicing_separate_waterconnection_billing.field_wua_waterconnection_watercosts_partner_id
-msgid "Partner for water costs"
-msgstr "Soci per a les despeses d'aigua"
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.ui.view,arch_db:base_wua_invoicing_separate_waterconnection_billing.wua_waterconnection_view_form
-msgid "Payment Mode"
-msgstr "Mode de pagament"
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.model.fields,field_description:base_wua_invoicing_separate_waterconnection_billing.field_account_invoice_line_wc_payment_mode_id
-msgid "Payment Mode (wc separate billing)"
-msgstr "Mode de pagament (wc separat enunciar)"
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.ui.view,arch_db:base_wua_invoicing_separate_waterconnection_billing.wua_waterconnection_view_search
-msgid "Payment mode for other costs"
-msgstr "Mode de pagament per a altres despeses"
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.ui.view,arch_db:base_wua_invoicing_separate_waterconnection_billing.wua_waterconnection_view_search
-msgid "Payment mode for water costs"
-msgstr "Mode de pagament per a les despeses d'aigua"
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.ui.view,arch_db:base_wua_invoicing_separate_waterconnection_billing.wua_waterconnection_view_form
-msgid "Separate Billing"
-msgstr "Facturació separada"
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.model.fields,field_description:base_wua_invoicing_separate_waterconnection_billing.field_wua_waterconnection_othercosts_separate_billing
-msgid "Separate billing for other costs"
-msgstr "Facturació separada d'altres despeses"
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.ui.view,arch_db:base_wua_invoicing_separate_waterconnection_billing.wua_waterconnection_view_search
-msgid "Separate billing for other costs: No"
-msgstr "Facturació separada d'altres despeses: No"
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.ui.view,arch_db:base_wua_invoicing_separate_waterconnection_billing.wua_waterconnection_view_search
-msgid "Separate billing for other costs: Yes"
-msgstr "Facturació separada d'altres despeses: Sí"
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.model.fields,field_description:base_wua_invoicing_separate_waterconnection_billing.field_wua_waterconnection_watercosts_separate_billing
-msgid "Separate billing for water costs"
-msgstr "Facturació separada de les despeses d'aigua"
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.ui.view,arch_db:base_wua_invoicing_separate_waterconnection_billing.wua_waterconnection_view_search
-msgid "Separate billing for water costs: No"
-msgstr "Facturació separada de les despeses d'aigua: No"
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.ui.view,arch_db:base_wua_invoicing_separate_waterconnection_billing.wua_waterconnection_view_search
-msgid "Separate billing for water costs: Yes"
-msgstr "Facturació separada de les despeses d'aigua: Sí"
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: code:addons/base_wua_invoicing_separate_waterconnection_billing/models/wua_waterconnection.py:223
+#. module: base_wua_invoicing_waterconnection_by_watercosts
+#: code:addons/base_wua_invoicing_waterconnection_by_watercosts/models/wua_invoiceset.py:104
 #, python-format
-msgid "Separate water connection billing: It is mandatory to enter a valid mandate of the only partner that pays the other costs."
-msgstr "Facturació separada de tomes: És obligatori indicar un mandat validat que pertanyi a l'soci (únic) que es faci càrrec de les despeses diferents de l'aigua."
+msgid "Partner Multiplier"
+msgstr "Multiplicador del soci"
 
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: code:addons/base_wua_invoicing_separate_waterconnection_billing/models/wua_waterconnection.py:207
+#. module: base_wua_invoicing_waterconnection_by_watercosts
+#: model:product.template,name:base_wua_invoicing_waterconnection_by_watercosts.product_10
+msgid "Standard Water Connection Maintenance (based on percentage of water costs)"
+msgstr "Manteniment estàndard de la pressa (basat en un percentatge dels costos d’aigua)"
+
+#. module: base_wua_invoicing_waterconnection_by_watercosts
+#: code:addons/base_wua_invoicing_waterconnection_by_watercosts/models/wua_invoiceset.py:96
+#: code:addons/base_wua_invoicing_waterconnection_by_watercosts/models/wua_invoiceset.py:159
 #, python-format
-msgid "Separate water connection billing: It is mandatory to enter a valid mandate of the only partner that pays the water costs."
-msgstr "Facturació separada de tomes: És obligatori indicar un manat validat que pertanyi a l'soci (únic) que es faci càrrec de les despeses d'aigua."
+msgid "Water Connection"
+msgstr "Pressa"
 
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: code:addons/base_wua_invoicing_separate_waterconnection_billing/models/account_banking_mandate.py:38
+#. module: base_wua_invoicing_waterconnection_by_watercosts
+#: model:product.category,name:base_wua_invoicing_waterconnection_by_watercosts.categ_10
+msgid "Water Connection (based on percentage of water costs)"
+msgstr "Pressa (basada en percentatge dels costos d’aigua)"
+
+#. module: base_wua_invoicing_waterconnection_by_watercosts
+#: code:addons/base_wua_invoicing_waterconnection_by_watercosts/models/wua_invoiceset.py:251
 #, python-format
-msgid "Separate water connection billing: The mandate must be a valid mandate, because there are some water connections associated with this mandate (other costs)."
-msgstr "Facturació separada de tomes: El mandat ha de ser obligatòriament un mandat vàlid, ja que hi ha tomes associades a aquest mandat (facturació separada per altres despeses)."
+msgid "Water Connections"
+msgstr "Presses"
 
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: code:addons/base_wua_invoicing_separate_waterconnection_billing/models/account_banking_mandate.py:26
+#. module: base_wua_invoicing_waterconnection_by_watercosts
+#: code:addons/base_wua_invoicing_waterconnection_by_watercosts/models/wua_invoiceset.py:175
 #, python-format
-msgid "Separate water connection billing: The mandate must be a valid mandate, because there are some water connections associated with this mandate (water costs)."
-msgstr "Facturació separada de tomes: El mandat ha de ser obligatòriament un mandat vàlid, ja que hi ha tomes associades a aquest mandat (facturació separada per despeses d'aigua)."
+msgid "cost:"
+msgstr "cost:"
 
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: code:addons/base_wua_invoicing_separate_waterconnection_billing/models/wua_waterconnection.py:192
+#. module: base_wua_invoicing_waterconnection_by_watercosts
+#: code:addons/base_wua_invoicing_waterconnection_by_watercosts/models/wua_invoiceset.py:167
 #, python-format
-msgid "Separate water connection billing: there can be no more one payer for the other costs."
-msgstr "Facturació separada de tomes: No es permet que hi hagi més d'un soci a càrrec de despeses diferents de l'aigua."
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: code:addons/base_wua_invoicing_separate_waterconnection_billing/models/wua_waterconnection.py:183
-#, python-format
-msgid "Separate water connection billing: there can be no more one water payer."
-msgstr "Facturació separada de tomes: No es permet que hi hagi més d'un soci a càrrec de les despeses d'aigua."
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.ui.view,arch_db:base_wua_invoicing_separate_waterconnection_billing.wua_waterconnection_view_form
-msgid "Water Costs"
-msgstr "Despeses d'aigua"
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.model.fields,field_description:base_wua_invoicing_separate_waterconnection_billing.field_wua_waterconnection_watercosts_mandate_id
-msgid "Water Costs: Direct Debit Mandate"
-msgstr "Despeses d'aigua: Mandat"
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.model.fields,field_description:base_wua_invoicing_separate_waterconnection_billing.field_wua_waterconnection_watercosts_mandate_required
-msgid "Water Costs: Mandate Required"
-msgstr "Despeses d'aigua: Mandat requerit"
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.model.fields,field_description:base_wua_invoicing_separate_waterconnection_billing.field_wua_waterconnection_watercosts_payment_mode_id
-msgid "Water Costs: Payment Mode"
-msgstr "Despeses d'aigua: Mode de pagament"
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.model.fields,field_description:base_wua_invoicing_separate_waterconnection_billing.field_account_banking_mandate_watercosts_waterconnection_ids
-msgid "Water Costs: Water connections associated with this mandate"
-msgstr "Despeses d'aigua: tomes associades amb aquest mandat"
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.model.fields,field_description:base_wua_invoicing_separate_waterconnection_billing.field_wua_waterconnection_othercosts_potentially_billable
-msgid "With a single payer for other costs"
-msgstr "Amb un únic soci per als altres despeses"
-
-#. module: base_wua_invoicing_separate_waterconnection_billing
-#: model:ir.model.fields,field_description:base_wua_invoicing_separate_waterconnection_billing.field_wua_waterconnection_watercosts_potentially_billable
-msgid "With a single payer for water costs"
-msgstr "Amb un únic soci per a les despeses d'aigua"
+msgid "parcel"
+msgstr "parcel·la"
 
