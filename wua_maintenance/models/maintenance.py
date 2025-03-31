@@ -307,6 +307,23 @@ class MaintenanceEquipment(models.Model):
         inverse_name='parent_id',
     )
 
+    @api.model
+    def _cron_generate_requests_with_limit(self):
+        for plan in self.env['maintenance.plan'].search([('period', '>', 0)]):
+            # Now let's check if the next maintenance date is within the limit
+            # days from today
+            if (plan.next_maintenance_date <= fields.Date.today() +
+                    plan.days_to_create_new_maintenance):
+                equipment = plan.equipment_id
+                next_requests = self.env['maintenance.request'].search(
+                    [('stage_id.done', '=', False),
+                     ('equipment_id', '=', equipment.id),
+                     ('maintenance_type', '=', 'preventive'),
+                     ('maintenance_kind_id', '=', plan.maintenance_kind_id.id),
+                     ('request_date', '=', plan.next_maintenance_date)])
+                if not next_requests:
+                    equipment._create_new_request(plan)
+
     @api.multi
     def _compute_hydraulicsector(self):
         attributes_to_check = [
