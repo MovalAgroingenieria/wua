@@ -11,4 +11,5 @@ class WuaWaterconnection(models.Model):
     _in_create = False
 
     telecontrol_associated = fields.Selection(
-        selection_add=[('icr', 'ICR Hidroweb')],)
+        selection_add=[('icr', 'ICR Hidroweb')],
+    )

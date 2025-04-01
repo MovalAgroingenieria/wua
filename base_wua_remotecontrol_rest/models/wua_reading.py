@@ -6,7 +6,6 @@ import datetime
 import logging
 import math
 from odoo import models, fields, api, exceptions, _
-from odoo.tools.misc import profile
 
 
 class WuaReading(models.Model):
@@ -80,7 +79,8 @@ class WuaReading(models.Model):
                     _logger.info(prefix_message_02 + '... ' +
                                  suffix_message_02)
                     remotecontrol.message_post(
-                        body="Error %s: " % suffix_message_02,
+                        body="Error %s: %s" % (
+                            suffix_message_02, error_message),
                     )
                     telecontrol_failed_template_id = self.env.ref(
                         'base_wua_remotecontrol_rest.'
@@ -108,7 +108,7 @@ class WuaReading(models.Model):
                         'base_wua_remotecontrol_rest.wua_remotecontrol_logger',
                     )
                     new_remotecontrol.message_post(
-                        body="Error %s: " % e,
+                        body="Error %s: " % str(e),
                     )
                     new_cr.commit()
                 raise e

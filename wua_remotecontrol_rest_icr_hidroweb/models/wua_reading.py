@@ -1,14 +1,21 @@
 # -*- coding: utf-8 -*-
-# 2022 Moval Agroingeniería
+# 2025 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-import requests
 import json
-from odoo import models, api, exceptions, _
+import base64
+import requests
+from odoo import models, fields, api, exceptions, _
 
 
 class WuaReading(models.Model):
     _inherit = 'wua.reading'
+
+    remotecontrol_origin = fields.Selection(
+        selection_add=[
+            ('icr', 'ICR Hidroweb'),
+        ],
+    )
 
     @api.model
     def run_remotecontrol_application_url_icr(self):
@@ -25,16 +32,97 @@ class WuaReading(models.Model):
         return {
             'type': 'ir.actions.act_url',
             'url': url_remotecontrol_application,
-            'target': 'new', }
+            'target': 'new',
+        }
 
-    # Implemented hook
+    def open_connection_icr(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password):
+        resp = ''
+        resprest = requests.post(
+            url_remotecontrol_rest + '/login',
+            headers={'Content-Type': 'application/json'},
+            data=json.dumps({
+                'username': url_remotecontrol_rest_username,
+                'password': url_remotecontrol_rest_password,
+            }))
+        if resprest.ok and resprest.text:
+            response = json.loads(resprest.text)
+            if 'jwt' in response:
+                resp = response['jwt']
+        return resp
+
+    def fetch_hidrantes_icr(
+            self, url_remotecontrol_rest, jwt,
+            installation_identifier, client_identifier):
+        remotecontrol = self.env.ref(
+            'base_wua_remotecontrol_rest.wua_remotecontrol_logger')
+        url = (
+            url_remotecontrol_rest + '/clients/' + str(client_identifier) +
+            '/installations/' + str(installation_identifier) + '/tags/' +
+            '?items_per_page=1000000&filter=name:\'_CONTADOR$\':contains'
+        )
+        headers = {'Authorization': 'Bearer ' + jwt}
+        resprest = requests.get(url, headers=headers)
+        json_filename = 'icr_readings_%s_%s.json' % (
+            installation_identifier, fields.Datetime.now())
+        if resprest.ok:
+            json_data = resprest.text
+            encoded_data = base64.b64encode(
+                json_data.encode('utf-8')).decode('utf-8')
+            attachment = self.env['ir.attachment'].sudo().create({
+                'name': json_filename,
+                'type': 'binary',
+                'datas': encoded_data,
+                'datas_fname': json_filename,
+                'res_model': 'wua.remotecontrol',
+                'res_id': remotecontrol.id,
+            })
+            remotecontrol.message_post(
+                body=_('Successfully retrieved readings from ICR for '
+                       'installation %s. Status code: %s')
+                % (installation_identifier, resprest.status_code),
+                attachment_ids=[attachment.id])
+            self.env.cr.commit()
+            return json.loads(resprest.text), ''
+        else:
+            remotecontrol.message_post(
+                body=_(
+                    'Failed to retrieve readings from ICR for installation '
+                    '%s. Status code: %s, Response body: %s')
+                % (installation_identifier, resprest.status_code,
+                   resprest.text))
+            self.env.cr.commit()
+            return [], _(
+                'Error fetching data for installation %s' %
+                installation_identifier)
+
+    def _get_readings_info_icr_from_json(self, readings_json):
+        readings = []
+        for reading in readings_json['results']:
+            volume = reading['value']
+            code_values = reading['name'].split('_')
+            wm_name = '%s_%s' % (code_values[0], code_values[1])
+            readings.append({
+                'watermeter': wm_name,
+                'volume': volume,
+                'remotecontrol_origin': 'icr',
+            })
+        return readings
+
+    def _get_reading_time_from_remotecontrol(self, reading, now):
+        icr_reading_date = self.env.context.get('icr_reading_date', False)
+        if icr_reading_date and reading.get('remotecontrol_origin') == 'icr':
+            return icr_reading_date
+        return super(WuaReading, self)._get_reading_time_from_remotecontrol(
+            reading, now)
+
     def populate_data_for_import_readings_icr(
         self, url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password):
         resp = True
         return resp
 
-    # Implemented hook
     def import_readings_icr(
         self, url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password, list_of_data):
@@ -45,69 +133,42 @@ class WuaReading(models.Model):
             'wua.irrigation.configuration', 'installation_identifier')
         client_identifier = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'client_identifier')
-        # Check if exists, and in case, split value to get all the
-        # installations
-        if (installation_identifiers):
+        if installation_identifiers:
             installation_identifiers = installation_identifiers.split(',')
-        if (installation_identifiers and client_identifier):
+        if installation_identifiers and client_identifier:
             jwt = self.open_connection_icr(
-                url_remotecontrol_rest, url_remotecontrol_rest_username,
+                url_remotecontrol_rest,
+                url_remotecontrol_rest_username,
                 url_remotecontrol_rest_password)
             if jwt:
-                readings_response = []
                 for installation_identifier in installation_identifiers:
-                    url_readings = url_remotecontrol_rest + '/clients/' + \
-                        str(client_identifier) + '/installations/' + \
-                        str(installation_identifier) + '/tags/?' + \
-                        'items_per_page=1000000&filter=name:' + \
-                        '\'_CONTADOR$\':contains'
-                    headers = {
-                        'Authorization': 'Bearer ' + jwt,
-                    }
-                    resprest = requests.request(
-                        'GET', url_readings,
-                        headers=headers,
-                        data={}
-                    )
-                    if resprest.ok:
-                        # Array of installation and readings
-                        readings_response += [(
-                            installation_identifier,
-                            json.loads(resprest.text)['results'])]
-                    else:
-                        error_message = _(' Represt was not ok. ')
-                # Iterate the installation identifier and then all the readings
-                for installation_identifier, readings_res in readings_response:
-                    for reading in readings_res:
-                        volume = reading['value']
-                        code_values = reading['name'].split('_')
-                        wm_name = code_values[0] + '_' + code_values[1]
-                        volume = reading['value']
-                        readings.append({
-                            'watermeter': wm_name,
-                            'volume': volume,
-                        })
+                    json_data, fetch_error = self.fetch_hidrantes_icr(
+                        url_remotecontrol_rest, jwt,
+                        installation_identifier, client_identifier)
+                    if json_data:
+                        readings += self._get_readings_info_icr_from_json(
+                            json_data)
+                    if fetch_error:
+                        error_message += ' - ' + fetch_error
             else:
-                error_message = _(' It is not possible to stablish connection with icr. ')
+                error_message = _(
+                    'It is not possible to establish connection with ICR.')
         else:
-            error_message = _(' It is not possible to get installation / client identifiers. ')
+            error_message = _(
+                'It is not possible to get installation / client identifiers.')
         return readings, error_message, error_watermeters
 
-    # Hook that will be implemeneted on every telecontrol
     def do_import_reading_of_telecontrol(self):
-        # Get super data and then append here data
-        # Result in format [readings, error_message, error_watermeters]
         others_readings_info = \
             list(super(WuaReading, self).do_import_reading_of_telecontrol())
         url_remotecontrol_rest = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'url_remotecontrol_rest_icr')
+        url_remotecontrol_rest_username = self.env['ir.values'].get_default(
             'wua.irrigation.configuration',
-            'url_remotecontrol_rest_icr')
-        url_remotecontrol_rest_username = self.env['ir.values'].\
-            get_default('wua.irrigation.configuration',
-                        'url_remotecontrol_rest_username_icr')
-        url_remotecontrol_rest_password = self.env['ir.values'].\
-            get_default('wua.irrigation.configuration',
-                        'url_remotecontrol_rest_password_icr')
+            'url_remotecontrol_rest_username_icr')
+        url_remotecontrol_rest_password = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration',
+            'url_remotecontrol_rest_password_icr')
         import_from_readings = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'import_from_readings_icr')
         if (import_from_readings and url_remotecontrol_rest and
@@ -123,35 +184,12 @@ class WuaReading(models.Model):
                         self.import_readings_icr(
                             url_remotecontrol_rest,
                             url_remotecontrol_rest_username,
-                            url_remotecontrol_rest_password, data)
-                    if (readings):
-                        # Merge arrays
-                        others_readings_info[0] += readings
-                    if (error_message):
-                        # Merge Strings
-                        others_readings_info[1] += ' - ' + error_message
-                    if (error_watermeters):
-                        # Merge Strings
-                        others_readings_info[2] += error_watermeters
+                            url_remotecontrol_rest_password,
+                            data)
+                    others_readings_info[0] += readings
+                    others_readings_info[1] += ' - ' + error_message
+                    others_readings_info[2] += error_watermeters
             except Exception as e:
-                others_readings_info[1] += ' - ' + 'Hidroweb error:\n\n' + str(e) + '\n\n'
+                others_readings_info[1] += \
+                    ' - ICR error:\n\n' + str(e) + '\n\n'
         return others_readings_info
-
-    def open_connection_icr(
-        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
-            url_remotecontrol_rest_password):
-        resp = ''
-        resprest = requests.request(
-            'POST', url_remotecontrol_rest + '/login',
-            headers={
-                'Content-Type': 'application/json'
-                },
-            data=json.dumps({
-                'username': url_remotecontrol_rest_username,
-                'password': url_remotecontrol_rest_password
-                }))
-        if resprest.ok and resprest.text:
-            response = json.loads(resprest.text)
-            if 'jwt' in response:
-                resp = response['jwt']
-        return resp
