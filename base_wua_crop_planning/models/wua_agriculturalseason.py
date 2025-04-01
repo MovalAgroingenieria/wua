@@ -163,12 +163,12 @@ class WuaAgriculturalseason(models.Model):
                     'order': 1,
                     'area_official': parcel.area_official,
                     'area_perc': 100,
-                    'subparceltype_id': no_cultivation_subparcel_type.id
+                    'subparceltype_id': no_cultivation_subparcel_type.id,
                     }
                 self.env['wua.cropplan'].create({
                     'agriculturalseason_id': self.id,
                     'partner_id': parcel.partner_id.id,
-                    'enrolledsubparcel_ids': [(0, 0, enrolledsubparcel_data)]
+                    'enrolledsubparcel_ids': [(0, 0, enrolledsubparcel_data)],
                     })
             else:
                 cropplan = parcel.partner_id.cropplan_id
@@ -178,7 +178,7 @@ class WuaAgriculturalseason(models.Model):
                     'order': 1,
                     'area_official': parcel.area_official,
                     'area_perc': 100,
-                    'subparceltype_id': no_cultivation_subparcel_type.id
+                    'subparceltype_id': no_cultivation_subparcel_type.id,
                     })
                 subparcels.search([('parcel_id', '=', parcel.id)]).unlink()
                 subparcels.create({
@@ -188,7 +188,7 @@ class WuaAgriculturalseason(models.Model):
                     'pos': 1,
                     'area_official': parcel.area_official,
                     'area_perc': 100,
-                    'subparceltype_id': no_cultivation_subparcel_type.id
+                    'subparceltype_id': no_cultivation_subparcel_type.id,
                     })
                 parcel.cropplan_id = cropplan.id
         # Step 2/2: Reset all links of partners and parcels with their
@@ -229,7 +229,7 @@ class WuaAgriculturalseason(models.Model):
                 'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
                 'search_view_id': (search_view.id, search_view.name),
                 'target': 'current',
-                'domain': [('id', 'in', self.cropplan_ids.ids)]
+                'domain': [('id', 'in', self.cropplan_ids.ids)],
                 }
             return act_window
 
@@ -253,7 +253,7 @@ class WuaAgriculturalseason(models.Model):
                 'target': 'current',
                 'domain': [('id', 'in', self.enrolledsubparcel_ids.ids)],
                 'context': {'reduced_name_get_for_agriculturalseason': True,
-                            'reduced_name_get_for_cropplan': True}
+                            'reduced_name_get_for_cropplan': True},
                 }
             return act_window
 

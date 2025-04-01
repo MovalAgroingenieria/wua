@@ -89,7 +89,8 @@ class WuaCropplan(models.Model):
         required=True,
         index=True,
         readonly=True,
-        default=lambda self: self.env.user,)
+        default=lambda self: self.env.user,
+    )
 
     enrolledsubparcel_ids = fields.One2many(
         string='Subparcels',
@@ -148,11 +149,6 @@ class WuaCropplan(models.Model):
         string='State',
         track_visibility='onchange')
 
-    _sql_constraints = [
-        ('unique_name', 'UNIQUE (name)',
-         'Existing Crop Plan.'),
-        ]
-
     is_portal_user = fields.Boolean(
         string='Created by the partner',
         default=False,
@@ -162,8 +158,13 @@ class WuaCropplan(models.Model):
     with_second_cultivation = fields.Boolean(
         string="With Second Cultivation",
         compute='_compute_with_second_cultivation',
-        store=True
+        store=True,
     )
+
+    _sql_constraints = [
+        ('unique_name', 'UNIQUE (name)',
+         'Existing Crop Plan.'),
+    ]
 
     @api.depends('enrolledsubparcel_ids',
                  'enrolledsubparcel_ids.with_second_cultivation')
@@ -810,7 +811,7 @@ class WuaCropplan(models.Model):
             enrolledsubparcels.append([0, False, enrolledsubparcel])
         if (enrolledsubparcels):
             self.write({
-                'enrolledsubparcel_ids': enrolledsubparcels
+                'enrolledsubparcel_ids': enrolledsubparcels,
             })
 
     def validate_cropplans(self, active_cropplans):
