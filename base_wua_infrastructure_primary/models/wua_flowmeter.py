@@ -19,7 +19,21 @@ class WuaFlowmeter(models.Model):
 
     description = fields.Char(
         string='Description',
-        index=True,)
+        index=True,
+    )
+
+    nominal_diameter = fields.Integer(
+        string='Nominal Diameter',
+        default=0,
+        track_visibility='onchange',
+    )
+
+    serial_number = fields.Char(
+        size=40,
+        string="Serial Number",
+        index=True,
+        track_visibility='onchange',
+    )
 
     state = fields.Selection([
         ('active', 'Active'),
