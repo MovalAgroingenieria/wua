@@ -459,7 +459,9 @@ class WuaInvoiceset(models.Model):
                 main_partner_id = lines_others[0]['partner_id']
             grouped_lines = {}
             if main_partner_id:
-                grouped_lines[main_partner_id] = lines_others.copy()
+                # The : Is used to make a copy of the list
+                # but not to reference the same list
+                grouped_lines[main_partner_id] = lines_others[:]
                 # Get lines of category 10 for the main partner
                 grouped_lines[main_partner_id] += [
                     line for line in lines_cat10 if line['partner_id'] ==
