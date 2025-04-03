@@ -6,6 +6,7 @@ from odoo import models, fields, api, _
 import json
 from lxml import etree
 
+
 class WuaWatermeter(models.Model):
     _inherit = 'mail.thread'
     _name = 'wua.watermeter'

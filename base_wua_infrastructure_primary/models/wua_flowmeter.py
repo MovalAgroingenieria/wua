@@ -35,6 +35,21 @@ class WuaFlowmeter(models.Model):
         track_visibility='onchange',
     )
 
+    flowmeter_brand = fields.Char(
+        string="Brand",
+        track_visibility='onchange',
+    )
+
+    flowmeter_model = fields.Char(
+        string="Model",
+        track_visibility='onchange',
+    )
+
+    installation_date = fields.Date(
+        string="Installation date",
+        track_visibility='onchange',
+    )
+
     state = fields.Selection([
         ('active', 'Active'),
         ('stored', 'Stored'),
