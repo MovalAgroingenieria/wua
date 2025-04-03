@@ -104,6 +104,10 @@ class MaintenanceRequest(models.Model):
         readonly=True,
     )
 
+    description = fields.Html(
+        string='Description',
+    )
+
     @api.depends('equipment_id')
     def _compute_hydraulicsector_id(self):
         for record in self:

@@ -412,6 +412,8 @@ class MaintenanceGisController(http.Controller):
             'related_element_extradata': maintenance.related_element_extradata,
             'maintenance_type': maintenance_type_label,
             'maintenance_kind': maintenance.maintenance_kind_id.name or '',
+            'procedure_description':
+                maintenance.maintenance_kind_id.procedure_description or '',
             'technician': maintenance.technician_user_id.name or '',
             'field_resolved': maintenance.field_resolved,
             'resolution_description': maintenance.resolution_description or '',

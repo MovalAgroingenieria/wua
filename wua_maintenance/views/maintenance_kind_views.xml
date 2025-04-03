@@ -7,9 +7,14 @@
         <field name="arch" type="xml">
             <form string="Maintenance Kind">
                 <sheet>
-                    <group>
-                        <field name="name"/>
-                        <field name="category_id"/>
+                    <group name="master_data">
+                        <group>
+                            <field name="name"/>
+                            <field name="category_id"/>
+                            <field name="procedure_description"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
                         <notebook>
                             <page string="Dynamic Fields">
                                 <field name="dynamic_field_ids">

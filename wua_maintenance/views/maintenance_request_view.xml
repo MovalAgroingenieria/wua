@@ -71,4 +71,19 @@
         </field>
     </record>
 
+    <record id="hr_equipment_request_view_search" model="ir.ui.view">
+        <field name="name">equipment.request.search</field>
+        <field name="model">maintenance.request</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_request_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='inactive']" position="before">
+                <separator/>
+                <filter string='Field resolved' name='field_resolved' domain="[('field_resolved', '=', True)]"/>
+                <separator/>
+                <filter string='Created on field' name='created_on_field' domain="[('created_on_field', '=', True)]"/>
+                <separator/>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>

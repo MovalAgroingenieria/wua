@@ -76,7 +76,7 @@ class WizardMassiveMaintenanceReequests(models.TransientModel):
         comodel_name='project.project',
     )
 
-    description = fields.Text(
+    description = fields.Html(
         string='Description',
     )
 

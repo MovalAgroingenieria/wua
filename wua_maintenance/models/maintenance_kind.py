@@ -23,6 +23,10 @@ class MaintenanceKind(models.Model):
         string='Dynamic Fields',
     )
 
+    procedure_description = fields.Html(
+        string='Procedure description',
+    )
+
     @api.model
     def update_dynamic_fields(self, record, values):
         for field in self.dynamic_field_ids:
