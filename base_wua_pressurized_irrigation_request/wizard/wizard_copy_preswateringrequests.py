@@ -63,41 +63,12 @@ class WizardCopyPreswateringrequests(models.TransientModel):
                 self.end_date > self.preswateringperiod_id.end_date):
             raise exceptions.UserError(
                 _('The date range must be within the watering period.'))
-
         preswateringrequests = self.env['wua.preswateringrequest'].browse(
             self.env.context['active_ids'])
-
         current_date = datetime.strptime(str(self.initial_date), '%Y-%m-%d')
         end_date = datetime.strptime(str(self.end_date), '%Y-%m-%d')
-
         while current_date <= end_date:
             for request in preswateringrequests:
-                self._copy_single_request(request, current_date)
+                self.env['wua.preswateringrequest'].\
+                    _copy_single_request(request, current_date)
             current_date += timedelta(days=self.interval_days)
-
-    def _copy_single_request(self, request, copy_date):
-        copy_date_str = copy_date.strftime('%Y-%m-%d')
-        new_request_vals = {
-            'preswateringperiod_id': self.preswateringperiod_id.id,
-            'initial_date': copy_date_str,
-            'partner_id': request.partner_id.id,
-        }
-        if request.presresconsumption_ids:
-            presresconsumption_vals = []
-            for presresconsumption in request.presresconsumption_ids:
-                presresconsumption_vals.append((0, 0, {
-                    'waterconnection_id':
-                        presresconsumption.waterconnection_id.id,
-                    'watering_duration':
-                        presresconsumption.watering_duration,
-                    'nominal_flow':
-                        presresconsumption.nominal_flow,
-                    'nominal_flow_ls':
-                        presresconsumption.nominal_flow_ls,
-                    'initial_hour':
-                        presresconsumption.initial_hour,
-                    'from_recurrence': True,
-                }))
-            new_request_vals['presresconsumption_ids'] = \
-                presresconsumption_vals
-        self.env['wua.preswateringrequest'].create(new_request_vals)

@@ -366,7 +366,7 @@ class WuaPreswateringrequest(models.Model):
         }
         # Ensure only the waterconnections of the partner are copied
         # to the new request and not the old ones (This may change)
-        partner_waterconnections = self.partner_id.waterconnectionlink_ids.\
+        partner_waterconnections = request.partner_id.waterconnectionlink_ids.\
             mapped(lambda x: x.waterconnection_id.id)
         presresconsumption_ids = request.presresconsumption_ids.filtered(
             lambda x: x.waterconnection_id.id in partner_waterconnections)

@@ -104,9 +104,15 @@ class WuaPresreswateringrequest(models.Model):
                 fields.Datetime.from_string(copy_date_str) + timedelta(days=1),
             ),
         }
-        if request.presresconsumption_ids:
+        # Ensure only the waterconnections of the partner are copied
+        # to the new request and not the old ones (This may change)
+        partner_waterconnections = request.partner_id.waterconnectionlink_ids.\
+            mapped(lambda x: x.waterconnection_id.id)
+        presresconsumption_ids = request.presresconsumption_ids.filtered(
+            lambda x: x.waterconnection_id.id in partner_waterconnections)
+        if presresconsumption_ids:
             presresconsumption_vals = []
-            for presresconsumption in request.presresconsumption_ids:
+            for presresconsumption in presresconsumption_ids:
                 presresconsumption_vals.append((0, 0, {
                     'waterconnection_id':
                         presresconsumption.waterconnection_id.id,
