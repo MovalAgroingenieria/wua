@@ -15,7 +15,8 @@ class WuaSigpac(models.Model):
     _url_sigpac_viewer = 'https://sigpac.mapa.es/fega/visor/' + \
         '#&visible=Inicio-SigPac;1/2.000.000;1/200.000;Ortofotos;1/25.000;' + \
         'Recinto&provincia=provinciaval&municipio=municipioval&' + \
-        'poligono=poligonoval&parcela=parcelaval&recinto=recintoval'
+        'poligono=poligonoval&parcela=parcelaval&recinto=recintoval' + \
+        '&agregado=agregadoval&zona=zonaval'
 
     name = fields.Char(
         string='SIGPAC Code',)
@@ -143,13 +144,17 @@ class WuaSigpac(models.Model):
             poligono = str(record.poligono).zfill(3)
             parcela = str(record.parcela).zfill(5)
             recinto = str(record.recinto)
+            agregado = str(record.agregado)
+            zona = str(record.zona)
             sigpac_link = \
                 self._url_sigpac_viewer.replace('provinciaval', provincia).\
                 replace('municipioval', municipio).\
                 replace('poligonoval', poligono).\
                 replace('parcelaval', parcela).\
-                replace('recintoval', recinto)
-        record.sigpac_link = sigpac_link
+                replace('recintoval', recinto).\
+                replace('agregadoval', agregado).\
+                replace('zonaval', zona)
+            record.sigpac_link = sigpac_link
 
     @api.multi
     def _compute_number_of_sigpaclinks(self):
