@@ -341,31 +341,36 @@
                                 </tr>
                             </thead>
                             <tbody class="invoice_tbody" name="invoice_line_body">
-                                <tr t-foreach="o.invoice_line_ids" t-as="l" style="page-break-before: always; page-break-after: auto; page-break-inside: avoid;">
-                                    <td name="product"><span t-field="l.product_id"/></td>
-                                    <td name="description"><span t-field="l.name"/></td>
-                                    <td name="src_document" class="hidden"><span t-field="l.origin"/></td>
+                                <t name="t-set-invoice-lines" t-set="invoice_line_ids" t-value="o.invoice_line_ids"/>
+                                <tr t-foreach="invoice_line_ids" t-as="l" style="page-break-before: always; page-break-after: auto; page-break-inside: avoid;">
+                                    <td name="product"><span t-esc="l['product_id'].display_name"/></td>
+                                    <td name="description"><span t-esc="l['name']"/></td>
+                                    <td name="src_document" class="hidden"><span t-esc="l['origin']"/></td>
                                     <td name="quantity" class="text-right">
-                                        <span t-field="l.quantity"/>
-                                        <span t-field="l.uom_id" groups="product.group_uom"/>
+                                        <t t-set="dp" t-value="o.env['decimal.precision'].search([('name', '=', 'Product Price')], limit=1)"/>
+                                        <t t-set="digits" t-value="dp.digits if dp else 3"/>
+                                        <t t-set="formatted_quantity"
+                                           t-value="o.env['wua.parcel'].transform_float_to_locale(l['quantity'], digits)"/>
+                                        <span t-esc="formatted_quantity"/>
+                                        <span t-esc="l['uom_id'].name" groups="product.group_uom"/>
                                     </td>
                                     <td name="price" class="text-right">
-                                        <span name="price_unit_span" t-field="l.price_unit" t-options='{"widget": "monetary", "display_currency": l.currency_id}'/>
-                                        <t t-if="l.uom_id">
+                                        <span name="price_unit_span" t-esc="l['price_unit']" t-options='{"widget": "monetary", "display_currency": l["currency_id"]}'/>
+                                        <t t-if="l['uom_id']">
                                             <span>/</span>
-                                            <span t-field="l.uom_id" groups="product.group_uom"/>
+                                            <span t-esc="l['uom_id'].name" groups="product.group_uom"/>
                                         </t>
                                     </td>
                                     <td t-if="display_discount" name="discount" class="text-right">
-                                        <span t-field="l.discount"/>
+                                        <span t-esc="l['discount']"/>
                                     </td>
                                     <td name="taxes">
                                         <!-- Change tax column from tax description to tax name (see below) -->
                                         <!-- Hidden in some custom modules -->
-                                        <span t-esc="', '.join(map(lambda x: (x.name), l.invoice_line_tax_ids))"/>
+                                        <span t-esc="', '.join(map(lambda x: (x.name), l['invoice_line_tax_ids']))"/>
                                     </td>
                                     <td name="amount" class="text-right">
-                                        <span t-field="l.price_subtotal"
+                                        <span t-esc="l['price_subtotal']"
                                             t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                                     </td>
                                 </tr>
