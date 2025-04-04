@@ -2,7 +2,7 @@
 # Copyright 2018 Eduardo Iniesta - <einiesta@moval.es>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields
+from odoo import models, fields, _
 
 
 class AccountInvoice(models.Model):
@@ -59,6 +59,18 @@ class AccountInvoice(models.Model):
                 lines.append(item)
         return lines
 
+    def _get_grouped_wc_description_for_report(
+            self, waterconnection_id, quantity):
+        formatted_qty = self.env['wua.parcel'].transform_float_to_locale(
+            quantity, 4,
+        )
+        return _(u'Water Connection %s; Total Consumption: %s m³') % (
+            waterconnection_id.name, formatted_qty)
+
     def _is_invoicing_based_on_wc(self):
         return (self.env['ir.values'].get_default(
             'wua.invoicing.configuration', 'invoicing_based_on_wc'))
+
+    def _must_group_wc_lines_on_report(self):
+        return (self.env['ir.values'].get_default(
+            'wua.invoicing.configuration', 'group_wc_lines_on_report'))

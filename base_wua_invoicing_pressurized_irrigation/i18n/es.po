@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-19 15:17+0000\n"
-"PO-Revision-Date: 2025-02-19 15:17+0000\n"
+"POT-Creation-Date: 2025-04-04 10:32+0000\n"
+"PO-Revision-Date: 2025-04-04 10:32+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -88,11 +88,6 @@ msgid "Adjust. Value (m3)"
 msgstr "Regularización (m³)"
 
 #. module: base_wua_invoicing_pressurized_irrigation
-#: model:product.template,name:base_wua_invoicing_pressurized_irrigation.product_07
-msgid "Agua Trasvase goteo (m³)"
-msgstr "Agua Trasvase goteo (m³)"
-
-#. module: base_wua_invoicing_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_invoicing_pressurized_irrigation.report_invoice_lines
 msgid "Amount"
 msgstr "Importe"
@@ -165,7 +160,7 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:base_wua_invoicing_pressurized_irrigation.field_wizard_print_invoices_create_date
 #: model:ir.model.fields,field_description:base_wua_invoicing_pressurized_irrigation.field_wua_invoiceset_line_presconsumption_create_date
 msgid "Created on"
-msgstr "Creado en"
+msgstr "Creado el"
 
 #. module: base_wua_invoicing_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_invoicing_pressurized_irrigation.field_wua_irrigation_configuration_default_pressure_product_id
@@ -236,7 +231,7 @@ msgid "Entity (water connection)"
 msgstr "Elemento (toma)"
 
 #. module: base_wua_invoicing_pressurized_irrigation
-#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:610
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:628
 #, python-format
 msgid "Error when updating records."
 msgstr "Error al actualizar los registros."
@@ -279,6 +274,11 @@ msgid "Group By"
 msgstr "Agrupar por"
 
 #. module: base_wua_invoicing_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_invoicing_pressurized_irrigation.field_wua_invoicing_configuration_group_wc_lines_on_report
+msgid "Group Waterconnection lines on report"
+msgstr "Agrupar líneas por toma en informe"
+
+#. module: base_wua_invoicing_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_invoicing_pressurized_irrigation.field_wua_invoiceset_line_presconsumption_hydraulicsector_id
 #: model:ir.ui.view,arch_db:base_wua_invoicing_pressurized_irrigation.wua_invoiceset_line_presconsumption_view_search
 msgid "Hydraulic Sector"
@@ -300,6 +300,11 @@ msgstr "Identificador"
 #: model:ir.model.fields,help:base_wua_invoicing_pressurized_irrigation.field_wua_invoicing_configuration_invoicing_based_on_wc
 msgid "If enabled, invoicing will be based only on water connections, parcels will be ignored"
 msgstr "Si se activa, cada factura estará referida a una toma, y se asumirá que todas las parcelas de la toma tienen el mismo pagador de agua"
+
+#. module: base_wua_invoicing_pressurized_irrigation
+#: model:ir.model.fields,help:base_wua_invoicing_pressurized_irrigation.field_wua_invoicing_configuration_group_wc_lines_on_report
+msgid "If marked, waterconnection lines will be grouped on report only if not invoicing based on wc"
+msgstr "Si está marcado, las líneas de consumos a persión se agruparán por toma dentro del informe de factura solo si no se agrupan por toma"
 
 #. module: base_wua_invoicing_pressurized_irrigation
 #: model:ir.model.fields,help:base_wua_invoicing_pressurized_irrigation.field_wua_invoicing_configuration_separate_wc_invoices
@@ -487,6 +492,11 @@ msgid "Lines for pressure consumptions"
 msgstr "Líneas para consumos de presión"
 
 #. module: base_wua_invoicing_pressurized_irrigation
+#: model:product.template,name:base_wua_invoicing_pressurized_irrigation.product_07
+msgid "Normal Water"
+msgstr "Manteniment Comunitat aigua 2025"
+
+#. module: base_wua_invoicing_pressurized_irrigation
 #: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_presconsumption.py:82
 #, python-format
 msgid "Not Invoiced"
@@ -514,7 +524,7 @@ msgid "Parcel"
 msgstr "Parcela"
 
 #. module: base_wua_invoicing_pressurized_irrigation
-#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:614
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:632
 #, python-format
 msgid "Pressure Consumptions"
 msgstr "Consumos de presión"
@@ -658,6 +668,12 @@ msgid "Water Connection"
 msgstr "Toma"
 
 #. module: base_wua_invoicing_pressurized_irrigation
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/account_invoice.py:67
+#, python-format
+msgid "Water Connection %s; Total Consumption: %s m³"
+msgstr "Toma %s; Consumo total: %s m³"
+
+#. module: base_wua_invoicing_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_invoicing_pressurized_irrigation.field_wizard_print_invoice_lines_waterconnection_ids
 #: model:ir.model.fields,field_description:base_wua_invoicing_pressurized_irrigation.field_wizard_print_invoices_waterconnection_ids
 msgid "Water Connections"
@@ -678,8 +694,8 @@ msgid "Water Type"
 msgstr "Tipo de agua"
 
 #. module: base_wua_invoicing_pressurized_irrigation
-#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:703
-#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:714
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:721
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:732
 #, python-format
 msgid "You cannot add or remove because the invoice set state is 'generated'."
 msgstr "No puedes añadir o eliminar porque el lote de facturas está en estado 'generado'."
@@ -725,3 +741,4 @@ msgstr "perfil"
 #, python-format
 msgid "total consumption"
 msgstr "consumo total"
+

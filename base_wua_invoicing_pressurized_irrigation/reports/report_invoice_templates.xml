@@ -21,13 +21,13 @@
                         <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
                             <t t-if="report_style == 'light'">
                                 <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
-                                    <div style="float: left; width: 32px;"><span class="fa fa-moval-irrigation"/></div>
+                                    <div style="float: left; wc_idth: 32px;"><span class="fa fa-moval-irrigation"/></div>
                                     <div style="float: left; display: inline;"><strong>Consumptions</strong></div>
                                </div>
                             </t>
                             <t t-else="">
                                 <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
-                                    <div style="float: left; width: 32px;"><span class="fa fa-moval-irrigation"/></div>
+                                    <div style="float: left; wc_idth: 32px;"><span class="fa fa-moval-irrigation"/></div>
                                     <div style="float: left; display: inline;"><strong>Consumptions</strong></div>
                                 </div>
                             </t>
@@ -37,8 +37,8 @@
                                 <thead>
                                     <tr>
                                       <t t-if="is_based_on_wc">
-                                        <th style="width: 15%;">Water Connection</th>
-                                        <th name= "th_watermeter_based_on_wc" style="width: 16%;">Water Meter</th>
+                                        <th style="wc_idth: 15%;">Water Connection</th>
+                                        <th name= "th_watermeter_based_on_wc" style="wc_idth: 16%;">Water Meter</th>
                                         <th id="th-initial-time-date-label">Initial time date</th>
                                         <th id="th-final-time-date-label">Final time date</th>
                                         <th class="text-right">Initial Reading</th>
@@ -159,6 +159,80 @@
                         </div>
                     </div>
                 </t>
+            </t>
+        </xpath>
+
+        <!-- Group consumptions by waterconnection whne not invoicing_based_on_wc -->
+        <xpath expr="//tbody[@name='invoice_line_body']/t[@name='t-set-invoice-lines']" position="after">
+            <t t-if="not o._is_invoicing_based_on_wc() and o._must_group_wc_lines_on_report()">
+                <t t-set="group_lines" t-value="[]"/>
+                <t t-set="other_lines" t-value="[]"/>
+                <t t-foreach="o.invoice_line_ids" t-as="l">
+                    <t t-if="l['product_id'].categ_id.productcategory_code == 7">
+                        <t t-set="group_lines" t-value="group_lines + [l]"/>
+                        </t>
+                    <t t-else="">
+                        <t t-set="other_lines" t-value="other_lines + [l]"/>
+                    </t>
+                </t>
+                <t t-set="grouped_by_wc" t-value="{}"/>
+                <t t-foreach="group_lines" t-as="l">
+                    <t t-set="wc_id" t-value="l['waterconnection_id'].id"/>
+                    <t t-set="product_id" t-value="l['product_id'].id"/>
+                    <t t-set="key_str" t-value="str(wc_id) + '_' + str(product_id)"/>
+                    <t t-if="key_str in grouped_by_wc">
+                        <t t-set="prev" t-value="grouped_by_wc[key_str]"/>
+                        <t t-set="updated_entry" t-value="{
+                            key_str: {
+                                'quantity': prev['quantity'] + l['quantity'],
+                                'amount': prev['amount'] + l['price_subtotal'],
+                                'uom': l['uom_id'],
+                                'product_id': l['product_id'],
+                                'waterconnection_id': l['waterconnection_id'],
+                                'price_unit': l['price_unit'],
+                                'discount': l['discount'],
+                                'invoice_line_tax_ids': l['invoice_line_tax_ids'],
+                                'currency_id': l['currency_id'],
+                                'origin': l['origin'],
+                            }
+                        }"/>
+                        <t t-set="grouped_by_wc" t-value="dict(list(grouped_by_wc.items()) + list(updated_entry.items()))"/>
+                    </t>
+                    <t t-else="">
+                        <t t-set="new_entry" t-value="{
+                            key_str: {
+                                'quantity': l['quantity'],
+                                'amount': l['price_subtotal'],
+                                'uom': l['uom_id'],
+                                'product_id': l['product_id'],
+                                'waterconnection_id': l['waterconnection_id'],
+                                'price_unit': l['price_unit'],
+                                'discount': l['discount'],
+                                'invoice_line_tax_ids': l['invoice_line_tax_ids'],
+                                'currency_id': l['currency_id'],
+                                'origin': l['origin'],
+                            }
+                        }"/>
+                        <t t-set="grouped_by_wc" t-value="dict(list(grouped_by_wc.items()) + list(new_entry.items()))"/>
+                    </t>
+                </t>
+                <t t-set="grouped_wc_lines" t-value="[]"/>
+                <t t-foreach="grouped_by_wc.values()" t-as="grp">
+                    <t t-set="line_name" t-value="o._get_grouped_wc_description_for_report(grp['waterconnection_id'], grp['quantity'])"/>
+                    <t t-set="grouped_wc_lines" t-value="grouped_wc_lines + [{
+                    'product_id': grp['product_id'],
+                    'name': line_name,
+                    'origin': grp['origin'],
+                    'quantity': grp['quantity'],
+                    'price_unit': grp['price_unit'],
+                    'uom_id': grp['uom'],
+                    'discount': grp['discount'],
+                    'invoice_line_tax_ids': grp['invoice_line_tax_ids'],
+                    'price_subtotal': grp['amount'],
+                    'currency_id': grp['currency_id'],
+                    }]"/>
+                </t>
+                <t t-set="invoice_line_ids" t-value="grouped_wc_lines + other_lines"/>
             </t>
         </xpath>
     </template>

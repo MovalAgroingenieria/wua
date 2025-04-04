@@ -13,6 +13,9 @@
                        string="Invoicing of Pressurized Irrigation">
                     <field name="invoicing_based_on_wc"
                            string="Based on Water Con."/>
+                    <field name="group_wc_lines_on_report"
+                           attrs="{'invisible': [('invoicing_based_on_wc', '=', True)]}"/>
+
                 </group>
             </xpath>
             <xpath expr="//field[@name='group_detail_lines_of_wc_if_same_payer']"
