@@ -446,9 +446,11 @@
                                             <th name="th_presconsumption">Consumption</th>
                                         </thead>
                                         <tbody>
+                                            <t t-set="total_volume_real" t-value="0.0"/>
                                             <t t-set="filtered_readings" t-value="o.reading_ids.filtered(lambda r: r.waterconnection_id == waterconnection)"/>
                                             <t t-if="filtered_readings">
                                                 <t t-foreach="filtered_readings" t-as="wr">
+                                                    <t t-set="total_volume_real" t-value="total_volume_real + (wr.presconsumption_volume_real or 0.0)"/>
                                                     <tr>
                                                         <td name="td_readingtime">
                                                             <span t-field="wr.reading_time" t-options="{'format': 'dd/MM/YYYY'}"/>
@@ -482,6 +484,16 @@
                                                         </td>
                                                     </tr>
                                                 </t>
+                                                <tr>
+                                                    <td colspan="2" class="text-right font-weight-bold">
+                                                        Total
+                                                    </td>
+                                                    <td class="text-right font-weight-bold">
+                                                        <t t-set="total_formatted" t-value="o.env['wua.parcel'].transform_float_to_locale(total_volume_real, 2)"/>
+                                                        <span t-esc="total_formatted"/>
+                                                    </td>
+                                                    <td colspan="3"></td>
+                                                </tr>
                                             </t>
                                         </tbody>
                                     </table>
