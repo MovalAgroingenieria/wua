@@ -149,7 +149,7 @@ class ResNotification(models.Model):
             if vals['state'] == '03_sent':
                 self._set_state_of_letters(state='rec')
             if vals['state'] == '04_executed':
-                self._set_state_of_letters(state='draft')
+                self._set_state_of_letters(state='rec')
         return True
 
     @api.multi
