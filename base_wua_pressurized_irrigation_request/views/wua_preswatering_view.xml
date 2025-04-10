@@ -110,7 +110,7 @@
                             <page name="condition_line_page" string="Condition Lines">
                                 <group name="condition_line_group">
                                     <field name="condition_line_ids" attrs="{'readonly':[('state', '=', '03_validated')]}">
-                                        <tree editable="bottom">
+                                        <tree editable="bottom" colors="red:state=='03_not_ok';green:state=='02_ok';">
                                             <field name="sequence" widget="handle"/>
                                             <field name="condition_id"/>
                                             <field name="check_value"/>
@@ -311,6 +311,7 @@
                         <group name="master_data_right">
                             <field name="comparison_operator"/>
                             <field name="value"/>
+                            <field name="is_mandatory"/>
                         </group>
                     </group>
                     <group name="slave_data">

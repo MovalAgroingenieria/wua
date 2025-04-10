@@ -617,7 +617,7 @@ class WuaPreswatering(models.Model):
     def validate_presresconsumptions(self):
         self.ensure_one()
         conditions_not_met = self.condition_line_ids.filtered(
-            lambda x: x.state == '03_not_ok')
+            lambda x: x.state == '03_not_ok' and x.condition_id.is_mandatory)
         if (len(conditions_not_met) > 0):
             raise exceptions.UserError(_(
                 'The conditions %s are not met.') %
@@ -756,6 +756,11 @@ class WuaPreswateringCondition(models.Model):
         column1='condition_id',
         column2='waterconnection_id',
         string='Water Connections',
+    )
+
+    is_mandatory = fields.Boolean(
+        string='Mandatory',
+        default=True,
     )
 
 
