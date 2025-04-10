@@ -19,8 +19,25 @@
                 <field name="by_surplus"/>
                 <field name="rebombed_flow_ls"/>
             </xpath>
-            <xpath expr="//field[@name='condition_line_ids']/tree/field[@name='state']" position="after">
-                <field name="specific_proration"/>
+            <xpath expr="//field[@name='condition_line_ids']/tree/field[@name='check_value']" position="after">
+                <field name="specific_proration" string='Original %' readonly="1"/>
+                <field name="result_value_first_proration" readonly="1"/>
+                <field name="proration_factor_used" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_preswatering_condition_view_form" model="ir.ui.view">
+        <field name="name">Preswatering Conditions (form view)</field>
+        <field name="model">wua.preswatering.condition</field>
+        <field name="inherit_id"
+               ref="base_wua_pressurized_irrigation_request.wua_preswatering_condition_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='is_mandatory']" position="after">
+                <field name="apply_second_proration"/>
+                <field name="max_iterations"/>
+                <field name="tolerance"/>
+                <field name="iteration_step"/>
             </xpath>
         </field>
     </record>

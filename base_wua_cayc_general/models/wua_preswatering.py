@@ -292,6 +292,154 @@ class WuaPresreswatering(models.Model):
                 _logger.error(
                     'Error issuing preswatering %s: %s', preswatering, e)
 
+    def simulate_adjusted_total(self, grouped, field, dynamic_proration):
+        total = 0.0
+        for request, consumptions in grouped.items():
+            is_wua = request.partner_id.partner_type == '01_WUA'
+            partner_area = request.partner_parcel_owner_area
+            if not is_wua or partner_area <= 0:
+                total += sum(c[field] for c in consumptions)
+                continue
+            max_flow = partner_area * dynamic_proration
+            sum_flow = sum(c[field] for c in consumptions)
+            if sum_flow > max_flow:
+                for c in consumptions:
+                    prorated = (c[field] * max_flow) / sum_flow
+                    rounded = 5 * ((prorated + 2.5) // 5)
+                    total += max(0, rounded)
+            else:
+                total += sum(c[field] for c in consumptions)
+        return total
+
+    def _apply_dynamic_proration(self, condition_line, attempt=0):
+        field = 'nominal_flow_ls'
+        preswatering = self
+        target_value = float(condition_line.check_value)
+        waterconnections = condition_line.condition_id.waterconnection_ids
+        all_consumptions = self.env['wua.presresconsumption'].search([
+            ('preswatering_id', '=', preswatering.id),
+            ('selected', '=', True),
+            ('waterconnection_id', 'in', waterconnections.ids),
+        ])
+        grouped = {}
+        for c in all_consumptions:
+            grouped.setdefault(c.preswateringrequest_id, []).append(c)
+        wua_requests = [
+            r for r in grouped
+            if r.partner_id.partner_type == '01_WUA'
+        ]
+        total_area = sum(
+            r.partner_parcel_owner_area
+            for r in wua_requests
+            if r.partner_parcel_owner_area > 0
+        )
+        if total_area <= 0 or target_value <= 0:
+            return
+        dynamic_proration = target_value / total_area
+        max_iterations = condition_line.condition_id.max_iterations
+        tolerance = condition_line.condition_id.tolerance
+        iteration_step = condition_line.condition_id.iteration_step
+        iteration = 0
+        while (iteration < max_iterations):
+            simulated_total = self.simulate_adjusted_total(
+                grouped, field, dynamic_proration)
+            if (target_value - simulated_total <= tolerance and
+                    simulated_total <= target_value):
+                break
+            elif simulated_total < target_value:
+                dynamic_proration *= iteration_step
+            else:
+                dynamic_proration *= 0.98
+            iteration += 1
+        total_adjusted = 0.0
+        for request, consumptions in grouped.items():
+            is_wua_type = request.partner_id.partner_type == '01_WUA'
+            partner_area = request.partner_parcel_owner_area
+            if is_wua_type and partner_area > 0:
+                max_nominal_flow = partner_area * dynamic_proration
+                total_nominal_flow = sum(c[field] for c in consumptions)
+                if total_nominal_flow > max_nominal_flow:
+                    for c in consumptions:
+                        requested_flow = c[field]
+                        prorated = (requested_flow * max_nominal_flow) / \
+                            total_nominal_flow
+                        rounded = 5 * ((prorated + 2.5) // 5)
+                        rounded = max(0, rounded)
+                        c.write({
+                            'nominal_flow_granted': rounded * 3.6,
+                            'nominal_flow_ls_granted': rounded,
+                        })
+                        total_adjusted += rounded
+                else:
+                    for c in consumptions:
+                        c.write({
+                            'nominal_flow_granted': c.nominal_flow,
+                            'nominal_flow_ls_granted': c.nominal_flow_ls,
+                        })
+                        total_adjusted += c.nominal_flow_ls
+            else:
+                for c in consumptions:
+                    c.write({
+                        'nominal_flow_granted': c.nominal_flow,
+                        'nominal_flow_ls_granted': c.nominal_flow_ls,
+                    })
+                    total_adjusted += c.nominal_flow_ls
+        condition_line.write({
+            'proration_factor_used': dynamic_proration,
+        })
+
+    def _update_preswatering_times(self, presresconsumptions):
+        request_times = presresconsumptions.mapped('request_time')
+        durations = presresconsumptions.mapped('watering_duration')
+        if request_times:
+            watering_initial_time = min(
+                fields.Datetime.from_string(rt) for rt in request_times)
+            latest_request_time = max(
+                fields.Datetime.from_string(rt) for rt in request_times)
+            max_duration = max(durations or [0])
+            watering_end_time = latest_request_time + timedelta(
+                hours=max_duration)
+            preswatering_duration = int(
+                (watering_end_time - watering_initial_time).total_seconds() /
+                60)
+            self.write({
+                'preswatering_initial_time': watering_initial_time,
+                'preswatering_duration': preswatering_duration,
+                'state': '02_calculated',
+            })
+
+    @api.multi
+    def calculate_presresconsumptions(self):
+        self.ensure_one()
+        presresconsumptions = self.env['wua.presresconsumption'].search([
+            ('preswatering_id', '=', self.id),
+            ('selected', '=', True),
+        ])
+        if presresconsumptions:
+            max_attempts = 5
+            attempt = 0
+            all_conditions_ok = False
+            self._process_granted_nominal_flows(presresconsumptions, self)
+            while attempt < max_attempts and not all_conditions_ok:
+                self.update_conditions()
+                # ONly for the first attempt and if first prorration is not 0
+                # we set the result_value_first_proration to the
+                # result_value of the condition line
+                if (attempt == 0):
+                    for condition in self.condition_line_ids:
+                        if condition.result_value_first_proration == 0.0:
+                            condition.result_value_first_proration = \
+                                condition.result_value
+                not_ok_lines = self.condition_line_ids.filtered(
+                    lambda l: l.state == '03_not_ok' and
+                    l.condition_id.apply_second_proration)
+                all_conditions_ok = not not_ok_lines
+                if not all_conditions_ok:
+                    for line in not_ok_lines:
+                        self._apply_dynamic_proration(line, attempt=attempt)
+                attempt += 1
+            self._update_preswatering_times(presresconsumptions)
+
     def generate_daily_preswatering(self):
         today = fields.Date.from_string(fields.Date.context_today(self))
         yesterday = today - timedelta(days=1)
@@ -406,6 +554,31 @@ class WuaPresreswatering(models.Model):
         return response
 
 
+class WuaPreswateringCondition(models.Model):
+
+    _inherit = 'wua.preswatering.condition'
+
+    apply_second_proration = fields.Boolean(
+        string='Apply Second Proration',
+        default=True,
+    )
+
+    max_iterations = fields.Integer(
+        string='Max Iterations',
+        default=20,
+    )
+
+    tolerance = fields.Float(
+        string='Tolerance (l/s)',
+        default=50,
+    )
+
+    iteration_step = fields.Float(
+        string='Iteration Step',
+        default=1.03,
+    )
+
+
 class WuaPreswateringConditionLine(models.Model):
 
     _inherit = 'wua.preswatering.condition.line'
@@ -415,6 +588,16 @@ class WuaPreswateringConditionLine(models.Model):
         required=True,
         digits=(32, 2),
         default=1.0,
+    )
+
+    proration_factor_used = fields.Float(
+        string='Proration Factor Dynamic',
+        digits=(32, 2),
+    )
+
+    result_value_first_proration = fields.Float(
+        string='Value First Proration',
+        digits=(32, 4),
     )
 
     @api.model

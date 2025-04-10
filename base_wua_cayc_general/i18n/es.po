@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-26 11:41+0000\n"
-"PO-Revision-Date: 2025-03-26 11:41+0000\n"
+"POT-Creation-Date: 2025-04-10 07:26+0000\n"
+"PO-Revision-Date: 2025-04-10 07:26+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -269,7 +269,7 @@ msgid "A che parcel must have at least one class associated."
 msgstr "Una parcela padrón CHE debe tener al menos una clase asociada."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:246
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:252
 #, python-format
 msgid "A new preswatering request has been created for %s on %s by user: %s."
 msgstr "Se ha creado una nueva solicitud para %s en fecha %s por el usuario: %s."
@@ -291,6 +291,11 @@ msgstr "Un perímetro de entidad no puede tener un socio padrón CHE asignado."
 #, python-format
 msgid "A primary partner must have a valid partner type ."
 msgstr "Un socio CAYC debe tener un tipo de socio válido."
+
+#. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_condition_apply_second_proration
+msgid "Apply Second Proration"
+msgstr "Aplicar segundo prorrateo"
 
 #. module: base_wua_cayc_general
 #: model:ir.model,name:base_wua_cayc_general.model_wua_assembly
@@ -409,6 +414,11 @@ msgid "Entity (preswatering condition line)"
 msgstr "Elemento (línea de condición)"
 
 #. module: base_wua_cayc_general
+#: model:ir.model,name:base_wua_cayc_general.model_wua_preswatering_condition
+msgid "Entity (preswatering condition)"
+msgstr "Elemento (condición)"
+
+#. module: base_wua_cayc_general
 #: model:ir.model,name:base_wua_cayc_general.model_wua_preswatering
 msgid "Entity (preswatering)"
 msgstr "Elemento (prorrateo)"
@@ -510,6 +520,11 @@ msgid "Is primary Partner"
 msgstr "Es Socio CAYC"
 
 #. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_condition_iteration_step
+msgid "Iteration Step"
+msgstr "Paso de cada iteración"
+
+#. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_octroi___last_update
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_waterchannel___last_update
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_watermeter_module___last_update
@@ -544,6 +559,11 @@ msgid "Lock Modification Hours for Independent partners"
 msgstr "Horas hasta bloqueo usuarios independientes"
 
 #. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_condition_max_iterations
+msgid "Max Iterations"
+msgstr "Máximo de iteraciones"
+
+#. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_presresconsumption_maximum_nominal_flow
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_waterconnection_maximum_nominal_flow
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_watermeter_maximum_nominal_flow
@@ -574,8 +594,8 @@ msgid "No valid consumption data received from SINEMA."
 msgstr "No se ha recibido consumos por SINEMA."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:179
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:257
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:185
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:263
 #, python-format
 msgid "Nominal Flow Requested (l/s)"
 msgstr "Caudal solicitado (l/s)"
@@ -619,6 +639,11 @@ msgstr "Usuario de Fielato"
 #: model:ir.ui.menu,name:base_wua_cayc_general.wua_octroi_menu
 msgid "Octrois"
 msgstr "Fielatos"
+
+#. module: base_wua_cayc_general
+#: model:ir.ui.view,arch_db:base_wua_cayc_general.wua_preswatering_view_form
+msgid "Original %"
+msgstr "% Original"
 
 #. module: base_wua_cayc_general
 #: code:addons/base_wua_cayc_general/models/res_partner.py:524
@@ -706,7 +731,7 @@ msgid "Preswatering Request"
 msgstr "Solicitudes"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:163
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:169
 #, python-format
 msgid "Preswatering Request Modified - %s - %s"
 msgstr "Solicitud modificada - %s - %s"
@@ -736,6 +761,11 @@ msgstr "Entidad primaria"
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswateringperiod_proration
 msgid "Proration"
 msgstr "Prorrateo"
+
+#. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_condition_line_proration_factor_used
+msgid "Proration Factor Dynamic"
+msgstr "Segundo prorrateo"
 
 #. module: base_wua_cayc_general
 #: model:ir.model,name:base_wua_cayc_general.model_wua_quotaperiod_line
@@ -838,7 +868,7 @@ msgid "The nominal flow of %s is not a combination of the watermeter modules (%s
 msgstr "El caudal de %s no es una combinación de los módulos del contador (%s -> %s)."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:168
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:174
 #, python-format
 msgid "The request from %s for %s has been modified by user: %s."
 msgstr "La solicitud de %s para el día %s ha sido modificada por el usuario: %s."
@@ -868,9 +898,19 @@ msgid "The value of 'Proration' must be greater than 0."
 msgstr "El valor del 'prorrateo' debe ser mayor a 0."
 
 #. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_condition_tolerance
+msgid "Tolerance (l/s)"
+msgstr "Tolerancia (l/s)"
+
+#. module: base_wua_cayc_general
 #: model:ir.model,name:base_wua_cayc_general.model_res_users
 msgid "User of WUA (MR)"
 msgstr "Usuario CR"
+
+#. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_condition_line_result_value_first_proration
+msgid "Value First Proration"
+msgstr "Valor del primer prorrateo"
 
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase_partner_ids
@@ -878,8 +918,8 @@ msgid "WUA Partners"
 msgstr "Socios"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:175
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:253
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:181
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:259
 #, python-format
 msgid "Water Connection"
 msgstr "Toma"
