@@ -45,19 +45,19 @@
                     <div name="invoice_address">
                         <div class="row" style="border: 1px solid white; margin: 4px 10px;">
                             <div class="col-xs-12" style="display: table;">
-                                <div style="border-right: 1px solid white; width: 50%; display: table-cell;">
-                                    <p style="margin-bottom: 0px"><i>Invoicing address</i></p>
+                                <div name="div_invoicing_address" style="border-right: 1px solid white; width: 50%; display: table-cell;">
+                                    <p name="p_invoicing_address_title" style="margin-bottom: 0px"><i>Invoicing address</i></p>
                                     <div>
                                         <t t-if="doc.partner_id.name">
                                             <strong><span name="invoicing_address_partner_name" t-field="doc.partner_id.name"/></strong>
                                             <t t-set="partner_code" t-value="str(doc.partner_id.partner_code)"/>
                                             <span>[<span t-esc="partner_code"/>]</span>
                                         </t><br/>
-                                        <t t-if="doc.partner_id.vat">
+                                        <t t-if="doc.partner_id.vat" name="t_invoicing_address_vat">
                                             <t t-set="mod_vat" t-value="doc.partner_id.vat[2:]"/>
                                             <span>TIN:&amp;nbsp;</span>
                                             <span t-esc="mod_vat"/>
-                                        </t><br/>
+                                        </t><br name="br_invoicing_address_after_vat"/>
                                         <t t-if="doc.partner_id.street_type_show"><span t-field="doc.partner_id.street_type_show"/></t>
                                         <t t-if="doc.partner_id.street"><span t-field="doc.partner_id.street"/></t>
                                         <t t-if="doc.partner_id.street_num"><span t-field="doc.partner_id.street_num"/></t>
@@ -79,7 +79,7 @@
                                         </t>
                                     </div>
                                 </div>
-                                <div style="width: 40%; display: table-cell; padding: 0px 4px;">
+                                <div name="div_shipping_address" style="width: 40%; display: table-cell; padding: 0px 4px;">
                                     <p style="margin-bottom: 0px"><i>Shipping Address</i></p>
                                     <div groups="!sale.group_delivery_invoice_address">
                                         <div>
