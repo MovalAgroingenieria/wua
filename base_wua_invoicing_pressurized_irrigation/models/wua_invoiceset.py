@@ -532,12 +532,14 @@ class WuaInvoicesetLine(models.Model):
     _description = 'Entity (line of a WUA invoice set)'
 
     linkable_unit_type = fields.Selection(selection_add=[
-        ('presconsumption', 'Pressure Consumptions')])
+        ('presconsumption', 'Pressure Consumptions')],
+    )
 
     line_presconsumption_ids = fields.One2many(
         string='Lines for pressure consumptions',
         comodel_name='wua.invoiceset.line.presconsumption',
-        inverse_name='invoicesetline_id')
+        inverse_name='invoicesetline_id',
+    )
 
     @api.depends('line_presconsumption_ids')
     def _compute_configured_line(self):
@@ -651,68 +653,88 @@ class WuaInvoicesetLinePresconsumption(models.Model):
         string='Line',
         comodel_name='wua.invoiceset.line',
         required=True,
-        ondelete='cascade')
+        ondelete='cascade',
+    )
 
     selected = fields.Boolean(
         string="Selected",
-        default=True)
+        default=True,
+    )
 
     presconsumption_id = fields.Many2one(
         string='Identifier',
         comodel_name='wua.presconsumption',
         required=True,
-        ondelete='restrict')
+        ondelete='restrict',
+    )
 
     reading_id = fields.Many2one(
         string='Reading',
         comodel_name='wua.reading',
-        ondelete='restrict')
+        ondelete='restrict',
+    )
 
     reading_initial_time = fields.Datetime(
-        string='Reading Start Time')
+        string='Reading Start Time',
+    )
 
     initial_volume = fields.Float(
         string='Initial Value (m3)',
-        digits=(32, 4), default=0)
+        digits=(32, 4),
+        default=0,
+    )
 
     reading_end_time = fields.Datetime(
-        string='Reading End Time')
+        string='Reading End Time',
+    )
 
     end_volume = fields.Float(
         string='Final Value (m3)',
-        digits=(32, 4), default=0)
+        digits=(32, 4),
+        default=0,
+    )
 
     volume = fields.Float(
         string='Gross Value (m3)',
-        digits=(32, 4), default=0)
+        digits=(32, 4),
+        default=0,
+    )
 
     watermeter_id = fields.Many2one(
         string='Water Meter',
         comodel_name='wua.watermeter',
-        ondelete='restrict')
+        ondelete='restrict',
+    )
 
     waterconnection_id = fields.Many2one(
         string='Water Connection',
         comodel_name='wua.waterconnection',
-        ondelete='restrict')
+        ondelete='restrict',
+    )
 
     irrigationshed_id = fields.Many2one(
         string='Irrigation Shed',
         comodel_name='wua.irrigationshed',
-        ondelete='restrict')
+        ondelete='restrict',
+    )
 
     hydraulicsector_id = fields.Many2one(
         string='Hydraulic Sector',
         comodel_name='wua.hydraulicsector',
-        ondelete='restrict')
+        ondelete='restrict',
+    )
 
     adjustement_volume = fields.Float(
         string='Adjust. Value (m3)',
-        digits=(32, 4), default=0)
+        digits=(32, 4),
+        default=0,
+    )
 
     volume_real = fields.Float(
         string='Real Value (m3)',
-        digits=(32, 4), default=0)
+        digits=(32, 4),
+        default=0,
+    )
 
     @api.multi
     def add_to_invoiceset(self):

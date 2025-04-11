@@ -12,7 +12,8 @@ class WuaReading(models.Model):
     invoiced_reading = fields.Boolean(
         string='Invoiced',
         store=True,
-        compute='_compute_invoiced_reading')
+        compute='_compute_invoiced_reading',
+    )
 
     @api.depends('presconsumption_id',
                  'presconsumption_id.invoiced_consumption')

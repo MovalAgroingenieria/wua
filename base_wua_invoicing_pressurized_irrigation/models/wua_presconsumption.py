@@ -15,24 +15,28 @@ class WuaPresconsumption(models.Model):
         index=True,
         store=True,
         compute='_compute_product_id',
-        ondelete='restrict')
+        ondelete='restrict',
+    )
 
     invoicesetlinepresconsumption_ids = fields.One2many(
         string='Selected consumptions of invoice sets',
         comodel_name='wua.invoiceset.line.presconsumption',
         inverse_name='presconsumption_id',
-        readonly=True)
+        readonly=True,
+    )
 
     invoiceset_id = fields.Many2one(
         string='Invoice Set',
         comodel_name='wua.invoiceset',
         index=True,
-        ondelete='set null')
+        ondelete='set null',
+    )
 
     invoiced_consumption = fields.Boolean(
         string='Invoiced',
         default=False,
-        required=True)
+        required=True,
+    )
 
     @api.depends('waterconnection_id', 'waterconnection_id.product_id')
     def _compute_product_id(self):

@@ -29,11 +29,13 @@ class WuaWaterconnection(models.Model):
         default=_default_product_id,
         required=True,
         index=True,
-        ondelete='restrict')
+        ondelete='restrict',
+    )
 
     last_invoiced_presconsumption = fields.Char(
         string='Last Invoiced Cons.',
-        compute='_compute_last_invoiced_presconsumption')
+        compute='_compute_last_invoiced_presconsumption',
+    )
 
     def _compute_last_invoiced_presconsumption(self):
         for record in self:

@@ -12,7 +12,8 @@ class AccountInvoice(models.Model):
         string='C7: Press. Cons.',
         currency_field='currency_id',
         store=True,
-        compute='_compute_amount')
+        compute='_compute_amount',
+    )
 
     # It is not necessary "api.depends" (get from parent method).
     def _compute_amount(self):

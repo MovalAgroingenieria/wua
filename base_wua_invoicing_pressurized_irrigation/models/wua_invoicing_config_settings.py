@@ -12,18 +12,21 @@ class WuaInvoicingConfiguration(models.TransientModel):
         string='Invoicing based on water connections',
         default=False,
         help='If enabled, invoicing will be based only on water connections, '
-             'parcels will be ignored')
+             'parcels will be ignored',
+    )
 
     separate_wc_invoices = fields.Boolean(
         string='Separate Waterconnection invoices',
         required=True,
         help='If marked, waterconnection lines will be separated on '
-             'different invoices')
+             'different invoices',
+    )
 
     group_wc_lines_on_report = fields.Boolean(
         string='Group Waterconnection lines on report',
         help='If marked, waterconnection lines will be grouped on report '
-             'only if not invoicing based on wc')
+             'only if not invoicing based on wc',
+    )
 
     @api.multi
     def set_default_values(self):

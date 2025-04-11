@@ -12,7 +12,8 @@ class WuaIrrigationConfiguration(models.TransientModel):
     default_pressure_product_id = fields.Many2one(
         string='Default Water Type',
         comodel_name='product.product',
-        help='Default type of water for water connections')
+        help='Default type of water for water connections',
+    )
 
     @api.multi
     def set_default_values(self):

@@ -26,4 +26,5 @@ class ProductTemplate(models.Model):
     _description = 'Entity (WUA Product Template)'
 
     linkable_unit_type = fields.Selection(selection_add=[
-        ('presconsumption', 'Pressure Consumptions')])
+        ('presconsumption', 'Pressure Consumptions')],
+    )
