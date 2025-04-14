@@ -307,6 +307,10 @@ class MaintenanceEquipment(models.Model):
         inverse_name='parent_id',
     )
 
+    description = fields.Html(
+        string='Description',
+    )
+
     @api.model
     def _cron_generate_requests_with_limit(self):
         for plan in self.env['maintenance.plan'].search([('period', '>', 0)]):

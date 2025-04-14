@@ -11,7 +11,11 @@ import random
 class WuaMaintenanceEquipmentCategory(models.Model):
     _inherit = 'maintenance.equipment.category'
 
-    name = fields.Char('Name', required=True, translate=True)
+    name = fields.Char(
+        string='Name',
+        required=True,
+        translate=True,
+    )
 
     is_wua = fields.Boolean(
         string='Part of WUA infrastructure?',

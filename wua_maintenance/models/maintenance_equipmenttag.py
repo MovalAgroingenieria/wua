@@ -19,7 +19,9 @@ class MaintenanceEquipmentTag(models.Model):
     _sql_constraints = [('name_uniq', 'unique (name)',
                          _("Maintenance tag already exists."))]
 
-    name = fields.Char(string='Equipment Tag')
+    name = fields.Char(
+        string='Equipment Tag',
+    )
 
     color = fields.Integer(
         string='Color Index',
