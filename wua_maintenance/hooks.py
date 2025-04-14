@@ -8,6 +8,49 @@ from odoo import api, SUPERUSER_ID
 def post_init_hook(cr, registry):
     env = api.Environment(cr, SUPERUSER_ID, {})
 
+    def handle_equipment_hierarchy():
+        # On maintenance_equipment equipments that comes from a
+        # wua.waterconnection or a wua.watermeter
+        # the parent_id of the maintenance_equipment is the equipment_id
+        # associated with the irrigationshed_id
+        cr.execute("""
+            UPDATE maintenance_equipment AS me1
+            SET parent_id = me2.id
+            FROM wua_waterconnection AS ww1
+            INNER JOIN wua_irrigationshed AS wi1 ON ww1.irrigationshed_id =
+                wi1.id
+            INNER JOIN maintenance_equipment AS me2 ON wi1.equipment_id =
+                me2.id
+            WHERE ww1.equipment_id = me1.id
+            AND wi1.equipment_id IS NOT NULL
+        """)
+        cr.execute("""
+            UPDATE maintenance_equipment AS me1
+            SET parent_id = me2.id
+            FROM wua_watermeter AS ww1
+            INNER JOIN wua_irrigationshed AS wi1 ON ww1.irrigationshed_id =
+                wi1.id
+            INNER JOIN maintenance_equipment AS me2 ON wi1.equipment_id =
+                me2.id
+            WHERE ww1.equipment_id = me1.id
+            AND wi1.equipment_id IS NOT NULL
+        """)
+        # On maintenance_equipment equipments that comes from a
+        # wua.pumpunit
+        # the parent_id of the maintenance_equipment is the equipment_id
+        # associated with the pumpgroup_id
+        cr.execute("""
+            UPDATE maintenance_equipment AS me1
+            SET parent_id = me2.id
+            FROM wua_pumpunit AS wp2
+            INNER JOIN wua_pumpgroup AS wp1 ON wp2.pumpgroup_id =
+                wp1.id
+            INNER JOIN maintenance_equipment AS me2 ON wp1.equipment_id =
+                me2.id
+            WHERE wp2.equipment_id = me1.id
+            AND wp1.equipment_id IS NOT NULL;
+        """)
+
     def handle_equipment(category_ref, table_name,
                          infrastructure_type, is_primary):
         category_id = env.ref(category_ref).id
@@ -67,7 +110,7 @@ def post_init_hook(cr, registry):
         ('wua_maintenance.equipment_category_valve',
          'wua_valve', '03_gravity', False),
         ('wua_maintenance.equipment_category_filteringstation',
-         'wua_filteringstation', '03_gravity', False)
+         'wua_filteringstation', '03_gravity', False),
     ]
 
     for category_ref, table_name, \

@@ -81,6 +81,12 @@ class WuaMaintenanceEquipmentCategory(models.Model):
         comodel_name='ir.model',
     )
 
+    parent_id = fields.Many2one(
+        string='Parent Category',
+        comodel_name='maintenance.equipment.category',
+        ondelete='restrict',
+    )
+
     _sql_constraints = [
         ('name_uniq', 'unique (name)',
          _('Maintenance category already exists.')),

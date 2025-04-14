@@ -36,7 +36,7 @@
                 <attribute name="attrs">{'readonly': [('is_wua', '=', True)]}</attribute>
             </xpath>
             <xpath expr="//field[@name='category_id']" position="before">
-                <field name="parent_id"/>
+                <field name="parent_id" attrs="{'readonly': [('is_wua', '=', True)]}"/>
             </xpath>
             <xpath expr="//field[@name='category_id']" position="after">
                 <field name="hydraulicsector_id" placeholder="Hydraulic Sector" />

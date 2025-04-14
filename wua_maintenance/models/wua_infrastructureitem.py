@@ -37,7 +37,7 @@ class WuaInfrastructureitem(models.AbstractModel):
             equipment = self.equipment_id
             equipment_vals = self._get_equipment_vals_for_write(vals)
             if equipment_vals:
-                equipment.write(vals)
+                equipment.write(equipment_vals)
             if 'active' in vals:
                 if not self.env.context.get('update_from_equipment', False):
                     for record in self:

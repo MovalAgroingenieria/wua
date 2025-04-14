@@ -311,6 +311,22 @@ class MaintenanceEquipment(models.Model):
         string='Description',
     )
 
+    @api.constrains('category_id', 'parent_id')
+    def _check_parent_category_consistency(self):
+        for record in self:
+            if record.category_id and record.parent_id and \
+                    record.parent_id.category_id:
+                expected_parent_category = record.category_id.parent_id
+                actual_parent_category = record.parent_id.category_id
+                if expected_parent_category and \
+                        expected_parent_category != actual_parent_category:
+                    raise exceptions.ValidationError(_(
+                        "The category of the parent does not equals to "
+                        "the parent category of %s.",
+                    ) % (
+                        record.category_id.display_name,
+                    ))
+
     @api.model
     def _cron_generate_requests_with_limit(self):
         for plan in self.env['maintenance.plan'].search([('period', '>', 0)]):

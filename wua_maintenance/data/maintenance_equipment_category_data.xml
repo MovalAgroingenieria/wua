@@ -49,6 +49,7 @@
             <field name="infrastructure_type">01_general</field>
             <field name="is_primary">False</field>
             <field name="model_id" ref="base_wua_infrastructure_pump.model_wua_pumpunit"/>
+            <field name="parent_id" ref="wua_maintenance.equipment_category_pumpgroup"/>
         </record>
 
         <record id="equipment_category_waterpipe" model="maintenance.equipment.category" forcecreate="False">
@@ -73,6 +74,7 @@
             <field name="infrastructure_type">02_pressurized</field>
             <field name="is_primary">False</field>
             <field name="model_id" ref="base_wua_infrastructure.model_wua_waterconnection"/>
+            <field name="parent_id" ref="wua_maintenance.equipment_category_irrigationshed"/>
         </record>
 
         <record id="equipment_category_watermeter" model="maintenance.equipment.category" forcecreate="False">
@@ -81,6 +83,7 @@
             <field name="infrastructure_type">02_pressurized</field>
             <field name="is_primary">False</field>
             <field name="model_id" ref="base_wua_pressurized_irrigation.model_wua_watermeter"/>
+            <field name="parent_id" ref="wua_maintenance.equipment_category_irrigationshed"/>
         </record>
 
         <record id="equipment_category_pressuresensor" model="maintenance.equipment.category" forcecreate="False">
@@ -113,6 +116,7 @@
             <field name="infrastructure_type">03_gravity</field>
             <field name="is_primary">False</field>
             <field name="model_id" ref="base_wua_infrastructure.model_wua_flowdivider"/>
+            <field name="parent_id" ref="wua_maintenance.equipment_category_irrigationditch"/>
         </record>
 
         <record id="equipment_category_irrigationgate" model="maintenance.equipment.category" forcecreate="False">
@@ -121,6 +125,7 @@
             <field name="infrastructure_type">03_gravity</field>
             <field name="is_primary">False</field>
             <field name="model_id" ref="base_wua_infrastructure.model_wua_irrigationgate"/>
+            <field name="parent_id" ref="wua_maintenance.equipment_category_irrigationditch"/>
         </record>
 
         <record id="equipment_category_airvalve" model="maintenance.equipment.category" forcecreate="False">
