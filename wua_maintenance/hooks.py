@@ -117,7 +117,7 @@ def post_init_hook(cr, registry):
             infrastructure_type, is_primary in equipment_mappings:
         handle_equipment(category_ref, table_name,
                          infrastructure_type, is_primary)
-
+    handle_equipment_hierarchy()
     sequence = env.ref('wua_maintenance.sequence_certificate_code')
     values = env['ir.values']
     values.set_default('maintenance.config.settings',
