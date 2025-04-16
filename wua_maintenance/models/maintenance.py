@@ -311,6 +311,15 @@ class MaintenanceEquipment(models.Model):
         string='Description',
     )
 
+    with_infrastructure_gis = fields.Boolean(
+        string='With Infrastructure GIS',
+        default=False,
+    )
+
+    geojson_geom = fields.Text(
+        string='GeoJSON Geometry',
+    )
+
     @api.constrains('category_id', 'parent_id')
     def _check_parent_category_consistency(self):
         for record in self:
@@ -326,6 +335,282 @@ class MaintenanceEquipment(models.Model):
                     ) % (
                         record.category_id.display_name,
                     ))
+
+    def _get_category_table_mapping(self):
+        env = self.env
+        category_mapping = {
+            env.ref('wua_maintenance.equipment_category_intake').id: {
+                'base_table': 'wua_intake',
+                'base_field': 'intake_code',
+                'gis_table': 'wua_gis_intake',
+                'gis_field': 'code',
+                'intermediate_table': False,
+                'intermediate_field': False,
+                'intermediate_gis_field': False,
+            },
+            env.ref('wua_maintenance.equipment_category_reservoir').id: {
+                'base_table': 'wua_reservoir',
+                'base_field': 'reservoir_code',
+                'gis_table': 'wua_gis_reservoir',
+                'gis_field': 'code',
+                'intermediate_table': False,
+                'intermediate_field': False,
+                'intermediate_gis_field': False,
+            },
+            env.ref('wua_maintenance.equipment_category_pumpgroup').id: {
+                'base_table': 'wua_pumpgroup',
+                'base_field': 'pumpgroup_code',
+                'gis_table': 'wua_gis_pumpgroup',
+                'gis_field': 'code',
+                'intermediate_table': False,
+                'intermediate_field': False,
+                'intermediate_gis_field': False,
+            },
+            env.ref(
+                'wua_maintenance.equipment_category_photovoltaicplant').id: {
+                'base_table': 'wua_photovoltaicplant',
+                'base_field': 'photovoltaicplant_code',
+                'gis_table': 'wua_gis_photovoltaicplant',
+                'gis_field': 'code',
+                'intermediate_table': False,
+                'intermediate_field': False,
+                'intermediate_gis_field': False,
+            },
+            env.ref('wua_maintenance.equipment_category_flowmeter').id: {
+                'base_table': 'wua_flowmeter',
+                'base_field': 'name',
+                'gis_table': 'wua_gis_flowmeter',
+                'gis_field': 'name',
+                'intermediate_table': False,
+                'intermediate_field': False,
+                'intermediate_gis_field': False,
+            },
+            env.ref('wua_maintenance.equipment_category_pump').id:  {
+                'base_table': 'wua_pumpunit',
+                'base_field': 'pumpgroup_id',
+                'gis_table': 'wua_gis_pumpgroup',
+                'gis_field': 'code',
+                'intermediate_table': 'wua_pumpgroup',
+                'intermediate_field': 'id',
+                'intermediate_gis_field': 'pumpgroup_code',
+            },
+            env.ref('wua_maintenance.equipment_category_waterpipe').id: {
+                'base_table': 'wua_waterpipe',
+                'base_field': 'waterpipe_code',
+                'gis_table': 'wua_gis_waterpipe',
+                'gis_field': 'code',
+                'intermediate_table': False,
+                'intermediate_field': False,
+                'intermediate_gis_field': False,
+            },
+            env.ref(
+                'wua_maintenance.equipment_category_irrigationshed').id: {
+                'base_table': 'wua_irrigationshed',
+                'base_field': 'name',
+                'gis_table': 'wua_gis_irrigationshed',
+                'gis_field': 'name',
+                'intermediate_table': False,
+                'intermediate_field': False,
+                'intermediate_gis_field': False,
+            },
+            env.ref(
+                'wua_maintenance.equipment_category_waterconnection').id: {
+                'base_table': 'wua_waterconnection',
+                'base_field': 'irrigationshed_id',
+                'gis_table': 'wua_gis_irrigationshed',
+                'gis_field': 'name',
+                'intermediate_table': 'wua_irrigationshed',
+                'intermediate_field': 'id',
+                'intermediate_gis_field': 'name',
+            },
+            env.ref('wua_maintenance.equipment_category_watermeter').id: {
+                'base_table': 'wua_watermeter',
+                'base_field': 'irrigationshed_id',
+                'gis_table': 'wua_gis_irrigationshed',
+                'gis_field': 'name',
+                'intermediate_table': 'wua_irrigationshed',
+                'intermediate_field': 'id',
+                'intermediate_gis_field': 'name',
+            },
+            env.ref(
+                'wua_maintenance.equipment_category_pressuresensor').id: {
+                'base_table': 'wua_pressuresensor',
+                'base_field': 'name',
+                'gis_table': 'wua_gis_pressuresensor',
+                'gis_field': 'name',
+                'intermediate_table': False,
+                'intermediate_field': False,
+                'intermediate_gis_field': False,
+            },
+            env.ref(
+                'wua_maintenance.equipment_category_irrigationditch').id: {
+                'base_table': 'wua_irrigationditch',
+                'base_field': 'irrigationditch_code',
+                'gis_table': 'wua_gis_irrigationditch',
+                'gis_field': 'code',
+                'intermediate_table': False,
+                'intermediate_field': False,
+                'intermediate_gis_field': False,
+            },
+            env.ref(
+                'wua_maintenance.equipment_category_drainageditch').id: {
+                'base_table': 'wua_drainageditch',
+                'base_field': 'drainageditch_code',
+                'gis_table': 'wua_gis_drainageditch',
+                'gis_field': 'code',
+                'intermediate_table': False,
+                'intermediate_field': False,
+                'intermediate_gis_field': False,
+            },
+            env.ref(
+                'wua_maintenance.equipment_category_flowdivider').id: {
+                'base_table': 'wua_flowdivider',
+                'base_field': 'name',
+                'gis_table': 'wua_gis_flowdivider',
+                'gis_field': 'name',
+                'intermediate_table': False,
+                'intermediate_field': False,
+                'intermediate_gis_field': False,
+            },
+            env.ref(
+                'wua_maintenance.equipment_category_irrigationgate').id: {
+                'base_table': 'wua_irrigationgate',
+                'base_field': 'name',
+                'gis_table': 'wua_gis_irrigationgate',
+                'gis_field': 'name',
+                'intermediate_table': False,
+                'intermediate_field': False,
+                'intermediate_gis_field': False,
+            },
+            env.ref(
+                'wua_maintenance.equipment_category_airvalve').id: {
+                'base_table': 'wua_airvalve',
+                'base_field': 'name',
+                'gis_table': 'wua_gis_airvalve',
+                'gis_field': 'name',
+                'intermediate_table': False,
+                'intermediate_field': False,
+                'intermediate_gis_field': False,
+            },
+            env.ref(
+                'wua_maintenance.equipment_category_drainagevalve').id: {
+                'base_table': 'wua_drainagevalve',
+                'base_field': 'name',
+                'gis_table': 'wua_gis_drainagevalve',
+                'gis_field': 'name',
+                'intermediate_table': False,
+                'intermediate_field': False,
+                'intermediate_gis_field': False,
+            },
+            env.ref(
+                'wua_maintenance.equipment_category_valve').id:  {
+                'base_table': 'wua_valve',
+                'base_field': 'name',
+                'gis_table': 'wua_gis_valve',
+                'gis_field': 'name',
+                'intermediate_table': False,
+                'intermediate_field': False,
+                'intermediate_gis_field': False,
+            },
+            env.ref(
+                'wua_maintenance.equipment_category_filteringstation').id: {
+                'base_table': 'wua_filteringstation',
+                'base_field': 'name',
+                'gis_table': 'wua_gis_filteringstation',
+                'gis_field': 'name',
+                'intermediate_table': False,
+                'intermediate_field': False,
+                'intermediate_gis_field': False,
+            },
+        }
+        return category_mapping
+
+    @api.model
+    def _cron_get_geojson_data(self):
+        category_mapping = self._get_category_table_mapping()
+        env = self.env
+        for category_id, mapping in category_mapping.items():
+            base_table = mapping['base_table']
+            base_field = mapping['base_field']
+            gis_table = mapping['gis_table']
+            gis_field = mapping['gis_field']
+            intermediate_table = mapping['intermediate_table']
+            intermediate_field = mapping['intermediate_field']
+            intermediate_gis_field = mapping['intermediate_gis_field']
+            if intermediate_table:
+                sql = """
+                    WITH RECURSIVE category_hierarchy AS (
+                        SELECT id, parent_id FROM maintenance_equipment
+                        WHERE category_id = {category_id}
+                        UNION ALL
+                        SELECT me.id, me.parent_id
+                        FROM maintenance_equipment me
+                        JOIN category_hierarchy ch ON me.id = ch.parent_id
+                    ),
+                    equipment_with_infrastructure_gis AS (
+                        SELECT me.id AS equipment_id, ST_AsGeoJSON(gis.geom)
+                            AS geojson
+                        FROM maintenance_equipment me
+                        INNER JOIN {base_table} bt ON me.id = bt.equipment_id
+                        INNER JOIN {intermediate_table} it ON
+                            bt.{base_field} = it.{intermediate_field}
+                        INNER JOIN {gis_table} gis ON
+                            it.{intermediate_gis_field} = gis.{gis_field}
+                        WHERE me.id IN (SELECT id FROM category_hierarchy)
+                    )
+                    UPDATE maintenance_equipment me
+                    SET geojson_geom = eg.geojson, with_infrastructure_gis =
+                        TRUE
+                    FROM equipment_with_infrastructure_gis eg
+                    WHERE me.id = eg.equipment_id
+                """.format(
+                    base_table=base_table,
+                    base_field=base_field,
+                    gis_table=gis_table,
+                    gis_field=gis_field,
+                    intermediate_table=intermediate_table,
+                    intermediate_field=intermediate_field,
+                    intermediate_gis_field=intermediate_gis_field,
+                    category_id=category_id,
+                )
+            else:
+                sql = """
+                    WITH RECURSIVE category_hierarchy AS (
+                        SELECT id, parent_id FROM maintenance_equipment
+                        WHERE category_id = {category_id}
+                        UNION ALL
+                        SELECT me.id, me.parent_id
+                        FROM maintenance_equipment me
+                        JOIN category_hierarchy ch ON me.id = ch.parent_id
+                    ),
+                    equipment_with_infrastructure_gis AS (
+                        SELECT me.id AS equipment_id, ST_AsGeoJSON(gis.geom)
+                            AS geojson
+                        FROM maintenance_equipment me
+                        INNER JOIN {base_table} bt ON me.id = bt.equipment_id
+                        INNER JOIN {gis_table} gis ON bt.{base_field} =
+                            gis.{gis_field}
+                        WHERE me.id IN (SELECT id FROM category_hierarchy)
+                    )
+                    UPDATE maintenance_equipment me
+                    SET geojson_geom = eg.geojson, with_infrastructure_gis =
+                        TRUE
+                    FROM equipment_with_infrastructure_gis eg
+                    WHERE me.id = eg.equipment_id
+                """.format(
+                    base_table=base_table,
+                    base_field=base_field,
+                    gis_table=gis_table,
+                    gis_field=gis_field,
+                    category_id=category_id,
+                )
+            env.cr.execute(sql)
+        cleanup_sql = """
+            UPDATE maintenance_equipment
+            SET geojson_geom = NULL, with_infrastructure_gis = FALSE
+            WHERE geojson_geom IS NULL OR geojson_geom = ''
+        """
+        env.cr.execute(cleanup_sql)
 
     @api.model
     def _cron_generate_requests_with_limit(self):

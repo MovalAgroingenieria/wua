@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding='UTF-8'?>
 <odoo>
-	<record model="ir.cron" id="maintenance_requests_cron">
+
+    <record model="ir.cron" id="maintenance_requests_cron">
         <field name="name">Generate preventive maintenance requests with limit date</field>
         <field name="interval_number">1</field>
         <field name="interval_type">days</field>
@@ -11,4 +12,17 @@
         <field name="args" eval="'()'" />
         <field name="active" eval="False"/>
     </record>
+
+    <record model="ir.cron" id="maintenance_requests_cron">
+        <field name="name">Recalculate geojson data of the maintenance equipments</field>
+        <field name="interval_number">15</field>
+        <field name="interval_type">minutes</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="model" eval="'maintenance.equipment'"/>
+        <field name="function" eval="'_cron_get_geojson_data'"/>
+        <field name="args" eval="'()'" />
+        <field name="active" eval="True"/>
+    </record>
+
 </odoo>

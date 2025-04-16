@@ -87,7 +87,11 @@
             <xpath expr="//field[@name='owner_user_id']" position="after">
                 <filter string='Is WUA: Yes' name="filter_is_wua_true" domain="[('is_wua', '!=', False)]" />
                 <filter string='Is WUA: No' name="filter_is_wua_false" domain="[('is_wua', '!=', True)]" />
-                <filter string='Primary' name="filter_is_primary" domain="[('is_primary', '!=', False)]" />
+                <separator/>
+                <filter string='Primary' name="filter_is_primary" domain="[('is_primary', '!=', False)]"/>
+                <separator/>
+                <filter string='With Infrastructure GIS ' name="filter_with_infrastructure_gis" domain="[('with_infrastructure_gis', '=', True)]"/>
+                <filter string='Without Infrastructure GIS ' name="filter_without_infrastructure_gis" domain="[('with_infrastructure_gis', '!=', True)]"/>
             </xpath>
             <xpath expr="//group[1]" position="replace">
                 <filter string="Technicians" domain="[]" context="{'group_by': 'technician_user_id'}" />
