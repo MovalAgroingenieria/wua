@@ -128,7 +128,7 @@ class WuaIrrigationshed(models.Model):
 
     with_gis_irrigationshed = fields.Boolean(
         string='GIS Irrigationshed',
-        store=True)
+    )
 
     with_pumping = fields.Boolean(
         string='With pumping',

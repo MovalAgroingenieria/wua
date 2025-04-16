@@ -100,6 +100,10 @@ class WuaIrrigationgate(models.Model):
         index=True,
         ondelete='restrict')
 
+    with_gis_irrigationgate = fields.Boolean(
+        string='GIS Irrigationgate',
+    )
+
     active = fields.Boolean(
         default=True,
         help='If the active field is set to False, it will allow you to ' +
@@ -112,6 +116,15 @@ class WuaIrrigationgate(models.Model):
          'CHECK (hydraulic_order > 0)',
          'The hydraulic_order must be a positive value.'),
         ]
+
+    @api.model_cr
+    def init(self):
+        parcel_model = self.env['wua.parcel']
+        try:
+            parcel_model.create_wua_gis_irrigationgate_table()
+            parcel_model.create_irrigationgate_triggers()
+        except Exception:
+            pass
 
     @api.multi
     def _compute_gis_googlemaps_link(self):

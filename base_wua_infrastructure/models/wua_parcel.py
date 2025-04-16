@@ -487,6 +487,165 @@ class WuaParcel(models.Model):
             """)
             self.env.cr.commit()
 
+    def check_gis_irrigationgate_created(self):
+        resp = False
+        self.env.cr.execute("""
+            SELECT EXISTS(SELECT * FROM information_schema.tables
+            WHERE table_name='wua_gis_irrigationgate')
+            """)
+        if self.env.cr.fetchone()[0]:
+            resp = True
+        return resp
+
+    def create_wua_gis_irrigationgate_table(self):
+        # Check if wua gis table already exists
+        gis_irrigationgate_table_created = \
+            self.check_gis_irrigationgate_created()
+        # Check if extension postgis and schema postgis are created
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        # Postgis extension and schema exists, but gis irrigationgate don't
+        if (not gis_irrigationgate_table_created and
+                extension_schema_postgis_created):
+            self.env.cr.execute("""
+                CREATE SEQUENCE IF NOT EXISTS
+                    public.wua_gis_irrigationgate_gid_seq
+                    INCREMENT 1
+                    START 1
+                    MINVALUE 1
+                    MAXVALUE 2147483647
+                    CACHE 1;
+            """)
+            self.env.cr.execute("""
+                CREATE TABLE IF NOT EXISTS public.wua_gis_irrigationgate
+                    (
+                        gid integer NOT NULL DEFAULT nextval(
+                            'wua_gis_irrigationgate_gid_seq'::regclass),
+                        name character varying(254)
+                            COLLATE pg_catalog."default",
+                        geom postgis.geometry(Point,25830),
+                        UNIQUE(name),
+                        CONSTRAINT wua_gis_irrigationgate_pkey
+                            PRIMARY KEY (gid)
+                    );
+            """)
+            self.env.cr.execute("""
+                CREATE INDEX IF NOT EXISTS
+                wua_gis_irrigationgate_idx ON public.wua_gis_irrigationgate
+                    USING gist (geom);
+            """)
+            self.env.cr.commit()
+
+    def create_irrigationgate_triggers(self):
+        gis_irrigationgate_table_created = \
+            self.check_gis_irrigationgate_created()
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        if (gis_irrigationgate_table_created and
+                extension_schema_postgis_created):
+            # Function that will update the wua_irrigationgate data when the
+            # wua_gis_irrigationgate table has some change, (Create, Update or
+            # Delete)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_gis_irrigationgate_update_on_wua_irrigationgate()
+                    RETURNS trigger AS
+                $BODY$
+                BEGIN
+                IF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
+                    UPDATE public.wua_irrigationgate SET
+                        with_gis_irrigationgate = False,
+                        gis_viewer_x = 0,
+                        gis_viewer_y = 0
+                    WHERE name = OLD.name;
+                END IF;
+                IF TG_OP = 'UPDATE' OR TG_OP = 'INSERT' THEN
+                    UPDATE public.wua_irrigationgate SET
+                        with_gis_irrigationgate = True,
+                        gis_viewer_x = postgis.ST_X(NEW.geom)::INTEGER,
+                        gis_viewer_y = postgis.ST_Y(NEW.geom)::INTEGER
+                    WHERE name = NEW.name;
+                END IF;
+                RETURN NULL;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the gis irrigationgate is
+            # unlinked and other when a gis irrigationgate is created or
+            # updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_gis_irrigationgate_write_trigger ON
+                    public.wua_gis_irrigationgate;
+                DROP TRIGGER IF EXISTS
+                    wua_gis_irrigationgate_create_unlink_trigger ON
+                    public.wua_gis_irrigationgate;
+
+                CREATE TRIGGER wua_gis_irrigationgate_write_trigger
+                AFTER UPDATE OF name, geom ON
+                public.wua_gis_irrigationgate FOR EACH ROW WHEN
+                ((NOT postgis.ST_Equals(OLD.geom, NEW.geom)) OR
+                 OLD.name IS DISTINCT FROM NEW.name)
+                EXECUTE PROCEDURE
+                    wua_gis_irrigationgate_update_on_wua_irrigationgate();
+
+                CREATE TRIGGER wua_gis_irrigationgate_create_unlink_trigger
+                AFTER INSERT OR DELETE ON
+                public.wua_gis_irrigationgate FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_gis_irrigationgate_update_on_wua_irrigationgate();
+            """)
+            self.env.cr.commit()
+            # Function that will update the wua_irrigationgate data when the
+            # wua_irrigationgate table has some change (Create, Update)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_irrigationgate_update_on_wua_irrigationgate() RETURNS
+                    trigger AS
+                $BODY$
+                BEGIN
+                    UPDATE public.wua_irrigationgate SET
+                        with_gis_irrigationgate = (SELECT NEW.name IN
+                            (SELECT name FROM wua_gis_irrigationgate)),
+                        gis_viewer_x = (SELECT postgis.ST_X(geom)::INTEGER FROM
+                            wua_gis_irrigationgate WHERE name = NEW.name
+                            LIMIT 1),
+                        gis_viewer_y = (SELECT postgis.ST_Y(geom)::INTEGER FROM
+                            wua_gis_irrigationgate WHERE name = NEW.name
+                            LIMIT 1)
+                    WHERE name = NEW.name;
+                RETURN NEW;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the irrigationgate is created
+            # and other when a gis irrigationgate is created or updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_irrigationgate_write_trigger ON
+                    public.wua_irrigationgate;
+                DROP TRIGGER IF EXISTS wua_irrigationgate_create_trigger ON
+                    public.wua_irrigationgate;
+
+                CREATE TRIGGER wua_irrigationgate_write_trigger
+                AFTER UPDATE OF name ON
+                public.wua_irrigationgate FOR EACH ROW WHEN
+                (OLD.name IS DISTINCT FROM NEW.name)
+                EXECUTE PROCEDURE
+                    wua_irrigationgate_update_on_wua_irrigationgate();
+
+                CREATE TRIGGER wua_irrigationgate_create_trigger
+                AFTER INSERT ON
+                public.wua_irrigationgate FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_irrigationgate_update_on_wua_irrigationgate();
+            """)
+            self.env.cr.commit()
+
     def check_gis_flowdivider_created(self):
         resp = False
         self.env.cr.execute("""
