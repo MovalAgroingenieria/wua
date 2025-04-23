@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_concession_view_form" model="ir.ui.view">
+        <field name="name">wua.concession.view.form</field>
+        <field name="model">wua.concession</field>
+        <field name="arch" type="xml">
+            <form string="Water Concession" duplicate="0">
+                <sheet>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="alphanum_code"/>
+                            <field name="description"/>
+                            <field name="associated_file"/>
+                            <field name="annual_volume"/>
+                            <field name="area"/>
+                            <field name="flow"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="provision"/>
+                        </group>
+                    </group>
+                    <notebook name="slave_data_notebook" colspan="4">
+                        <page name="page_notes" string="Notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_concession_view_tree" model="ir.ui.view">
+        <field name="name">wua.concession.view.tree</field>
+        <field name="model">wua.concession</field>
+            <field name="arch" type="xml">
+            <tree default_order="alphanum_code">
+                <field name="alphanum_code"/>
+                <field name="description"/>
+                <field name="associated_file"/>
+                <field name="annual_volume" class="text-right"/>
+                <field name="area" class="text-right"/>
+                <field name="flow" class="text-right"/>
+                <field name="provision" class="text-right"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_concession_view_search" model="ir.ui.view">
+        <field name="name">wua.concession.view.search</field>
+        <field name="model">wua.concession</field>
+        <field name="arch" type="xml">
+            <search string="Search concessions">
+                <field name="alphanum_code"/>
+                <field name="description"/>
+                <field name="associated_file"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_concession_action" model="ir.actions.act_window">
+        <field name="name">Concessions</field>
+        <field name="res_model">wua.concession</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_concession_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('wua_concession_view_form')})]"/>
+        <field name="search_view_id" ref="wua_concession_view_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new water concession
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="wua_concession_menu"
+        parent="base_ter.menu_configuration_general"
+        action="wua_concession_action"
+        sequence="40"/>
+
+</odoo>

@@ -1,0 +1,75 @@
+@font-face {
+  font-family: 'wua_iconset';
+  src:  url('fonts/wua_iconset.eot?fsclch');
+  src:  url('fonts/wua_iconset.eot?fsclch#iefix') format('embedded-opentype'),
+    url('fonts/wua_iconset.ttf?fsclch') format('truetype'),
+    url('fonts/wua_iconset.woff?fsclch') format('woff'),
+    url('fonts/wua_iconset.svg?fsclch#wua_iconset') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Simplified fa-wua class (inspired by the native Base Fontawesome module) */
+[class^="fa-wua-"], [class*=" fa-wua-"] {
+   display: inline-block;
+   font-family: wua_iconset;
+   font-style: normal;
+   font-weight: normal;
+   font-variant: normal;
+   text-rendering: auto;
+}
+
+/* Render duotone icons */
+[class*="-duotone"]::before {
+   opacity: 1;
+}
+[class*="-duotone"]::after {
+   opacity: 0.4;
+   margin-left: -1em;
+}
+
+/* Print duotone */
+.duotone-print-white::after {
+  opacity: 1;
+  color: rgba(255, 255, 255, 0.6);
+}
+.duotone-print-color::after {
+  opacity: 1;
+  /* Overwritten by js */
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Icons */
+.fa-wua-parcel:before {
+  content: "\e900";
+}
+.fa-wua-subparcel:before {
+  content: "\e901";
+}
+.fa-wua-subparcel-duotone::before {
+  content: "\e902";
+}
+.fa-wua-subparcel-duotone::after {
+  content: "\e903";
+}
+.fa-wua-property:before {
+  content: "\e904";
+}
+.fa-wua-property-duotone::before {
+  content: "\e905";
+}
+.fa-wua-property-duotone::after {
+  content: "\e906";
+}
+.fa-wua-file-parcel:before {
+  content: "\e907";
+}
+.fa-wua-file-subparcel:before {
+  content: "\e908";
+}
+.fa-wua-file-subparcel-duotone::before {
+  content: "\e909";
+}
+.fa-wua-file-subparcel-duotone::after {
+  content: "\e90a";
+}
