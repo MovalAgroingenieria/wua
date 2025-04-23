@@ -187,7 +187,7 @@ class WuaAttendance(models.Model):
         for record in self:
             name = ''
             if (record.assembly_id and record.assembly_id.name and
-               record.partner_id and record.partner_id.partner_code):
+               record.partner_id):
                 name = record.assembly_id.name + '-' + \
                     str(record.partner_id.partner_code).zfill(
                         self.SIZE_PARTNER_CODE)

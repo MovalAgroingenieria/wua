@@ -2761,7 +2761,8 @@ class WuaParcel(models.Model):
             return {
                 'type': 'ir.actions.act_url',
                 'url': url,
-                'target': 'new', }
+                'target': 'new',
+            }
 
     # # # # # # # # # # # # # # # # # # # # # # #
     # Common methods to be used for all modules #
