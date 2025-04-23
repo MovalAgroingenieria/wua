@@ -11,7 +11,8 @@ class MaintenanceGisController(http.Controller):
 
     def _get_geojson_from_equipment_id(self, equipment):
         env = request.env
-        category_mapping = env['maintenance.equipment']._get_category_mapping()
+        category_mapping = env['maintenance.equipment'].\
+            _get_category_table_mapping()
         geojson_geom = None
         category_id = equipment.category_id.id
         # If the category is not in the mapping, try to find the parent
