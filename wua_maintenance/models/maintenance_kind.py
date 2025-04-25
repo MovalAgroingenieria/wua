@@ -67,6 +67,8 @@ class MaintenanceKindDynamicField(models.Model):
             ('date', 'Date'),
             ('fixed', 'Fixed'),
             ('checkbox', 'Checkbox'),
+            ('binary', 'Binary'),
+            ('many2one', 'Many2one'),
         ],
         string='Field Type',
         required=True,

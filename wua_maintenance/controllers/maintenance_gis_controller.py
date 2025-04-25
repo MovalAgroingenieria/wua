@@ -205,6 +205,15 @@ class MaintenanceGisController(http.Controller):
                         maintenance.equipment_id.category_id.model_id.model,
                         field.field_path,
                     )
+                if field.field_type == 'many2one':
+                    value = field_data['value']
+                    field_data['label'] = value.name if value else ''
+                    field_data['fixed_options'] = [
+                        {'label': rec.name, 'value': rec.id}
+                        for rec in request.env[value._name].search([])
+                    ]
+                    # Only send the selected id, not all the data
+                    field_data['value'] = field_data['value'].id
                 dynamic_fields.append(field_data)
         # In case some is null, set the 0 value
         priority_selection = "0"
