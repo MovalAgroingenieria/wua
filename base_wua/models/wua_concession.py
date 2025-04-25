@@ -31,17 +31,15 @@ class WuaConcession(models.Model):
         translate=True,
     )
 
-    annual_volume = fields.Float(
+    annual_volume = fields.Integer(
         string='Annual Volume (m³)',
-        digits=(32, 4),
         default=0,
         required=True,
         index=True,
     )
 
-    area = fields.Float(
+    area = fields.Integer(
         string='Area (ha)',
-        digits=(32, 4),
         default=0,
         required=True,
         index=True,
@@ -54,7 +52,7 @@ class WuaConcession(models.Model):
 
     flow = fields.Float(
         string='Flow (l/s)',
-        digits=(32, 4),
+        digits=(32, 2),
         default=0,
         required=True,
         index=True,
@@ -62,7 +60,7 @@ class WuaConcession(models.Model):
 
     provision = fields.Float(
         string='Provision (m³/ha)',
-        digits=(32, 4),
+        digits=(32, 2),
         store=True,
         index=True,
         compute='_compute_provision',
@@ -88,46 +86,3 @@ class WuaConcession(models.Model):
                 record.provision = record.annual_volume / record.area
             else:
                 record.provision = 0
-
-
-class TerParcelConcessionlink(models.Model):
-    _name = 'ter.parcel.concessionlink'
-    _description = 'Concession of parcel'
-
-    parcel_id = fields.Many2one(
-        string='Parcel',
-        comodel_name='ter.parcel',
-        required=True,
-    )
-
-    concession_id = fields.Many2one(
-        string='Profile',
-        comodel_name='wua.concession',
-        required=True,
-    )
-
-    name = fields.Char(
-        string='Concessionlink',
-        store=True,
-        index=True,
-        compute='_compute_name',
-    )
-
-    notes = fields.Char(
-        string='Notes',
-    )
-
-    _sql_constraints = [
-        ('name_uniq', 'UNIQUE (parcel_id, concession_id)',
-         'Existing Concession.'),
-    ]
-
-    @api.depends('parcel_id', 'concession_id')
-    def _compute_name(self):
-        for record in self:
-            name = ''
-            if record.parcel_id:
-                name += record.parcel_id.name
-            if record.concession_id:
-                name += ' - ' + record.concession_id.name
-            record.name = name

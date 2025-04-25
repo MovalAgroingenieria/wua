@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-24 09:54+0000\n"
-"PO-Revision-Date: 2025-04-24 09:54+0000\n"
+"POT-Creation-Date: 2025-04-25 16:47+0000\n"
+"PO-Revision-Date: 2025-04-25 16:47+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,12 +16,24 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: base_wua
+#: model:ir.model.fields,field_description:base_wua.field_ter_parcel_concessionlink__active
+msgid "Active"
+msgstr "Registre actiu"
+
+#. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_concession__annual_volume
+#: model_terms:ir.ui.view,arch_db:base_wua.wua_concession_view_tree
 msgid "Annual Volume (m³)"
 msgstr "Volum anual (m³)"
 
 #. module: base_wua
+#: model_terms:ir.ui.view,arch_db:base_wua.ter_parcel_concessionlink_view_search
+msgid "Archived"
+msgstr "Arxivat"
+
+#. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_concession__area
+#: model_terms:ir.ui.view,arch_db:base_wua.wua_concession_view_tree
 msgid "Area (ha)"
 msgstr "Àrea (ha)"
 
@@ -43,9 +55,23 @@ msgid "Code (numeric value)"
 msgstr ""
 
 #. module: base_wua
+#: model:ir.model.fields,field_description:base_wua.field_ter_parcel_concessionlink__concession_id
+#: model_terms:ir.ui.view,arch_db:base_wua.ter_parcel_concessionlink_view_search
+#: model_terms:ir.ui.view,arch_db:base_wua.ter_parcel_concessionlink_view_tree
+#: model_terms:ir.ui.view,arch_db:base_wua.ter_parcel_view_form
+msgid "Concession"
+msgstr "Concessió"
+
+#. module: base_wua
 #: model:ir.model,name:base_wua.model_ter_parcel_concessionlink
 msgid "Concession of parcel"
-msgstr "Concessió"
+msgstr "Concessió de parcel·la"
+
+#. module: base_wua
+#: model:ir.actions.act_window,name:base_wua.ter_parcel_concessionlink_action
+#: model:ir.ui.menu,name:base_wua.ter_parcel_concessionlink_menu
+msgid "Concession-Links"
+msgstr "Enllaços parcel·la-concessió"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_ter_parcel_concessionlink__name
@@ -57,7 +83,7 @@ msgstr "Enllaç parcel·la/concessió"
 #: model:ir.ui.menu,name:base_wua.wua_concession_menu
 #: model_terms:ir.ui.view,arch_db:base_wua.ter_parcel_view_form
 msgid "Concessions"
-msgstr "Concessions"
+msgstr ""
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_ter_parcel__concessionlink_ids
@@ -68,12 +94,12 @@ msgstr "Concessions en parcel·les"
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_res_config_settings__concessions_mandatory_default_parcels
 msgid "Concessions: Set mandatory by default in parcels"
-msgstr "Concessions: Establir obligatori per defecte en parcel·les"
+msgstr "Concessions: per defecte, obligatòries en parcel·les"
 
 #. module: base_wua
 #: model:ir.model,name:base_wua.model_res_config_settings
 msgid "Config Settings"
-msgstr "Opcions de configuració"
+msgstr "Ajustos de configuració"
 
 #. module: base_wua
 #: model_terms:ir.actions.act_window,help:base_wua.wua_concession_action
@@ -93,6 +119,13 @@ msgid "Created on"
 msgstr ""
 
 #. module: base_wua
+#: model:ir.model.fields,field_description:base_wua.field_ter_parcel_concessionlink__concession_description
+#: model_terms:ir.ui.view,arch_db:base_wua.ter_parcel_concessionlink_view_tree
+#: model_terms:ir.ui.view,arch_db:base_wua.ter_parcel_view_form
+msgid "Description"
+msgstr "Descripció"
+
+#. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_ter_parcel_concessionlink__display_name
 #: model:ir.model.fields,field_description:base_wua.field_wua_concession__display_name
 msgid "Display Name"
@@ -105,11 +138,13 @@ msgstr "Ja existeix una concessió amb aquest nom."
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_concession__associated_file
+#: model_terms:ir.ui.view,arch_db:base_wua.wua_concession_view_tree
 msgid "File Code"
 msgstr "Codi d'expedient"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_concession__flow
+#: model_terms:ir.ui.view,arch_db:base_wua.wua_concession_view_tree
 msgid "Flow (l/s)"
 msgstr "Cabal (l/s)"
 
@@ -122,8 +157,9 @@ msgstr ""
 #. module: base_wua
 #: model:ir.model.fields,help:base_wua.field_res_config_settings__concessions_mandatory_default_parcels
 #: model_terms:ir.ui.view,arch_db:base_wua.res_config_settings_view_form
-msgid "If checked, the concession will be mandatory in parcels."
-msgstr "Si està marcada, la concessió serà obligatòria en parcel·les per defecte."
+msgid "If checked, the concession will be mandatory in parcels"
+msgstr ""
+"Si està marcat, per defecte la concessió serà obligatòria a les parcel·les"
 
 #. module: base_wua
 #: model:ir.model.constraint,message:base_wua.constraint_wua_concession_annual_volume_ok
@@ -133,7 +169,7 @@ msgstr "Valor incorrecte per a \"Volum anual (m³)\"."
 #. module: base_wua
 #: model:ir.model.constraint,message:base_wua.constraint_wua_concession_area_ok
 msgid "Incorrect value for \"Area (ha)\"."
-msgstr "Valor incorrecte per a \"Àrea (ha)\"."
+msgstr "Valor incorrecte per \"Àrea (ha)\"."
 
 #. module: base_wua
 #: model:ir.model.constraint,message:base_wua.constraint_wua_concession_flow_ok
@@ -165,11 +201,12 @@ msgstr ""
 
 #. module: base_wua
 #: model:ter.profile,alphanum_code:base_wua.ter_profile_03
-msgid "Lesse"
+msgid "Lessee"
 msgstr "Arrendatari"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_concession__description
+#: model_terms:ir.ui.view,arch_db:base_wua.wua_concession_view_tree
 msgid "Long Name / Description"
 msgstr "Descripció"
 
@@ -180,9 +217,12 @@ msgstr "Concessions obligatòries"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_ter_parcel_concessionlink__notes
+#: model_terms:ir.ui.view,arch_db:base_wua.ter_parcel_concessionlink_view_search
+#: model_terms:ir.ui.view,arch_db:base_wua.ter_parcel_concessionlink_view_tree
+#: model_terms:ir.ui.view,arch_db:base_wua.ter_parcel_view_form
 #: model_terms:ir.ui.view,arch_db:base_wua.wua_concession_view_form
 msgid "Notes"
-msgstr "Notes"
+msgstr ""
 
 #. module: base_wua
 #: model_terms:ir.ui.view,arch_db:base_wua.ter_parcel_view_form
@@ -192,6 +232,8 @@ msgstr "Opcions"
 #. module: base_wua
 #: model:ir.model,name:base_wua.model_ter_parcel
 #: model:ir.model.fields,field_description:base_wua.field_ter_parcel_concessionlink__parcel_id
+#: model_terms:ir.ui.view,arch_db:base_wua.ter_parcel_concessionlink_view_search
+#: model_terms:ir.ui.view,arch_db:base_wua.ter_parcel_concessionlink_view_tree
 msgid "Parcel"
 msgstr "Parcel·la"
 
@@ -201,14 +243,18 @@ msgid "Payer"
 msgstr "Pagador"
 
 #. module: base_wua
-#: model:ir.model.fields,field_description:base_wua.field_ter_parcel_concessionlink__concession_id
-msgid "Profile"
-msgstr "Perfil"
+#: model:ir.model.fields,field_description:base_wua.field_ter_parcel_concessionlink__concession_provision
+#: model:ir.model.fields,field_description:base_wua.field_wua_concession__provision
+#: model_terms:ir.ui.view,arch_db:base_wua.ter_parcel_concessionlink_view_tree
+#: model_terms:ir.ui.view,arch_db:base_wua.ter_parcel_view_form
+#: model_terms:ir.ui.view,arch_db:base_wua.wua_concession_view_tree
+msgid "Provision (m³/ha)"
+msgstr "Dotació (m³/ha)"
 
 #. module: base_wua
-#: model:ir.model.fields,field_description:base_wua.field_wua_concession__provision
-msgid "Provision (m³/ha)"
-msgstr "Provisió (m³/ha)"
+#: model_terms:ir.ui.view,arch_db:base_wua.ter_parcel_concessionlink_view_search
+msgid "Search concession-links"
+msgstr "Buscar enllaços parcel·la-concessió"
 
 #. module: base_wua
 #: model_terms:ir.ui.view,arch_db:base_wua.wua_concession_view_search
@@ -217,6 +263,7 @@ msgstr "Cercar concessions"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_concession__alphanum_code
+#: model_terms:ir.ui.view,arch_db:base_wua.wua_concession_view_tree
 msgid "Short Name"
 msgstr "Nom"
 
@@ -228,8 +275,8 @@ msgid ""
 "There are no concessions associated with the parcel, and have been "
 "established as mandatory."
 msgstr ""
-"No hi ha concessions associades a la parcel·la, i han estat "
-"establertes com a obligatòries."
+"No hi ha concessions associades a la parcel·la, però han estat establertes "
+"com a obligatòries."
 
 #. module: base_wua
 #: model:ir.model,name:base_wua.model_wua_concession
@@ -239,11 +286,10 @@ msgstr "Concessió d'aigua"
 
 #. module: base_wua
 #: model_terms:ir.ui.view,arch_db:base_wua.res_config_settings_view_form
-msgid "Water User Assocation: Basic Settings"
-msgstr "Comunitat de Regants: Parametrització bàsica"
+msgid "Water Users Association: Basic Settings"
+msgstr "Comunitats de regants: Configuració bàsica"
 
 #. module: base_wua
 #: model_terms:ir.ui.view,arch_db:base_wua.view_partner_form
 msgid "parcel logo"
 msgstr ""
-

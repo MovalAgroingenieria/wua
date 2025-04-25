@@ -34,14 +34,19 @@
         <field name="name">wua.concession.view.tree</field>
         <field name="model">wua.concession</field>
             <field name="arch" type="xml">
-            <tree default_order="alphanum_code">
-                <field name="alphanum_code"/>
-                <field name="description"/>
-                <field name="associated_file"/>
-                <field name="annual_volume" class="text-right"/>
-                <field name="area" class="text-right"/>
-                <field name="flow" class="text-right"/>
-                <field name="provision" class="text-right"/>
+            <tree default_order="alphanum_code"
+                  class="o_base_wua_concession">
+                <field name="alphanum_code" string="Short Name"/>
+                <field name="description" string="Long Name / Description"/>
+                <field name="associated_file" string="File Code"/>
+                <field name="flow" string="Flow (l/s)"
+                       class="text-right"/>
+                <field name="annual_volume" string="Annual Volume (m³)"
+                       class="text-right"/>
+                <field name="area" string="Area (ha)"
+                       class="text-right"/>
+                <field name="provision" string="Provision (m³/ha)"
+                       class="text-right"/>
             </tree>
         </field>
     </record>
@@ -79,6 +84,6 @@
     <menuitem id="wua_concession_menu"
         parent="base_ter.menu_configuration_general"
         action="wua_concession_action"
-        sequence="40"/>
+        sequence="11"/>
 
 </odoo>

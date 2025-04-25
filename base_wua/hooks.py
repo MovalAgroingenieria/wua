@@ -8,7 +8,7 @@ def pre_init_hook(cr):
     env = api.Environment(cr, SUPERUSER_ID, {})
     incompatible_modules = ['base_foa', 'base_pdo', 'base_agf']
     installed_incompatible_modules = env['ir.module.module'].search([
-        ('name', 'in', incompatible_modules),('state', '=', 'installed')])
+        ('name', 'in', incompatible_modules), ('state', '=', 'installed')])
     if len(installed_incompatible_modules) > 0:
         raise exceptions.ValidationError(_(
             'Cannot install, incompatible modules are installed: %s.') % (
@@ -17,6 +17,8 @@ def pre_init_hook(cr):
 
 def post_init_hook(cr, registry):
     env = api.Environment(cr, SUPERUSER_ID, {})
+    env['ir.config_parameter'].set_param(
+        'base_wua.concessions_mandatory_default_parcels', False)
     env.ref('base.module_base_wua')._update_translations(
         overwrite=True)
 

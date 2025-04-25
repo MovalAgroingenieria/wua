@@ -7,6 +7,21 @@
         <field name="inherit_id" ref="base_ter.ter_parcel_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//page[@name='page_partnerlinks']" position="after">
+                <page name="page_concessionlinks" string="Concessions">
+                    <field name="concessionlink_ids" nolabel="1">
+                        <tree editable="bottom"
+                             class="o_base_wua_ter_parcel_concessionlink">
+                            <field name="concession_id" string="Concession"
+                                   options="{'no_quick_create':True,
+                                             'no_create_edit': True}"/>
+                            <field name="concession_description" string="Description"/>
+                            <field name="concession_provision" string="Provision (m³/ha)"/>
+                            <field name="notes" string="Notes"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+            <xpath expr="//page[@name='page_notes']" position="before">
                 <page name="wua_parcel_options" string="Options">
                     <group name="wua_parcel_options_group">
                         <group name="wua_parcel_options_left">
@@ -16,17 +31,62 @@
                         </group>
                     </group>
                 </page>
-                <page name="page_concessionlinks" string="Concessions">
-                    <field name="concessionlink_ids" nolabel="1">
-                        <tree editable="bottom">
-                            <field name="concession_id"/>
-                            <field name="name"/>
-                            <field name="notes"/>
-                        </tree>
-                    </field>
-                </page>
             </xpath>
         </field>
     </record>
+
+    <record id="ter_parcel_concessionlink_view_tree" model="ir.ui.view">
+        <field name="name">ter.parcel.concessionlink.view.tree</field>
+        <field name="model">ter.parcel.concessionlink</field>
+        <field name="arch" type="xml">
+            <tree edit="false" delete="false"
+                  class="o_base_ter_ter_parcel_concessionlink_technical">
+                <field name="parcel_id" string="Parcel"/>
+                <field name="concession_id" string="Concession"/>
+                <field name="concession_description" string="Description"/>
+                <field name="concession_provision" string="Provision (m³/ha)"/>
+                <field name="notes" string="Notes"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="ter_parcel_concessionlink_view_search" model="ir.ui.view">
+        <field name="name">ter.parcel.concessionlink.view.search</field>
+        <field name="model">ter.parcel.concessionlink</field>
+        <field name="arch" type="xml">
+            <search string="Search concession-links">
+                <field name="parcel_id" string="Parcel"/>
+                <field name="concession_id" string="Concession"/>
+                <field name="notes" string="Notes"/>
+                <filter name="inactive"
+                        string="Archived"
+                        domain="[('active', '=', False)]"/>
+                <group expand="0">
+                    <filter name="grouped_by_concession_id"
+                            string="Concession"
+                     context="{'group_by':'concession_id'}"/>
+                    <filter name="grouped_by_parcel_id"
+                            string="Parcel"
+                     context="{'group_by':'parcel_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="ter_parcel_concessionlink_action" model="ir.actions.act_window">
+        <field name="name">Concession-Links</field>
+        <field name="res_model">ter.parcel.concessionlink</field>
+        <field name="view_mode">tree</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('ter_parcel_concessionlink_view_tree')}),]"/>
+        <field name="search_view_id" ref="ter_parcel_concessionlink_view_search"/>
+    </record>
+
+    <menuitem id="ter_parcel_concessionlink_menu"
+              parent="base_ter.menu_thecnicalactions_detailmodels"
+              action="ter_parcel_concessionlink_action"
+              sequence="20"/>
 
 </odoo>
