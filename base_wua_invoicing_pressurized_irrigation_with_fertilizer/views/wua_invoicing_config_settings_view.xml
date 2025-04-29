@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_invoicing_config_settings_view_form" model="ir.ui.view">
+        <field name="name">Parameters</field>
+        <field name="model">wua.invoicing.configuration</field>
+        <field name="inherit_id"
+               ref="base_wua_invoicing.wua_invoicing_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='default_invoiceset_code_type']/ancestor::group"
+                   position="after">
+                <group name="params_categ_12"
+                       string="Invoicing of Pressurized Irrigation With Fertilizer">
+                    <field name="group_fertilizer_lines_on_report"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_invoice_document" inherit_id="account.report_invoice_document">
+
+        <xpath expr="//t[@t-if='not o._is_invoicing_based_on_wc() and o._must_group_wc_lines_on_report()']" position="attributes">
+            <attribute name="t-if">False</attribute>
+        </xpath>
+
+        <xpath expr="//tbody[@name='invoice_line_body']/t[@name='t-set-invoice-lines']" position="after">
+            <t t-if="not o._is_invoicing_based_on_wc() and o._must_group_wc_lines_on_report() or o._must_group_fertilizer_lines_on_report()">
+                    <t t-set="group_lines_wc" t-value="[]"/>
+                    <t t-set="group_lines_fertilizer" t-value="[]"/>
+                    <t t-set="other_lines" t-value="[]"/>
+
+                    <t t-foreach="o.invoice_line_ids" t-as="l">
+                        <t t-if="l['product_id'].categ_id.productcategory_code == 7">
+                            <t t-set="group_lines_wc" t-value="group_lines_wc + [l]"/>
+                        </t>
+                        <t t-elif="l['product_id'].categ_id.productcategory_code == 12">
+                            <t t-set="group_lines_fertilizer" t-value="group_lines_fertilizer + [l]"/>
+                        </t>
+                        <t t-else="">
+                            <t t-set="other_lines" t-value="other_lines + [l]"/>
+                        </t>
+                    </t>
+
+                    <t t-if="not o._is_invoicing_based_on_wc() and o._must_group_wc_lines_on_report()">
+                        <t t-set="grouped_by_wc" t-value="{}"/>
+                        <t t-foreach="group_lines_wc" t-as="l">
+                            <t t-set="wc_id" t-value="l['waterconnection_id'].id"/>
+                            <t t-set="product_id" t-value="l['product_id'].id"/>
+                            <t t-set="key_str" t-value="str(wc_id) + '_' + str(product_id)"/>
+                            <t t-if="key_str in grouped_by_wc">
+                                <t t-set="prev" t-value="grouped_by_wc[key_str]"/>
+                                <t t-set="updated_entry" t-value="{
+                                    key_str: {
+                                        'quantity': prev['quantity'] + l['quantity'],
+                                        'amount': prev['amount'] + l['price_subtotal'],
+                                        'uom': l['uom_id'],
+                                        'product_id': l['product_id'],
+                                        'waterconnection_id': l['waterconnection_id'],
+                                        'price_unit': l['price_unit'],
+                                        'discount': l['discount'],
+                                        'invoice_line_tax_ids': l['invoice_line_tax_ids'],
+                                        'currency_id': l['currency_id'],
+                                        'origin': l['origin'],
+                                    }
+                                }"/>
+                                <t t-set="grouped_by_wc" t-value="dict(list(grouped_by_wc.items()) + list(updated_entry.items()))"/>
+                            </t>
+                            <t t-else="">
+                                <t t-set="new_entry" t-value="{
+                                    key_str: {
+                                        'quantity': l['quantity'],
+                                        'amount': l['price_subtotal'],
+                                        'uom': l['uom_id'],
+                                        'product_id': l['product_id'],
+                                        'waterconnection_id': l['waterconnection_id'],
+                                        'price_unit': l['price_unit'],
+                                        'discount': l['discount'],
+                                        'invoice_line_tax_ids': l['invoice_line_tax_ids'],
+                                        'currency_id': l['currency_id'],
+                                        'origin': l['origin'],
+                                    }
+                                }"/>
+                                <t t-set="grouped_by_wc" t-value="dict(list(grouped_by_wc.items()) + list(new_entry.items()))"/>
+                            </t>
+                        </t>
+                    </t>
+                    <t t-if="o._must_group_fertilizer_lines_on_report()">
+                        <t t-set="grouped_by_fertilizer" t-value="{}"/>
+                        <t t-foreach="group_lines_fertilizer" t-as="l">
+                            <t t-set="wc_id" t-value="l['waterconnection_id'].id"/>
+                            <t t-set="product_id" t-value="l['product_id'].id"/>
+                            <t t-set="key_str" t-value="str(wc_id) + '_' + str(product_id)"/>
+                            <t t-if="key_str in grouped_by_fertilizer">
+                                <t t-set="prev" t-value="grouped_by_fertilizer[key_str]"/>
+                                <t t-set="updated_entry" t-value="{
+                                    key_str: {
+                                        'quantity': prev['quantity'] + l['quantity'],
+                                        'amount': prev['amount'] + l['price_subtotal'],
+                                        'uom': l['uom_id'],
+                                        'product_id': l['product_id'],
+                                        'waterconnection_id': l['waterconnection_id'],
+                                        'price_unit': l['price_unit'],
+                                        'discount': l['discount'],
+                                        'invoice_line_tax_ids': l['invoice_line_tax_ids'],
+                                        'currency_id': l['currency_id'],
+                                        'origin': l['origin'],
+                                    }
+                                }"/>
+                                <t t-set="grouped_by_fertilizer" t-value="dict(list(grouped_by_fertilizer.items()) + list(updated_entry.items()))"/>
+                            </t>
+                            <t t-else="">
+                                <t t-set="new_entry" t-value="{
+                                    key_str: {
+                                        'quantity': l['quantity'],
+                                        'amount': l['price_subtotal'],
+                                        'uom': l['uom_id'],
+                                        'product_id': l['product_id'],
+                                        'waterconnection_id': l['waterconnection_id'],
+                                        'price_unit': l['price_unit'],
+                                        'discount': l['discount'],
+                                        'invoice_line_tax_ids': l['invoice_line_tax_ids'],
+                                        'currency_id': l['currency_id'],
+                                        'origin': l['origin'],
+                                    }
+                                }"/>
+                                <t t-set="grouped_by_fertilizer" t-value="dict(list(grouped_by_fertilizer.items()) + list(new_entry.items()))"/>
+                            </t>
+                        </t>
+                    </t>
+                    <t t-set="grouped_wc_lines" t-value="[]"/>
+                    <t t-foreach="grouped_by_wc.values()" t-as="grp">
+                        <t t-set="line_name" t-value="o._get_grouped_wc_description_for_report(grp['waterconnection_id'], grp['quantity'])"/>
+                        <t t-set="grouped_wc_lines" t-value="grouped_wc_lines + [{
+                            'product_id': grp['product_id'],
+                            'name': line_name,
+                            'origin': grp['origin'],
+                            'quantity': grp['quantity'],
+                            'price_unit': grp['price_unit'],
+                            'uom_id': grp['uom'],
+                            'discount': grp['discount'],
+                            'invoice_line_tax_ids': grp['invoice_line_tax_ids'],
+                            'price_subtotal': grp['amount'],
+                            'currency_id': grp['currency_id'],
+                        }]"/>
+                    </t>
+
+                    <t t-set="grouped_fertilizer_lines" t-value="[]"/>
+                    <t t-foreach="grouped_by_fertilizer.values()" t-as="grp">
+                        <t t-set="line_name" t-value="grp['waterconnection_id'].name + ' [' + grp['product_id'].name + ']'"/>
+                        <t t-set="grouped_fertilizer_lines" t-value="grouped_fertilizer_lines + [{
+                            'product_id': grp['product_id'],
+                            'name': line_name,
+                            'origin': grp['origin'],
+                            'quantity': grp['quantity'],
+                            'price_unit': grp['price_unit'],
+                            'uom_id': grp['uom'],
+                            'discount': grp['discount'],
+                            'invoice_line_tax_ids': grp['invoice_line_tax_ids'],
+                            'price_subtotal': grp['amount'],
+                            'currency_id': grp['currency_id'],
+                        }]"/>
+                    </t>
+                    <t t-set="invoice_line_ids" t-value="grouped_wc_lines + grouped_fertilizer_lines + other_lines"/>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>

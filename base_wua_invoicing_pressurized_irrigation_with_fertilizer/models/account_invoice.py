@@ -56,4 +56,8 @@ class AccountInvoice(models.Model):
 
     def _is_invoicing_based_on_wc(self):
         return (self.env['ir.values'].get_default(
-           'wua.invoicing.configuration', 'invoicing_based_on_wc'))
+            'wua.invoicing.configuration', 'invoicing_based_on_wc'))
+
+    def _must_group_fertilizer_lines_on_report(self):
+        return (self.env['ir.values'].get_default(
+            'wua.invoicing.configuration', 'group_fertilizer_lines_on_report'))
