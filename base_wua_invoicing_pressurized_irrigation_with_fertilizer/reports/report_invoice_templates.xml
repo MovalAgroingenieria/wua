@@ -14,10 +14,10 @@
                     <t t-set="other_lines" t-value="[]"/>
 
                     <t t-foreach="o.invoice_line_ids" t-as="l">
-                        <t t-if="l['product_id'].categ_id.productcategory_code == 7">
+                        <t t-if="l['product_id'].categ_id.productcategory_code == 7 and o._must_group_wc_lines_on_report()">
                             <t t-set="group_lines_wc" t-value="group_lines_wc + [l]"/>
                         </t>
-                        <t t-elif="l['product_id'].categ_id.productcategory_code == 12">
+                        <t t-elif="l['product_id'].categ_id.productcategory_code == 12 and o._must_group_fertilizer_lines_on_report()">
                             <t t-set="group_lines_fertilizer" t-value="group_lines_fertilizer + [l]"/>
                         </t>
                         <t t-else="">
@@ -67,6 +67,23 @@
                                 <t t-set="grouped_by_wc" t-value="dict(list(grouped_by_wc.items()) + list(new_entry.items()))"/>
                             </t>
                         </t>
+                        <t t-set="grouped_wc_lines" t-value="[]"/>
+                        <t t-foreach="grouped_by_wc.values()" t-as="grp">
+                            <t t-set="line_name" t-value="o._get_grouped_wc_description_for_report(grp['waterconnection_id'], grp['quantity'])"/>
+                            <t t-set="grouped_wc_lines" t-value="grouped_wc_lines + [{
+                                'product_id': grp['product_id'],
+                                'name': line_name,
+                                'origin': grp['origin'],
+                                'quantity': grp['quantity'],
+                                'price_unit': grp['price_unit'],
+                                'uom_id': grp['uom'],
+                                'discount': grp['discount'],
+                                'invoice_line_tax_ids': grp['invoice_line_tax_ids'],
+                                'price_subtotal': grp['amount'],
+                                'currency_id': grp['currency_id'],
+                            }]"/>
+                        </t>
+                        <t t-set="invoice_line_ids" t-value="grouped_wc_lines"/>
                     </t>
                     <t t-if="o._must_group_fertilizer_lines_on_report()">
                         <t t-set="grouped_by_fertilizer" t-value="{}"/>
@@ -110,41 +127,25 @@
                                 <t t-set="grouped_by_fertilizer" t-value="dict(list(grouped_by_fertilizer.items()) + list(new_entry.items()))"/>
                             </t>
                         </t>
+                        <t t-set="grouped_fertilizer_lines" t-value="[]"/>
+                        <t t-foreach="grouped_by_fertilizer.values()" t-as="grp">
+                            <t t-set="line_name" t-value="grp['waterconnection_id'].name + ' [' + grp['product_id'].name + ']'"/>
+                            <t t-set="grouped_fertilizer_lines" t-value="grouped_fertilizer_lines + [{
+                                'product_id': grp['product_id'],
+                                'name': line_name,
+                                'origin': grp['origin'],
+                                'quantity': grp['quantity'],
+                                'price_unit': grp['price_unit'],
+                                'uom_id': grp['uom'],
+                                'discount': grp['discount'],
+                                'invoice_line_tax_ids': grp['invoice_line_tax_ids'],
+                                'price_subtotal': grp['amount'],
+                                'currency_id': grp['currency_id'],
+                            }]"/>
+                        </t>
+                        <t t-set="invoice_line_ids" t-value="invoice_line_ids + grouped_fertilizer_lines"/>
                     </t>
-                    <t t-set="grouped_wc_lines" t-value="[]"/>
-                    <t t-foreach="grouped_by_wc.values()" t-as="grp">
-                        <t t-set="line_name" t-value="o._get_grouped_wc_description_for_report(grp['waterconnection_id'], grp['quantity'])"/>
-                        <t t-set="grouped_wc_lines" t-value="grouped_wc_lines + [{
-                            'product_id': grp['product_id'],
-                            'name': line_name,
-                            'origin': grp['origin'],
-                            'quantity': grp['quantity'],
-                            'price_unit': grp['price_unit'],
-                            'uom_id': grp['uom'],
-                            'discount': grp['discount'],
-                            'invoice_line_tax_ids': grp['invoice_line_tax_ids'],
-                            'price_subtotal': grp['amount'],
-                            'currency_id': grp['currency_id'],
-                        }]"/>
-                    </t>
-
-                    <t t-set="grouped_fertilizer_lines" t-value="[]"/>
-                    <t t-foreach="grouped_by_fertilizer.values()" t-as="grp">
-                        <t t-set="line_name" t-value="grp['waterconnection_id'].name + ' [' + grp['product_id'].name + ']'"/>
-                        <t t-set="grouped_fertilizer_lines" t-value="grouped_fertilizer_lines + [{
-                            'product_id': grp['product_id'],
-                            'name': line_name,
-                            'origin': grp['origin'],
-                            'quantity': grp['quantity'],
-                            'price_unit': grp['price_unit'],
-                            'uom_id': grp['uom'],
-                            'discount': grp['discount'],
-                            'invoice_line_tax_ids': grp['invoice_line_tax_ids'],
-                            'price_subtotal': grp['amount'],
-                            'currency_id': grp['currency_id'],
-                        }]"/>
-                    </t>
-                    <t t-set="invoice_line_ids" t-value="grouped_wc_lines + grouped_fertilizer_lines + other_lines"/>
+                    <t t-set="invoice_line_ids" t-value="invoice_line_ids + other_lines"/>
             </t>
         </xpath>
     </template>
