@@ -248,9 +248,9 @@ class WuaPreswateringrequest(models.Model):
                 raise exceptions.ValidationError(_(
                     'Cannot create preswaterinrequests on a closed period '))
 
-    @api.onchange('partner_id')
+    @api.onchange('partner_id', 'initial_date')
     def _onchange_partner_id(self):
-        if self.partner_id:
+        if self.partner_id and self.initial_date:
             self.action_get_waterconnections()
 
     @api.depends('partner_id', 'initial_date')
