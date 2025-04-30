@@ -43,6 +43,48 @@ class WuaPresreswateringrequest(models.Model):
     def _check_recurrence_end_date_within_period(self):
         pass
 
+    @api.multi
+    def action_get_waterconnections(self):
+        self.ensure_one()
+        if self.partner_id and self.partner_id.waterconnectionlink_ids:
+            waterconnections = self.partner_id.waterconnectionlink_ids.mapped(
+                lambda x: x.waterconnection_id)
+            previous_request = self.env['wua.preswateringrequest'].search([
+                ('partner_id', '=', self.partner_id.id),
+                ('initial_date', '<', self.initial_date),
+            ], order='initial_date desc', limit=1)
+            presresconsumptions = []
+            global_irrigation_duration = self.env['ir.values'].\
+                sudo().get_default(
+                'wua.irrigation.configuration',
+                'default_irrigation_duration')
+            global_initial_hour = self.env['ir.values'].sudo().get_default(
+                'wua.irrigation.configuration',
+                'default_presresconsumption_initial_hour')
+            for wc in waterconnections:
+                irrigation_duration = wc.default_request_duration or \
+                    global_irrigation_duration or 0
+                initial_hour = wc.default_request_initial_hour or \
+                    global_initial_hour or 0.0
+                presresconsumptions.append((0, 0, {
+                    'waterconnection_id': wc.id,
+                    'preswateringrequest_id': self.id,
+                    'nominal_flow': 0.0,
+                    'nominal_flow_ls': 0.0,
+                    'initial_hour': initial_hour,
+                    'watering_duration': irrigation_duration,
+                }))
+            self.presresconsumption_ids = presresconsumptions
+            for pres in self.presresconsumption_ids:
+                pres._onchange_waterconnection_id()
+                if previous_request:
+                    previous_pres = previous_request.presresconsumption_ids.\
+                        filtered(lambda x: x.waterconnection_id.id == pres.
+                                 waterconnection_id.id)
+                    if (previous_pres):
+                        pres.nominal_flow = previous_pres.nominal_flow
+                        pres.nominal_flow_ls = previous_pres.nominal_flow_ls
+
     @api.depends('partner_id', 'partner_id.parent_partner_id')
     def _compute_parent_partner_id(self):
         for record in self:

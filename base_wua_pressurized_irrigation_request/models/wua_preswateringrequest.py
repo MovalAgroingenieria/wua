@@ -345,15 +345,19 @@ class WuaPreswateringrequest(models.Model):
             modification_deadline_message = ''
             modification_deadline = None
             if record.presresconsumption_ids:
-                modification_deadline_message = record.\
-                    presresconsumption_ids[0].modification_deadline_message
-                modification_deadline = record.\
-                    presresconsumption_ids[0].modification_deadline
-            # Write?
+                # Ordenar por fecha más temprana
+                presres_with_deadline = record.presresconsumption_ids.filtered(
+                    lambda r: r.modification_deadline)
+                if presres_with_deadline:
+                    presres_sorted = presres_with_deadline.sorted(
+                        key=lambda r: r.modification_deadline)
+                    modification_deadline_message = \
+                        presres_sorted[0].modification_deadline_message
+                    modification_deadline = \
+                        presres_sorted[0].modification_deadline
             record.modification_deadline_message = \
                 modification_deadline_message
-            record.modification_deadline = \
-                modification_deadline
+            record.modification_deadline = modification_deadline
 
     def _copy_single_request(self, request, copy_date):
         copy_date_str = copy_date.strftime('%Y-%m-%d')

@@ -46,7 +46,7 @@ class WuaParcel(models.Model):
     with_second_cultivation = fields.Boolean(
         string="With Second Cultivation",
         compute='_compute_with_second_cultivation',
-        store=True
+        store=True,
     )
 
     @api.depends('cropplan_id', 'cropplan_id.with_second_cultivation')
@@ -140,6 +140,6 @@ class WuaParcel(models.Model):
                 'domain': [('id', 'in', self.enrolledsubparcel_ids.ids)],
                 'context': {'search_default_active_agriculturalseason': 1,
                             'reduced_name_get_for_agriculturalseason': True,
-                            'reduced_name_get_for_cropplan': True}
+                            'reduced_name_get_for_cropplan': True},
                 }
             return act_window

@@ -776,7 +776,7 @@ class WuaCropplan(models.Model):
                 'search_view_id': (search_view.id, search_view.name),
                 'domain': condition,
                 'target': 'current',
-                'context': {'wua': '1', 'default_is_wua_partner': True}
+                'context': {'wua': '1', 'default_is_wua_partner': True},
                 }
             return act_window
         else:
@@ -962,7 +962,7 @@ class WuaEnrolledsubparcel(models.Model):
     with_second_cultivation = fields.Boolean(
         string="With Second Cultivation",
         compute='_compute_with_second_cultivation',
-        store=True
+        store=True,
     )
 
     irrigationsystem_id = fields.Many2one(
@@ -1146,7 +1146,7 @@ class WuaEnrolledsubparcel(models.Model):
         if self.cultivation_id.id:
             return {
                 'domain': {'cultivationvariety_id':
-                           [('cultivation_id', '=', self.cultivation_id.id)]}
+                           [('cultivation_id', '=', self.cultivation_id.id)]},
             }
 
     @api.model

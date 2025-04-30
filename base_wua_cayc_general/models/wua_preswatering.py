@@ -536,8 +536,6 @@ class WuaPresreswatering(models.Model):
                                     preswatering.preswateringperiod_id.id,
                                 'user_id': self.env.user.id,
                                 'state': '02_validated',
-                                'preswateringperiod_id':
-                                    preswatering.preswateringperiod_id.id,
                                 'from_remotecontrol': True,
                             })
                         self.env['wua.presresconsumption'].create({
