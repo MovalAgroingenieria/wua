@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-28 11:29+0000\n"
-"PO-Revision-Date: 2025-01-28 11:29+0000\n"
+"POT-Creation-Date: 2025-04-30 11:20+0000\n"
+"PO-Revision-Date: 2025-04-30 11:20+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -46,6 +46,28 @@ msgstr "\n"
 "        "
 
 #. module: base_wua_assembly
+#: code:addons/base_wua_assembly/models/wua_assembly.py:124
+#, python-format
+msgid "\n"
+"            <p>Mr./Mrs.:&nbsp; {{ partner.participant_name }} &nbsp;&nbsp;&nbsp;\n"
+"            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n"
+"            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; &nbsp;\n"
+"            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;\n"
+"            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Area:\n"
+"            {{ partner.partner_id.parcel_owner_area }} ha</p>\n"
+"            <p>Partner Code:&nbsp;&nbsp; {{ partner.partner_code }}</p>\n"
+"        "
+msgstr "\n"
+"            <p>D/Dña..:&nbsp; {{ partner.participant_name }} &nbsp;&nbsp;&nbsp;\n"
+"            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n"
+"            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; &nbsp;\n"
+"            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;\n"
+"            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Superfície:\n"
+"            {{ partner.partner_id.parcel_owner_area }} ha</p>\n"
+"            <p>Codi de comuner:&nbsp;&nbsp; {{ partner.partner_code }}</p>\n"
+"        "
+
+#. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_attendance_individual_call_report_document
 msgid "&amp;nbsp;"
 msgstr "&amp;nbsp;"
@@ -59,13 +81,13 @@ msgid "(TIN:"
 msgstr "(NIF:"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:124
+#: code:addons/base_wua_assembly/models/wua_assembly.py:136
 #, python-format
 msgid "<div style=\"text-align: justify;\">Mr. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b></b> with Community Member No. <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>, by virtue of the provisions of the perminent articles of the Statutes of the {{ assembly.president_id.company_id.name }}, <b>AUTHORIZE</b>:<br><br>Mr. <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> to represent him at the {{ assembly.issue }} of this Water Association Community, which will take place on the next {{ assembly_day }} of {{ assembly_month }} of {{ assembly_year }}.<br><br><div style=\"text-align: center;\"><br>The Authorized&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The Communard<br><br><br><br><br>VAT &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VAT <br><br><b>THE COMMUNITY SECRETARY</b><br><br><br><br>VAT {{ assembly.secretary_id.vat }}<br></div></div>"
 msgstr "<div style=\"text-align: justify;\">D. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b></b> amb Nº de comuner <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>, en virtut dels articles pertinents dels Estatuts de la {{ assembly.president_id.company_id.name }}, <b>AUTORITZA</b>:<br><br>D. <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>perquè el representi en la {{ assembly.issue }} d'aquesta Comunitat de Regants, que tindrà lloc el proper {{ assembly_day }} de {{ assembly_month }} de {{ assembly_year }}.<br><br><div style=\"text-align: center;\"><br>L'Autoritzat&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; El Comuner<br><br><br><br><br>NIF &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NIF <br><br><b>EL SECRETARI DE LA COMUNITAT</b><br><br><br><br>NIF {{ assembly.secretary_id.vat }}<br></div></div>"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:187
+#: code:addons/base_wua_assembly/models/wua_assembly.py:199
 #, python-format
 msgid "<div style=\"text-align: justify;\">Mr. <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> with Community Member No. <b><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>, by virtue of the provisions of the perminent articles of the Statutes of the {{ assembly.president_id.company_id.name }}, <b>AUTHORIZE</b>:<br><br>Mr. <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> to represent him at the {{ assembly.issue }} of this Water Association Community, which will take place on the next {{ assembly_day }} of {{ assembly_month }} of {{ assembly_year }}.<br><br><div style=\"text-align: center;\"><br>The Authorized&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Communard<br><br><br><br><br>VAT &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VAT &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br><br><b>THE COMMUNITY SECRETARY</b><br><br><br><br>VAT {{ assembly.secretary_id.vat }}<br></div></div>"
 msgstr "<div style=\"text-align: justify;\">D. <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> amb Nº de comuner <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>, en virtut dels articles pertinents dels Estatuts de la {{ assembly.president_id.company_id.name }}, <b>AUTORITZA</b>:<br><br>D. <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>perquè el representi en la {{ assembly.issue }} d'aquesta Comunitat de Regants, que tindrà lloc el proper {{ assembly_day }} de {{ assembly_month }} de {{ assembly_year }}.<br><br><div style=\"text-align: center;\"><br>L'Autoritzat&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;El Comuner<br><br><br><br><br>NIF &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NIF &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br><br><b>EL SECRETARI DE LA COMUNITAT</b><br><br><br><br>NIF {{ assembly.secretary_id.vat }}<br></div></div>"
@@ -83,8 +105,8 @@ msgid "<div style=\"text-align: justify;\">Mr. <b>{{ partner.name }}</b> with Co
 msgstr "<div style=\"text-align: justify;\">D. <b>{{ partner.name }}</b> amb nombre de comuner <b>{{ partner.partner_code }}</b>, en vertu dels articles pertanyents dels Estatuts de la {{ assembly.president_id.company_id.name }}, <b>AUTORISSA</b>:<br><br>D. <b>{{ agent.name }}</b> perquè el representi a la {{ assembly.issue }} d'aquesta Comunitat de Regants, que tindrà lloc el proper {{ assembly_day }} de {{ assembly_month }} de {{ assembly_year }}.<br><br><div style=\"text-align: center;\"><br>L'Autoritzat &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; El Comuner<br><br><br><br><br>VAT {{ agent.vat_wua_legalrep }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NIF {{ partner.vat }}<br><br><b>Vistiplau<br>EL SECRETARI DE LA COMUNITAT</b><br><br><br><br>NIF {{ assembly.secretary_id.vat }}<br></div></div>"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:173
-#: code:addons/base_wua_assembly/models/wua_assembly.py:239
+#: code:addons/base_wua_assembly/models/wua_assembly.py:185
+#: code:addons/base_wua_assembly/models/wua_assembly.py:251
 #: code:addons/base_wua_assembly/models/wua_delegationvote.py:64
 #: code:addons/base_wua_assembly/models/wua_representation.py:65
 #, python-format
@@ -234,6 +256,7 @@ msgstr "<span>Punt n.</span>"
 
 #. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.report_wua_assembly_voting_ballot_document
+#: model:ir.ui.view,arch_db:base_wua_assembly.report_wua_assembly_voting_ballot_nominative_document
 msgid "<span>N. Votes</span>"
 msgstr "<span>Nº Vots</span>"
 
@@ -268,6 +291,7 @@ msgstr "<span>Aquest camp admet variables jinja2 {{ object.attribute }}.\n"
 
 #. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.report_wua_assembly_voting_ballot_document
+#: model:ir.ui.view,arch_db:base_wua_assembly.report_wua_assembly_voting_ballot_nominative_document
 msgid "<strong>Abstention</strong>\n"
 "                                        <span class=\"fa fa-square-o\" style=\"margin-left: 5px; font-size: 30px; color:grey;\"/>"
 msgstr "<strong>Abstenció</strong>\n"
@@ -275,16 +299,19 @@ msgstr "<strong>Abstenció</strong>\n"
 
 #. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.report_wua_assembly_voting_ballot_document
+#: model:ir.ui.view,arch_db:base_wua_assembly.report_wua_assembly_voting_ballot_nominative_document
 msgid "<strong>Agenda Voting Ballot of the</strong>"
 msgstr "<strong>Papereta de votació de l'ordre del dia de la</strong>"
 
 #. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.report_wua_assembly_voting_ballot_document
+#: model:ir.ui.view,arch_db:base_wua_assembly.report_wua_assembly_voting_ballot_nominative_document
 msgid "<strong>Agendaitem to vote on the agenda</strong>"
 msgstr "<strong>Punts a votar de l'ordre del dia</strong>"
 
 #. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.report_wua_assembly_voting_ballot_document
+#: model:ir.ui.view,arch_db:base_wua_assembly.report_wua_assembly_voting_ballot_nominative_document
 msgid "<strong>Attendee Or Representative</strong>"
 msgstr "<strong>Assistent o Representat</strong>"
 
@@ -314,6 +341,7 @@ msgstr "<strong>Delegació&amp;nbsp;vot</strong>"
 
 #. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.report_wua_assembly_voting_ballot_document
+#: model:ir.ui.view,arch_db:base_wua_assembly.report_wua_assembly_voting_ballot_nominative_document
 msgid "<strong>No</strong>\n"
 "                                        <span class=\"fa fa-square-o\" style=\"margin-left: 5px; font-size: 30px; color:grey;\"/>"
 msgstr "<strong>No</strong>\n"
@@ -327,6 +355,7 @@ msgstr "<strong>Representació</strong>"
 
 #. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.report_wua_assembly_voting_ballot_document
+#: model:ir.ui.view,arch_db:base_wua_assembly.report_wua_assembly_voting_ballot_nominative_document
 msgid "<strong>Yes</strong>\n"
 "                                        <span class=\"fa fa-square-o\" style=\"margin-left: 5px; font-size: 30px; color:grey;\"/>"
 msgstr "<strong>Sí</strong>\n"
@@ -343,7 +372,7 @@ msgid "<u>¡ W A R N I N G !</u>"
 msgstr "<u>¡ A T E N C I Ó !</u>"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_delegationvote.py:220
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:232
 #, python-format
 msgid "A partner cannot give their votes if they have already received votes from other partners."
 msgstr "Un soci no pot cedir els vots si ja ha rebut vots daltres socis."
@@ -355,7 +384,7 @@ msgid "ATTENDANCE NOTES"
 msgstr "NOTES ASSISTÈNCIA"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1297
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1471
 #, python-format
 msgid "ATTENDEES"
 msgstr "ATTENDEES"
@@ -409,7 +438,7 @@ msgid "Agenda Item of an assembly"
 msgstr "Punt de l'ordre del dia"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1153
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1323
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_agendaitem_ids
 #, python-format
 msgid "Agenda Items"
@@ -439,7 +468,7 @@ msgid "Allow notes with the partner signature"
 msgstr "Permetre anotacions en signar l'assistència"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_agendaitem.py:366
+#: code:addons/base_wua_assembly/models/wua_agendaitem.py:392
 #, python-format
 msgid "An item of this type cannot have any options."
 msgstr "Un punt daquest tipus no pot oferir diverses opcions."
@@ -543,6 +572,11 @@ msgid "Assembly Voting Ballot"
 msgstr "Papereta Votació Assemblea"
 
 #. module: base_wua_assembly
+#: model:ir.actions.report.xml,name:base_wua_assembly.action_wua_assembly_voting_ballot_nominative
+msgid "Assembly Voting Ballot Nominative"
+msgstr "Papereta Votació Assemblea Nominativa"
+
+#. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_vegetationindex_config_settings_view_form
 msgid "Assenblies Settings"
 msgstr "Paràmetres relatius a les assemblees"
@@ -630,7 +664,7 @@ msgid "Attendees"
 msgstr "Assistents"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1273
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1447
 #, python-format
 msgid "BALLOT PAPERS"
 msgstr "PAPERETES DE VOTACIÓ"
@@ -647,7 +681,7 @@ msgid "C O N F I R M"
 msgstr "C O N F I R M A R"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1174
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1344
 #, python-format
 msgid "CALLED"
 msgstr "CONVOCADA"
@@ -662,7 +696,7 @@ msgid "Called"
 msgstr "Convocada"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1250
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1424
 #, python-format
 msgid "Calls"
 msgstr "Citacions"
@@ -775,7 +809,7 @@ msgid "Current Year"
 msgstr "Any actual"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1172
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1342
 #, python-format
 msgid "DRAFT"
 msgstr "ESBORRANY"
@@ -853,7 +887,7 @@ msgid "Delegation vote main text"
 msgstr "Delegació vot text principal"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1198
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1370
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_delegationvote_ids
 #, python-format
 msgid "Delegations of vote"
@@ -893,15 +927,16 @@ msgid "Draft"
 msgstr "Esborrany"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:815
-#: code:addons/base_wua_assembly/models/wua_assembly.py:838
-#: code:addons/base_wua_assembly/models/wua_assembly.py:863
-#: code:addons/base_wua_assembly/models/wua_assembly.py:888
-#: code:addons/base_wua_assembly/models/wua_assembly.py:911
-#: code:addons/base_wua_assembly/models/wua_delegationvote.py:349
-#: code:addons/base_wua_assembly/models/wua_delegationvote.py:372
-#: code:addons/base_wua_assembly/models/wua_representation.py:338
-#: code:addons/base_wua_assembly/models/wua_representation.py:361
+#: code:addons/base_wua_assembly/models/wua_assembly.py:881
+#: code:addons/base_wua_assembly/models/wua_assembly.py:919
+#: code:addons/base_wua_assembly/models/wua_assembly.py:943
+#: code:addons/base_wua_assembly/models/wua_assembly.py:969
+#: code:addons/base_wua_assembly/models/wua_assembly.py:995
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1019
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:362
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:386
+#: code:addons/base_wua_assembly/models/wua_representation.py:351
+#: code:addons/base_wua_assembly/models/wua_representation.py:375
 #, python-format
 msgid "ERROR IN TEMPLATE"
 msgstr "ERROR A LA PLANTILLA"
@@ -914,7 +949,7 @@ msgid "Enter notes"
 msgstr "Afegir notes"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1178
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1348
 #, python-format
 msgid "FINISHED"
 msgstr "FINALITZADA"
@@ -986,7 +1021,7 @@ msgid "ID"
 msgstr "ID"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1176
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1346
 #, python-format
 msgid "IN PROGRESS"
 msgstr "EN CURS"
@@ -1029,69 +1064,69 @@ msgid "Issue:"
 msgstr "Assumpte:"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_agendaitem.py:362
+#: code:addons/base_wua_assembly/models/wua_agendaitem.py:388
 #, python-format
 msgid "It is mandatory to choose a type of voting."
 msgstr "És obligatori triar un tipus de votació."
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_agendaitem.py:357
+#: code:addons/base_wua_assembly/models/wua_agendaitem.py:382
 #, python-format
 msgid "It is not possible to choose multiple types of voting."
 msgstr "No es permet triar diversos tipus de votació alhora."
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_delegationvote.py:246
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:258
 #, python-format
 msgid "It is only allowed to create a delegation of vote in 'CALLED' state."
 msgstr "Només es permet dur a terme delegacions de vot quan l'assemblea es troba a l'estat 'CONVOCADA'."
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_representation.py:238
+#: code:addons/base_wua_assembly/models/wua_representation.py:250
 #, python-format
 msgid "It is only allowed to create a representation in 'CALLED' state."
 msgstr "It is only allowed to create a representation in 'CALLED' state."
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_delegationvote.py:281
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:293
 #, python-format
 msgid "It is only allowed to delete a delegation of vote in 'CALLED' state."
 msgstr "Només es permet suprimir delegacions de vot quan l'assemblea es troba a l'estat 'CONVOCADA'."
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_representation.py:270
+#: code:addons/base_wua_assembly/models/wua_representation.py:282
 #, python-format
 msgid "It is only allowed to delete a representation in 'CALLED' state."
 msgstr "It is only allowed to delete a representation in 'CALLED' state."
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_agendaitem.py:459
+#: code:addons/base_wua_assembly/models/wua_agendaitem.py:485
 #, python-format
 msgid "It is only allowed to delete an agenda item in 'DRAFT' state."
 msgstr "Només es permet suprimir un punt de l'ordre del dia si l'assemblea es troba en estat 'ESBORRANY'."
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:990
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1109
 #, python-format
 msgid "It is only allowed to delete an assembly in 'DRAFT' state."
 msgstr "Només es permet eliminar una assemblea si aquesta es troba en estat 'ESBORRANY'."
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_representation.py:293
-#: code:addons/base_wua_assembly/models/wua_representation.py:308
+#: code:addons/base_wua_assembly/models/wua_representation.py:305
+#: code:addons/base_wua_assembly/models/wua_representation.py:320
 #, python-format
 msgid "It is only possible to validate or cancel representations when the assembly is in the 'CALLED' state."
 msgstr "It is only possible to validate or cancel representations when the assembly is in the 'CALLED' state."
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_delegationvote.py:304
-#: code:addons/base_wua_assembly/models/wua_delegationvote.py:319
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:316
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:331
 #, python-format
 msgid "It is only possible to validate or cancel voting delegations when the assembly is in the 'CALLED' state."
 msgstr "Només és possible validar o cancel·lar delegacions de vot quan l'assemblea es troba a l'estat 'CONVOCADA'."
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_agendaitem.py:433
+#: code:addons/base_wua_assembly/models/wua_agendaitem.py:459
 #, python-format
 msgid "Item"
 msgstr "Item"
@@ -1111,7 +1146,7 @@ msgstr "Nº punt"
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_delegationvote___last_update
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_representation___last_update
 msgid "Last Modified on"
-msgstr "Última modificació el "
+msgstr "Darrera modificació el"
 
 #. module: base_wua_assembly
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wizard_preview_publicationtext_write_uid
@@ -1283,7 +1318,6 @@ msgstr "Paràmetres"
 
 #. module: base_wua_assembly
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_attendance_participant_id
-#: model:ir.ui.view,arch_db:base_wua_assembly.wua_attendance_calls_particular_view_tree
 msgid "Participant"
 msgstr "Participant"
 
@@ -1302,7 +1336,7 @@ msgstr "Participant Name"
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_representation_partner_id
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_representation_particular_view_tree
 msgid "Partner"
-msgstr "Soci"
+msgstr "Empresa"
 
 #. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_representation_particular_view_form
@@ -1366,13 +1400,13 @@ msgid "Preview of publication text"
 msgstr "Previsualització de la citació"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1123
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1290
 #, python-format
 msgid "Preview of the final paragraph of the assembly convocation"
 msgstr "Previsualització del paràgraf final de la citació"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1110
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1277
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wizard_preview_publicationtext_publication_text_preview
 #: model:ir.ui.view,arch_db:base_wua_assembly.wizard_preview_publicationtext_view_form
 #, python-format
@@ -1399,13 +1433,23 @@ msgid "Public Notes (as text)"
 msgstr "Notes públiques (com a text)"
 
 #. module: base_wua_assembly
+#: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_attendee_text_on_ballot_nominative
+msgid "Public Notes Nominative"
+msgstr "Notes públiques nominatives"
+
+#. module: base_wua_assembly
+#: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_rendered_attendee_text_on_ballot_nominative
+msgid "Public Notes Nominative Rendered"
+msgstr "Notes públiques nominatives renderitzades"
+
+#. module: base_wua_assembly
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_publication_text
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_assembly_view_form
 msgid "Publication Text"
 msgstr "Citació"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_attendance.py:489
+#: code:addons/base_wua_assembly/models/wua_attendance.py:498
 #, python-format
 msgid "QR code link for attendance %s"
 msgstr "Link del codi QR assistència %s"
@@ -1484,7 +1528,7 @@ msgid "Representation report (Template)"
 msgstr "Representació (Plantilla)"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1226
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1400
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_representation_ids
 #, python-format
 msgid "Representations"
@@ -1542,7 +1586,7 @@ msgid "Signature"
 msgstr "Signatura"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_agendaitem.py:373
+#: code:addons/base_wua_assembly/models/wua_agendaitem.py:399
 #, python-format
 msgid "Some options are required."
 msgstr "És obligatori introduir-hi alguna opció."
@@ -1649,13 +1693,13 @@ msgid "Text"
 msgstr "Text"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_representation.py:221
+#: code:addons/base_wua_assembly/models/wua_representation.py:233
 #, python-format
 msgid "The agent is not a contact associated with the partner."
 msgstr "The agent is not a contact associated with the partner."
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:921
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1040
 #, python-format
 msgid "The assembly date must be after the convocation date."
 msgstr "La data assemblea ha de ser posterior a la de citació."
@@ -1666,19 +1710,19 @@ msgid "The first hour must be a value less than 24."
 msgstr "L'hora de la 1ª convocatòria ha de ser un valor entre 00:00 i 23:59."
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_delegationvote.py:236
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:248
 #, python-format
 msgid "The grantor and the receiver cannot be the same."
 msgstr "El cedent i el receptor no poden ser el mateix soci."
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_delegationvote.py:214
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:226
 #, python-format
 msgid "The grantor must be a owner with votes."
 msgstr "El cedent ha de ser propietari i tenir vots."
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1099
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1266
 #, python-format
 msgid "The next participants does not have TIN assigned (assigning a TIN is required):"
 msgstr "The next participants does not have TIN assigned (assigning a TIN is required):"
@@ -1699,8 +1743,8 @@ msgid "The number of own votes must be a value greater than or equal to 0."
 msgstr "El nombre de vots en propietat ha de ser un valor més gran o igual que 0."
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_agendaitem.py:334
-#: code:addons/base_wua_assembly/models/wua_agendaitem.py:339
+#: code:addons/base_wua_assembly/models/wua_agendaitem.py:359
+#: code:addons/base_wua_assembly/models/wua_agendaitem.py:364
 #, python-format
 msgid "The number of total votes"
 msgstr "The number of total votes"
@@ -1721,13 +1765,13 @@ msgid "The number of votes of an option must be a value greater than or equal to
 msgstr "El nombre de vots d'una opció ha de ser un valor més gran o igual que 0."
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_representation.py:214
+#: code:addons/base_wua_assembly/models/wua_representation.py:226
 #, python-format
 msgid "The partner must be a owner with votes."
 msgstr "The partner must be a owner with votes."
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_delegationvote.py:229
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:241
 #, python-format
 msgid "The receiver must be a owner."
 msgstr "El receptor ha de ser propietari."
@@ -1738,7 +1782,7 @@ msgid "The second hour must be a value less than 24."
 msgstr "L'hora de la 2ª convocatòria ha de ser un valor entre 00:00 i 23:59."
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:929
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1048
 #, python-format
 msgid "The second hour must be after the first hour."
 msgstr "La 2ª convocatòria ha de ser posterior a la 1ª."
@@ -1749,7 +1793,7 @@ msgid "There are notes (y/n)"
 msgstr "Hi ha anotacions a l'assistència? (s/n)"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1018
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1137
 #, python-format
 msgid "There are still delegations of vote or representations in draft state."
 msgstr "There are still delegations of vote or representations in draft state."
@@ -1894,7 +1938,7 @@ msgid "Type: Yes/No"
 msgstr "Tipus: Sí/No"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_attendance.py:294
+#: code:addons/base_wua_assembly/models/wua_attendance.py:309
 #, python-format
 msgid "VOTES"
 msgstr "VOTES"
@@ -1940,6 +1984,11 @@ msgid "Voting Ballot"
 msgstr "Papereta de votació"
 
 #. module: base_wua_assembly
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_assembly_view_form
+msgid "Voting Ballot Nominative"
+msgstr "Papereta de votació nominativa"
+
+#. module: base_wua_assembly
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_is_wua_manager
 msgid "WUA manager"
 msgstr "WUA manager"
@@ -1966,10 +2015,10 @@ msgid "Yes/No"
 msgstr "Sí/No"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_delegationvote.py:298
-#: code:addons/base_wua_assembly/models/wua_delegationvote.py:313
-#: code:addons/base_wua_assembly/models/wua_representation.py:287
-#: code:addons/base_wua_assembly/models/wua_representation.py:302
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:310
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:325
+#: code:addons/base_wua_assembly/models/wua_representation.py:299
+#: code:addons/base_wua_assembly/models/wua_representation.py:314
 #, python-format
 msgid "You do not have permission to execute this action."
 msgstr "No teniu permís per executar aquesta operació."
@@ -1986,25 +2035,25 @@ msgid "Zip Code"
 msgstr "Codi postal"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_agendaitem.py:341
+#: code:addons/base_wua_assembly/models/wua_agendaitem.py:366
 #, python-format
 msgid "is GREATHER than the number of possible votes"
 msgstr "is GREATHER than the number of possible votes"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_agendaitem.py:336
+#: code:addons/base_wua_assembly/models/wua_agendaitem.py:361
 #, python-format
 msgid "is less than the number of possible votes"
 msgstr "is less than the number of possible votes"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_agendaitem.py:451
+#: code:addons/base_wua_assembly/models/wua_agendaitem.py:477
 #, python-format
 msgid "item"
 msgstr "punt n."
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1150
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1320
 #, python-format
 msgid "possible votes"
 msgstr "possible votes"

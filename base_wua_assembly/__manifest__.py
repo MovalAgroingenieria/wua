@@ -40,6 +40,7 @@
         "reports/wua_assembly_representation_report.xml",
         "reports/wua_assembly_voting_ballot_report.xml",
         "reports/wua_assembly_attendance_report.xml",
+        "reports/wua_assembly_voting_ballot_nominative_report.xml",
     ],
     "installable": True,
     "post_init_hook": "post_init_hook",

@@ -119,6 +119,18 @@ class WuaAssembly(models.Model):
             Area:</p><p>Partner Code:</p>
         ''')
         return resp
+    
+    def _default_attendee_text_on_ballot_nominative(self):
+        resp = _('''
+            <p>Mr./Mrs.:&nbsp; {{ partner.participant_name }} &nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; &nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Area:
+            {{ partner.partner_id.parcel_owner_area }} ha</p>
+            <p>Partner Code:&nbsp;&nbsp; {{ partner.partner_code }}</p>
+        ''')
+        return resp
 
     def _default_delegation_vote_main_text(self):
         delegation_vote_main_text = _(
@@ -397,6 +409,15 @@ class WuaAssembly(models.Model):
     attendee_text_on_ballot = fields.Html(
         string='Public Notes',
         default=_default_attendee_text_on_ballot,
+    )
+    
+    attendee_text_on_ballot_nominative = fields.Html(
+        string='Public Notes Nominative',
+        default=_default_attendee_text_on_ballot_nominative,
+    )
+    
+    rendered_attendee_text_on_ballot_nominative = fields.Html(
+        string='Public Notes Nominative Rendered',
     )
 
     public_notes_text = fields.Char(
@@ -861,6 +882,44 @@ class WuaAssembly(models.Model):
                 '<p><br>' + e.message + '</p>'
         return resp
 
+    def _get_rendered_data_text(self, partner=False):
+        resp = ''
+        lang = self.env.context['lang']
+        if not lang:
+            lang = 'en_US'
+        try:
+            date_of_assembly = datetime.datetime.strptime(self.assembly_date,
+                                                          '%Y-%m-%d')
+            text_to_render = self.attendee_text_on_ballot_nominative
+            if not partner:
+                text_to_render = self.attendee_text_on_ballot
+                template = Template(text_to_render)
+                resp = template.render(
+                    assembly=self,
+                    assembly_day=dates.format_date(date_of_assembly,
+                                                   'd', locale=lang),
+                    assembly_month=dates.format_date(date_of_assembly,
+                                                     'LLLL', locale=lang,
+                                                     ),
+                )
+            else:
+                template = Template(text_to_render)
+                resp = template.render(
+                    assembly=self,
+                    assembly_day=dates.format_date(date_of_assembly,
+                                                   'd', locale=lang),
+                    assembly_month=dates.format_date(date_of_assembly,
+                                                     'LLLL', locale=lang,
+                    ),
+                    partner=partner,
+                )
+        except TemplateError as e:
+            resp = '<p style="text-align:center;color:red;">' + \
+                '<b><font style="font-size: 14px;">' + \
+                _('ERROR IN TEMPLATE') + '</font></b></p>' + \
+                '<p><br>' + e.message + '</p>'
+        return resp
+
     def _get_rendered_delegation_vote_footer_text(self):
         resp = ''
         lang = self.env.context['lang']
@@ -960,6 +1019,17 @@ class WuaAssembly(models.Model):
                 _('ERROR IN TEMPLATE') + '</font></b></p>' + \
                 '<p><br>' + e.message + '</p>'
         return resp
+
+    @api.multi
+    def get_rendered_attendee_text_on_ballot_nominative(self, partner=False):
+        for record in self:
+            rendered_attendee_text_on_ballot_nominative = ''
+            if record.attendee_text_on_ballot_nominative:
+                rendered_attendee_text_on_ballot_nominative = \
+                    record._get_rendered_data_text(partner)
+            record.rendered_attendee_text_on_ballot_nominative = (
+                rendered_attendee_text_on_ballot_nominative)
+            return rendered_attendee_text_on_ballot_nominative
 
     @api.constrains('assembly_date', 'convocation_date')
     def _check_assembly_and_convocation_dates(self):
