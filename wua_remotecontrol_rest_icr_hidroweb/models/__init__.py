@@ -9,3 +9,4 @@ from . import wua_waterpipeflowreading
 from . import wua_waterconnection_telecontrol
 from . import wua_parcel
 from . import wua_waterconnection
+from . import wua_negative_reading
