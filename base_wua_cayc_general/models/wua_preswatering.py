@@ -227,6 +227,10 @@ class WuaPresreswatering(models.Model):
                 'until 08:00 of the current day'))
 
     def _get_sinema_consumptions(self):
+        # Added for manual import of json data
+        override = self.env.context.get('overwrite_consumption_data')
+        if override:
+            return override
         consumption_data = {}
         response_data = self._send_sinema_remote_data(
             {"variableName": "*_QMedio_24h*"}, method='get')
@@ -488,67 +492,81 @@ class WuaPresreswatering(models.Model):
             'wua.irrigation.configuration',
             'default_presresconsumption_initial_hour')
         if consumption_data:
-            siemens_ids = [
-                name.split('_QMedio_24h')[0] for name in
-                consumption_data.keys()]
-            waterconnections = self.env['wua.waterconnection'].search(
-                [('siemens_id', 'in', siemens_ids)])
-            for wc in waterconnections:
-                variable_name = '%s_QMedio_24h' % wc.siemens_id
-                if variable_name in consumption_data:
-                    consumption = consumption_data[variable_name]
-                    partner_id = wc.partner_id.id
-                    if not partner_id:
-                        continue
-                    preswatering_date = fields.Datetime.from_string(
-                        preswatering.initial_time).date().strftime('%Y-%m-%d')
-                    request = self.env['wua.preswateringrequest'].search([
-                        ('partner_id', '=', partner_id),
-                        ('initial_date', '=', preswatering_date),
-                    ], limit=1)
-                    if request:
-                        existing_consumption = self.env[
-                            'wua.presresconsumption'].search([
-                                ('preswateringrequest_id', '=', request.id),
-                                ('waterconnection_id', '=', wc.id),
-                            ], limit=1)
-                        if existing_consumption:
-                            existing_consumption.nominal_flow_ls_issued = \
-                                consumption
-                        else:
-                            self.env['wua.presresconsumption'].create({
-                                'preswateringrequest_id': request.id,
-                                'waterconnection_id': wc.id,
-                                'nominal_flow': 0.0,
-                                'nominal_flow_ls': 0.0,
-                                'nominal_flow_ls_issued': consumption,
-                                'preswatering_id': preswatering.id,
-                                'initial_hour': global_initial_hour,
-                                'state': '03_issued',
-                                'from_remotecontrol': True,
-                            })
+            for siemens_key, consumption in consumption_data.iteritems():
+                siemens_id = siemens_key.split('_QMedio_24h')[0]
+                waterconnections = self.env['wua.waterconnection'].search([
+                    ('siemens_id', '=', siemens_id)])
+                if not waterconnections:
+                    continue
+                irrigationpoints = waterconnections.mapped(
+                    'irrigationpoint_ids')
+                partners = irrigationpoints.mapped('partner_id')
+                preswatering_date = fields.Datetime.from_string(
+                    preswatering.initial_time).date().strftime('%Y-%m-%d')
+                requests = self.env['wua.preswateringrequest'].search([
+                    ('partner_id', 'in', partners.ids),
+                    ('initial_date', '=', preswatering_date)])
+                consumptions = self.env['wua.presresconsumption'].search([
+                    ('preswateringrequest_id', 'in', requests.ids),
+                    ('waterconnection_id', 'in', waterconnections.ids)])
+                if consumptions:
+                    # Only share between nominal_flow_ls > 0.0
+                    non_zero = consumptions.filtered(
+                        lambda c: c.nominal_flow_ls > 0.0)
+                    if non_zero:
+                        total_requested = sum(
+                            non_zero.mapped('nominal_flow_ls'))
+                        for c in consumptions:
+                            if c in non_zero:
+                                proportion = c.nominal_flow_ls / \
+                                    total_requested
+                                c.nominal_flow_ls_issued = \
+                                    consumption * proportion
+                            else:
+                                c.nominal_flow_ls_issued = 0.0
                     else:
-                        new_request = self.env[
+                        # If all are 0.0, share equally
+                        share = consumption / len(consumptions)
+                        for c in consumptions:
+                            c.nominal_flow_ls_issued = share
+                else:
+                    request_to_use = None
+                    if requests:
+                        wua_requests = requests.filtered(
+                            lambda r: r.partner_id.partner_type == '01_WUA')
+                        if wua_requests:
+                            request_to_use = wua_requests[0]
+                        else:
+                            request_to_use = requests[0]
+                    else:
+                        partner_for_request = partners.filtered(
+                            lambda p: p.partner_type == '01_WUA')
+                        partner_to_use = partner_for_request[0] if \
+                            partner_for_request else (
+                            partners and partners[0] or None)
+                        if not partner_to_use:
+                            continue
+                        request_to_use = self.env[
                             'wua.preswateringrequest'].create({
-                                'partner_id': partner_id,
+                                'partner_id': partner_to_use.id,
                                 'initial_date': preswatering_date,
                                 'preswateringperiod_id':
-                                    preswatering.preswateringperiod_id.id,
+                                preswatering.preswateringperiod_id.id,
                                 'user_id': self.env.user.id,
                                 'state': '02_validated',
                                 'from_remotecontrol': True,
                             })
-                        self.env['wua.presresconsumption'].create({
-                            'preswateringrequest_id': new_request.id,
-                            'waterconnection_id': wc.id,
-                            'nominal_flow': 0.0,
-                            'nominal_flow_ls': 0.0,
-                            'nominal_flow_ls_issued': consumption,
-                            'preswatering_id': preswatering.id,
-                            'initial_hour': global_initial_hour,
-                            'state': '03_issued',
-                            'from_remotecontrol': True,
-                        })
+                    self.env['wua.presresconsumption'].create({
+                        'preswateringrequest_id': request_to_use.id,
+                        'waterconnection_id': waterconnections[0].id,
+                        'nominal_flow': 0.0,
+                        'nominal_flow_ls': 0.0,
+                        'nominal_flow_ls_issued': consumption,
+                        'preswatering_id': preswatering.id,
+                        'initial_hour': global_initial_hour,
+                        'state': '03_issued',
+                        'from_remotecontrol': True,
+                    })
         return response
 
 

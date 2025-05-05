@@ -40,6 +40,7 @@
         "reports/wua_parcel_report.xml",
         "reports/wua_partner_report.xml",
         "views/resources.xml",
+        "wizard/wua_preswatering_import_consumption_wizard_view.xml",
         "views/wua_irrigation_menus_view.xml",
         "views/wua_irrigation_configuration_view.xml",
         "views/wua_cropplan_view.xml",

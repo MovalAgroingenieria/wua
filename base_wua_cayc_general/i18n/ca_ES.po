@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-10 07:25+0000\n"
-"PO-Revision-Date: 2025-04-10 07:25+0000\n"
+"POT-Creation-Date: 2025-05-05 10:05+0000\n"
+"PO-Revision-Date: 2025-05-05 10:05+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -269,7 +269,7 @@ msgid "A che parcel must have at least one class associated."
 msgstr "Una parcel·la che ha de tenir almenys una classe assignada."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:252
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:294
 #, python-format
 msgid "A new preswatering request has been created for %s on %s by user: %s."
 msgstr "msgstr \"S’ha creat una nova sol·licitud de pre-reg per a %s en data %s per l'usuari: %s."
@@ -321,6 +321,11 @@ msgid "By Surplus"
 msgstr "Per Esplus"
 
 #. module: base_wua_cayc_general
+#: model:ir.ui.view,arch_db:base_wua_cayc_general.import_consumption_wizard_view_form
+msgid "Cancel"
+msgstr "Cancel·la"
+
+#. module: base_wua_cayc_general
 #: model:ir.ui.view,arch_db:base_wua_cayc_general.view_partner_form
 msgid "Class Parcels"
 msgstr "Classes"
@@ -361,6 +366,7 @@ msgstr "No s'ha pogut connectar a la base de dades del servidor, comproveu els p
 
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_octroi_create_uid
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_import_consumption_wizard_create_uid
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_waterchannel_create_uid
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_watermeter_module_create_uid
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase_create_uid
@@ -369,6 +375,7 @@ msgstr "Creat per"
 
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_octroi_create_date
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_import_consumption_wizard_create_date
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_waterchannel_create_date
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_watermeter_module_create_date
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase_create_date
@@ -377,6 +384,7 @@ msgstr "Creat el"
 
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_octroi_display_name
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_import_consumption_wizard_display_name
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_waterchannel_display_name
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_watermeter_module_display_name
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase_display_name
@@ -445,6 +453,11 @@ msgid "Error when updating records."
 msgstr "Error en introduir registres."
 
 #. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_import_consumption_wizard_json_filename
+msgid "Filename"
+msgstr "Nom de l'arxiu"
+
+#. module: base_wua_cayc_general
 #: model:ir.ui.view,arch_db:base_wua_cayc_general.wua_watermeter_module_view_search
 msgid "Group By"
 msgstr "Agrupar per"
@@ -456,6 +469,7 @@ msgstr "Productor hidroelèctric"
 
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_octroi_id
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_import_consumption_wizard_id
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_waterchannel_id
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_watermeter_module_id
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase_id
@@ -467,6 +481,27 @@ msgstr "ID"
 #: model:ir.ui.view,arch_db:base_wua_cayc_general.wua_watermeter_module_view_tree
 msgid "Identifier"
 msgstr "Identificador"
+
+#. module: base_wua_cayc_general
+#: model:ir.ui.view,arch_db:base_wua_cayc_general.import_consumption_wizard_view_form
+msgid "Import"
+msgstr "Importar"
+
+#. module: base_wua_cayc_general
+#: model:ir.ui.view,arch_db:base_wua_cayc_general.import_consumption_wizard_view_form
+#: model:ir.ui.view,arch_db:base_wua_cayc_general.wua_preswatering_view_form
+msgid "Import Consumption from JSON File"
+msgstr "Importa el consum des del fitxer JSON"
+
+#. module: base_wua_cayc_general
+#: model:ir.actions.act_window,name:base_wua_cayc_general.action_open_import_consumption_wizard
+msgid "Import SINEMA JSON"
+msgstr "Importa SINEMA JSON"
+
+#. module: base_wua_cayc_general
+#: model:ir.model,name:base_wua_cayc_general.model_wua_preswatering_import_consumption_wizard
+msgid "Import SINEMA JSON from file"
+msgstr "Importa SINEMA JSON des del fitxer"
 
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_res_partner_is_independent
@@ -492,6 +527,12 @@ msgstr "Captació"
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_waterchannel_intake_ids
 msgid "Intakes"
 msgstr "Captacions"
+
+#. module: base_wua_cayc_general
+#: code:addons/base_wua_cayc_general/wizard/wua_preswatering_import_consumption_wizard.py:38
+#, python-format
+msgid "Invalid JSON: %s"
+msgstr "JSON no vàlid: %s"
 
 #. module: base_wua_cayc_general
 #: model:res.groups,name:base_wua_cayc_general.group_make_invisible
@@ -525,7 +566,13 @@ msgid "Iteration Step"
 msgstr "Pas d'iteració"
 
 #. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_import_consumption_wizard_json_file
+msgid "JSON File (.json)"
+msgstr "Fitxer JSON (.json)"
+
+#. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_octroi___last_update
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_import_consumption_wizard___last_update
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_waterchannel___last_update
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_watermeter_module___last_update
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase___last_update
@@ -539,6 +586,7 @@ msgstr "Darrera data de sincronització"
 
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_octroi_write_uid
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_import_consumption_wizard_write_uid
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_waterchannel_write_uid
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_watermeter_module_write_uid
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase_write_uid
@@ -547,6 +595,7 @@ msgstr "Última actualització per"
 
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_octroi_write_date
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_import_consumption_wizard_write_date
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_waterchannel_write_date
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_watermeter_module_write_date
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase_write_date
@@ -588,14 +637,14 @@ msgid "Modules"
 msgstr "Mòduls"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswatering.py:262
+#: code:addons/base_wua_cayc_general/models/wua_preswatering.py:266
 #, python-format
 msgid "No valid consumption data received from SINEMA."
 msgstr "No s'han rebut dades de consum vàlides de SINEMA."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:185
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:263
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:227
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:305
 #, python-format
 msgid "Nominal Flow Requested (l/s)"
 msgstr "Caudal sol·licitat (l/s)"
@@ -721,6 +770,11 @@ msgid "Position"
 msgstr "Posición"
 
 #. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_import_consumption_wizard_preswatering_id
+msgid "Preswatering"
+msgstr "Prorrateig"
+
+#. module: base_wua_cayc_general
 #: model:ir.model,name:base_wua_cayc_general.model_wua_preswateringperiod
 msgid "Preswatering Period"
 msgstr "Període de reg a pressió"
@@ -731,7 +785,7 @@ msgid "Preswatering Request"
 msgstr "Sol·licitud de reg a pressió"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:169
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:211
 #, python-format
 msgid "Preswatering Request Modified - %s - %s"
 msgstr "Sol·licitud Modificada - %s - %s"
@@ -868,7 +922,7 @@ msgid "The nominal flow of %s is not a combination of the watermeter modules (%s
 msgstr "The nominal flow of %s is not a combination of the watermeter modules (%s -> %s)."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:174
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:216
 #, python-format
 msgid "The request from %s for %s has been modified by user: %s."
 msgstr "La sol·licitud de %s per al dia %s ha estat modificada per l'usuari: %s."
@@ -918,8 +972,8 @@ msgid "WUA Partners"
 msgstr "Socis"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:181
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:259
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:223
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:301
 #, python-format
 msgid "Water Connection"
 msgstr "Toma"
@@ -975,7 +1029,7 @@ msgid "Waterchannels"
 msgstr "Canals"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:75
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:117
 #, python-format
 msgid "Waterconnection: %s, Flow: %s %s"
 msgstr "Presa: %s, Cabal: %s %s"
@@ -1007,6 +1061,12 @@ msgstr "Només pots obtenir els consums servits del dia anterior fins a les 08:0
 #, python-format
 msgid "You can only validate the consumptions starting from 12:00 on the previous day until 08:00 of the request date."
 msgstr "Només es poden validar les consumicions a partir de les 12:00 del dia anterior fins a les 08:00 de la data de sol·licitud."
+
+#. module: base_wua_cayc_general
+#: code:addons/base_wua_cayc_general/wizard/wua_preswatering_import_consumption_wizard.py:33
+#, python-format
+msgid "You must upload a JSON file."
+msgstr "Heu de penjar un fitxer JSON."
 
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_res_partner_zone_id
