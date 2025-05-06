@@ -57,7 +57,7 @@
                         </div>
                         <div style="width: 40%; display: table-cell; padding: 0px 8px;">
                             <p style="margin-bottom: 0px"><i>Shipping Address</i></p>
-                            <t t-if="o.child_ids">
+                            <t name="t_if_child_ids" t-if="o.child_ids">
                                 <t t-foreach="o.child_ids" t-as="address">
                                     <t t-if="address.type == 'delivery'">
                                         <t t-set="shipping_address" t-value="address"/>
