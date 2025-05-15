@@ -2,7 +2,7 @@
 # 2025 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import http
+from odoo import http, _
 from odoo.http import request
 import json
 
@@ -110,6 +110,8 @@ class MaintenanceGisController(http.Controller):
                 value, maintenance)
             for value, _ in maintenance._fields['priority'].selection
         }
+        maintenance_teams = request.env['maintenance.team'].search([]).mapped(
+            lambda team: team.name)
         default_gis_refresh_interval = request.env['ir.values'].get_default(
             'maintenance.config.settings', 'default_gis_refresh_interval') or \
             10
@@ -142,6 +144,7 @@ class MaintenanceGisController(http.Controller):
                     'name': stage.name,
                 }),
             'priority_labels': priority_labels,
+            'maintenance_teams': maintenance_teams,
             'default_interval': default_gis_refresh_interval * 1000,
             'default_maintenance_for_creation':
                 default_maintenance_for_creation,
@@ -238,6 +241,10 @@ class MaintenanceGisController(http.Controller):
             'related_element_extradata': maintenance.related_element_extradata,
             'maintenance_type': maintenance_type_label,
             'maintenance_kind': maintenance.maintenance_kind_id.name or '',
+            'images_required': maintenance.maintenance_kind_id.images_required,
+            'maintenance_team':
+            maintenance.maintenance_team_id.name if
+            maintenance.maintenance_team_id else _('Without team'),
             'procedure_description':
                 maintenance.maintenance_kind_id.procedure_description or '',
             'technician': maintenance.technician_user_id.name or '',

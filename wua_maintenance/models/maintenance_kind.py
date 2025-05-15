@@ -27,6 +27,11 @@ class MaintenanceKind(models.Model):
         string='Procedure description',
     )
 
+    images_required = fields.Boolean(
+        string='Images required',
+        default=True,
+    )
+
     @api.model
     def update_dynamic_fields(self, record, values):
         for field in self.dynamic_field_ids:

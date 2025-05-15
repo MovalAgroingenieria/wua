@@ -71,17 +71,39 @@
         </field>
     </record>
 
+    <record id="maintenance_plan_view_pivot" model="ir.ui.view">
+        <field name="name">Maintenance plans (pivot view)</field>
+        <field name="model">maintenance.plan</field>
+        <field name="arch" type="xml">
+            <pivot string="Maintenance Plan Pivot">
+                <field name="equipment_id" type="row"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="maintenance_plan_view_calendar" model="ir.ui.view">
+        <field name="name">Maintenance plans (calendar view)</field>
+        <field name="model">maintenance.plan</field>
+        <field name="arch" type="xml">
+            <calendar string="Maintenance Plan Calendar" date_start="next_maintenance_date">
+                <field name="equipment_id"/>
+            </calendar>
+        </field>
+    </record>
+
     <record id="maintenance_plan_action" model="ir.actions.act_window">
         <field name="name">Maintenance plans</field>
         <field name="res_model">maintenance.plan</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,pivot,calendar</field>
         <field name="view_ids"
          eval="[(5, 0),
                 (0, 0, {'view_mode': 'tree',
                         'view_id': ref('maintenance_plan_configuration_view_tree')}),
                 (0, 0, {'view_mode': 'form',
-                        'view_id': ref('maintenance_plan_configuration_view_form')})]"/>
+                        'view_id': ref('maintenance_plan_configuration_view_form')}),
+                (0, 0, {'view_mode': 'pivot', 'view_id': ref('maintenance_plan_view_pivot')}),
+                (0, 0, {'view_mode': 'calendar', 'view_id': ref('maintenance_plan_view_calendar')})]"/>
         <field name="search_view_id" ref="maintenance_plan_view_search"/>
     </record>
 

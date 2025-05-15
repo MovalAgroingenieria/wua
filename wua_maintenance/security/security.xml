@@ -21,10 +21,29 @@
         </record>
 
         <record id="equipment_request_rule_user" model="ir.rule">
-            <field name="name">Users are allowed to access their own maintenance requests</field>
+            <field name="name">Users are not allowed to access maintenance requests</field>
             <field name="model_id" ref="model_maintenance_request"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="domain_force">[('id', '=', False)]</field>
             <field name="groups" eval="[(4, ref('base.group_user'))]"/>
         </record>
+
+        <record id="equipment_request_rule_maintenance_user" model="ir.rule">
+            <field name="name">Manager User are allowed to access their own maintenance requests</field>
+            <field name="model_id" ref="model_maintenance_request"/>
+            <field name="domain_force">[
+                '|',
+                ('maintenance_team_id.partner_ids','=',user.partner_id.id),
+                ('maintenance_team_id.partner_ids','parent_of',user.partner_id.id)
+            ]</field>
+            <field name="groups" eval="[(4, ref('base_maintenance_config.group_maintenance_user'))]"/>
+        </record>
+
+        <record id="equipment_request_rule_manager" model="ir.rule">
+            <field name="name">Manager are allowed to access all maintenance requests</field>
+            <field name="model_id" ref="model_maintenance_request"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base_maintenance_config.group_maintenance_manager'))]"/>
+        </record>
+
     </data>
 </odoo>

@@ -44,7 +44,16 @@ class WuaInfrastructureitem(models.AbstractModel):
                         record.equipment_id.with_context(
                             {'update_from_infrastructure': True}).write(
                             {'active': vals['active']})
-
+            # Let's assume that the name is always the same on all languages
+            if 'name' in vals:
+                for record in self:
+                    self.env.cr.execute("""
+                        UPDATE ir_translation
+                        SET value=%s
+                        WHERE name=%s AND res_id=%s AND type='model'
+                        AND lang IS NOT NULL
+                    """, (vals['name'], 'maintenance.equipment,name',
+                          record.id))
         return super(WuaInfrastructureitem, self).write(vals)
 
     def _get_equipment_vals_for_create(self, item_vals):

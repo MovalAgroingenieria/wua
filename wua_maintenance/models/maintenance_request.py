@@ -263,7 +263,7 @@ class MaintenanceRequest(models.Model):
                     response['updated_fields'].extend(updates.keys())
                 except Exception as e:
                     response['errors'].append(
-                        'Error writing to %s: %s' (record, e))
+                        'Error writing to %s: %s' % (record, e))
             if updated_dynamic_fields:
                 maintenance.resolution_dynamic_fields = ';\n '.join(
                     updated_dynamic_fields)
