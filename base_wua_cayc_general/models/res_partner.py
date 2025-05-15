@@ -535,3 +535,21 @@ class ResPartner(models.Model):
             'context': {'from_shortcut': 1},
         }
         return act_window
+
+    @api.onchange('vat')
+    def _onchange_vat(self):
+        if self.vat:
+            duplicates = self.search([
+                ('vat', '=', self.vat),
+            ])
+            if duplicates:
+                names = ', '.join(duplicates.mapped('name'))
+                return {
+                    'warning': {
+                        'title': _('Warning'),
+                        'message': _(
+                            'The VAT number %s already exists in another '
+                        'partner with the same VAT: %s') % (self.vat, names),
+                    }
+                }
+            
