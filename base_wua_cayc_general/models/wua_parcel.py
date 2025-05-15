@@ -68,7 +68,6 @@ class WuaParcel(models.Model):
                 # Primary cannot have more than one partnerlink and this¡
                 # partner must be primary
                 if record.is_primary and (
-                    len(record.partnerlink_ids) > 1 or
                     len(record.partnerlink_ids.filtered(
                         lambda x: not x.partner_id.is_primary)) > 0):
                     raise exceptions.ValidationError(
