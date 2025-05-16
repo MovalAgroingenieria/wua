@@ -19,3 +19,7 @@ class MaintenanceTeam(models.Model):
         string='Partners',
         comodel_name='res.partner',
     )
+
+    name = fields.Char(
+        translate=True,
+    )
