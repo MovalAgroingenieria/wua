@@ -208,6 +208,10 @@ class MaintenanceRequest(models.Model):
             vals['sequence'] = model_ir_sequence.next_by_code(
                 sequence_maintenance_request_code.code)
         new_request = super(MaintenanceRequest, self).create(vals)
+        # Assign default category if created_on_field is True
+        if (new_request.created_on_field and not new_request.category_id):
+            new_request.category_id = self.env.ref(
+                'wua_maintenance.equipment_category_field')
         new_request._add_maintenance_team_followers()
         return new_request
 

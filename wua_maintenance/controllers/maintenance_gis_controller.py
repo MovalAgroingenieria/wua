@@ -254,6 +254,9 @@ class MaintenanceGisController(http.Controller):
             'resolution_image_after': maintenance.resolution_image_after,
             'resolution_time': maintenance.resolution_time,
             'resolved_by': maintenance.resolved_by.name or '',
+            'created_on_field': maintenance.created_on_field,
+            'field_latitude': maintenance.field_latitude,
+            'field_longitude': maintenance.field_longitude,
             'messages': maintenance.message_ids.filtered(
                 lambda x: x.body).mapped(
                 lambda message: {
