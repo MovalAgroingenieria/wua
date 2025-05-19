@@ -5,6 +5,8 @@
 import requests
 import base64
 import json
+import time
+import traceback
 from odoo import models, fields, api, _, exceptions
 
 
@@ -52,23 +54,45 @@ class WuaPresreswatering(models.Model):
         # uses another endpoint
         if method in ['post', 'get']:
             request_function = requests.post
-        try:
-            response = request_function(
-                url,
-                json=payload,
-                headers=headers,
-                verify=False,
-            )
-            if response.status_code == 200:
-                return response.json()
-            else:
+        # Inestable connection, retry X times
+        # TODO: Transform this to a parameter
+        max_retries = 5
+        base_sleep = 10
+        for attempt in range(1, max_retries + 1):
+            try:
+                response = request_function(
+                    url,
+                    json=payload,
+                    headers=headers,
+                    verify=False,
+                    timeout=60,
+                )
+                if response.status_code == 200:
+                    return response.json()
+                else:
+                    self.message_post(body=_(
+                        'Failed to send data to remote control. Status: %s, '
+                        'Response: %s',
+                    ) % (response.status_code, response.text))
+                    return None
+            except (requests.exceptions.Timeout,
+                    requests.exceptions.ConnectionError) as e:
                 self.message_post(body=_(
-                    'Failed to send data to remote control. Status: {}, '
-                    'Response: {}',
-                ).format(response.status_code, response.text))
-        except requests.RequestException as e:
-            self.message_post(body=_('Error during communication: {}').format(
-                str(e)))
+                    'Network error during communication (attempt %s of %s):'
+                    ' %s',
+                ) % (attempt, max_retries, str(e)))
+            except Exception:
+                tb = traceback.format_exc()
+                self.message_post(body=_(
+                    'Unexpected error during communication '
+                    '(attempt %s of %s):\n%s',
+                ) % (attempt, max_retries, tb))
+            if attempt == max_retries:
+                self.message_post(body=_('Max retry attempts reached. '
+                                         'Giving up.'))
+                return None
+            sleep_time = base_sleep * attempt
+            time.sleep(sleep_time)
         return None
 
     def _handle_sinema_response(self, response_data):
