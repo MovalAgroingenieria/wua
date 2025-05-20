@@ -2,7 +2,7 @@
 # 2022 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, exceptions, _
+from odoo import models, fields, api, _
 
 
 class WuaFlowmeter(models.Model):
@@ -17,15 +17,15 @@ class WuaFlowmeter(models.Model):
         comodel_name='wua.flowdata',
         inverse_name='flowmeter_id')
 
-    number_of_flowdata_ids = fields.Integer(
-        string="Num. flowdata",
-        compute="_compute_number_of_flowdata_ids")
+    # number_of_flowdata_ids = fields.Integer(
+    #     string="Num. flowdata",
+    #     compute="_compute_number_of_flowdata_ids")
 
-    @api.multi
-    def _compute_number_of_flowdata_ids(self):
-        for record in self:
-            number_of_flowdata_ids = len(record.flowdata_ids)
-            record.number_of_flowdata_ids = number_of_flowdata_ids
+    # @api.multi
+    # def _compute_number_of_flowdata_ids(self):
+    #     for record in self:
+    #         number_of_flowdata_ids = len(record.flowdata_ids)
+    #         record.number_of_flowdata_ids = number_of_flowdata_ids
 
     @api.multi
     def action_see_flowdata(self):

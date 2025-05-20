@@ -18,7 +18,7 @@ class WuaFlowData(models.Model):
         required=True,
         compute="_compute_name")
 
-    # Indexed by TimescaleDB
+    # Indexed by TimescaleDB (disabled)
     time = fields.Datetime(
         string="Time",
         required=True)

@@ -9,11 +9,13 @@
             <xpath expr="//button[@name='action_see_gis_viewer']" position="after">
                 <button name="action_see_flowdata" type="object" class="oe_stat_button"
                         icon="fa-moval-flowdata-show" groups="base_wua.group_wua_user"
-                        attrs="{'invisible': ['|', ('id', '=', False), ('number_of_flowdata_ids', '=', 0 )]}">
+                        attrs="{'invisible': ['|', ('id', '=', False)]}">
                     <div class="o_form_field o_stat_info">
+                        <!-- Do not show the number, it slows down the view load
                         <span class="o_stat_value">
                             <field name="number_of_flowdata_ids"/>
                         </span>
+                        -->
                         <span class="o_stat_text">
                             <span>Flow data</span>
                         </span>
