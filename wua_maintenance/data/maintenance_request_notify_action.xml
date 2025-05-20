@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="action_notify_maintenance_request_followers" model="ir.actions.server">
+            <field name="name">Notify creation of maintenance request</field>
+            <field name="model_id" ref="maintenance.model_maintenance_request"/>
+            <field name="state">code</field>
+            <field name="code">
+        if record:
+            base_url = env['ir.config_parameter'].get_param('web.base.url') or ''
+            model = record._name
+            link = '%s/web#id=%s&amp;model=%s&amp;view_type=form' % (base_url, record.id, model)
+            record.message_post(
+                 body = "Se ha creado la solicitud &lt;b&gt;%s&lt;/b&gt; por &lt;i&gt;%s&lt;/i&gt; el &lt;b&gt;%s&lt;/b&gt;.&lt;br/&gt;&lt;a href='%s' target='_blank'&gt; Ver Solicitud&lt;/a&gt;" % (
+                    record.name,
+                    record.create_uid.name,
+                    record.request_date or 'sin fecha',
+                    link
+                ),
+                subtype='mail.mt_comment'
+            )
+            </field>
+        </record>
+
+    </data>
+
+</odoo>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="maintenance_request_notify_followers_rule" model="base.action.rule">
+            <field name="name">Notify creation of maintenance request mail</field>
+            <field name="model_id" ref="maintenance.model_maintenance_request"/>
+            <field name="active" eval="True"/>
+            <field name="kind">on_create</field>
+            <field name="state">code</field>
+            <field name="server_action_ids" eval="[(4, ref('wua_maintenance.action_notify_maintenance_request_followers'))]"/>
+        </record>
+
+    </data>
+
+</odoo>

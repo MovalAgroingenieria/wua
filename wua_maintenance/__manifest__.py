@@ -32,6 +32,8 @@
         "data/maintenance_kinds_data.xml",
         "data/maintenance_request_cron.xml",
         "data/maintenance_cron.xml",
+        "data/maintenance_request_notify_action.xml",
+        "data/maintenance_request_notify_rule.xml",
         "wizard/wizard_massive_maintenance_requests.xml",
         "views/maintenance_equipment_view.xml",
         "views/maintenance_views.xml",
