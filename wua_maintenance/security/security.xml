@@ -2,6 +2,11 @@
 <odoo>
     <data noupdate="0">
 
+        <record id="group_maintenance_agent" model="res.groups">
+            <field name="name">Agent</field>
+            <field name="category_id" ref="base_maintenance_config.module_maintenance"/>
+        </record>
+
         <record model="res.groups"
             id="base_wua.group_wua_user">
             <field name="implied_ids"
@@ -43,6 +48,17 @@
             <field name="model_id" ref="model_maintenance_request"/>
             <field name="domain_force">[(1, '=', 1)]</field>
             <field name="groups" eval="[(4, ref('base_maintenance_config.group_maintenance_manager'))]"/>
+        </record>
+
+        <record id="equipment_request_rule_maintenance_agent" model="ir.rule">
+            <field name="name">Agent User are allowed to access their own maintenance requests</field>
+            <field name="model_id" ref="model_maintenance_request"/>
+            <field name="domain_force">[
+                '|',
+                ('maintenance_team_id.partner_ids','=',user.partner_id.id),
+                ('maintenance_team_id.partner_ids','parent_of',user.partner_id.id)
+            ]</field>
+            <field name="groups" eval="[(4, ref('group_maintenance_agent'))]"/>
         </record>
 
     </data>

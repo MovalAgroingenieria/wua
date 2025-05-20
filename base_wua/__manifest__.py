@@ -87,6 +87,7 @@
         "views/res_partner_view.xml",
         "views/res_partner_bank_view.xml",
         "views/res_users_view.xml",
+        "views/menuitems.xml",
         "reports/account_report.xml",
         "reports/wua_partner_report.xml",
         "reports/wua_parcel_report.xml",
