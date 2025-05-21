@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_flowmeter_view_form" model="ir.ui.view" >
+        <field name="name">Flowmeters (form view)</field>
+        <field name="model">wua.flowmeter</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_primary.wua_flowmeter_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='notes_page']" position="before">
+                <page name="grafana_graph_page" string="Graph">
+                    <div class="panel-body text-center">
+                        <field name="flowdata_grafana_frame" widget="html"/>
+                    </div>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

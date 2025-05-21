@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_infrastructure_config_settings_view_form" model="ir.ui.view">
+        <field name="name">Parameters</field>
+        <field name="model">wua.infrastructure.configuration</field>
+        <field name="inherit_id"
+            ref="base_wua_infrastructure.wua_infrastructure_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='gis_settings_group']" position="after">
+                <group string="Grafana" name="grafana_configuration_group">
+                    <field name="flowdata_dashboard_id" style="width:300px"/>
+                    <field name="flowdata_panel_id" style="width:300px"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
