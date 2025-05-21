@@ -43,6 +43,7 @@
         "views/maintenance_kind_views.xml",
         "views/maintenance_stage_views.xml",
         "views/maintenance_equipment_category_view.xml",
+        "views/menuitems.xml",
         "views/resources.xml",
         "reports/maintenance_request_report.xml",
     ],
