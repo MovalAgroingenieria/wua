@@ -24,8 +24,8 @@
         "base_wua_infrastructure_pump",
     ],
     "data": [
-        "security/ir.model.access.csv",
         "security/security.xml",
+        "security/ir.model.access.csv",
         "data/ir_sequence_data.xml",
         "data/maintenance_config_settings_data.xml",
         "data/maintenance_equipment_category_data.xml",
