@@ -243,9 +243,11 @@ class MaintenanceRequest(models.Model):
             response['errors'].append('Maintenance request not found')
         else:
             equipment = maintenance.equipment_id
-            model_name = equipment.category_id.model_id.model
-            target_record = self.env[model_name].search(
-                [('equipment_id', '=', equipment.id)], limit=1)
+            target_record = equipment
+            if (equipment.category_id.model_id):
+                model_name = equipment.category_id.model_id.model
+                target_record = self.env[model_name].search(
+                    [('equipment_id', '=', equipment.id)], limit=1)
             updates_by_target = {}
             updated_dynamic_fields = []
             for field_path, value in dynamic_fields.items():
