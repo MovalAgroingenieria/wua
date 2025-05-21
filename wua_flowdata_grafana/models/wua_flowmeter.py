@@ -2,7 +2,6 @@
 # 2025 - Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-import datetime
 from odoo import models, fields, exceptions, _
 
 
@@ -17,30 +16,21 @@ class WuaFlowmeter(models.Model):
         # Get config params
         flowdata_dashboard_path = self.env['ir.values'].get_default(
             'wua.infrastructure.configuration', 'flowdata_dashboard_path')
-        flowdata_panel_id = self.env['ir.values'].get_default(
-            'wua.infrastructure.configuration', 'flowdata_panel_id')
-        if not flowdata_dashboard_path or not flowdata_panel_id:
+        if not flowdata_dashboard_path:
             raise exceptions.ValidationError(
-                _('The Flowdata Grafana config settings have not been set.'))
-        # Get data
-        panel = "panelId=" + str(flowdata_panel_id)
+                _('The Grafana Flow dashboard not found.'))
         db_name = self.env.cr.dbname
         datasource = "var-Datasource=" + db_name
-        parcel = "var-parcel=" + self.name
+        flowmeter = "var-flowmeter=" + self.name
+        # Detect if there is flow data
         flowdata_values = self.env['wua.flowdata'].search(
-            [('flowmerter_id', '=', self.id)],
-            order='time')
+            [('flowmeter_id', '=', self.id)], limit=1)
         if flowdata_values:
-            epoch_from = "from=" + str(int(datetime.datetime.strptime(
-                flowdata_values[0].data_date,
-                "%Y-%m-%d").strftime('%s')) * 1000)
-            epoch_to = "to=" + str(int(datetime.datetime.strptime(
-                flowdata_values[-1].data_date,
-                "%Y-%m-%d").strftime('%s')) * 1000)
-            # Construct frame src
-            frame_src = flowdata_dashboard_path + '?' + datasource + '&' + parcel + \
-                '&' + epoch_from + '&' + epoch_to + '&' + panel
-            frame_params = 'width="100%" height="400"'
+            # Construct frame src (use default dashboard parameters)
+            # from=now-24h&to=now&refresh=5m&kiosk
+            frame_src = flowdata_dashboard_path + '?' + datasource + '&' + \
+                flowmeter + '&kiosk'
+            frame_params = 'width="100%" height="600"'
             frame_id = 'flowdata_grafana'
             # Get frame
             grafana_frame = self.env['board.grafana'].create_grafana_frame(

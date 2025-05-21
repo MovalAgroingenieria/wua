@@ -16,14 +16,10 @@ class WuaInfrastructureConfiguration(models.TransientModel):
     flowdata_dashboard_path = fields.Char(
         compute="_compute_flowdata_dashboard_path")
 
-    flowdata_panel_id = fields.Integer(
-        string="Panel id",
-        help="The id of the panel.")
-
     @api.depends("flowdata_dashboard_id")
     def _compute_flowdata_dashboard_path(self):
         for record in self:
-            path = "/d-solo/" + record.flowdata_dashboard_id + "/flowdata"
+            path = "/d/" + record.flowdata_dashboard_id + "/caudal-integracion"
             record.flowdata_dashboard_path = path
 
     @api.multi
@@ -34,6 +30,4 @@ class WuaInfrastructureConfiguration(models.TransientModel):
         values.set_default("wua.infrastructure.configuration",
                            "flowdata_dashboard_path",
                            self.flowdata_dashboard_path)
-        values.set_default("wua.infrastructure.configuration",
-                           "flowdata_panel_id", self.flowdata_panel_id)
         super(WuaInfrastructureConfiguration, self).set_default_values()
