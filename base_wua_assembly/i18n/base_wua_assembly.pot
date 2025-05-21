@@ -6,28 +6,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-30 11:06+0000\n"
-"PO-Revision-Date: 2025-04-30 11:06+0000\n"
+"POT-Creation-Date: 2025-05-21 13:10+0000\n"
+"PO-Revision-Date: 2025-05-21 13:10+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
-
-#. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:124
-#, python-format
-msgid "\n"
-"            <p>D./Dña.:&nbsp; {{ partner.participant_name }} &nbsp;&nbsp;&nbsp;\n"
-"            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n"
-"            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; &nbsp;\n"
-"            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;\n"
-"            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Superficie:\n"
-"            {{ partner.partner_id.parcel_owner_area }} ha</p>\n"
-"            <p>Código comunero:&nbsp;&nbsp; {{ partner.partner_code }}</p>\n"
-"        "
-msgstr ""
 
 #. module: base_wua_assembly
 #: code:addons/base_wua_assembly/models/wua_assembly.py:108
@@ -44,6 +30,20 @@ msgid "\n"
 "            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n"
 "            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n"
 "            Area:</p><p>Partner Code:</p>\n"
+"        "
+msgstr ""
+
+#. module: base_wua_assembly
+#: code:addons/base_wua_assembly/models/wua_assembly.py:124
+#, python-format
+msgid "\n"
+"            <p>Mr./Mrs.:&nbsp; {{ partner.participant_name }} &nbsp;&nbsp;&nbsp;\n"
+"            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n"
+"            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; &nbsp;\n"
+"            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;\n"
+"            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Area:\n"
+"            {{ partner.partner_id.parcel_owner_area }} ha</p>\n"
+"            <p>Partner Code:&nbsp;&nbsp; {{ partner.partner_code }}</p>\n"
 "        "
 msgstr ""
 
@@ -335,7 +335,7 @@ msgid "ATTENDANCE NOTES"
 msgstr ""
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1471
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1472
 #, python-format
 msgid "ATTENDEES"
 msgstr ""
@@ -389,7 +389,7 @@ msgid "Agenda Item of an assembly"
 msgstr ""
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1323
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1324
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_agendaitem_ids
 #, python-format
 msgid "Agenda Items"
@@ -496,6 +496,12 @@ msgstr ""
 #. module: base_wua_assembly
 #: model:ir.actions.report.xml,name:base_wua_assembly.action_wua_assembly_attendance_with_delegationvote_report
 msgid "Assembly Attendees (only presents, with delegated votes)"
+msgstr ""
+
+#. module: base_wua_assembly
+#: model:ir.model.fields,field_description:base_wua_assembly.field_res_partner_assembly_excluded
+#: model:ir.model.fields,field_description:base_wua_assembly.field_res_users_assembly_excluded
+msgid "Assembly Excluded"
 msgstr ""
 
 #. module: base_wua_assembly
@@ -615,7 +621,7 @@ msgid "Attendees"
 msgstr ""
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1447
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1448
 #, python-format
 msgid "BALLOT PAPERS"
 msgstr ""
@@ -632,7 +638,7 @@ msgid "C O N F I R M"
 msgstr ""
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1344
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1345
 #, python-format
 msgid "CALLED"
 msgstr ""
@@ -647,7 +653,7 @@ msgid "Called"
 msgstr ""
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1424
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1425
 #, python-format
 msgid "Calls"
 msgstr ""
@@ -760,7 +766,7 @@ msgid "Current Year"
 msgstr ""
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1342
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1343
 #, python-format
 msgid "DRAFT"
 msgstr ""
@@ -838,7 +844,7 @@ msgid "Delegation vote main text"
 msgstr ""
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1370
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1371
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_delegationvote_ids
 #, python-format
 msgid "Delegations of vote"
@@ -900,7 +906,7 @@ msgid "Enter notes"
 msgstr ""
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1348
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1349
 #, python-format
 msgid "FINISHED"
 msgstr ""
@@ -972,7 +978,7 @@ msgid "ID"
 msgstr ""
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1346
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1347
 #, python-format
 msgid "IN PROGRESS"
 msgstr ""
@@ -985,6 +991,12 @@ msgstr ""
 #. module: base_wua_assembly
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_agendaitem_icon_approved
 msgid "Icon for voting result"
+msgstr ""
+
+#. module: base_wua_assembly
+#: model:ir.model.fields,help:base_wua_assembly.field_res_partner_assembly_excluded
+#: model:ir.model.fields,help:base_wua_assembly.field_res_users_assembly_excluded
+msgid "If checked, this partner will not be included in the assembly process."
 msgstr ""
 
 #. module: base_wua_assembly
@@ -1290,6 +1302,11 @@ msgid "Partner"
 msgstr ""
 
 #. module: base_wua_assembly
+#: model:ir.model,name:base_wua_assembly.model_res_partner
+msgid "Partner of a WUA"
+msgstr ""
+
+#. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_representation_particular_view_form
 msgid "Partner:"
 msgstr ""
@@ -1351,13 +1368,13 @@ msgid "Preview of publication text"
 msgstr ""
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1290
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1291
 #, python-format
 msgid "Preview of the final paragraph of the assembly convocation"
 msgstr ""
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1277
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1278
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wizard_preview_publicationtext_publication_text_preview
 #: model:ir.ui.view,arch_db:base_wua_assembly.wizard_preview_publicationtext_view_form
 #, python-format
@@ -1479,7 +1496,7 @@ msgid "Representation report (Template)"
 msgstr ""
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1400
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1401
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_representation_ids
 #, python-format
 msgid "Representations"
@@ -1673,7 +1690,7 @@ msgid "The grantor must be a owner with votes."
 msgstr ""
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1266
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1267
 #, python-format
 msgid "The next participants does not have TIN assigned (assigning a TIN is required):"
 msgstr ""
@@ -2004,7 +2021,7 @@ msgid "item"
 msgstr ""
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:1320
+#: code:addons/base_wua_assembly/models/wua_assembly.py:1321
 #, python-format
 msgid "possible votes"
 msgstr ""

@@ -1213,7 +1213,8 @@ class WuaAssembly(models.Model):
         self.ensure_one()
         self.reset_attendances()
         partner_domain = self._get_partners_domain()
-        partners = self.env['res.partner'].search(partner_domain)
+        partners = self.env['res.partner'].search(partner_domain).filtered(
+            lambda p: not p.assembly_excluded)
         if partners:
             model_wua_attendance = self.env['wua.attendance']
             for partner in partners:

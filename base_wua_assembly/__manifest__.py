@@ -41,6 +41,7 @@
         "reports/wua_assembly_voting_ballot_report.xml",
         "reports/wua_assembly_attendance_report.xml",
         "reports/wua_assembly_voting_ballot_nominative_report.xml",
+        "views/res_partner_view.xml",
     ],
     "installable": True,
     "post_init_hook": "post_init_hook",
