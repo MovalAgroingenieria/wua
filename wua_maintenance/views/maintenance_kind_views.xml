@@ -7,6 +7,18 @@
         <field name="arch" type="xml">
             <form string="Maintenance Kind">
                 <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <button name="toggle_active"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-archive"
+                                confirm="Are you sure you want to toggle visibility?"
+                                groups="base_maintenance_config.group_maintenance_manager">
+                                <field name="active"
+                                 widget="boolean_button"
+                                 options='{"terminology": "archive"}'/>
+                        </button>
+                    </div>
                     <group name="master_data">
                         <group>
                             <field name="name"/>
@@ -46,6 +58,18 @@
             <xpath expr="//tree" position="attributes">
                 <attribute name="editable" delete="1"/>
             </xpath>
+        </field>
+    </record>
+
+    <record id="maintenance_kind_view_search" model="ir.ui.view">
+        <field name="name">maintenance.kind.search</field>
+        <field name="model">maintenance.kind</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <filter string="Active" name="filter_active" domain="[('active','=',True)]"/>
+                <filter string="Archived" name="filter_archived" domain="[('active','=',False)]"/>
+            </search>
         </field>
     </record>
 
