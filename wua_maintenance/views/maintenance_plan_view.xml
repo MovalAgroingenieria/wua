@@ -19,6 +19,10 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='duration']" position="after">
                 <field name="days_to_create_new_maintenance"/>
+                <field name="first_execution_date"/>
+            </xpath>
+            <xpath expr="//field[@name='duration']" position="after">
+                <field name="first_execution_date"/>
             </xpath>
         </field>
     </record>
@@ -48,6 +52,7 @@
                     <field name="period"/>
                     <field name="duration"/>
                     <field name="next_maintenance_date"/>
+                    <field name="first_execution_date"/>
                     <field name="days_to_create_new_maintenance"/>
                     <field name="next_creation_date"/>
                 </group>
