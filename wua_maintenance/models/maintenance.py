@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html)
 
 from odoo import models, fields, api, exceptions, _
+from datetime import timedelta
 import string
 
 
@@ -615,10 +616,9 @@ class MaintenanceEquipment(models.Model):
     @api.model
     def _cron_generate_requests_with_limit(self):
         for plan in self.env['maintenance.plan'].search([('period', '>', 0)]):
-            # Now let's check if the next maintenance date is within the limit
-            # days from today
-            if (plan.next_maintenance_date <= fields.Date.today() +
-                    plan.days_to_create_new_maintenance):
+            next_date = fields.Date.from_string(plan.next_creation_date)
+            today = fields.Date.from_string(fields.Date.today())
+            if next_date <= today:
                 equipment = plan.equipment_id
                 next_requests = self.env['maintenance.request'].search(
                     [('stage_id.done', '=', False),
@@ -628,6 +628,9 @@ class MaintenanceEquipment(models.Model):
                      ('request_date', '=', plan.next_maintenance_date)])
                 if not next_requests:
                     equipment._create_new_request(plan)
+                    plan.next_creation_date = fields.Date.to_string(
+                        fields.Date.from_string(plan.next_creation_date) +
+                        timedelta(days=plan.period))
 
     @api.multi
     def _compute_hydraulicsector(self):
