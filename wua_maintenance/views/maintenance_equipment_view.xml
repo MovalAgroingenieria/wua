@@ -28,6 +28,13 @@
                         <span class="o_stat_text">Childs</span>
                     </div>
                 </button>
+                <button name="action_see_gis_viewer"
+                                type="object"
+                                class="oe_stat_button"
+                                string="GIS Viewer"
+                                icon="fa-map-marker"
+                                attrs="{'invisible':
+                                        [('geojson_geom','=',False)]}"/>
             </xpath>
             <xpath expr="//field[@name='name']" position="attributes">
                 <attribute name="attrs">{'readonly': [('is_wua', '=', True)]}</attribute>
@@ -46,6 +53,14 @@
             </xpath>
             <xpath expr="//field[@name='maintenance_team_id']" position="before">
                 <field name="image" widget="image" class="oe_img_259_160"/>
+            </xpath>
+            <xpath expr="//notebook/page[last()]" position="after">
+                <page string="Geometry">
+                    <group>
+                        <field name="geojson_geom"
+                               attrs="{'readonly': [('is_wua', '=', True)]}"/>
+                    </group>
+                </page>
             </xpath>
         </field>
     </record>
@@ -75,6 +90,15 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='category_id']" position="replace">
                 <field name="category_id" string="Equipment Category" />
+            </xpath>
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="with_infrastructure_gis" invisible="1"/>
+                <button name="action_see_gis_viewer"
+                        type="object" class="oe_stat_button"
+                        string="GIS Viewer"
+                        icon="fa-map-marker"
+                        attrs="{'invisible':
+                                [('with_infrastructure_gis','=',False)]}"/>
             </xpath>
         </field>
     </record>

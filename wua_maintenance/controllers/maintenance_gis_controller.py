@@ -65,6 +65,8 @@ class MaintenanceGisController(http.Controller):
             env.cr.execute(sql_query)
             result = env.cr.fetchone()
             geojson_geom = result[0] if result else None
+        if not geojson_geom:
+            geojson_geom = equipment.geojson_geom
         return geojson_geom
 
     def _get_selection_options(self, model, field_path):

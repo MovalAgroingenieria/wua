@@ -51,7 +51,6 @@ class MaintenanceRequest(models.Model):
     resolution_image_before = fields.Binary(
         string='Resolution Before Image',
         attachment=True,
-        readonly=True,
     )
 
     resolution_image_before_filename = fields.Char(
@@ -63,7 +62,6 @@ class MaintenanceRequest(models.Model):
     resolution_image_after = fields.Binary(
         string='Resolution After Image',
         attachment=True,
-        readonly=True,
     )
 
     resolution_image_after_filename = fields.Char(
@@ -106,6 +104,11 @@ class MaintenanceRequest(models.Model):
 
     description = fields.Html(
         string='Description',
+    )
+
+    with_infrastructure_gis = fields.Boolean(
+        string='With Infrastructure GIS',
+        compute='_compute_with_infrastructure_gis',
     )
 
     @api.depends('equipment_id')
@@ -165,6 +168,38 @@ class MaintenanceRequest(models.Model):
                 'domain': {
                     'equipment_id': [],
                 },
+            }
+
+    @api.multi
+    def _compute_with_infrastructure_gis(self):
+        for record in self:
+            with_infrastructure_gis = False
+            if record.equipment_id and \
+                    record.equipment_id.with_infrastructure_gis:
+                with_infrastructure_gis = True
+            record.with_infrastructure_gis = with_infrastructure_gis
+
+    @api.multi
+    def action_see_gis_viewer(self):
+        url = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer')
+        username = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_username')
+        password = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_password')
+        if (url and self.equipment_id and self.equipment_id.geojson_geom):
+            cipher_text = self.env['wua.parcel']._get_viewer_credentials(
+                username, password)
+            if (cipher_text):
+                url = '%s?arg=%s&geom=%s' % (
+                    url, cipher_text, self.equipment_id.geojson_geom)
+            else:
+                url = '%s?&geom=%s' % (
+                    url, self.equipment_id.geojson_geom)
+            return {
+                'type': 'ir.actions.act_url',
+                'url': url,
+                'target': 'new',
             }
 
     @api.model

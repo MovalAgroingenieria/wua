@@ -337,6 +337,14 @@ class MaintenanceEquipment(models.Model):
                         record.category_id.display_name,
                     ))
 
+    def write(self, vals):
+        if 'geojson_geom' in vals and vals['geojson_geom']:
+            # If the geojson_geom is set, we need to update the
+            # with_infrastructure_gis field to True
+            vals['with_infrastructure_gis'] = True
+        res = super(MaintenanceEquipment, self).write(vals)
+        return res
+
     def _get_category_table_mapping(self):
         env = self.env
         category_mapping = {
@@ -910,3 +918,26 @@ class MaintenanceEquipment(models.Model):
             'context': {'create': False},
         }
         return act_window
+
+    @api.multi
+    def action_see_gis_viewer(self):
+        url = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer')
+        username = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_username')
+        password = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_password')
+        if (url and self.geojson_geom):
+            cipher_text = self.env['wua.parcel']._get_viewer_credentials(
+                username, password)
+            if (cipher_text):
+                url = '%s?arg=%s&geom=%s' % (
+                    url, cipher_text, self.geojson_geom)
+            else:
+                url = '%s?&geom=%s' % (
+                    url, self.geojson_geom)
+            return {
+                'type': 'ir.actions.act_url',
+                'url': url,
+                'target': 'new',
+            }
