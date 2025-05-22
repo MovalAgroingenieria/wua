@@ -45,7 +45,12 @@ class WizardPrintInvoices(models.TransientModel):
         compute='_compute_invoice_lines',
         string='Invoice Lines')
 
-    @api.depends('initial_date', 'end_date', 'waterconnection_ids')
+    only_unpaid = fields.Boolean(
+        string='Only Unpaid Invoices',
+        default=False,
+        help='If checked, only show unpaid invoices')
+
+    @api.depends('initial_date', 'end_date', 'waterconnection_ids', 'only_unpaid')
     def _compute_invoice_lines(self):
         for record in self:
             if record.initial_date \
@@ -54,12 +59,15 @@ class WizardPrintInvoices(models.TransientModel):
                     raise exceptions.UserError(
                         _('''Incorrect dates,
                             the initial date is after the end date.'''))
-                invoice_lines = self.env['account.invoice.line'].search([
+                domain = [
                     ('invoice_id.date_invoice', '>=', record.initial_date),
                     ('invoice_id.date_invoice', '<=', record.end_date),
                     ('waterconnection_id',
                         'in', record.waterconnection_ids.ids)
-                ])
+                ]
+                if record.only_unpaid:
+                    domain.append(('invoice_id.state', '=', 'open'))
+                invoice_lines = self.env['account.invoice.line'].search(domain)
                 record.invoice_line_ids = invoice_lines
 
     @api.depends('invoice_line_ids')

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-04 10:30+0000\n"
-"PO-Revision-Date: 2025-04-04 10:30+0000\n"
+"POT-Creation-Date: 2025-05-20 15:03+0000\n"
+"PO-Revision-Date: 2025-05-20 15:03+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -109,25 +109,25 @@ msgid "Cancel"
 msgstr ""
 
 #. module: base_wua_invoicing_pressurized_irrigation
-#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_reading.py:32
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_reading.py:33
 #, python-format
 msgid "Cannot delete reading with invoiced consumptions."
 msgstr ""
 
 #. module: base_wua_invoicing_pressurized_irrigation
-#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_presconsumption.py:52
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_presconsumption.py:56
 #, python-format
 msgid "Cannot set as invoiced if consumption is not validated."
 msgstr ""
 
 #. module: base_wua_invoicing_pressurized_irrigation
-#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_presconsumption.py:64
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_presconsumption.py:68
 #, python-format
 msgid "Cannot set as not invoiced if have invoiceset associated."
 msgstr ""
 
 #. module: base_wua_invoicing_pressurized_irrigation
-#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_reading.py:44
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_reading.py:45
 #, python-format
 msgid "Cannot update reading with invoiced consumptions."
 msgstr ""
@@ -231,7 +231,7 @@ msgid "Entity (water connection)"
 msgstr ""
 
 #. module: base_wua_invoicing_pressurized_irrigation
-#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:628
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:630
 #, python-format
 msgid "Error when updating records."
 msgstr ""
@@ -297,6 +297,11 @@ msgid "Identifier"
 msgstr ""
 
 #. module: base_wua_invoicing_pressurized_irrigation
+#: model:ir.model.fields,help:base_wua_invoicing_pressurized_irrigation.field_wizard_print_invoices_only_unpaid
+msgid "If checked, only show unpaid invoices"
+msgstr ""
+
+#. module: base_wua_invoicing_pressurized_irrigation
 #: model:ir.model.fields,help:base_wua_invoicing_pressurized_irrigation.field_wua_invoicing_configuration_invoicing_based_on_wc
 msgid "If enabled, invoicing will be based only on water connections, parcels will be ignored"
 msgstr ""
@@ -313,7 +318,7 @@ msgstr ""
 
 #. module: base_wua_invoicing_pressurized_irrigation
 #: code:addons/base_wua_invoicing_pressurized_irrigation/wizard/wizard_print_invoice_lines.py:55
-#: code:addons/base_wua_invoicing_pressurized_irrigation/wizard/wizard_print_invoices.py:55
+#: code:addons/base_wua_invoicing_pressurized_irrigation/wizard/wizard_print_invoices.py:60
 #, python-format
 msgid "Incorrect dates,\n"
 "                            the initial date is after the end date."
@@ -321,8 +326,8 @@ msgstr ""
 
 #. module: base_wua_invoicing_pressurized_irrigation
 #: code:addons/base_wua_invoicing_pressurized_irrigation/wizard/wizard_print_invoice_lines.py:79
-#: code:addons/base_wua_invoicing_pressurized_irrigation/wizard/wizard_print_invoices.py:79
 #: code:addons/base_wua_invoicing_pressurized_irrigation/wizard/wizard_print_invoices.py:87
+#: code:addons/base_wua_invoicing_pressurized_irrigation/wizard/wizard_print_invoices.py:95
 #, python-format
 msgid "Incorrect dates, the initial date is after the end date."
 msgstr ""
@@ -402,7 +407,7 @@ msgid "Invoice State"
 msgstr ""
 
 #. module: base_wua_invoicing_pressurized_irrigation
-#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_presconsumption.py:80
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_presconsumption.py:84
 #: model:ir.model.fields,field_description:base_wua_invoicing_pressurized_irrigation.field_wua_presconsumption_invoiced_consumption
 #: model:ir.model.fields,field_description:base_wua_invoicing_pressurized_irrigation.field_wua_reading_invoiced_reading
 #: model:ir.ui.view,arch_db:base_wua_invoicing_pressurized_irrigation.wua_presconsumption_view_search
@@ -496,7 +501,7 @@ msgid "Normal Water"
 msgstr ""
 
 #. module: base_wua_invoicing_pressurized_irrigation
-#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_presconsumption.py:82
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_presconsumption.py:86
 #, python-format
 msgid "Not Invoiced"
 msgstr ""
@@ -512,6 +517,11 @@ msgid "Not invoiced"
 msgstr ""
 
 #. module: base_wua_invoicing_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_invoicing_pressurized_irrigation.field_wizard_print_invoices_only_unpaid
+msgid "Only Unpaid Invoices"
+msgstr ""
+
+#. module: base_wua_invoicing_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_invoicing_pressurized_irrigation.report_invoice
 msgid "Other lines"
 msgstr ""
@@ -523,7 +533,7 @@ msgid "Parcel"
 msgstr ""
 
 #. module: base_wua_invoicing_pressurized_irrigation
-#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:632
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:634
 #, python-format
 msgid "Pressure Consumptions"
 msgstr ""
@@ -667,7 +677,7 @@ msgid "Water Connection"
 msgstr ""
 
 #. module: base_wua_invoicing_pressurized_irrigation
-#: code:addons/base_wua_invoicing_pressurized_irrigation/models/account_invoice.py:67
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/account_invoice.py:68
 #, python-format
 msgid "Water Connection %s; Total Consumption: %s m³"
 msgstr ""
@@ -693,15 +703,15 @@ msgid "Water Type"
 msgstr ""
 
 #. module: base_wua_invoicing_pressurized_irrigation
-#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:721
-#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:732
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:743
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:754
 #, python-format
 msgid "You cannot add or remove because the invoice set state is 'generated'."
 msgstr ""
 
 #. module: base_wua_invoicing_pressurized_irrigation
 #: code:addons/base_wua_invoicing_pressurized_irrigation/wizard/wizard_print_invoice_lines.py:89
-#: code:addons/base_wua_invoicing_pressurized_irrigation/wizard/wizard_print_invoices.py:97
+#: code:addons/base_wua_invoicing_pressurized_irrigation/wizard/wizard_print_invoices.py:105
 #, python-format
 msgid "You must select at least one water connection."
 msgstr ""
@@ -740,4 +750,3 @@ msgstr ""
 #, python-format
 msgid "total consumption"
 msgstr ""
-
