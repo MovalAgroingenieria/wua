@@ -18,15 +18,25 @@ better visualization of the data and an interaction with the generated graph
 Configuration
 =============
 
-1.- Upon installing the module, access your Grafana instance and retrieve the
-    **Flow Data Dashboard ID**.
+1. **Locate the Flow Dashboard**
+   After deploying the module, you will find **Flow Dashboard** under
+   Dashboards > Grafana > Dashboards.
 
-2.- Navigate to Infrastructure > Configuration > Parameters and enter the
-    Dashboard ID under the **Grafana Flow** section.
+2. **Import the Dashboard**
+   Import the provided JSON file into your Grafana instance.
 
-3.- The dashboard will appear in the Graph tab using Grafana's default settings.
-    To adjust the refresh interval, time range or dashboard layout, simply
-   update those parameters within Grafana.
+   .. note::
+      You may customize the JSON file to match your organization’s conventions
+      before importing.
+      The API key has to be configured before importing the dashboard.
+
+3. **Configure the Dashboard Parameter**
+   Go to Infrastructure > Configuration > Parameters and choose
+   Flow Dashboard from the Grafana Flow section.
+
+4. **View and Adjust**
+   The dashboard is now accessible under the **Graph** tab. To change the refresh
+   interval, time range, or layout, simply update these settings within Grafana.
 
 Credits
 =======

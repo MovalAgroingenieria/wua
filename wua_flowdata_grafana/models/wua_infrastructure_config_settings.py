@@ -8,26 +8,17 @@ from odoo import models, fields, api
 class WuaInfrastructureConfiguration(models.TransientModel):
     _inherit = "wua.infrastructure.configuration"
 
-    flowdata_dashboard_id = fields.Char(
-        string="Dashboard id",
-        required=True,
-        help="The id of the embebbed dashboard.")
-
-    flowdata_dashboard_path = fields.Char(
-        compute="_compute_flowdata_dashboard_path")
-
-    @api.depends("flowdata_dashboard_id")
-    def _compute_flowdata_dashboard_path(self):
-        for record in self:
-            path = "/d/" + record.flowdata_dashboard_id + "/caudal-integracion"
-            record.flowdata_dashboard_path = path
+    flowdata_dashboard_id = fields.Many2one(
+        string='Dashboard',
+        comodel_name='board.grafana.dashboard.storage',
+        domain="[('integrated_dashboard', '=', True)]",
+        ondelete='restrict',
+        help="The dashboard to be used for flow data.")
 
     @api.multi
     def set_default_values(self):
         values = self.env["ir.values"].sudo()
         values.set_default("wua.infrastructure.configuration",
-                           "flowdata_dashboard_id", self.flowdata_dashboard_id)
-        values.set_default("wua.infrastructure.configuration",
-                           "flowdata_dashboard_path",
-                           self.flowdata_dashboard_path)
+                           "flowdata_dashboard_id",
+                           self.flowdata_dashboard_id.id)
         super(WuaInfrastructureConfiguration, self).set_default_values()

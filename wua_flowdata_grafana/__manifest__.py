@@ -17,6 +17,7 @@
     "data": [
         "views/wua_infrastructure_config_settings_view.xml",
         "views/wua_flowmeter_view.xml",
+        "data/flowdata_grafana_dashboard.xml",
     ],
     "installable": True,
     "application": False,
