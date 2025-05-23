@@ -7,6 +7,8 @@
             <field name="dashboard_uid">2T_S7Kxx7k</field>
             <field name="dashboard_path">/d/2T_S7Kxx7k/flow_integration</field>
             <field name="integrated_dashboard">1</field>
+            <field name="integrated_panel_only">0</field>
+            <field name="integrated_panel_id"></field>
             <field name="dashboard_json"><![CDATA[
                 {
                 "__inputs": [
@@ -40,6 +42,29 @@
                     "version": ""
                     }
                 ],
+                "templating": {
+                    "list": [
+                    {
+                        "name": "DS_GENERIC",
+                        "type": "datasource",
+                        "pluginId": "grafana-postgresql-datasource",
+                        "label": "Datasource",
+                        "query": "postgresql",
+                        "hide": 0,
+                        "includeAll": false,
+                        "multi": false,
+                        "current": {
+                        "selected": false,
+                        "text": "default",
+                        "value": ""
+                        },
+                        "options": [],
+                        "refresh": 1,
+                        "skipUrlSync": false,
+                        "regex": ""
+                    }
+                    ]
+                },
                 "annotations": {
                     "list": [
                     {

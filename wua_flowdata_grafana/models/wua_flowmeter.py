@@ -40,8 +40,8 @@ class WuaFlowmeter(models.Model):
             [("flowmeter_id", "=", self.id)], limit=1)
         if flowdata_values:
             # Construct frame src (use default dashboard parameters)
-            frame_src = flowdata_dashboard_path + "?" + datasource + "&" + \
-                flowmeter + "&kiosk"
+            frame_src = flowdata_dashboard_path + "&" + datasource + "&" + \
+                flowmeter
             frame_params = 'width="100%" height="600"'
             frame_id = "flowdata_grafana"
             # Get frame
