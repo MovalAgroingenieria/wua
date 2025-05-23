@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
-from odoo import models, fields, exceptions, _
+from odoo import models, fields, api, exceptions, _
 
 
 class WuaParcel(models.Model):
@@ -13,32 +13,40 @@ class WuaParcel(models.Model):
         string='NDVI grafana',
         compute='_compute_ndvi_grafana_frame')
 
+    @api.multi
     def _compute_ndvi_grafana_frame(self):
-        # Get config params
-        dashboard_path = self.env['ir.values'].get_default(
-            'wua.vegetationindex.configuration', 'dashboard_path')
-        panel_id = self.env['ir.values'].get_default(
-            'wua.vegetationindex.configuration', 'panel_id')
-        if not dashboard_path or not panel_id:
+        # Get configured dashboard
+        ndvi_dashboard_id = self.env["ir.values"].get_default(
+            "wua.vegetationindex.configuration", "ndvi_dashboard_id")
+        ndvi_dashboard = self.env["board.grafana.dashboard.storage"].browse(
+            ndvi_dashboard_id)
+        # Get ndvi dashboard
+        ndvi_dashboard_path = ndvi_dashboard.dashboard_path
+        if not ndvi_dashboard_path:
             raise exceptions.ValidationError(
-                _('The NDVI Grafana config settings have not been set.'))
-        # Get data
-        panel = "panelId=" + str(panel_id)
-        db_name = self.env.cr.dbname
+                _("The Grafana NDVI dashboard not found."))
+        # Get datasource
+        grafana_default_datasource = self.env["ir.values"].get_default(
+            "board.grafana.configuration", "grafana_default_datasource")
+        if grafana_default_datasource:
+            db_name = grafana_default_datasource
+        else:
+            db_name = self.env.cr.dbname
         datasource = "var-Datasource=" + db_name
+        # Get parcel
         parcel = "var-parcel=" + self.name
+        # Get NDVI data
         ndvi_values = self.env['wua.parcel.vegetationindex.ndvi'].search(
-                [('parcel_id', '=', self.id),
-                 ('of_active_agriculturalseason', '=', True)],
-                order='data_date')
+            [('parcel_id', '=', self.id),
+             ('of_active_agriculturalseason', '=', True)], order='data_date')
         if ndvi_values:
             epoch_from = "from=" + str(int(datetime.datetime.strptime(
                 ndvi_values[0].data_date, "%Y-%m-%d").strftime('%s')) * 1000)
             epoch_to = "to=" + str(int(datetime.datetime.strptime(
                 ndvi_values[-1].data_date, "%Y-%m-%d").strftime('%s')) * 1000)
             # Construct frame src
-            frame_src = dashboard_path + '?' + datasource + '&' + parcel + \
-                '&' + epoch_from + '&' + epoch_to + '&' + panel
+            frame_src = ndvi_dashboard_path + '&' + datasource + '&' + \
+                parcel + '&' + epoch_from + '&' + epoch_to + '&'
             frame_params = 'width="100%" height="400"'
             frame_id = 'ndvi_grafana'
             # Get frame

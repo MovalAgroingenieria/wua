@@ -18,6 +18,7 @@
     "data": [
         "views/wua_parcel_view.xml",
         "views/wua_vegetationindex_config_settings_view.xml",
+        "data/ndvi_grafana_dashboard.xml",
     ],
     "installable": True,
     "application": False,
