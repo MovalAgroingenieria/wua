@@ -47,7 +47,17 @@ class WuaParcel(models.Model):
             # Construct frame src
             frame_src = ndvi_dashboard_path + '&' + datasource + '&' + \
                 parcel + '&' + epoch_from + '&' + epoch_to + '&'
-            frame_params = 'width="100%" height="400"'
+            if ndvi_dashboard.frame_width:
+                frame_width = \
+                    " width=" + '"' + ndvi_dashboard.frame_width + '"'
+            else:
+                frame_width = " width=100%"
+            if ndvi_dashboard.frame_height:
+                frame_height = \
+                    " height=" + '"' + ndvi_dashboard.frame_height + '"'
+            else:
+                frame_height = " height=400px"
+            frame_params = frame_width + frame_height
             frame_id = 'ndvi_grafana'
             # Get frame
             grafana_frame = self.env['board.grafana'].create_grafana_frame(
