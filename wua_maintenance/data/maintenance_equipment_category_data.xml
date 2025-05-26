@@ -9,6 +9,7 @@
             <field name="infrastructure_type">01_general</field>
             <field name="is_primary">True</field>
             <field name="model_id" ref="base_wua_infrastructure_primary.model_wua_intake"/>
+            <field name="geometry_type">01_point</field>
         </record>
 
         <record id="equipment_category_reservoir" model="maintenance.equipment.category" forcecreate="False">
@@ -17,6 +18,7 @@
             <field name="infrastructure_type">01_general</field>
             <field name="is_primary">True</field>
             <field name="model_id" ref="base_wua_reservoir.model_wua_reservoir"/>
+            <field name="geometry_type">03_polygon</field>
         </record>
 
         <record id="equipment_category_pumpgroup" model="maintenance.equipment.category" forcecreate="False">
@@ -25,6 +27,7 @@
             <field name="infrastructure_type">01_general</field>
             <field name="is_primary">True</field>
             <field name="model_id" ref="base_wua_infrastructure_pump.model_wua_pumpgroup"/>
+            <field name="geometry_type">01_point</field>
         </record>
 
         <record id="equipment_category_photovoltaicplant" model="maintenance.equipment.category" forcecreate="False">
@@ -33,6 +36,7 @@
             <field name="infrastructure_type">01_general</field>
             <field name="is_primary">True</field>
             <field name="model_id" ref="base_wua_infrastructure_pump.model_wua_photovoltaicplant"/>
+            <field name="geometry_type">03_polygon</field>
         </record>
 
         <record id="equipment_category_flowmeter" model="maintenance.equipment.category" forcecreate="False">
@@ -41,6 +45,7 @@
             <field name="infrastructure_type">01_general</field>
             <field name="is_primary">False</field>
             <field name="model_id" ref="base_wua_infrastructure_primary.model_wua_flowmeter"/>
+            <field name="geometry_type">01_point</field>
         </record>
 
         <record id="equipment_category_pump" model="maintenance.equipment.category" forcecreate="False">
@@ -50,6 +55,7 @@
             <field name="is_primary">False</field>
             <field name="model_id" ref="base_wua_infrastructure_pump.model_wua_pumpunit"/>
             <field name="parent_id" ref="wua_maintenance.equipment_category_pumpgroup"/>
+            <field name="geometry_type">01_point</field>
         </record>
 
         <record id="equipment_category_waterpipe" model="maintenance.equipment.category" forcecreate="False">
@@ -58,6 +64,7 @@
             <field name="infrastructure_type">02_pressurized</field>
             <field name="is_primary">True</field>
             <field name="model_id" ref="base_wua_infrastructure_pressurized_hierarchy.model_wua_waterpipe"/>
+            <field name="geometry_type">02_line</field>
         </record>
 
         <record id="equipment_category_irrigationshed" model="maintenance.equipment.category" forcecreate="False">
@@ -66,6 +73,7 @@
             <field name="infrastructure_type">02_pressurized</field>
             <field name="is_primary">False</field>
             <field name="model_id" ref="base_wua_infrastructure.model_wua_irrigationshed"/>
+            <field name="geometry_type">01_point</field>
         </record>
 
         <record id="equipment_category_waterconnection" model="maintenance.equipment.category" forcecreate="False">
@@ -75,6 +83,7 @@
             <field name="is_primary">False</field>
             <field name="model_id" ref="base_wua_infrastructure.model_wua_waterconnection"/>
             <field name="parent_id" ref="wua_maintenance.equipment_category_irrigationshed"/>
+            <field name="geometry_type">01_point</field>
         </record>
 
         <record id="equipment_category_watermeter" model="maintenance.equipment.category" forcecreate="False">
@@ -84,6 +93,7 @@
             <field name="is_primary">False</field>
             <field name="model_id" ref="base_wua_pressurized_irrigation.model_wua_watermeter"/>
             <field name="parent_id" ref="wua_maintenance.equipment_category_irrigationshed"/>
+            <field name="geometry_type">01_point</field>
         </record>
 
         <record id="equipment_category_pressuresensor" model="maintenance.equipment.category" forcecreate="False">
@@ -92,6 +102,7 @@
             <field name="infrastructure_type">02_pressurized</field>
             <field name="is_primary">False</field>
             <field name="model_id" ref="base_wua_pressurized_irrigation.model_wua_pressuresensor"/>
+            <field name="geometry_type">01_point</field>
         </record>
 
         <record id="equipment_category_irrigationditch" model="maintenance.equipment.category" forcecreate="False">
@@ -100,6 +111,7 @@
             <field name="infrastructure_type">03_gravity</field>
             <field name="is_primary">True</field>
             <field name="model_id" ref="base_wua_infrastructure.model_wua_irrigationditch"/>
+            <field name="geometry_type">02_line</field>
         </record>
 
         <record id="equipment_category_drainageditch" model="maintenance.equipment.category" forcecreate="False">
@@ -108,6 +120,7 @@
             <field name="infrastructure_type">03_gravity</field>
             <field name="is_primary">True</field>
             <field name="model_id" ref="base_wua_infrastructure_gravity_hierarchy.model_wua_drainageditch"/>
+            <field name="geometry_type">02_line</field>
         </record>
 
         <record id="equipment_category_flowdivider" model="maintenance.equipment.category" forcecreate="False">
@@ -117,6 +130,7 @@
             <field name="is_primary">False</field>
             <field name="model_id" ref="base_wua_infrastructure.model_wua_flowdivider"/>
             <field name="parent_id" ref="wua_maintenance.equipment_category_irrigationditch"/>
+            <field name="geometry_type">01_point</field>
         </record>
 
         <record id="equipment_category_irrigationgate" model="maintenance.equipment.category" forcecreate="False">
@@ -126,6 +140,7 @@
             <field name="is_primary">False</field>
             <field name="model_id" ref="base_wua_infrastructure.model_wua_irrigationgate"/>
             <field name="parent_id" ref="wua_maintenance.equipment_category_irrigationditch"/>
+            <field name="geometry_type">01_point</field>
         </record>
 
         <record id="equipment_category_airvalve" model="maintenance.equipment.category" forcecreate="False">
@@ -134,6 +149,7 @@
             <field name="infrastructure_type">03_gravity</field>
             <field name="is_primary">False</field>
             <field name="model_id" ref="base_wua_infrastructure.model_wua_airvalve"/>
+            <field name="geometry_type">01_point</field>
         </record>
 
         <record id="equipment_category_drainagevalve" model="maintenance.equipment.category" forcecreate="False">
@@ -142,6 +158,7 @@
             <field name="infrastructure_type">03_gravity</field>
             <field name="is_primary">False</field>
             <field name="model_id" ref="base_wua_infrastructure.model_wua_drainagevalve"/>
+            <field name="geometry_type">01_point</field>
         </record>
 
         <record id="equipment_category_valve" model="maintenance.equipment.category" forcecreate="False">
@@ -150,6 +167,7 @@
             <field name="infrastructure_type">03_gravity</field>
             <field name="is_primary">False</field>
             <field name="model_id" ref="base_wua_infrastructure.model_wua_valve"/>
+            <field name="geometry_type">01_point</field>
         </record>
 
         <record id="equipment_category_filteringstation" model="maintenance.equipment.category" forcecreate="False">
@@ -158,6 +176,7 @@
             <field name="infrastructure_type">01_general</field>
             <field name="is_primary">False</field>
             <field name="model_id" ref="base_wua_infrastructure_primary.model_wua_filteringstation"/>
+            <field name="geometry_type">01_point</field>
         </record>
 
         <record id="equipment_category_field" model="maintenance.equipment.category" forcecreate="False">
@@ -165,6 +184,7 @@
             <field name="is_wua">True</field>
             <field name="infrastructure_type">01_general</field>
             <field name="is_primary">False</field>
+            <field name="geometry_type">01_point</field>
         </record>
 
     </data>

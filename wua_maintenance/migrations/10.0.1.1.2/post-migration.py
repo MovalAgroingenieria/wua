@@ -76,23 +76,23 @@ def migrate(cr, version):
         env = api.Environment(cr, SUPERUSER_ID, {})
         env.ref('wua_maintenance.equipment_category_irrigationgate').write({
             'parent_id': env.ref(
-                'wua_maintenance.equipment_category_irrigationditch').id
+                'wua_maintenance.equipment_category_irrigationditch').id,
         })
         env.ref('wua_maintenance.equipment_category_flowdivider').write({
             'parent_id': env.ref(
-                'wua_maintenance.equipment_category_irrigationditch').id
+                'wua_maintenance.equipment_category_irrigationditch').id,
         })
         env.ref('wua_maintenance.equipment_category_watermeter').write({
             'parent_id': env.ref(
-                'wua_maintenance.equipment_category_irrigationshed').id
+                'wua_maintenance.equipment_category_irrigationshed').id,
         })
         env.ref('wua_maintenance.equipment_category_waterconnection').write({
             'parent_id': env.ref(
-                'wua_maintenance.equipment_category_irrigationshed').id
+                'wua_maintenance.equipment_category_irrigationshed').id,
         })
         env.ref('wua_maintenance.equipment_category_pump').write({
             'parent_id': env.ref(
-                'wua_maintenance.equipment_category_pumpgroup').id
+                'wua_maintenance.equipment_category_pumpgroup').id,
         })
 
     except Exception as e:

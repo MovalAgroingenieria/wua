@@ -123,6 +123,7 @@ class MaintenanceGisController(http.Controller):
                     'id': equipment.id,
                     'name': equipment.name,
                     'category': equipment.category_id.name,
+                    'geometry_type': equipment.category_id.geometry_type,
                     'geom': self._get_geojson_from_equipment_id(equipment),
                     'image': equipment.image,
                     'attachments': request.env['ir.attachment'].search([
@@ -138,7 +139,13 @@ class MaintenanceGisController(http.Controller):
                         lambda maintenance: maintenance.stage_id.
                         requests_visible_on_gis).mapped(
                         lambda maintenance: maintenance.id),
-
+                    'maintenances_without_field_data': equipment.
+                    maintenance_ids.filtered(
+                            lambda maintenance: maintenance.stage_id.
+                            requests_visible_on_gis and not
+                            maintenance.field_latitude and not
+                            maintenance.field_longitude).mapped(
+                        lambda maintenance: maintenance.id),
                 }),
             'maintenance_stages': maintenance_stages.mapped(
                 lambda stage: {
@@ -158,8 +165,10 @@ class MaintenanceGisController(http.Controller):
 
     def _get_field_value(self, equipment, field_path):
         field_names = field_path.split('.')
-        target = request.env[equipment.category_id.model_id.model].search(
-            [('equipment_id', '=', equipment.id)], limit=1)
+        target = equipment
+        if (equipment.category_id and equipment.category_id.model_id):
+            target = request.env[equipment.category_id.model_id.model].search(
+                [('equipment_id', '=', equipment.id)], limit=1)
         for field_name in field_names:
             if not target:
                 return None
@@ -204,12 +213,17 @@ class MaintenanceGisController(http.Controller):
                     ]
                 if field.field_type == 'selection':
                     # Get the selection options from the related field
-                    # selection
+                    # selection, check if category has a model associated
+                    # and get the selection options from the model
+                    # other case use the maintenance.equipment
+                    model = 'maintenance.equipment'
+                    if (maintenance.equipment_id and
+                        maintenance.equipment_id.category_id and
+                            maintenance.equipment_id.category_id.model_id):
+                        model = \
+                            maintenance.equipment_id.category_id.model_id.model
                     field_data['fixed_options'] = self.\
-                        _get_selection_options(
-                        maintenance.equipment_id.category_id.model_id.model,
-                        field.field_path,
-                    )
+                        _get_selection_options(model, field.field_path)
                 if field.field_type == 'many2one':
                     value = field_data['value']
                     field_data['label'] = value.name if value else ''
@@ -233,6 +247,7 @@ class MaintenanceGisController(http.Controller):
             'name': maintenance.name,
             'description': maintenance.description or '',
             'category': maintenance.category_id.name,
+            'geometry_type': maintenance.category_id.geometry_type,
             'equipment': maintenance.equipment_id.name,
             'equipment_id': maintenance.equipment_id.id,
             'request_date': maintenance.request_date,

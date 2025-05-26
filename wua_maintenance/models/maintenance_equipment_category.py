@@ -87,6 +87,15 @@ class WuaMaintenanceEquipmentCategory(models.Model):
         ondelete='restrict',
     )
 
+    geometry_type = fields.Selection(
+        [('01_point', 'Point'),
+         ('02_line', 'Line'),
+         ('03_polygon', 'Polygon')],
+        string='Geometry Type',
+        default='01_point',
+        required=True,
+    )
+
     _sql_constraints = [
         ('name_uniq', 'unique (name)',
          _('Maintenance category already exists.')),

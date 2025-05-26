@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-22 09:38+0000\n"
-"PO-Revision-Date: 2025-05-22 09:38+0000\n"
+"POT-Creation-Date: 2025-05-23 11:03+0000\n"
+"PO-Revision-Date: 2025-05-23 11:03+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -205,7 +205,7 @@ msgid "Cancel"
 msgstr "Cancel·la"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:127
+#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:136
 #, python-format
 msgid "Cannot delete a WUA infrastructure category."
 msgstr "No es pot eliminar una categoria d'infraestructura WUA."
@@ -511,7 +511,7 @@ msgid "Equipment not available."
 msgstr "Element no disponible."
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:119
+#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:128
 #, python-format
 msgid "Error resolving template: {}"
 msgstr "Error en resoldre la plantilla: {}"
@@ -649,6 +649,11 @@ msgstr "Estil GeoJSON per a les dades del visor."
 #: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_view_form
 msgid "Geometry"
 msgstr "Geometría"
+
+#. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_category_geometry_type
+msgid "Geometry Type"
+msgstr "Tipus de geometria"
 
 #. module: wua_maintenance
 #: selection:maintenance.equipment,infrastructure_type:0
@@ -829,6 +834,11 @@ msgid "Legend symbology viewer data"
 msgstr "Legend symbology viewer data"
 
 #. module: wua_maintenance
+#: selection:maintenance.equipment.category,geometry_type:0
+msgid "Line"
+msgstr "Línia"
+
+#. module: wua_maintenance
 #: selection:wizard.massive.maintenance.requests,priority:0
 msgid "Low"
 msgstr "Baix"
@@ -900,7 +910,7 @@ msgid "Maintenance category"
 msgstr "Categoria de manteniment"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:92
+#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:101
 #: sql_constraint:maintenance.equipment.category:0
 #, python-format
 msgid "Maintenance category already exists."
@@ -955,7 +965,7 @@ msgid "Next creation date"
 msgstr "Pròxima data de creació"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:104
+#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:113
 #, python-format
 msgid "No equipment found"
 msgstr "No s'ha trobat cap equip"
@@ -1049,6 +1059,16 @@ msgstr "Foto / Imatge"
 #, python-format
 msgid "Photovoltaic Plant"
 msgstr "Planta fotovoltaica"
+
+#. module: wua_maintenance
+#: selection:maintenance.equipment.category,geometry_type:0
+msgid "Point"
+msgstr "Punt"
+
+#. module: wua_maintenance
+#: selection:maintenance.equipment.category,geometry_type:0
+msgid "Polygon"
+msgstr "Polígon"
 
 #. module: wua_maintenance
 #: code:addons/wua_maintenance/models/maintenance.py:863
@@ -1418,7 +1438,7 @@ msgid "Without Infrastructure GIS"
 msgstr "Sense SIG d'infraestructura"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/controllers/maintenance_gis_controller.py:249
+#: code:addons/wua_maintenance/controllers/maintenance_gis_controller.py:264
 #, python-format
 msgid "Without team"
 msgstr "Sense equip"
