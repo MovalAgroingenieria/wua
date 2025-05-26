@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_wua_processing_centre_form" model="ir.ui.view">
+    <field name="name">WUA Processing Centre (form view)</field>
+    <field name="model">wua.processing.centre</field>
+    <field name="arch" type="xml">
+      <form string="Processing Centre">
+        <sheet>
+          <group>
+            <field name="name"/>
+            <field name="type"/>
+            <field name="capacity"/>
+            <field name="number_of_transformers"/>
+            <field name="transformer_type"/>
+            <field name="installation_year"/>
+            <field name="with_measurement_devices"/>
+            <field name="with_gis_processing_centre" readonly="1"/>
+            <field name="gis_viewer_link" readonly="1"/>
+          </group>
+          <notebook>
+            <page string="Notes">
+              <field name="notes"/>
+            </page>
+            <page string="Technical Characteristics">
+              <field name="technical_characteristics"/>
+            </page>
+            <page string="Photos">
+              <field name="photo_01"/>
+              <field name="photo_02"/>
+            </page>
+          </notebook>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_wua_processing_centre_tree" model="ir.ui.view">
+    <field name="name">WUA Processing Centre (tree view)</field>
+    <field name="model">wua.processing.centre</field>
+    <field name="arch" type="xml">
+      <tree string="Processing Centres">
+        <field name="name"/>
+        <field name="type"/>
+        <field name="capacity"/>
+        <field name="number_of_transformers"/>
+        <field name="transformer_type"/>
+        <field name="installation_year"/>
+        <field name="with_measurement_devices"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_wua_processing_centre_search" model="ir.ui.view">
+    <field name="name">WUA Processing Centre (search view)</field>
+    <field name="model">wua.processing.centre</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="name"/>
+        <field name="type"/>
+        <field name="transformer_type"/>
+        <filter string="With Measurement Devices" name="with_measurement_devices" domain="[('with_measurement_devices','=',True)]"/>
+        <filter string="With GIS Processing Centre" name="with_gis_processing_centre" domain="[('with_gis_processing_centre','=',True)]"/>
+        <group expand="0" string="Group By">
+          <filter string="Type" name="group_type" context="{'group_by': 'type'}"/>
+          <filter string="Transformer Type" name="group_transformer_type" context="{'group_by': 'transformer_type'}"/>
+          <filter string="Installation Year" name="group_installation_year" context="{'group_by': 'installation_year'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+</odoo>

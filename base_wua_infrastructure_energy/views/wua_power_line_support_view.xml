@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_wua_power_line_support_tree" model="ir.ui.view">
+        <field name="name">wua.power.line.support.tree</field>
+        <field name="model">wua.power.line.support</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="tipology"/>
+                <field name="wire_support"/>
+                <field name="bird_friendly"/>
+                <field name="construction_date"/>
+                <field name="material"/>
+                <field name="insulator_type"/>
+                <field name="singular_points"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_wua_power_line_support_form" model="ir.ui.view">
+        <field name="name">wua.power.line.support.form</field>
+        <field name="model">wua.power.line.support</field>
+        <field name="arch" type="xml">
+            <form string="Power Line Support">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="tipology"/>
+                        <field name="wire_support"/>
+                        <field name="bird_friendly"/>
+                        <field name="construction_date"/>
+                        <field name="useful_height"/>
+                        <field name="material"/>
+                        <field name="insulator_type"/>
+                        <field name="singular_points"/>
+                        <field name="bypass"/>
+                        <field name="anticlimb_device"/>
+                        <field name="danger_signage"/>
+                        <field name="have_license_plate"/>
+                        <field name="license_plate" attrs="{'invisible': [('have_license_plate','=',False)]}"/>
+                        <field name="with_gis_power_line_support"/>
+                        <field name="gis_viewer_link" readonly="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Technical Characteristics">
+                            <field name="technical_characteristics"/>
+                        </page>
+                        <page string="Notes">
+                            <field name="notes"/>
+                        </page>
+                        <page string="Photos">
+                            <field name="photo_01"/>
+                            <field name="photo_02"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_wua_power_line_support_search" model="ir.ui.view">
+        <field name="name">wua.power.line.support.search</field>
+        <field name="model">wua.power.line.support</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="tipology"/>
+                <field name="material"/>
+                <field name="insulator_type"/>
+                <filter string="Bird Friendly" name="bird_friendly" domain="[('bird_friendly', '=', True)]"/>
+                <filter string="With License Plate" name="have_license_plate" domain="[('have_license_plate', '=', True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Material" name="group_by_material" context="{'group_by': 'material'}"/>
+                    <filter string="Insulator Type" name="group_by_insulator" context="{'group_by': 'insulator_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+</odoo>

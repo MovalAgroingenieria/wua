@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_wua_power_line_tree" model="ir.ui.view">
+        <field name="name">wua.power.line.tree</field>
+        <field name="model">wua.power.line</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="rated_voltage"/>
+                <field name="type"/>
+                <field name="length"/>
+                <field name="construction_date"/>
+                <field name="critical_crossings"/>
+                <field name="bird_friendly"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_wua_power_line_form" model="ir.ui.view">
+        <field name="name">wua.power.line.form</field>
+        <field name="model">wua.power.line</field>
+        <field name="arch" type="xml">
+            <form string="Power Line">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="rated_voltage"/>
+                        <field name="type"/>
+                        <field name="length"/>
+                        <field name="construction_date"/>
+                        <field name="critical_crossings"/>
+                        <field name="bird_friendly"/>
+                        <field name="with_gis_power_line"/>
+                        <field name="gis_viewer_link" readonly="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Technical Characteristics">
+                            <field name="technical_characteristics"/>
+                        </page>
+                        <page string="Notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_wua_power_line_search" model="ir.ui.view">
+        <field name="name">wua.power.line.search</field>
+        <field name="model">wua.power.line</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="type"/>
+                <field name="critical_crossings"/>
+                <filter string="Bird Friendly" name="bird_friendly" domain="[('bird_friendly', '=', True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Type" name="group_by_type" context="{'group_by': 'type'}"/>
+                    <filter string="Critical Crossings" name="group_by_crossings" context="{'group_by': 'critical_crossings'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+</odoo>
