@@ -19,6 +19,11 @@ class MaintenanceStage(models.Model):
         default=False,
     )
 
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+    )
+
     @api.constrains('default_stage_for_viewer_creation')
     def _check_default_stage_for_viewer_creation(self):
         for record in self:

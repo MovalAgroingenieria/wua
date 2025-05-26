@@ -9,8 +9,18 @@
             <xpath expr="//field[@name='done']" position="after">
                 <field name="requests_visible_on_gis"/>
                 <field name="default_stage_for_viewer_creation"/>
+                <field name="active"/>
             </xpath>
         </field>
     </record>
-
+    <record id="hr_equipment_stage_view_search" model="ir.ui.view">
+        <field name="name">maintenance.stage.search</field>
+        <field name="model">maintenance.stage</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_stage_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+            </xpath>
+        </field>
+    </record>
 </odoo>
