@@ -23,8 +23,8 @@ def migrate(cr, version):
         '01_point'
     env.ref('wua_maintenance.equipment_category_waterpipe').geometry_type = \
         '02_line'
-    env.ref('wua_maintenance.equipment_category_irrigationshed')\
-        .geometry_type = '01_point'
+    env.ref('wua_maintenance.equipment_category_irrigationshed').\
+        geometry_type = '01_point'
     env.ref('wua_maintenance.equipment_category_waterconnection').\
         geometry_type = '01_point'
     env.ref('wua_maintenance.equipment_category_watermeter').geometry_type = \
