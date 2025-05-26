@@ -7,6 +7,14 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="name"/>
+                <field name="gis_viewer_link" invisible="1"/>
+                <field name="with_gis_power_line" invisible="1"/>
+                <button name="action_see_gis_viewer"
+                        type="object" class="oe_stat_button"
+                        string="GIS Viewer (zoom to point)"
+                        icon="fa-map-marker"
+                        attrs="{'invisible': ['|',('gis_viewer_link','=',False),
+                               ('with_gis_power_line','=',False)]}"/>
                 <field name="rated_voltage"/>
                 <field name="type"/>
                 <field name="length"/>
@@ -23,6 +31,18 @@
         <field name="arch" type="xml">
             <form string="Power Line">
                 <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <field name="with_gis_power_line" invisible="1"/>
+                        <field name="gis_viewer_link" invisible="1"/>
+                        <button name="action_see_gis_viewer"
+                                type="object"
+                                class="oe_stat_button"
+                                string="GIS Viewer"
+                                icon="fa-map-marker"
+                                attrs="{'invisible':
+                                      ['|',('gis_viewer_link','=',False),
+                                      ('with_gis_power_line','=',False)]}"/>
+                    </div>
                     <group>
                         <field name="name"/>
                         <field name="rated_voltage"/>
@@ -31,8 +51,6 @@
                         <field name="construction_date"/>
                         <field name="critical_crossings"/>
                         <field name="bird_friendly"/>
-                        <field name="with_gis_power_line"/>
-                        <field name="gis_viewer_link" readonly="1"/>
                     </group>
                     <notebook>
                         <page string="Technical Characteristics">

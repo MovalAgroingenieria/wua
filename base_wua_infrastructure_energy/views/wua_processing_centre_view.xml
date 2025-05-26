@@ -7,6 +7,18 @@
     <field name="arch" type="xml">
       <form string="Processing Centre">
         <sheet>
+          <div name="buttons" class="oe_button_box">
+            <field name="with_gis_processing_centre" invisible="1"/>
+            <field name="gis_viewer_link" invisible="1"/>
+              <button name="action_see_gis_viewer"
+                      type="object"
+                      class="oe_stat_button"
+                      string="GIS Viewer"
+                      icon="fa-map-marker"
+                      attrs="{'invisible':
+                            ['|',('gis_viewer_link','=',False),
+                            ('with_gis_processing_centre','=',False)]}"/>
+          </div>
           <group>
             <field name="name"/>
             <field name="type"/>
@@ -14,9 +26,6 @@
             <field name="number_of_transformers"/>
             <field name="transformer_type"/>
             <field name="installation_year"/>
-            <field name="with_measurement_devices"/>
-            <field name="with_gis_processing_centre" readonly="1"/>
-            <field name="gis_viewer_link" readonly="1"/>
           </group>
           <notebook>
             <page string="Notes">
@@ -25,10 +34,16 @@
             <page string="Technical Characteristics">
               <field name="technical_characteristics"/>
             </page>
-            <page string="Photos">
-              <field name="photo_01"/>
-              <field name="photo_02"/>
-            </page>
+            <page name="page_photos" string="Photos">
+              <group name="photos" col="4">
+                  <field name="photo_01"
+                         widget="image"
+                         class="oe_img_259_160"/>
+                  <field name="photo_02"
+                         widget="image"
+                         class="oe_img_259_160"/>
+              </group>
+          </page>
           </notebook>
         </sheet>
       </form>
@@ -41,6 +56,14 @@
     <field name="arch" type="xml">
       <tree string="Processing Centres">
         <field name="name"/>
+        <field name="gis_viewer_link" invisible="1"/>
+        <field name="with_gis_processing_centre" invisible="1"/>
+                <button name="action_see_gis_viewer"
+                        type="object" class="oe_stat_button"
+                        string="GIS Viewer (zoom to point)"
+                        icon="fa-map-marker"
+                        attrs="{'invisible': ['|',('gis_viewer_link','=',False),
+                               ('with_gis_processing_centre','=',False)]}"/>
         <field name="type"/>
         <field name="capacity"/>
         <field name="number_of_transformers"/>

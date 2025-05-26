@@ -6,6 +6,14 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="name"/>
+                <field name="gis_viewer_link" invisible="1"/>
+                <field name="with_gis_power_line_support" invisible="1"/>
+                <button name="action_see_gis_viewer"
+                        type="object" class="oe_stat_button"
+                        string="GIS Viewer (zoom to point)"
+                        icon="fa-map-marker"
+                        attrs="{'invisible': ['|',('gis_viewer_link','=',False),
+                               ('with_gis_power_line_support','=',False)]}"/>
                 <field name="tipology"/>
                 <field name="wire_support"/>
                 <field name="bird_friendly"/>
@@ -23,6 +31,18 @@
         <field name="arch" type="xml">
             <form string="Power Line Support">
                 <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <field name="with_gis_power_line_support" invisible="1"/>
+                        <field name="gis_viewer_link" invisible="1"/>
+                        <button name="action_see_gis_viewer"
+                                type="object"
+                                class="oe_stat_button"
+                                string="GIS Viewer"
+                                icon="fa-map-marker"
+                                attrs="{'invisible':
+                                      ['|',('gis_viewer_link','=',False),
+                                      ('with_gis_power_line_support','=',False)]}"/>
+                    </div>
                     <group>
                         <field name="name"/>
                         <field name="tipology"/>
@@ -38,8 +58,6 @@
                         <field name="danger_signage"/>
                         <field name="have_license_plate"/>
                         <field name="license_plate" attrs="{'invisible': [('have_license_plate','=',False)]}"/>
-                        <field name="with_gis_power_line_support"/>
-                        <field name="gis_viewer_link" readonly="1"/>
                     </group>
                     <notebook>
                         <page string="Technical Characteristics">
@@ -48,9 +66,15 @@
                         <page string="Notes">
                             <field name="notes"/>
                         </page>
-                        <page string="Photos">
-                            <field name="photo_01"/>
-                            <field name="photo_02"/>
+                        <page name="page_photos" string="Photos">
+                            <group name="photos" col="4">
+                                <field name="photo_01"
+                                       widget="image"
+                                       class="oe_img_259_160"/>
+                                <field name="photo_02"
+                                       widget="image"
+                                       class="oe_img_259_160"/>
+                            </group>
                         </page>
                     </notebook>
                 </sheet>

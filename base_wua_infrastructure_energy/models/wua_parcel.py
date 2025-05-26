@@ -386,12 +386,12 @@ class WuaParcel(models.Model):
                 BEGIN
                     IF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
                         UPDATE public.wua_processing_centre SET
-                            with_wua_processing_centre = False
+                            with_gis_processing_centre = False
                         WHERE name = OLD.name;
                     END IF;
                     IF TG_OP = 'UPDATE' OR TG_OP = 'INSERT' THEN
                         UPDATE public.wua_processing_centre SET
-                            with_wua_processing_centre = True
+                            with_gis_processing_centre = True
                         WHERE name = NEW.name;
                     END IF;
                     RETURN NULL;
@@ -431,7 +431,7 @@ class WuaParcel(models.Model):
                 $BODY$
                 BEGIN
                     UPDATE public.wua_processing_centre SET
-                        with_wua_processing_centre = (
+                        with_gis_processing_centre = (
                             SELECT NEW.name IN (
                                 SELECT name FROM wua_gis_processing_centre
                             )
