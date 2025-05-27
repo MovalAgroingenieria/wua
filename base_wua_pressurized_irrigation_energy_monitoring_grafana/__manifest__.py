@@ -17,9 +17,10 @@
         ],
     "data": [
         "views/wua_infrastructure_config_settings_view.xml",
-        #"views/wua_pumpgroupmeasurement_view.xml",
+        # "views/wua_pumpgroupmeasurement_view.xml",
         "views/wua_pumpgroup_view.xml",
-        ],
+        "data/pumpgroup_grafana_dashboard.xml",
+    ],
     'qweb': [
         ],
     "installable": True,

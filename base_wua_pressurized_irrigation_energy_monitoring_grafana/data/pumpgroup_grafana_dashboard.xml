@@ -1,0 +1,1275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="pumpgroup_dashboard" model="board.grafana.dashboard.storage">
+            <field name="name">Pumpgroup Dashboard</field>
+            <field name="dashboard_title">pumpgroup-integration</field>
+            <field name="dashboard_uid">pumpgroup_integration</field>
+            <field name="dashboard_path">/d/pumpgroup-integration/pumpgroup_integration</field>
+            <field name="integrated_dashboard">1</field>
+            <field name="integrated_panel_only">0</field>
+            <field name="integrated_panel_id"></field>
+            <field name="dashboard_json"><![CDATA[
+                {
+                "annotations": {
+                    "list": [
+                    {
+                        "builtIn": 1,
+                        "datasource": {
+                        "type": "datasource",
+                        "uid": "grafana"
+                        },
+                        "enable": true,
+                        "hide": true,
+                        "iconColor": "rgba(0, 211, 255, 1)",
+                        "name": "Annotations & Alerts",
+                        "target": {
+                        "limit": 100,
+                        "matchAny": false,
+                        "tags": [],
+                        "type": "dashboard"
+                        },
+                        "type": "dashboard"
+                    }
+                    ]
+                },
+                "editable": true,
+                "fiscalYearStartMonth": 0,
+                "graphTooltip": 0,
+                "id": 10,
+                "links": [],
+                "panels": [
+                    {
+                    "collapsed": false,
+                    "gridPos": {
+                        "h": 1,
+                        "w": 24,
+                        "x": 0,
+                        "y": 0
+                    },
+                    "id": 12,
+                    "panels": [],
+                    "title": "Datos por Bombeo",
+                    "type": "row"
+                    },
+                    {
+                    "datasource": {
+                        "type": "postgres",
+                        "uid": "${Datasource}"
+                    },
+                    "description": "Caudal ${pumpgroup}",
+                    "fieldConfig": {
+                        "defaults": {
+                        "color": {
+                            "fixedColor": "semi-dark-green",
+                            "mode": "palette-classic"
+                        },
+                        "custom": {
+                            "axisBorderShow": false,
+                            "axisCenteredZero": false,
+                            "axisColorMode": "text",
+                            "axisLabel": "",
+                            "axisPlacement": "auto",
+                            "barAlignment": 0,
+                            "barWidthFactor": 0.6,
+                            "drawStyle": "line",
+                            "fillOpacity": 10,
+                            "gradientMode": "none",
+                            "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                            },
+                            "insertNulls": false,
+                            "lineInterpolation": "smooth",
+                            "lineWidth": 1,
+                            "pointSize": 5,
+                            "scaleDistribution": {
+                            "type": "linear"
+                            },
+                            "showPoints": "auto",
+                            "spanNulls": false,
+                            "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                            },
+                            "thresholdsStyle": {
+                            "mode": "off"
+                            }
+                        },
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "percentage",
+                            "steps": [
+                            {
+                                "color": "semi-dark-red"
+                            }
+                            ]
+                        },
+                        "unit": "m³/h"
+                        },
+                        "overrides": []
+                    },
+                    "gridPos": {
+                        "h": 12,
+                        "w": 12,
+                        "x": 0,
+                        "y": 1
+                    },
+                    "id": 18,
+                    "options": {
+                        "legend": {
+                        "calcs": [
+                            "lastNotNull",
+                            "max",
+                            "mean"
+                        ],
+                        "displayMode": "table",
+                        "placement": "bottom",
+                        "showLegend": true
+                        },
+                        "tooltip": {
+                        "hideZeros": false,
+                        "mode": "multi",
+                        "sort": "none"
+                        }
+                    },
+                    "pluginVersion": "12.0.0+security-01",
+                    "targets": [
+                        {
+                        "datasource": {
+                            "type": "grafana-postgresql-datasource",
+                            "uid": "w4ayEFP7k"
+                        },
+                        "editorMode": "code",
+                        "format": "time_series",
+                        "group": [],
+                        "hide": false,
+                        "metricColumn": "energy_efficiency_rating",
+                        "rawQuery": true,
+                        "rawSql": "    SELECT measurement.measurement_time AS \"time\",\n           pumpgroup.name AS \"Bombeo\",\n           measurement.instantaneous_flow AS \"Caudal\"\n      FROM wua_pumpgroupmeasurement measurement\nINNER JOIN wua_pumpgroup pumpgroup ON measurement.pumpgroup_id = pumpgroup.id\n     WHERE pumpgroup.name IN ($pumpgroup)\n       AND measurement.of_active_agriculturalseason\n  GROUP BY \"time\", pumpgroup.name, measurement.instantaneous_flow\n  ORDER BY \"time\"",
+                        "refId": "A",
+                        "select": [
+                            [
+                            {
+                                "params": [
+                                "method_progress_factor"
+                                ],
+                                "type": "column"
+                            }
+                            ]
+                        ],
+                        "sql": {
+                            "columns": [
+                            {
+                                "parameters": [],
+                                "type": "function"
+                            }
+                            ],
+                            "groupBy": [
+                            {
+                                "property": {
+                                "type": "string"
+                                },
+                                "type": "groupBy"
+                            }
+                            ],
+                            "limit": 50
+                        },
+                        "table": "wua_pumpgroupmeasurement",
+                        "timeColumn": "measurement_time",
+                        "timeColumnType": "timestamp",
+                        "where": [
+                            {
+                            "name": "$__timeFilter",
+                            "params": [],
+                            "type": "macro"
+                            }
+                        ]
+                        }
+                    ],
+                    "title": "Caudal",
+                    "type": "timeseries"
+                    },
+                    {
+                    "datasource": {
+                        "type": "postgres",
+                        "uid": "${Datasource}"
+                    },
+                    "description": "Potencia consumida ${pumpgroup}",
+                    "fieldConfig": {
+                        "defaults": {
+                        "color": {
+                            "fixedColor": "semi-dark-green",
+                            "mode": "palette-classic"
+                        },
+                        "custom": {
+                            "axisBorderShow": false,
+                            "axisCenteredZero": false,
+                            "axisColorMode": "text",
+                            "axisLabel": "",
+                            "axisPlacement": "auto",
+                            "barAlignment": 0,
+                            "barWidthFactor": 0.6,
+                            "drawStyle": "line",
+                            "fillOpacity": 10,
+                            "gradientMode": "none",
+                            "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                            },
+                            "insertNulls": false,
+                            "lineInterpolation": "smooth",
+                            "lineWidth": 1,
+                            "pointSize": 5,
+                            "scaleDistribution": {
+                            "type": "linear"
+                            },
+                            "showPoints": "auto",
+                            "spanNulls": false,
+                            "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                            },
+                            "thresholdsStyle": {
+                            "mode": "off"
+                            }
+                        },
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "percentage",
+                            "steps": [
+                            {
+                                "color": "semi-dark-red"
+                            }
+                            ]
+                        },
+                        "unit": "kwatt"
+                        },
+                        "overrides": [
+                        {
+                            "matcher": {
+                            "id": "byName",
+                            "options": "Potencia consumida Sector O"
+                            },
+                            "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                "fixedColor": "orange",
+                                "mode": "fixed"
+                                }
+                            }
+                            ]
+                        }
+                        ]
+                    },
+                    "gridPos": {
+                        "h": 12,
+                        "w": 12,
+                        "x": 12,
+                        "y": 1
+                    },
+                    "id": 21,
+                    "options": {
+                        "legend": {
+                        "calcs": [
+                            "lastNotNull",
+                            "max",
+                            "mean"
+                        ],
+                        "displayMode": "table",
+                        "placement": "bottom",
+                        "showLegend": true
+                        },
+                        "tooltip": {
+                        "hideZeros": false,
+                        "mode": "multi",
+                        "sort": "none"
+                        }
+                    },
+                    "pluginVersion": "12.0.0+security-01",
+                    "targets": [
+                        {
+                        "datasource": {
+                            "type": "grafana-postgresql-datasource",
+                            "uid": "w4ayEFP7k"
+                        },
+                        "editorMode": "code",
+                        "format": "time_series",
+                        "group": [],
+                        "hide": false,
+                        "metricColumn": "energy_efficiency_rating",
+                        "rawQuery": true,
+                        "rawSql": "    SELECT measurement.measurement_time AS \"time\",\n           pumpgroup.name AS \"Bombeo\",\n           measurement.consumed_power AS \"Potencia consumida\"\n      FROM wua_pumpgroupmeasurement measurement\nINNER JOIN wua_pumpgroup pumpgroup ON measurement.pumpgroup_id = pumpgroup.id\n     WHERE pumpgroup.name IN (${pumpgroup})\n       AND measurement.of_active_agriculturalseason\n  GROUP BY \"time\", pumpgroup.name,measurement.consumed_power\n  ORDER BY \"time\";",
+                        "refId": "A",
+                        "select": [
+                            [
+                            {
+                                "params": [
+                                "method_progress_factor"
+                                ],
+                                "type": "column"
+                            }
+                            ]
+                        ],
+                        "sql": {
+                            "columns": [
+                            {
+                                "parameters": [],
+                                "type": "function"
+                            }
+                            ],
+                            "groupBy": [
+                            {
+                                "property": {
+                                "type": "string"
+                                },
+                                "type": "groupBy"
+                            }
+                            ],
+                            "limit": 50
+                        },
+                        "table": "wua_pumpgroupmeasurement",
+                        "timeColumn": "measurement_time",
+                        "timeColumnType": "timestamp",
+                        "where": [
+                            {
+                            "name": "$__timeFilter",
+                            "params": [],
+                            "type": "macro"
+                            }
+                        ]
+                        }
+                    ],
+                    "title": "Potencia consumida",
+                    "type": "timeseries"
+                    },
+                    {
+                    "datasource": {
+                        "type": "postgres",
+                        "uid": "${Datasource}"
+                    },
+                    "description": "Altura manométrica $bombeo",
+                    "fieldConfig": {
+                        "defaults": {
+                        "color": {
+                            "mode": "palette-classic"
+                        },
+                        "custom": {
+                            "axisBorderShow": false,
+                            "axisCenteredZero": false,
+                            "axisColorMode": "text",
+                            "axisLabel": "",
+                            "axisPlacement": "auto",
+                            "barAlignment": 0,
+                            "barWidthFactor": 0.6,
+                            "drawStyle": "line",
+                            "fillOpacity": 0,
+                            "gradientMode": "none",
+                            "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                            },
+                            "insertNulls": false,
+                            "lineInterpolation": "linear",
+                            "lineWidth": 1,
+                            "pointSize": 5,
+                            "scaleDistribution": {
+                            "type": "linear"
+                            },
+                            "showPoints": "auto",
+                            "spanNulls": false,
+                            "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                            },
+                            "thresholdsStyle": {
+                            "mode": "off"
+                            }
+                        },
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                            {
+                                "color": "green"
+                            }
+                            ]
+                        },
+                        "unit": "mca"
+                        },
+                        "overrides": []
+                    },
+                    "gridPos": {
+                        "h": 12,
+                        "w": 8,
+                        "x": 0,
+                        "y": 13
+                    },
+                    "id": 4,
+                    "options": {
+                        "legend": {
+                        "calcs": [
+                            "lastNotNull",
+                            "max",
+                            "mean"
+                        ],
+                        "displayMode": "table",
+                        "placement": "bottom",
+                        "showLegend": true
+                        },
+                        "tooltip": {
+                        "hideZeros": false,
+                        "mode": "multi",
+                        "sort": "none"
+                        }
+                    },
+                    "pluginVersion": "12.0.0+security-01",
+                    "targets": [
+                        {
+                        "datasource": {
+                            "type": "grafana-postgresql-datasource",
+                            "uid": "${DS_CRFOIAPOU}"
+                        },
+                        "editorMode": "code",
+                        "format": "time_series",
+                        "group": [],
+                        "hide": false,
+                        "metricColumn": "energy_efficiency_rating",
+                        "rawQuery": true,
+                        "rawSql": "    SELECT measurement.measurement_time AS \"time\", pumpgroup.name AS \"Bombeo\", measurement.manometric_height AS \"Altura manométrica\"\n      FROM wua_pumpgroupmeasurement measurement\nINNER JOIN wua_pumpgroup pumpgroup ON measurement.pumpgroup_id = pumpgroup.id\n     WHERE pumpgroup.name IN ($pumpgroup)\n       AND measurement.of_active_agriculturalseason\n       AND $__timeFilter(measurement.measurement_time)\n  GROUP BY pumpgroup.name, measurement.manometric_height, measurement.measurement_time\n  ORDER BY measurement.measurement_time",
+                        "refId": "B",
+                        "select": [
+                            [
+                            {
+                                "params": [
+                                "method_progress_factor"
+                                ],
+                                "type": "column"
+                            }
+                            ]
+                        ],
+                        "sql": {
+                            "columns": [
+                            {
+                                "parameters": [],
+                                "type": "function"
+                            }
+                            ],
+                            "groupBy": [
+                            {
+                                "property": {
+                                "type": "string"
+                                },
+                                "type": "groupBy"
+                            }
+                            ],
+                            "limit": 50
+                        },
+                        "table": "wua_pumpgroupmeasurement",
+                        "timeColumn": "measurement_time",
+                        "timeColumnType": "timestamp",
+                        "where": [
+                            {
+                            "name": "$__timeFilter",
+                            "params": [],
+                            "type": "macro"
+                            }
+                        ]
+                        }
+                    ],
+                    "title": "Altura manométrica",
+                    "type": "timeseries"
+                    },
+                    {
+                    "datasource": {
+                        "type": "postgres",
+                        "uid": "${Datasource}"
+                    },
+                    "description": "Presión de impulsión $bombeo",
+                    "fieldConfig": {
+                        "defaults": {
+                        "color": {
+                            "mode": "palette-classic"
+                        },
+                        "custom": {
+                            "axisBorderShow": false,
+                            "axisCenteredZero": false,
+                            "axisColorMode": "text",
+                            "axisLabel": "",
+                            "axisPlacement": "auto",
+                            "barAlignment": 0,
+                            "barWidthFactor": 0.6,
+                            "drawStyle": "line",
+                            "fillOpacity": 0,
+                            "gradientMode": "none",
+                            "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                            },
+                            "insertNulls": false,
+                            "lineInterpolation": "linear",
+                            "lineWidth": 1,
+                            "pointSize": 5,
+                            "scaleDistribution": {
+                            "type": "linear"
+                            },
+                            "showPoints": "auto",
+                            "spanNulls": false,
+                            "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                            },
+                            "thresholdsStyle": {
+                            "mode": "off"
+                            }
+                        },
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                            {
+                                "color": "green"
+                            }
+                            ]
+                        },
+                        "unit": "mca"
+                        },
+                        "overrides": [
+                        {
+                            "matcher": {
+                            "id": "byName",
+                            "options": "Presión de impulsión Rebombeo"
+                            },
+                            "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                "fixedColor": "green",
+                                "mode": "fixed"
+                                }
+                            }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                            "id": "byName",
+                            "options": "Presión de impulsión Sector E"
+                            },
+                            "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                "fixedColor": "yellow",
+                                "mode": "fixed"
+                                }
+                            }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                            "id": "byName",
+                            "options": "Presión de impulsión Sector N"
+                            },
+                            "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                "fixedColor": "blue",
+                                "mode": "fixed"
+                                }
+                            }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                            "id": "byName",
+                            "options": "Presión de impulsión Sector O"
+                            },
+                            "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                "fixedColor": "orange",
+                                "mode": "fixed"
+                                }
+                            }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                            "id": "byName",
+                            "options": "Presión de impulsión Sector S"
+                            },
+                            "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                "fixedColor": "red",
+                                "mode": "fixed"
+                                }
+                            }
+                            ]
+                        }
+                        ]
+                    },
+                    "gridPos": {
+                        "h": 12,
+                        "w": 8,
+                        "x": 8,
+                        "y": 13
+                    },
+                    "id": 22,
+                    "options": {
+                        "legend": {
+                        "calcs": [
+                            "lastNotNull",
+                            "max",
+                            "mean"
+                        ],
+                        "displayMode": "table",
+                        "placement": "bottom",
+                        "showLegend": true
+                        },
+                        "tooltip": {
+                        "hideZeros": false,
+                        "mode": "multi",
+                        "sort": "none"
+                        }
+                    },
+                    "pluginVersion": "12.0.0+security-01",
+                    "targets": [
+                        {
+                        "datasource": {
+                            "type": "grafana-postgresql-datasource",
+                            "uid": "${DS_CRFOIAPOU}"
+                        },
+                        "editorMode": "code",
+                        "format": "time_series",
+                        "group": [],
+                        "hide": false,
+                        "metricColumn": "energy_efficiency_rating",
+                        "rawQuery": true,
+                        "rawSql": "    SELECT measurement.measurement_time AS \"time\", pumpgroup.name AS \"Bombeo\", measurement.impulsion_pressure AS \"Presión de impulsión\"\n      FROM wua_pumpgroupmeasurement measurement\nINNER JOIN wua_pumpgroup pumpgroup ON measurement.pumpgroup_id = pumpgroup.id\n     WHERE pumpgroup.name IN ($pumpgroup)\n       AND measurement.of_active_agriculturalseason\n       AND $__timeFilter(measurement.measurement_time)\n  GROUP BY pumpgroup.name, measurement.impulsion_pressure, measurement.measurement_time\n  ORDER BY measurement.measurement_time",
+                        "refId": "A",
+                        "select": [
+                            [
+                            {
+                                "params": [
+                                "method_progress_factor"
+                                ],
+                                "type": "column"
+                            }
+                            ]
+                        ],
+                        "sql": {
+                            "columns": [
+                            {
+                                "parameters": [],
+                                "type": "function"
+                            }
+                            ],
+                            "groupBy": [
+                            {
+                                "property": {
+                                "type": "string"
+                                },
+                                "type": "groupBy"
+                            }
+                            ],
+                            "limit": 50
+                        },
+                        "table": "wua_pumpgroupmeasurement",
+                        "timeColumn": "measurement_time",
+                        "timeColumnType": "timestamp",
+                        "where": [
+                            {
+                            "name": "$__timeFilter",
+                            "params": [],
+                            "type": "macro"
+                            }
+                        ]
+                        }
+                    ],
+                    "title": "Presión de impulsión",
+                    "type": "timeseries"
+                    },
+                    {
+                    "datasource": {
+                        "type": "postgres",
+                        "uid": "${Datasource}"
+                    },
+                    "description": "Presión de aspiración $bombeo",
+                    "fieldConfig": {
+                        "defaults": {
+                        "color": {
+                            "mode": "palette-classic"
+                        },
+                        "custom": {
+                            "axisBorderShow": false,
+                            "axisCenteredZero": false,
+                            "axisColorMode": "text",
+                            "axisLabel": "",
+                            "axisPlacement": "auto",
+                            "barAlignment": 0,
+                            "barWidthFactor": 0.6,
+                            "drawStyle": "line",
+                            "fillOpacity": 0,
+                            "gradientMode": "none",
+                            "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                            },
+                            "insertNulls": false,
+                            "lineInterpolation": "linear",
+                            "lineWidth": 1,
+                            "pointSize": 5,
+                            "scaleDistribution": {
+                            "type": "linear"
+                            },
+                            "showPoints": "auto",
+                            "spanNulls": false,
+                            "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                            },
+                            "thresholdsStyle": {
+                            "mode": "off"
+                            }
+                        },
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                            {
+                                "color": "green"
+                            }
+                            ]
+                        },
+                        "unit": "mca"
+                        },
+                        "overrides": []
+                    },
+                    "gridPos": {
+                        "h": 12,
+                        "w": 8,
+                        "x": 16,
+                        "y": 13
+                    },
+                    "id": 23,
+                    "options": {
+                        "legend": {
+                        "calcs": [
+                            "lastNotNull",
+                            "max",
+                            "mean"
+                        ],
+                        "displayMode": "table",
+                        "placement": "bottom",
+                        "showLegend": true
+                        },
+                        "tooltip": {
+                        "hideZeros": false,
+                        "mode": "multi",
+                        "sort": "none"
+                        }
+                    },
+                    "pluginVersion": "12.0.0+security-01",
+                    "targets": [
+                        {
+                        "datasource": {
+                            "type": "grafana-postgresql-datasource",
+                            "uid": "${DS_CRFOIAPOU}"
+                        },
+                        "editorMode": "code",
+                        "format": "time_series",
+                        "group": [],
+                        "hide": false,
+                        "metricColumn": "energy_efficiency_rating",
+                        "rawQuery": true,
+                        "rawSql": "    SELECT measurement.measurement_time AS \"time\", pumpgroup.name AS \"Bombeo\", measurement.suction_pressure AS \"Presión de aspiración\"\n      FROM wua_pumpgroupmeasurement measurement\nINNER JOIN wua_pumpgroup pumpgroup ON measurement.pumpgroup_id = pumpgroup.id\n     WHERE pumpgroup.name IN ($pumpgroup)\n       AND measurement.of_active_agriculturalseason\n       AND $__timeFilter(measurement.measurement_time)\n  GROUP BY pumpgroup.name, measurement.suction_pressure, measurement.measurement_time\n  ORDER BY measurement.measurement_time",
+                        "refId": "C",
+                        "select": [
+                            [
+                            {
+                                "params": [
+                                "method_progress_factor"
+                                ],
+                                "type": "column"
+                            }
+                            ]
+                        ],
+                        "sql": {
+                            "columns": [
+                            {
+                                "parameters": [],
+                                "type": "function"
+                            }
+                            ],
+                            "groupBy": [
+                            {
+                                "property": {
+                                "type": "string"
+                                },
+                                "type": "groupBy"
+                            }
+                            ],
+                            "limit": 50
+                        },
+                        "table": "wua_pumpgroupmeasurement",
+                        "timeColumn": "measurement_time",
+                        "timeColumnType": "timestamp",
+                        "where": [
+                            {
+                            "name": "$__timeFilter",
+                            "params": [],
+                            "type": "macro"
+                            }
+                        ]
+                        }
+                    ],
+                    "title": "Presión de aspiración",
+                    "type": "timeseries"
+                    },
+                    {
+                    "datasource": {
+                        "type": "postgres",
+                        "uid": "${Datasource}"
+                    },
+                    "description": "Eficiencia energética $bombeo",
+                    "fieldConfig": {
+                        "defaults": {
+                        "color": {
+                            "fixedColor": "semi-dark-green",
+                            "mode": "palette-classic"
+                        },
+                        "custom": {
+                            "axisBorderShow": false,
+                            "axisCenteredZero": false,
+                            "axisColorMode": "text",
+                            "axisLabel": "",
+                            "axisPlacement": "auto",
+                            "barAlignment": 0,
+                            "barWidthFactor": 0.6,
+                            "drawStyle": "line",
+                            "fillOpacity": 10,
+                            "gradientMode": "none",
+                            "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                            },
+                            "insertNulls": false,
+                            "lineInterpolation": "smooth",
+                            "lineWidth": 1,
+                            "pointSize": 5,
+                            "scaleDistribution": {
+                            "type": "linear"
+                            },
+                            "showPoints": "auto",
+                            "spanNulls": false,
+                            "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                            },
+                            "thresholdsStyle": {
+                            "mode": "area"
+                            }
+                        },
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "percentage",
+                            "steps": [
+                            {
+                                "color": "semi-dark-red"
+                            },
+                            {
+                                "color": "semi-dark-orange",
+                                "value": 45
+                            },
+                            {
+                                "color": "semi-dark-yellow",
+                                "value": 50
+                            },
+                            {
+                                "color": "semi-dark-green",
+                                "value": 60
+                            },
+                            {
+                                "color": "semi-dark-blue",
+                                "value": 65
+                            }
+                            ]
+                        },
+                        "unit": "percent"
+                        },
+                        "overrides": []
+                    },
+                    "gridPos": {
+                        "h": 12,
+                        "w": 9,
+                        "x": 0,
+                        "y": 25
+                    },
+                    "id": 6,
+                    "options": {
+                        "legend": {
+                        "calcs": [
+                            "lastNotNull",
+                            "max",
+                            "mean"
+                        ],
+                        "displayMode": "table",
+                        "placement": "bottom",
+                        "showLegend": true
+                        },
+                        "tooltip": {
+                        "hideZeros": false,
+                        "mode": "multi",
+                        "sort": "none"
+                        }
+                    },
+                    "pluginVersion": "12.0.0+security-01",
+                    "targets": [
+                        {
+                        "datasource": {
+                            "type": "grafana-postgresql-datasource",
+                            "uid": "${DS_CRFOIAPOU}"
+                        },
+                        "editorMode": "code",
+                        "format": "time_series",
+                        "group": [],
+                        "hide": false,
+                        "metricColumn": "energy_efficiency_rating",
+                        "rawQuery": true,
+                        "rawSql": "    SELECT measurement.measurement_time AS \"time\", pumpgroup.name AS \"Bombeo\", measurement.energy_efficiency AS \"Eficiencia energética\"\n      FROM wua_pumpgroupmeasurement measurement\nINNER JOIN wua_pumpgroup pumpgroup ON measurement.pumpgroup_id = pumpgroup.id\n     WHERE pumpgroup.name IN ($pumpgroup)\n       AND measurement.of_active_agriculturalseason\n  GROUP BY \"time\", pumpgroup.name, measurement.energy_efficiency\n  ORDER BY \"time\"\n",
+                        "refId": "A",
+                        "select": [
+                            [
+                            {
+                                "params": [
+                                "method_progress_factor"
+                                ],
+                                "type": "column"
+                            }
+                            ]
+                        ],
+                        "sql": {
+                            "columns": [
+                            {
+                                "parameters": [],
+                                "type": "function"
+                            }
+                            ],
+                            "groupBy": [
+                            {
+                                "property": {
+                                "type": "string"
+                                },
+                                "type": "groupBy"
+                            }
+                            ],
+                            "limit": 50
+                        },
+                        "table": "wua_pumpgroupmeasurement",
+                        "timeColumn": "measurement_time",
+                        "timeColumnType": "timestamp",
+                        "where": [
+                            {
+                            "name": "$__timeFilter",
+                            "params": [],
+                            "type": "macro"
+                            }
+                        ]
+                        }
+                    ],
+                    "title": "Eficiencia energética",
+                    "type": "timeseries"
+                    },
+                    {
+                    "collapsed": false,
+                    "gridPos": {
+                        "h": 1,
+                        "w": 24,
+                        "x": 0,
+                        "y": 37
+                    },
+                    "id": 14,
+                    "panels": [],
+                    "title": "Datos Globales",
+                    "type": "row"
+                    },
+                    {
+                    "datasource": {
+                        "type": "postgres",
+                        "uid": "${Datasource}"
+                    },
+                    "description": "",
+                    "fieldConfig": {
+                        "defaults": {
+                        "color": {
+                            "mode": "palette-classic"
+                        },
+                        "custom": {
+                            "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                            }
+                        },
+                        "mappings": [],
+                        "unit": "kwatth"
+                        },
+                        "overrides": [
+                        {
+                            "matcher": {
+                            "id": "byName",
+                            "options": "Sector S"
+                            },
+                            "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                "fixedColor": "red",
+                                "mode": "fixed"
+                                }
+                            }
+                            ]
+                        }
+                        ]
+                    },
+                    "gridPos": {
+                        "h": 9,
+                        "w": 8,
+                        "x": 0,
+                        "y": 38
+                    },
+                    "id": 8,
+                    "options": {
+                        "displayLabels": [
+                        "percent",
+                        "name"
+                        ],
+                        "legend": {
+                        "displayMode": "table",
+                        "placement": "right",
+                        "showLegend": true,
+                        "values": [
+                            "percent",
+                            "value"
+                        ]
+                        },
+                        "pieType": "donut",
+                        "reduceOptions": {
+                        "calcs": [
+                            "lastNotNull"
+                        ],
+                        "fields": "",
+                        "values": true
+                        },
+                        "tooltip": {
+                        "hideZeros": false,
+                        "mode": "multi",
+                        "sort": "none"
+                        }
+                    },
+                    "pluginVersion": "12.0.0+security-01",
+                    "targets": [
+                        {
+                        "datasource": {
+                            "type": "grafana-postgresql-datasource",
+                            "uid": "${DS_CRFOIAPOU}"
+                        },
+                        "format": "table",
+                        "group": [],
+                        "metricColumn": "none",
+                        "rawQuery": true,
+                        "rawSql": "    SELECT pumpgroup.name AS \"Bombeo\", sum(measurement.consumed_energy) AS \"Energía consumida\"\n      FROM wua_pumpgroupmeasurement measurement\nINNER JOIN wua_pumpgroup pumpgroup ON measurement.pumpgroup_id = pumpgroup.id\n     WHERE measurement.of_active_agriculturalseason\n  GROUP BY pumpgroup.name\n  ORDER BY pumpgroup.name",
+                        "refId": "A",
+                        "select": [
+                            [
+                            {
+                                "params": [
+                                "percent"
+                                ],
+                                "type": "column"
+                            }
+                            ]
+                        ],
+                        "table": "account_analytic_distribution_rule",
+                        "timeColumn": "write_date",
+                        "timeColumnType": "timestamp",
+                        "where": [
+                            {
+                            "name": "$__timeFilter",
+                            "params": [],
+                            "type": "macro"
+                            }
+                        ]
+                        }
+                    ],
+                    "title": "Energía consumida por Bombeo",
+                    "type": "piechart"
+                    },
+                    {
+                    "datasource": {
+                        "type": "postgres",
+                        "uid": "${Datasource}"
+                    },
+                    "description": "Energía consumida por categoría $bombeo",
+                    "fieldConfig": {
+                        "defaults": {
+                        "color": {
+                            "mode": "palette-classic"
+                        },
+                        "custom": {
+                            "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                            }
+                        },
+                        "mappings": [],
+                        "unit": "kwatth"
+                        },
+                        "overrides": []
+                    },
+                    "gridPos": {
+                        "h": 9,
+                        "w": 8,
+                        "x": 8,
+                        "y": 38
+                    },
+                    "id": 15,
+                    "options": {
+                        "displayLabels": [
+                        "percent",
+                        "name"
+                        ],
+                        "legend": {
+                        "displayMode": "table",
+                        "placement": "right",
+                        "showLegend": true,
+                        "values": [
+                            "percent",
+                            "value"
+                        ]
+                        },
+                        "pieType": "donut",
+                        "reduceOptions": {
+                        "calcs": [
+                            "lastNotNull"
+                        ],
+                        "fields": "",
+                        "values": true
+                        },
+                        "tooltip": {
+                        "hideZeros": false,
+                        "mode": "multi",
+                        "sort": "none"
+                        }
+                    },
+                    "pluginVersion": "12.0.0+security-01",
+                    "targets": [
+                        {
+                        "datasource": {
+                            "type": "grafana-postgresql-datasource",
+                            "uid": "${DS_CRFOIAPOU}"
+                        },
+                        "format": "table",
+                        "group": [],
+                        "metricColumn": "none",
+                        "rawQuery": true,
+                        "rawSql": "    SELECT measurement.energy_efficiency_rating AS \"Categoría\", sum(measurement.consumed_energy) AS \"Energía consumida\"\n      FROM wua_pumpgroupmeasurement measurement\nINNER JOIN wua_pumpgroup pumpgroup ON measurement.pumpgroup_id = pumpgroup.id\n     WHERE pumpgroup.name IN ($bombeo)\n       AND measurement.of_active_agriculturalseason\n  GROUP BY measurement.energy_efficiency_rating\n  ORDER BY measurement.energy_efficiency_rating",
+                        "refId": "A",
+                        "select": [
+                            [
+                            {
+                                "params": [
+                                "percent"
+                                ],
+                                "type": "column"
+                            }
+                            ]
+                        ],
+                        "table": "account_analytic_distribution_rule",
+                        "timeColumn": "write_date",
+                        "timeColumnType": "timestamp",
+                        "where": [
+                            {
+                            "name": "$__timeFilter",
+                            "params": [],
+                            "type": "macro"
+                            }
+                        ]
+                        }
+                    ],
+                    "title": "Energía consumida por categoría",
+                    "type": "piechart"
+                    }
+                ],
+                "preload": false,
+                "refresh": "",
+                "schemaVersion": 41,
+                "tags": [],
+                "templating": {
+                    "list": [
+                    {
+                        "current": {
+                        "text": "crfoiapou",
+                        "value": "w4ayEFP7k"
+                        },
+                        "hide": 2,
+                        "includeAll": false,
+                        "name": "Datasource",
+                        "options": [],
+                        "query": "postgres",
+                        "refresh": 1,
+                        "regex": "",
+                        "type": "datasource"
+                    },
+                    {
+                        "current": {
+                        "text": "All",
+                        "value": [
+                            "$__all"
+                        ]
+                        },
+                        "datasource": {
+                        "type": "postgres",
+                        "uid": "${Datasource}"
+                        },
+                        "definition": "SELECT DISTINCT name FROM wua_pumpgroup;",
+                        "includeAll": true,
+                        "label": "Bombeo",
+                        "multi": true,
+                        "name": "pumpgroup",
+                        "options": [],
+                        "query": "SELECT DISTINCT name FROM wua_pumpgroup;",
+                        "refresh": 1,
+                        "regex": "",
+                        "sort": 1,
+                        "type": "query"
+                    }
+                    ]
+                },
+                "time": {
+                    "from": "now-1y",
+                    "to": "now"
+                },
+                "timepicker": {},
+                "timezone": "",
+                "title": "pumpgroup-integration",
+                "uid": "pumpgroup_integration",
+                "version": 4,
+                "weekStart": "monday"
+                }
+             ]]></field>
+        </record>
+    </data>
+</odoo>
