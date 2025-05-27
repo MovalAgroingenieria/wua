@@ -49,6 +49,13 @@ class WuaPresresconsumption(models.Model):
         readonly=False,
     )
 
+    siemens_id = fields.Char(
+        string='Siemens ID',
+        compute='_compute_siemens_id',
+        index=True,
+        store=True,
+    )
+
     def is_close(self, a, b, rel_tol=1e-09, abs_tol=0.0):
         return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
 
@@ -142,3 +149,12 @@ class WuaPresresconsumption(models.Model):
                     record.request_time) - timedelta(
                     hours=int(lock_hours))
             record.modification_deadline = modification_deadline
+
+    @api.depends('waterconnection_id')
+    def _compute_siemens_id(self):
+        for record in self:
+            siemens_id = ''
+            if (record.waterconnection_id and
+                    record.waterconnection_id.siemens_id):
+                siemens_id = record.waterconnection_id.siemens_id
+            record.siemens_id = siemens_id
