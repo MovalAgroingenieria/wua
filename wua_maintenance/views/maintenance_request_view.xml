@@ -118,6 +118,9 @@
                 <filter string='Created on field' name='created_on_field' domain="[('created_on_field', '=', True)]"/>
                 <separator/>
             </xpath>
+            <xpath expr="//filter[@name='created_by']" position="before">
+                    <filter string='Team' domain="[]" context="{'group_by' : 'maintenance_team_id'}"/>
+            </xpath>
         </field>
     </record>
 
