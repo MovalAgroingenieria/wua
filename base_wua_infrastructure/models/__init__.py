@@ -19,3 +19,4 @@ from . import wua_valve
 from . import wua_valve_type
 from . import wua_drainagevalve
 from . import wua_drainagevalve_type
+from . import wua_building

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_wua_building_tree" model="ir.ui.view">
+        <field name="name">wua.building.tree</field>
+        <field name="model">wua.building</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="gis_viewer_link" invisible="1"/>
+                <field name="with_gis_building" invisible="1"/>
+                <button name="action_see_gis_viewer"
+                        type="object" class="oe_stat_button"
+                        string="GIS Viewer (zoom to point)"
+                        icon="fa-map-marker"
+                        attrs="{'invisible': ['|',('gis_viewer_link','=',False), ('with_gis_building','=',False)]}"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_wua_building_form" model="ir.ui.view">
+        <field name="name">wua.building.form</field>
+        <field name="model">wua.building</field>
+        <field name="arch" type="xml">
+            <form string="Building">
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <field name="with_gis_building" invisible="1"/>
+                        <field name="gis_viewer_link" invisible="1"/>
+                        <button name="action_see_gis_viewer"
+                                type="object"
+                                class="oe_stat_button"
+                                string="GIS Viewer"
+                                icon="fa-map-marker"
+                                attrs="{'invisible': ['|',('gis_viewer_link','=',False), ('with_gis_building','=',False)]}"/>
+                    </div>
+                    <group>
+                        <field name="name"/>
+                        <field name="description"/>
+                        <field name="partner_id"/>
+                    </group>
+                    <notebook>
+                        <page string="Technical Characteristics">
+                            <field name="technical_characteristics"/>
+                        </page>
+                        <page string="Notes">
+                            <field name="notes"/>
+                        </page>
+                        <page name="page_photos" string="Photos">
+                            <group name="photos" col="4">
+                                <field name="photo" widget="image" class="oe_img_259_160"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_wua_building_search" model="ir.ui.view">
+        <field name="name">wua.building.search</field>
+        <field name="model">wua.building</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="description"/>
+                <field name="partner_id"/>
+                <filter string="Con edificio GIS" name="with_gis_building" domain="[('with_gis_building', '=', True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Dirección" name="group_by_partner" context="{'group_by': 'partner_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="wua_building_action" model="ir.actions.act_window">
+        <field name="name">Buildings</field>
+        <field name="res_model">wua.building</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_wua_building_tree"/>
+        <field name="search_view_id"
+         ref="view_wua_building_search"/>
+    </record>
+
+    <menuitem
+        name="Buildings"
+        id="wua_building_menu"
+        parent="base_wua_infrastructure_primary_menu"
+        sequence="13"
+        action="wua_building_action"/>
+</odoo>
