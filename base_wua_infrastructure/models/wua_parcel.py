@@ -2091,6 +2091,158 @@ class WuaParcel(models.Model):
                     break
             record.with_pumping = with_pumping
 
+    def check_gis_building_created(self):
+        resp = False
+        self.env.cr.execute("""
+            SELECT EXISTS(SELECT * FROM information_schema.tables
+            WHERE table_name='wua_gis_building')
+            """)
+        if self.env.cr.fetchone()[0]:
+            resp = True
+        return resp
+
+    def create_wua_gis_building_table(self):
+        # Check if wua gis table already exists
+        gis_building_table_created = \
+            self.check_gis_building_created()
+        # Check if extension postgis and schema postgis are created
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        # Postgis extension and schema exists, but gis building don't
+        if (not gis_building_table_created and
+                extension_schema_postgis_created):
+            self.env.cr.execute("""
+                CREATE SEQUENCE IF NOT EXISTS
+                    public.wua_gis_building_gid_seq
+                    INCREMENT 1
+                    START 1
+                    MINVALUE 1
+                    MAXVALUE 2147483647
+                    CACHE 1;
+            """)
+            self.env.cr.execute("""
+                CREATE TABLE IF NOT EXISTS public.wua_gis_building
+                    (
+                        gid integer NOT NULL DEFAULT nextval(
+                            'wua_gis_building_gid_seq'::regclass),
+                        name character varying(254)
+                            COLLATE pg_catalog."default",
+                        code bigint,
+                        geom postgis.geometry(MultiPolygon,25830),
+                        UNIQUE(code),
+                        CONSTRAINT wua_gis_building_pkey
+                            PRIMARY KEY (gid)
+                    );
+            """)
+            self.env.cr.execute("""
+                CREATE INDEX IF NOT EXISTS
+                wua_gis_building_idx ON
+                public.wua_gis_building USING gist (geom);
+            """)
+            self.env.cr.commit()
+
+    def create_building_triggers(self):
+        gis_building_table_created = \
+            self.check_gis_building_created()
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        if (gis_building_table_created and
+                extension_schema_postgis_created):
+            # Function that will update the wua_building data when the
+            # wua_gis_building table has some change, (Create, Update
+            # or Delete)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_gis_building_update_on_wua_building()
+                    RETURNS trigger AS
+                $BODY$
+                BEGIN
+                IF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
+                    UPDATE public.wua_building SET
+                        with_gis_building = False
+                    WHERE building_code = OLD.code;
+                END IF;
+                IF TG_OP = 'UPDATE' OR TG_OP = 'INSERT' THEN
+                    UPDATE public.wua_building SET
+                        with_gis_building = True
+                    WHERE building_code = NEW.code;
+                END IF;
+                RETURN NULL;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the gis building is
+            # unlinked and other when a gis building is created or
+            # updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_gis_building_write_trigger
+                    ON public.wua_gis_building;
+                DROP TRIGGER IF EXISTS
+                    wua_gis_building_create_unlink_trigger ON
+                    public.wua_gis_building;
+
+                CREATE TRIGGER wua_gis_building_write_trigger
+                AFTER UPDATE OF code ON
+                public.wua_gis_building FOR EACH ROW WHEN
+                (OLD.code IS DISTINCT FROM NEW.code)
+                EXECUTE PROCEDURE
+                    wua_gis_building_update_on_wua_building();
+
+                CREATE TRIGGER wua_gis_building_create_unlink_trigger
+                AFTER INSERT OR DELETE ON
+                public.wua_gis_building FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_gis_building_update_on_wua_building();
+            """)
+            self.env.cr.commit()
+            # Function that will update the wua_building data when the
+            # wua_building table has some change (Create, Update)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_building_update_on_wua_building()
+                    RETURNS trigger AS
+                $BODY$
+                BEGIN
+                    UPDATE public.wua_building SET
+                        with_gis_building = (SELECT
+                            NEW.building_code IN
+                            (SELECT code FROM wua_gis_building))
+                    WHERE building_code = NEW.building_code;
+                RETURN NEW;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the building is
+            # created and other when a gis building is created or
+            # updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_building_write_trigger ON
+                    public.wua_building;
+                DROP TRIGGER IF EXISTS wua_building_create_trigger ON
+                    public.wua_building;
+
+                CREATE TRIGGER wua_building_write_trigger
+                AFTER UPDATE OF building_code ON
+                public.wua_building FOR EACH ROW WHEN
+                (OLD.building_code IS DISTINCT FROM
+                 NEW.building_code)
+                EXECUTE PROCEDURE
+                    wua_building_update_on_wua_building();
+
+                CREATE TRIGGER wua_building_create_trigger
+                AFTER INSERT ON
+                public.wua_building FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_building_update_on_wua_building();
+            """)
+            self.env.cr.commit()
+
 
 class WuaParcelIrrigationpoint(models.Model):
     _name = 'wua.parcel.irrigationpoint'

@@ -9,42 +9,42 @@ class WuaBuilding(models.Model):
     _order = 'name'
 
     name = fields.Char(
-        string='Identificador',
+        string='Identifier',
         required=True,
         index=True,
         unique=True
     )
 
     description = fields.Char(
-        string='Descripción'
+        string='Description'
     )
 
     partner_id = fields.Many2one(
         comodel_name='res.partner',
-        string='Dirección'
+        string='Address',
     )
 
     notes = fields.Html(
-        string='Notas'
+        string='Notes'
     )
 
     technical_characteristics = fields.Html(
-        string='Características técnicas'
+        string='Technical Characteristics'
     )
 
     photo = fields.Binary(
-        string='Foto',
+        string='Photo',
         attachment=True
     )
 
     gis_viewer_link = fields.Char(
-        string='Enlace al visor GIS',
+        string='GIS Viewer Link',
         compute='_compute_gis_viewer_link',
         store=False
     )
 
     with_gis_building = fields.Boolean(
-        string='Con edificio GIS',
+        string='Linked with GIS Building',
         readonly=True
     )
 
@@ -72,3 +72,12 @@ class WuaBuilding(models.Model):
                     sep_char = '?' if '?' not in url_for_record else '&'
                     url_for_record += sep_char + "arg=" + cipher_text
             record.gis_viewer_link = url_for_record or ''
+
+    @api.model_cr
+    def init(self):
+        parcel_model = self.env['wua.parcel']
+        try:
+            parcel_model.create_wua_gis_building_table()
+            parcel_model.create_building_triggers()
+        except Exception:
+            pass
