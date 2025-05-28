@@ -267,8 +267,6 @@ class MaintenanceGisController(http.Controller):
             'technician': maintenance.technician_user_id.name or '',
             'field_resolved': maintenance.field_resolved,
             'resolution_description': maintenance.resolution_description or '',
-            'resolution_image_before': maintenance.resolution_image_before,
-            'resolution_image_after': maintenance.resolution_image_after,
             'resolution_time': maintenance.resolution_time,
             'resolved_by': maintenance.resolved_by.name or '',
             'created_on_field': maintenance.created_on_field,

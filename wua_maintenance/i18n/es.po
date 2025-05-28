@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-28 10:59+0000\n"
-"PO-Revision-Date: 2025-05-28 10:59+0000\n"
+"POT-Creation-Date: 2025-05-28 13:16+0000\n"
+"PO-Revision-Date: 2025-05-28 13:16+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -164,6 +164,16 @@ msgid "Additional Info"
 msgstr "Información adicional"
 
 #. module: wua_maintenance
+#: selection:maintenance.request.attachment,image_type:0
+msgid "After"
+msgstr "Después"
+
+#. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_resolution_images_after
+msgid "After Resolution Images"
+msgstr "Imágenes después"
+
+#. module: wua_maintenance
 #: model:res.groups,name:wua_maintenance.group_maintenance_agent
 msgid "Agent"
 msgstr "Agente"
@@ -195,6 +205,16 @@ msgstr "¿Está seguro de que quiere modificar la visibilidad?"
 #: model:ir.model,name:wua_maintenance.model_maintenance_equipment_category
 msgid "Asset Category"
 msgstr "Categoría de activo"
+
+#. module: wua_maintenance
+#: selection:maintenance.request.attachment,image_type:0
+msgid "Before"
+msgstr "Antes"
+
+#. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_resolution_images_before
+msgid "Before Resolution Images"
+msgstr "Imágenes antes"
 
 #. module: wua_maintenance
 #: selection:maintenance.kind.dynamic.field,field_type:0
@@ -257,6 +277,7 @@ msgstr "Crear Peticiones de Mantenimiento"
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipmenttag_create_uid
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_kind_dynamic_field_create_uid
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_kind_dynamic_field_selection_create_uid
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_attachment_create_uid
 #: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_create_uid
 msgid "Created by"
 msgstr "Creado por"
@@ -265,6 +286,7 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipmenttag_create_date
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_kind_dynamic_field_create_date
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_kind_dynamic_field_selection_create_date
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_attachment_create_date
 #: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_create_date
 msgid "Created on"
 msgstr "Creado el"
@@ -325,10 +347,17 @@ msgstr "Descripción"
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipmenttag_display_name
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_kind_dynamic_field_display_name
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_kind_dynamic_field_selection_display_name
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_attachment_display_name
 #: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_display_name
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_infrastructureitem_display_name
 msgid "Display Name"
 msgstr "Nombre a mostrar"
+
+#. module: wua_maintenance
+#: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_request_view_form
+#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_attachment_view_kanban
+msgid "Download"
+msgstr "Descargar"
 
 #. module: wua_maintenance
 #: code:addons/wua_maintenance/models/maintenance.py:869
@@ -551,8 +580,14 @@ msgstr "CAUDALÍMETRO"
 
 #. module: wua_maintenance
 #: model:maintenance.equipment.category,name:wua_maintenance.equipment_category_field
+#: selection:maintenance.request.attachment,image_type:0
 msgid "Field"
 msgstr "Campo"
+
+#. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_field_images
+msgid "Field Images"
+msgstr "Imágenes campo"
 
 #. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_field_latitude
@@ -589,6 +624,11 @@ msgstr "Tipo de campo"
 #: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_request_view_search
 msgid "Field resolved"
 msgstr "Resuelta en campo"
+
+#. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_attachment_filename
+msgid "Filename"
+msgstr "Nombre de archivo"
 
 #. module: wua_maintenance
 #: code:addons/wua_maintenance/models/maintenance.py:887
@@ -685,6 +725,7 @@ msgstr "Sector hidráulico"
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipmenttag_id
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_kind_dynamic_field_id
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_kind_dynamic_field_selection_id
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_attachment_id
 #: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_id
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_infrastructureitem_id
 msgid "ID"
@@ -709,6 +750,16 @@ msgstr "TABLACHO"
 #: model:maintenance.equipment.category,name:wua_maintenance.equipment_category_irrigationshed
 msgid "IRRIGATION SHED"
 msgstr "CASETA"
+
+#. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_attachment_image
+msgid "Image"
+msgstr "Imagen"
+
+#. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_attachment_image_type
+msgid "Image Type"
+msgstr "Tipo imagen"
 
 #. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_field_image
@@ -804,6 +855,7 @@ msgstr "Etiqueta"
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipmenttag___last_update
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_kind_dynamic_field___last_update
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_kind_dynamic_field_selection___last_update
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_attachment___last_update
 #: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests___last_update
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_infrastructureitem___last_update
 msgid "Last Modified on"
@@ -813,6 +865,7 @@ msgstr "Última modificación en"
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipmenttag_write_uid
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_kind_dynamic_field_selection_write_uid
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_kind_dynamic_field_write_uid
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_attachment_write_uid
 #: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_write_uid
 msgid "Last Updated by"
 msgstr "Última actualización por"
@@ -821,6 +874,7 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipmenttag_write_date
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_kind_dynamic_field_selection_write_date
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_kind_dynamic_field_write_date
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_attachment_write_date
 #: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_write_date
 msgid "Last Updated on"
 msgstr "Última actualización el"
@@ -844,6 +898,11 @@ msgstr "Línea"
 #: selection:wizard.massive.maintenance.requests,priority:0
 msgid "Low"
 msgstr "Baja"
+
+#. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_attachment_maintenance_id
+msgid "Maintenance"
+msgstr "Mantenimiento"
 
 #. module: wua_maintenance
 #: model:ir.model,name:wua_maintenance.model_maintenance_equipmenttag
@@ -1556,6 +1615,11 @@ msgid "maintenance.kind.dynamic.field.selection"
 msgstr "maintenance.kind.dynamic.field.selection"
 
 #. module: wua_maintenance
+#: model:ir.model,name:wua_maintenance.model_maintenance_request_attachment
+msgid "maintenance.request.attachment"
+msgstr "maintenance.request.attachment"
+
+#. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_photovoltaicplant_id
 msgid "photovoltaicplant"
 msgstr "planta fotovoltáica"
@@ -1644,3 +1708,4 @@ msgstr "wizard.massive.maintenance.requests"
 #: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_category_view_form
 msgid "{{ equipment.name }}"
 msgstr "{{ equipment.name }}"
+

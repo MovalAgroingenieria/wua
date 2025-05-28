@@ -70,6 +70,20 @@ class MaintenanceRequest(models.Model):
         readonly=True,
     )
 
+    resolution_images_before = fields.One2many(
+        string='Before Resolution Images',
+        comodel_name='maintenance.request.attachment',
+        inverse_name='maintenance_id',
+        domain=[('image_type', '=', 'before')],
+    )
+
+    resolution_images_after = fields.One2many(
+        string='After Resolution Images',
+        comodel_name='maintenance.request.attachment',
+        inverse_name='maintenance_id',
+        domain=[('image_type', '=', 'after')],
+    )
+
     resolution_description = fields.Html(
         string='Resolution Description',
         readonly=True,
@@ -85,6 +99,13 @@ class MaintenanceRequest(models.Model):
         string='Image from Field',
         attachment=True,
         readonly=True,
+    )
+
+    field_images = fields.One2many(
+        string='Field Images',
+        comodel_name='maintenance.request.attachment',
+        inverse_name='maintenance_id',
+        domain=[('image_type', '=', 'field')],
     )
 
     field_latitude = fields.Float(
@@ -221,6 +242,13 @@ class MaintenanceRequest(models.Model):
                     partner_ids=record.maintenance_team_id.partner_ids.ids)
 
     def write(self, vals):
+        # Ensure no empty resolution images are saved
+        if 'resolution_images_before' in vals and not \
+                vals['resolution_images_before']:
+            vals.pop('resolution_images_before')
+        if 'resolution_images_after' in vals and not \
+                vals['resolution_images_after']:
+            vals.pop('resolution_images_after')
         res = super(MaintenanceRequest, self).write(vals)
         if 'maintenance_team_id' in vals:
             self._add_maintenance_team_followers()
@@ -310,3 +338,32 @@ class MaintenanceRequest(models.Model):
                     updated_dynamic_fields)
             response['success'] = not response['errors']
         return response
+
+
+class MaintenanceRequestAttachment(models.Model):
+    _name = 'maintenance.request.attachment'
+
+    maintenance_id = fields.Many2one(
+        string='Maintenance',
+        comodel_name='maintenance.request',
+        ondelete='cascade',
+        required=True,
+    )
+
+    image_type = fields.Selection(
+        [('before', 'Before'),
+         ('after', 'After'),
+         ('field', 'Field')],
+        string='Image Type',
+        required=True,
+    )
+
+    image = fields.Binary(
+        string='Image',
+        attachment=True,
+        required=True,
+    )
+
+    filename = fields.Char(
+        string='Filename',
+    )

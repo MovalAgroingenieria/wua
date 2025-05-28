@@ -45,7 +45,6 @@
                 <field name="sequence" />
             </xpath>
             <xpath expr="//field[@name='maintenance_kind_id']" position="replace">
-                <field name="maintenance_kind_id" invisible="1"/>
             </xpath>
             <xpath expr="//field[@name='owner_user_id']" position="after">
                 <field name="maintenance_kind_id"/>
@@ -72,7 +71,43 @@
                         <page name="created_on_field_page" string="Origin"
                               attrs="{'invisible': [('created_on_field', '=', False)]}">
                             <group>
-                                <field name="field_image" widget="image" class="oe_img_259_160"/>
+                                <field name="field_images" mode="kanban">
+                                    <kanban>
+                                        <field name="image"/>
+                                        <field name="filename"/>
+                                        <field name="id"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <div style="
+                                                        flex: unset;
+                                                        -webkit-flex: unset;
+                                                        -webkit-box-flex: unset;
+                                                        -moz-flex: unset;
+                                                        ms-flex: unset;
+                                                        padding: 8px;
+                                                        margin: 6px;
+                                                        border: 1px solid #ddd;
+                                                        border-radius: 6px;
+                                                        background-color: #f9f9f9;
+                                                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);"
+                                                    t-att-class="'o_kanban_small_image_card'">
+                                                    <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right" style="color: red;"/>
+                                                    <a t-if="record.image.raw_value"
+                                                        t-att-href="'/web/content/maintenance.request.attachment/' + record.id.raw_value + '/image?download=true'"
+                                                        t-att-download="record.filename.raw_value or 'imagen.jpg'"
+                                                        class="fa fa-download pull-right"
+                                                        title="Download"
+                                                        style="color: #555;" />
+                                                    <div class="o_kanban_image" style="text-align:center;">
+                                                    <img t-if="record.image.raw_value"
+                                                        t-att-src="'/web/image?model=maintenance.request.attachment&amp;id=' + record.id.raw_value + '&amp;field=image'"
+                                                        style="max-width: 100px; max-height: 100px; margin: auto; border: 1px solid #ccc; border-radius: 4px;" />
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                </field>
                             </group>
                         </page>
                         <page name="field_resolved_page" string="Field Resolved"
@@ -82,10 +117,80 @@
                                 <field name="resolution_time"/>
                                 <field name="resolution_description"/>
                                 <field name="resolution_dynamic_fields"/>
-                                <field name="resolution_image_before_filename" invisible="1"/>
-                                <field name="resolution_image_before" widget="image" class="oe_img_259_160" filename="resolution_image_before_filename"/>
-                                <field name="resolution_image_after_filename" invisible="1"/>
-                                <field name="resolution_image_after" widget="image" class="oe_img_259_160" filename="resolution_image_after_filename"/>
+                                <field name="resolution_images_before" mode="kanban">
+                                    <kanban>
+                                        <field name="image"/>
+                                        <field name="filename"/>
+                                        <field name="id"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <div style="
+                                                        flex: unset;
+                                                        -webkit-flex: unset;
+                                                        -webkit-box-flex: unset;
+                                                        -moz-flex: unset;
+                                                        ms-flex: unset;
+                                                        padding: 8px;
+                                                        margin: 6px;
+                                                        border: 1px solid #ddd;
+                                                        border-radius: 6px;
+                                                        background-color: #f9f9f9;
+                                                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);"
+                                                    t-att-class="'o_kanban_small_image_card'">
+                                                    <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right" style="color: red;"/>
+                                                    <a t-if="record.image.raw_value"
+                                                        t-att-href="'/web/content/maintenance.request.attachment/' + record.id.raw_value + '/image?download=true'"
+                                                        t-att-download="record.filename.raw_value or 'imagen.jpg'"
+                                                        class="fa fa-download pull-right"
+                                                        title="Download"
+                                                        style="color: #555;" />
+                                                    <div class="o_kanban_image" style="text-align:center;">
+                                                    <img t-if="record.image.raw_value"
+                                                        t-att-src="'/web/image?model=maintenance.request.attachment&amp;id=' + record.id.raw_value + '&amp;field=image'"
+                                                        style="max-width: 100px; max-height: 100px; margin: auto; border: 1px solid #ccc; border-radius: 4px;" />
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                </field>
+                                <field name="resolution_images_after" mode="kanban">
+                                    <kanban>
+                                        <field name="image"/>
+                                        <field name="filename"/>
+                                        <field name="id"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <div style="
+                                                        flex: unset;
+                                                        -webkit-flex: unset;
+                                                        -webkit-box-flex: unset;
+                                                        -moz-flex: unset;
+                                                        ms-flex: unset;
+                                                        padding: 8px;
+                                                        margin: 6px;
+                                                        border: 1px solid #ddd;
+                                                        border-radius: 6px;
+                                                        background-color: #f9f9f9;
+                                                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);"
+                                                    t-att-class="'o_kanban_small_image_card'">
+                                                    <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right" style="color: red;"/>
+                                                    <a t-if="record.image.raw_value"
+                                                        t-att-href="'/web/content/maintenance.request.attachment/' + record.id.raw_value + '/image?download=true'"
+                                                        t-att-download="record.filename.raw_value or 'imagen.jpg'"
+                                                        class="fa fa-download pull-right"
+                                                        title="Download"
+                                                        style="color: #555;" />
+                                                    <div class="o_kanban_image" style="text-align:center;">
+                                                    <img t-if="record.image.raw_value"
+                                                        t-att-src="'/web/image?model=maintenance.request.attachment&amp;id=' + record.id.raw_value + '&amp;field=image'"
+                                                        style="max-width: 100px; max-height: 100px; margin: auto; border: 1px solid #ccc; border-radius: 4px;" />
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                </field>
                             </group>
                         </page>
                     </notebook>
@@ -121,6 +226,47 @@
             <xpath expr="//filter[@name='created_by']" position="before">
                     <filter string='Team' domain="[]" context="{'group_by' : 'maintenance_team_id'}"/>
             </xpath>
+        </field>
+    </record>
+
+    <record id="maintenance_request_attachment_view_kanban" model="ir.ui.view">
+        <field name="name">maintenance.request.attachment.kanban</field>
+        <field name="model">maintenance.request.attachment</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="image"/>
+                <field name="filename"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div style="
+                                flex: unset;
+                                -webkit-flex: unset;
+                                -webkit-box-flex: unset;
+                                -moz-flex: unset;
+                                ms-flex: unset;
+                                padding: 8px;
+                                margin: 6px;
+                                border: 1px solid #ddd;
+                                border-radius: 6px;
+                                background-color: #f9f9f9;
+                                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);"
+                            t-att-class="'o_kanban_small_image_card'">
+                            <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right" style="color: red;"/>
+                            <a t-if="record.image.raw_value"
+                                t-att-href="'/web/content/maintenance.request.attachment/' + record.id.raw_value + '/image?download=true'"
+                                t-att-download="record.filename.raw_value or 'imagen.jpg'"
+                                class="fa fa-download pull-right"
+                                title="Download"
+                                style="color: #555;" />
+                            <div class="o_kanban_image" style="text-align:center;">
+                            <img t-if="record.image.raw_value"
+                                t-att-src="'/web/image?model=maintenance.request.attachment&amp;id=' + record.id.raw_value + '&amp;field=image'"
+                                style="max-width: 100px; max-height: 100px; margin: auto; border: 1px solid #ccc; border-radius: 4px;" />
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
         </field>
     </record>
 
