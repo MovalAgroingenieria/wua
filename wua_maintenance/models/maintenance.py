@@ -549,23 +549,23 @@ class MaintenanceEquipment(models.Model):
             if intermediate_table:
                 sql = """
                     WITH RECURSIVE category_hierarchy AS (
-                        SELECT id, parent_id FROM maintenance_equipment
-                        WHERE category_id = {category_id}
+                        SELECT id FROM maintenance_equipment_category
+                        WHERE id = {category_id}
                         UNION ALL
-                        SELECT me.id, me.parent_id
-                        FROM maintenance_equipment me
-                        JOIN category_hierarchy ch ON me.id = ch.parent_id
+                        SELECT c.id
+                        FROM maintenance_equipment_category c
+                        JOIN category_hierarchy ch ON c.parent_id = ch.id
                     ),
                     equipment_with_infrastructure_gis AS (
-                        SELECT me.id AS equipment_id, ST_AsGeoJSON(gis.geom)
-                            AS geojson
+                        SELECT me.id AS equipment_id, ST_AsGeoJSON(gis.geom) AS geojson
                         FROM maintenance_equipment me
                         INNER JOIN {base_table} bt ON me.id = bt.equipment_id
-                        INNER JOIN {intermediate_table} it ON
-                            bt.{base_field} = it.{intermediate_field}
+                        INNER JOIN {intermediate_table} it ON bt.{base_field}
+                            = it.{intermediate_field}
                         INNER JOIN {gis_table} gis ON
                             it.{intermediate_gis_field} = gis.{gis_field}
-                        WHERE me.id IN (SELECT id FROM category_hierarchy)
+                        WHERE me.category_id IN (
+                            SELECT id FROM category_hierarchy)
                     )
                     UPDATE maintenance_equipment me
                     SET geojson_geom = eg.geojson, with_infrastructure_gis =
@@ -585,12 +585,12 @@ class MaintenanceEquipment(models.Model):
             else:
                 sql = """
                     WITH RECURSIVE category_hierarchy AS (
-                        SELECT id, parent_id FROM maintenance_equipment
-                        WHERE category_id = {category_id}
+                        SELECT id FROM maintenance_equipment_category
+                        WHERE id = {category_id}
                         UNION ALL
-                        SELECT me.id, me.parent_id
-                        FROM maintenance_equipment me
-                        JOIN category_hierarchy ch ON me.id = ch.parent_id
+                        SELECT c.id
+                        FROM maintenance_equipment_category c
+                        JOIN category_hierarchy ch ON c.parent_id = ch.id
                     ),
                     equipment_with_infrastructure_gis AS (
                         SELECT me.id AS equipment_id, ST_AsGeoJSON(gis.geom)
@@ -599,7 +599,8 @@ class MaintenanceEquipment(models.Model):
                         INNER JOIN {base_table} bt ON me.id = bt.equipment_id
                         INNER JOIN {gis_table} gis ON bt.{base_field} =
                             gis.{gis_field}
-                        WHERE me.id IN (SELECT id FROM category_hierarchy)
+                        WHERE me.category_id IN (
+                            SELECT id FROM category_hierarchy)
                     )
                     UPDATE maintenance_equipment me
                     SET geojson_geom = eg.geojson, with_infrastructure_gis =
@@ -620,6 +621,26 @@ class MaintenanceEquipment(models.Model):
             WHERE geojson_geom IS NULL OR geojson_geom = ''
         """
         env.cr.execute(cleanup_sql)
+        # Categories not WUA inherit can inherit from parents
+        inherit_geojson_sql = """
+        WITH RECURSIVE geo_inheritance AS (
+            SELECT id, parent_id, geojson_geom, with_infrastructure_gis
+            FROM maintenance_equipment
+            WHERE geojson_geom IS NOT NULL AND geojson_geom <> ''
+            UNION ALL
+            SELECT child.id, child.parent_id, parent.geojson_geom,
+                   parent.with_infrastructure_gis
+            FROM maintenance_equipment child
+            JOIN geo_inheritance parent ON child.parent_id = parent.id
+            WHERE child.geojson_geom IS NULL OR child.geojson_geom = ''
+        )
+        UPDATE maintenance_equipment me
+        SET geojson_geom = g.geojson_geom,
+            with_infrastructure_gis = g.with_infrastructure_gis
+        FROM geo_inheritance g
+        WHERE me.id = g.id
+        """
+        env.cr.execute(inherit_geojson_sql)
 
     @api.model
     def _cron_generate_requests_with_limit(self):
