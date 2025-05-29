@@ -1,0 +1,235 @@
+<odoo>
+    <data>
+        <template id="portal_my_home_menu_wua" name="Portal layout : wua menu entries" inherit_id="base_wua_portal.portal_my_home_menu_wua" priority="925">
+            <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="inside">
+                <li style="order: 9;">
+                    <a href="/my/irrigationreports">Irrigationreports</a>
+                </li>
+            </xpath>
+        </template>
+        <template id="portal_my_home_wua" inherit_id="base_wua_portal.portal_my_home_wua" name="Hide Quotes and Orders">
+            <xpath expr="//div[contains(@class,'o_my_home_content')]" position="inside">
+                <h3 class="page-header" style="order: 9;">
+                    <a href="/my/irrigationreports">
+                        <i class="fa fa-fw fa-moval-file-irrigation"></i>
+                        Your Irrigationreports
+                        <small class="ml8">
+                            <t t-if="irrigationreports_count">
+                                <span class='badge pull-right'><t t-esc="irrigationreports_count"/></span>
+                            </t>
+                            <t t-if="not irrigationreports_count">
+                                There are currently no irrigationreport for your account.
+                            </t>
+                        </small>
+                    </a>
+                </h3>
+                <h3 class="page-header"  style="order: 10;">
+                    <a href="/my/irrigationreportrequests">
+                        <i class="fa fa-fw fa-moval-file-irrigation-request"></i>
+                        Your Irrigationreport Requests
+                        <small class="ml8">
+                            <t t-if="irrigationreport_requests_count">
+                                <span class='badge pull-right'><t t-esc="irrigationreport_requests_count"/></span>
+                            </t>
+                            <t t-if="not irrigationreport_requests_count">
+                                There are currently no irrigationreport requests for your account.
+                            </t>
+                        </small>
+                    </a>
+                </h3>
+            </xpath>
+        </template>
+        <template id="portal_my_irrigationreports" name="My Irrigationreports">
+            <t t-call="website.layout">
+                <div class="container mt16">
+                    <div class="navbar navbar-default">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#oe-help-navbar-collapse">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a class="navbar-brand" href="/my/home">My Account</a>
+                        </div>
+                        <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
+                            <ul class="nav navbar-nav o_portal_submenu">
+                                <li><a href="/my/invoices">Invoices</a></li>
+                                <li><a href="/my/parcels">Parcels</a></li>
+                                <li><a href="/my/irrigationreports">Irrigationreports</a></li>
+                                <li><a href="/my/irrigationreportrequests">Irrigationreport Requests</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="wrap">
+                    <div class="container mb64">
+                        <div class="col-md-12">
+                            <h3 class="page-header">Your Irrigationreports</h3>
+                            <t t-if="not irrigationreports">
+                                <p>There are currently no irrigationreport for your account.</p>
+                            </t>
+                            <t t-if="irrigationreports">
+                                <form action="/my/irrigationreports" method="get" class="mb-3">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <select id="search_field" name="search_field" class="form-control">
+                                                <option value="irrigationreport_number" t-att-selected="'irrigationreport_number' == search_field">Irrigation Report #</option>
+                                                <option value="intake_id" t-att-selected="'intake_id' == search_field">Intake</option>
+                                                <option value="watermeter_id" t-att-selected="'watermeter_id' == search_field">Water Meter</option>
+                                                <option value="report_initial_time" t-att-selected="'report_initial_time' == search_field">Initial Time</option>
+                                                <option value="report_end_time" t-att-selected="'report_end_time' == search_field">End Time</option>
+                                                <option value="delivery_note" t-att-selected="'delivery_note' == search_field">Delivery Note</option>
+                                                <option value="volume" t-att-selected="'volume' == search_field">Volume</option>
+                                                <option value="adjustement_volume" t-att-selected="'adjustement_volume' == search_field">Adjustement Volume</option>
+                                                <option value="volume_real" t-att-selected="'volume_real' == search_field">Volume real</option>
+                                                <option value="state" t-att-selected="'state' == search_field">State</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <input type="text" name="search" class="form-control" placeholder="Search irrigationreports..." t-att-value="search_query or ''"/>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="submit" class="btn btn-primary btn-block">Search</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <table class="table table-hover o_my_status_table">
+                                    <thead>
+                                        <tr class="active">
+                                            <th>Irrigation Report #</th>
+                                            <th>Intake</th>
+                                            <th>Water Meter</th>
+                                            <th>Initial Time</th>
+                                            <th>End Time</th>
+                                            <th>Delivery Note</th>
+                                            <th>Volume</th>
+                                            <th>Adjustement Volume</th>
+                                            <th>Volume real</th>
+                                            <th>State</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="irrigationreports" t-as="irrigationreport">
+                                            <tr>
+                                                <td>
+                                                    <a t-att-href="'/my/irrigationreports/' + str(irrigationreport.id) + '/report'">
+                                                        <t t-esc="irrigationreport.irrigationreport_number"/>
+                                                    </a>
+                                                </td>
+                                                <td><t t-esc="irrigationreport.intake_id.name"/></td>
+                                                <td><t t-esc="irrigationreport.watermeter_id.name"/></td>
+                                                <td><t t-esc="irrigationreport.report_initial_time"/></td>
+                                                <td><t t-esc="irrigationreport.report_end_time"/></td>
+                                                <td><t t-esc="irrigationreport.delivery_note"/></td>
+                                                <td><t t-esc="irrigationreport.volume"/></td>
+                                                <td><t t-esc="irrigationreport.adjustement_volume"/></td>
+                                                <td><t t-esc="irrigationreport.volume_real"/></td>
+                                                <td><t t-esc="irrigationreport.state"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                                <div t-if="pager" class="o_portal_pager text-center">
+                                    <t t-call="website.pager"/>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+        <template id="portal_my_irrigationreportrequests" name="My Irrigationreport Requests">
+            <t t-call="website.layout">
+                <div class="container mt16">
+                    <div class="navbar navbar-default">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#oe-help-navbar-collapse">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a class="navbar-brand" href="/my/home">My Account</a>
+                        </div>
+                        <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
+                            <ul class="nav navbar-nav o_portal_submenu">
+                                <li><a href="/my/invoices">Invoices</a></li>
+                                <li><a href="/my/parcels">Parcels</a></li>
+                                <li><a href="/my/irrigationreports">Irrigationreports</a></li>
+                                <li><a href="/my/irrigationreportrequests">Irrigationreport Requests</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="wrap">
+                    <div class="container mb64">
+                        <div class="col-md-12">
+                            <h3 class="page-header">Your Irrigationreport Requests</h3>
+                            <t t-if="not irrigationreportrequests">
+                                <p>There are currently no irrigationreport requests for your account.</p>
+                            </t>
+                            <t t-if="irrigationreportrequests">
+                                <form action="/my/irrigationreportrequests" method="get" class="mb-3">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <select id="search_field" name="search_field" class="form-control">
+                                                <option value="agriculturalseason_id" t-att-selected="'agriculturalseason_id' == search_field">Agricultural Season</option>
+                                                <option value="request_date" t-att-selected="'request_date' == search_field">Request Date</option>
+                                                <option value="parcel_id" t-att-selected="'parcel_id' == search_field">Parcel</option>
+                                                <option value="product_id" t-att-selected="'product_id' == search_field">Product</option>
+                                                <option value="hours" t-att-selected="'hours' == search_field">Hours</option>
+                                                <option value="volume" t-att-selected="'volume' == search_field">Volume</option>
+                                                <option value="state" t-att-selected="'state' == search_field">State</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <input type="text" name="search" class="form-control" placeholder="Search irrigationreport_requests..." t-att-value="search_query or ''"/>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="submit" class="btn btn-primary btn-block">Search</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <table class="table table-hover o_my_status_table">
+                                    <thead>
+                                        <tr class="active">
+                                            <th>Irrigationreport Request</th>
+                                            <th>Agricultural Season</th>
+                                            <th>Request Date</th>
+                                            <th>Parcel</th>
+                                            <th>Product</th>
+                                            <th>Hours</th>
+                                            <th>Volume</th>
+                                            <th>State</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="irrigationreportrequests" t-as="irrigationreportrequest">
+                                            <tr>
+
+                                                <td>
+                                                <a t-att-href="'/my/irrigationreportrequests/' + str(irrigationreportrequest.id) + '/report'">
+                                                    <t t-esc="irrigationreportrequest.name"/>
+                                                </a></td>
+                                                <td><t t-esc="irrigationreportrequest.agriculturalseason_id.name"/></td>
+                                                <td><t t-esc="irrigationreportrequest.request_date"/></td>
+                                                <td><t t-esc="irrigationreportrequest.partner_id.name"/></td>
+                                                <td><t t-esc="irrigationreportrequest.parcel_id.name"/></td>
+                                                <td><t t-esc="irrigationreportrequest.product_id.name"/></td>
+                                                <td><t t-esc="irrigationreportrequest.hours"/></td>
+                                                <td><t t-esc="irrigationreportrequest.volume"/></td>
+                                                <td><t t-esc="irrigationreportrequest.state"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                                <div t-if="pager" class="o_portal_pager text-center">
+                                    <t t-call="website.pager"/>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

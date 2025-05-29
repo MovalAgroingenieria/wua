@@ -1,0 +1,353 @@
+<odoo>
+    <data>
+        <template id="portal_my_home_menu_wua" name="Portal layout : wua menu entries" inherit_id="base_wua_portal_infrastructure.portal_my_home_menu_wua" priority="925">
+            <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="inside">
+                <li style="order: 4;">
+                    <a href="/my/readings">Readings</a>
+                </li>
+                <li style="order: 5;">
+                    <a href="/my/readings">Presconsumptions</a>
+                </li>
+            </xpath>
+        </template>
+        <template id="portal_my_home_wua" inherit_id="base_wua_portal_infrastructure.portal_my_home_wua" name="Hide Quotes and Orders">
+            <xpath expr="//div[contains(@class,'o_my_home_content')]" position="inside">
+                <h3 class="page-header" style="order: 4;">
+                    <a href="/my/readings">
+                        <i class="fa fa-fw fa-list"/>
+                        Your Readings
+                        <small class="ml8">
+                            <t t-if="readings_count">
+                                <span class='badge pull-right'><t t-esc="readings_count"/></span>
+                            </t>
+                            <t t-if="not readings_count">
+                                There are currently no readings for your account.
+                            </t>
+                        </small>
+                    </a>
+                </h3>
+                <h3 class="page-header" style="order: 5;">
+                    <a href="/my/presconsumptions">
+                        <i class="fa fa-fw fa-moval-irrigation"/>
+                        Your presconsumptions
+                        <small class="ml8">
+                            <t t-if="presconsumptions_count">
+                                <span class='badge pull-right'><t t-esc="presconsumptions_count"/></span>
+                            </t>
+                            <t t-if="not presconsumptions_count">
+                                There are currently no presconsumptions for your account.
+                            </t>
+                        </small>
+                    </a>
+                </h3>
+            </xpath>
+        </template>
+        <template id="portal_my_readings" name="My Readings">
+            <t t-call="website.layout">
+                <div class="container mt16">
+                    <div class="navbar navbar-default">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#oe-help-navbar-collapse">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a class="navbar-brand" href="/my/home">
+                                My Account
+                            </a>
+                        </div>
+                        <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
+                            <ul class="nav navbar-nav o_portal_submenu">
+                            <li>
+                                <a href="/my/invoices">Invoices</a>
+                            </li>
+                            <li>
+                                <a href="/my/readings">Parcels</a>
+                            </li>
+                             <li>
+                                <a href="/my/waterconnections">Water Connections</a>
+                            </li>
+                            <li>
+                                <a href="/my/readings">Readings</a>
+                            </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="wrap">
+                    <div class="container mb64">
+                        <div class="col-md-12">
+                            <h3 class="page-header">Your Readings</h3>
+                            <t t-if="not readings">
+                                <p>There are currently no readings for your account.</p>
+                            </t>
+
+                            <t t-if="readings">
+                                <form action="/my/readings" method="get" class="mb-3">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <select id="search_field" name="search_field" class="form-control">
+                                                <option value="waterconnection" t-att-selected="'waterconnection' == search_field">Water Connection</option>
+                                                <option value="watermeter" t-att-selected="'watermeter' == search_field">Water Meter</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <input type="text" name="search" class="form-control" placeholder="Search readings..." t-att-value="search_query or ''"/>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="submit" class="btn btn-primary btn-block">Search</button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                                <table class="table table-hover o_my_status_table">
+                                    <thead>
+                                        <tr class="active">
+                                            <th>Watermeter</th>
+                                            <th>Water Connection</th>
+                                            <th>Reading Time</th>
+                                            <th>Volume</th>
+                                            <th>Initialization Reading</th>
+                                            <th>Presconsumption Volume</th>
+                                            <th>Presconsumption Volume Real</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="readings" t-as="reading">
+                                            <tr>
+                                                <td>
+                                                    <t t-esc="reading.watermeter_id.name"/>
+                                                </td>
+                                                <td>
+                                                    <a t-attf-href="/my/waterconnections/#{partner.waterconnectionlink_ids.filtered(lambda l: l.waterconnection_id == reading.waterconnection_id).id}">
+                                                        <t t-esc="reading.waterconnection_id.name"/>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="reading.reading_time"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="reading.volume"/>
+                                                </td>
+                                                <td>
+                                                    <input type="checkbox" t-att-checked="reading.initialization_reading" disabled="disabled"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="reading.presconsumption_volume"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="reading.presconsumption_volume_real"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+
+                                <div t-if="pager" class="o_portal_pager text-center">
+                                    <t t-call="website.pager"/>
+                                </div>
+                            </t>
+
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+        <template id="portal_my_presconsumptions" name="My Presconsumptions">
+            <t t-call="website.layout">
+            <div class="container mt16">
+                <div class="navbar navbar-default">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#oe-help-navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/my/home">
+                    My Account
+                    </a>
+                </div>
+                <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
+                    <ul class="nav navbar-nav o_portal_submenu">
+                    <li>
+                        <a href="/my/invoices">Invoices</a>
+                    </li>
+                    <li>
+                        <a href="/my/parcels">Parcels</a>
+                    </li>
+                    <li>
+                        <a href="/my/waterconnections">Water Connections</a>
+                    </li>
+                    <li>
+                        <a href="/my/presconsumptions">Presconsumptions</a>
+                    </li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <div id="wrap">
+                <div class="container mb64">
+                <div class="col-md-12">
+                    <h3 class="page-header">Your Presconsumptions</h3>
+                    <t t-if="not presconsumptions">
+                    <p>There are currently no presconsumptions for your account.</p>
+                    </t>
+
+                    <t t-if="presconsumptions">
+                    <form action="/my/presconsumptions" method="get" class="mb-3">
+                        <div class="row">
+                        <div class="col-md-2">
+                            <select id="search_field" name="search_field" class="form-control">
+                                <option value="waterconnection" t-att-selected="'waterconnection' == search_field">Water Connection</option>
+                                <option value="watermeter" t-att-selected="'watermeter' == search_field">Water Meter</option>
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" name="search" class="form-control" placeholder="Search presconsumptions..." t-att-value="search_query or ''"/>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary btn-block">Search</button>
+                        </div>
+                        </div>
+                    </form>
+
+                    <table class="table table-hover o_my_status_table">
+                        <thead>
+                        <tr class="active">
+                            <th>Reading Initial Time</th>
+                            <th>Reading End Time</th>
+                            <th>Volume</th>
+                            <th>Adjustment Volume</th>
+                            <th>Volume Real</th>
+                            <th>Water Connection</th>
+                            <th>Reading</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <t t-foreach="presconsumptions" t-as="presconsumption">
+                            <tr>
+                                <td>
+                                    <t t-esc="presconsumption.reading_initial_time"/>
+                                </td>
+                                <td>
+                                    <t t-esc="presconsumption.reading_end_time"/>
+                                </td>
+                                <td>
+                                    <t t-esc="presconsumption.volume"/>
+                                </td>
+                                <td>
+                                    <t t-esc="presconsumption.adjustement_volume"/>
+                                </td>
+                                <td>
+                                    <t t-esc="presconsumption.volume_real"/>
+                                </td>
+                                <td>
+                                    <t t-esc="presconsumption.waterconnection_id.name"/>
+                                </td>
+                                <td>
+                                    <t t-esc="presconsumption.reading_id.name"/>
+                                </td>
+                            </tr>
+                        </t>
+                        </tbody>
+                    </table>
+
+                    <div t-if="pager" class="o_portal_pager text-center">
+                        <t t-call="website.pager"/>
+                    </div>
+                    </t>
+
+                </div>
+                </div>
+            </div>
+            </t>
+        </template>
+        <template id="readings_followup" name="Reading">
+            <t t-call="website.layout">
+                <div id="wrap">
+                    <div class="container">
+                        <div class="oe_structure">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <ol class="breadcrumb mt8">
+                                        <li><a href="/my/home"><i class="fa fa-home"/></a></li>
+                                        <li>
+                                            <a t-attf-href="/my/readings">
+                                                <t>My Readings</t>
+                                            </a>
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                            <div id="optional_placeholder"></div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <h4>
+                                                <t>Reading</t>
+                                                <span t-esc="reading.name"/>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-4 d-flex flex-column justify-content-between"></div>
+                                    </div>
+                                    <hr/>
+
+                                    <ul name="tabs_titles" class="nav nav-tabs" role="tablist">
+                                        <li class="active"><a href="#parcels" role="tab" data-toggle="tab">Parcels</a></li>
+                                        <li><a href="#partnerlinks" role="tab" data-toggle="tab"></a></li>
+                                    </ul>
+
+                                    <div name="tabs_content" class="tab-content">
+                                        <div class="tab-pane active" id="parcels">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="tab-pane" id="partnerlinks">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+        <template id="portal_my_parcels" name="Portal layout : parcel entries" inherit_id="base_wua_portal.portal_my_parcels" priority="925">
+            <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="inside">
+                <li>
+                    <a href="/my/readings">Readings</a>
+                </li>
+            </xpath>
+        </template>
+        <template id="portal_my_waterconnections" name="Portal layout : waterconnection entries" inherit_id="base_wua_portal_infrastructure.portal_my_waterconnections" priority="925">
+            <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="inside">
+                <li>
+                    <a href="/my/readings">Readings</a>
+                </li>
+            </xpath>
+        </template>
+        <template id="portal_my_waterconnections" name="Portal layout : parcel entries" inherit_id="base_wua_portal_infrastructure.waterconnections_followup" priority="925">
+            <xpath expr="//div[contains(@name,'buttons')]" position="inside">
+                <a t-att-href="'/my/readings?search_field=waterconnection&amp;search=' + waterconnection.name" class="btn oe_stat_button">
+                    <div class="fa fa-fw fa-list o_button_icon"></div>
+                    Readings
+                </a>
+                <a t-att-href="'/my/presconsumptions?search_field=waterconnection&amp;search=' + waterconnection.name" class="btn oe_stat_button">
+                    <div class="fa fa-fw fa-list o_button_icon"></div>
+                    Consumptions
+                </a>
+            </xpath>
+        </template>
+    </data>
+</odoo>

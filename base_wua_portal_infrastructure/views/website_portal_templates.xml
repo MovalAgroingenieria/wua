@@ -1,0 +1,364 @@
+<odoo>
+    <data>
+        <template id="assets_frontend" name="My Waterconnections Assets" inherit_id="website.assets_frontend">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/base_wua_portal_infrastructure/static/src/js/manage_columns.js"></script>
+            </xpath>
+        </template>
+        <template id="portal_my_home_menu_wua" name="Portal layout : wua menu entries" inherit_id="base_wua_portal.portal_my_home_menu_wua" priority="925">
+            <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="inside">
+                <li style="order: 3;">
+                    <a name="waterconnections_menu" href="/my/waterconnections">Water connections</a>
+                </li>
+            </xpath>
+        </template>
+        <template id="portal_my_home_wua" inherit_id="base_wua_portal.portal_my_home_wua" name="Hide Quotes and Orders">
+            <xpath expr="//div[contains(@class,'o_my_home_content')]" position="inside">
+                <h3 name="waterconnections_home_header" class="page-header" style="order: 3;">
+                    <a href="/my/waterconnections">
+                    <i class="fa fa-fw fa-moval-water-counter"></i>
+                        Your Water connections
+                        <small class="ml8">
+                            <t t-if="waterconnection_count">
+                                <span class='badge pull-right'><t t-esc="waterconnection_count"/></span>
+                            </t>
+                            <t t-if="not waterconnection_count">
+                                There are currently no water connections for your account.
+                            </t>
+                        </small>
+                    </a>
+                </h3>
+            </xpath>
+        </template>
+        <template id="portal_my_waterconnections" name="My Waterconnections">
+            <t t-call="website.layout">
+                <div class="container mt16">
+                    <div class="navbar navbar-default">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#oe-help-navbar-collapse">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a class="navbar-brand" href="/my/home">
+                                My Account
+                            </a>
+                        </div>
+                        <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
+                            <ul class="nav navbar-nav o_portal_submenu">
+                            <li>
+                                <a href="/my/invoices">Facturas</a>
+                            </li>
+                            <li>
+                                <a href="/my/parcels">Parcelas</a>
+                            </li>
+                            <li>
+                                <a href="/my/waterconnections">Water connections</a>
+                            </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="wrap">
+                    <div class="container mb64">
+                        <div class="col-md-12">
+                            <h3 class="page-header">Your Water connections</h3>
+                            <t t-if="not waterconnections">
+                                <p>There are currently no water connections for your account.</p>
+                            </t>
+
+                            <t t-if="waterconnections">
+                                <form action="/my/waterconnections" method="get" class="mb-3">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <select id="search_field" name="search_field" class="form-control">
+                                                <option value="name" t-att-selected="'name' == search_field">Water connection</option>
+                                                <option value="description" t-att-selected="'extra_code' == search_field">Extra Code</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <input type="text" name="search" class="form-control" placeholder="Search water connections..." t-att-value="search_query or ''"/>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="submit" class="btn btn-primary btn-block">Search</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <form id="columnToggleForm">
+                                <div class="col-md-12" style="padding: 0;">
+                                    <div class="panel-group" id="columnsAccordion" style="margin: 0; width: 100%;">
+                                        <div class="panel panel-default" style="margin: 0; border: none;">
+                                            <div class="panel-heading" style="padding: 5px;">
+                                                <h4 class="panel-title">
+                                                    <a data-toggle="collapse" data-parent="#columnsAccordion" href="#collapseOne">
+                                                        Columns
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="collapseOne" class="panel-collapse collapse">
+                                                <div class="panel-body" style="padding: 5px;">
+                                                    <t t-foreach="available_columns" t-as="col">
+                                                        <div class="checkbox-inline">
+                                                            <label>
+                                                                <input type="checkbox" class="column-toggle" t-att-data-column="col" checked="checked"/>
+                                                                <t t-esc="col.replace('_', ' ').title()"/>
+                                                            </label>
+                                                        </div>
+                                                    </t>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </form>
+
+                                <table id="waterconnections-table" class="table table-hover o_my_status_table">
+                                    <thead>
+                                        <tr class="active">
+                                            <th class="column-water_connection">Water Connection</th>
+                                            <th class="column-description">Description</th>
+                                            <th class="column-last_reading_time">Last Reading Time</th>
+                                            <th class="column-last_reading_value">Last Reading Value</th>
+                                            <th class="column-volume_real">Volume Real</th>
+                                            <th class="column-last_data_time">Last Data Time</th>
+                                            <th class="column-last_total_volume">Last Total Volume</th>
+                                            <th class="column-last_waterflow">Last Waterflow</th>
+                                            <th class="column-last_valve_open">Last Valve Open</th>
+                                            <th class="column-last_valve_scheduled">Last Valve Scheduled</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="partnerlinks" t-as="link">
+                                            <tr>
+                                                <td class="column-water_connection">
+                                                    <a t-attf-href="/my/waterconnections/#{link.id}">
+                                                        <t t-esc="link.waterconnection_id.name"/>
+                                                    </a>
+                                                </td>
+                                                <td class="column-description">
+                                                    <t t-esc="link.description"/>
+                                                </td>
+                                                <td class="column-last_reading_time">
+                                                    <t t-esc="link.last_reading_time"/>
+                                                </td>
+                                                <td class="column-last_reading_value">
+                                                    <t t-esc="link.last_reading_value"/>
+                                                </td>
+                                                <td class="column-volume_real">
+                                                    <t t-esc="link.volume_real"/>
+                                                </td>
+                                                <td class="column-last_data_time">
+                                                    <t t-esc="link.last_data_time"/>
+                                                </td>
+                                                <td class="column-last_total_volume">
+                                                    <t t-esc="link.last_total_volume"/>
+                                                </td>
+                                                <td class="column-last_waterflow">
+                                                    <t t-esc="link.last_waterflow"/>
+                                                </td>
+                                                <td class="column-last_valve_open">
+                                                    <input type="checkbox" t-att-checked="link.last_valve_open" disabled="disabled"/>
+                                                </td>
+                                                <td class="column-last_valve_scheduled">
+                                                    <input type="checkbox" t-att-checked="link.last_valve_scheduled" disabled="disabled"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+
+                                </table>
+
+                                <div t-if="pager" class="o_portal_pager text-center">
+                                    <t t-call="website.pager"/>
+                                </div>
+                            </t>
+
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+        <template id="waterconnections_followup" name="Water connection">
+            <t t-call="website.layout">
+                <div id="wrap">
+                    <div class="container">
+                        <div class="oe_structure">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <ol class="breadcrumb mt8">
+                                        <li><a href="/my/home"><i class="fa fa-home"/></a></li>
+                                        <li>
+                                            <a t-attf-href="/my/waterconnections">
+                                                <t>My Water connections</t>
+                                            </a>
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                            <div id="optional_placeholder"></div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <h4>
+                                                <t>Water connection</t>
+                                                <span t-esc="waterconnection.name"/>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-4 d-flex flex-column justify-content-between">
+                                            <div>
+                                                <strong>Irrigationshed:</strong>
+                                                <span t-esc="waterconnection.irrigationshed_id.name"/>
+                                            </div>
+                                            <br/>
+                                            <div>
+                                                <strong>Name:</strong>
+                                                <span t-esc="waterconnection.name"/>
+                                            </div>
+                                            <br/>
+                                            <div>
+                                                <strong>Description:</strong>
+                                                <span t-esc="waterconnection.description"/>
+                                            </div>
+                                            <br/>
+                                            <div>
+                                                <strong>Number of Parcels:</strong>
+                                                <span t-esc="waterconnection.number_of_parcels"/>
+                                            </div>
+                                            <br/>
+                                            <div>
+                                                <strong>Watermeter:</strong>
+                                                <span t-esc="waterconnection.watermeter_id.name"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 d-flex flex-column justify-content-between">
+                                            <div>
+                                                <strong>Total Affected Area (Official):</strong>
+                                                <span t-esc="waterconnection.total_affected_area_official"/>
+                                            </div>
+                                            <br/>
+                                            <div>
+                                                <strong>Total Affected Area (Official Hectares):</strong>
+                                                <span t-esc="waterconnection.total_affected_area_official_hec"/>
+                                            </div>
+                                            <br/>
+                                            <div>
+                                                <strong>Hydraulicsector:</strong>
+                                                <span t-esc="waterconnection.hydraulicsector_id.name"/>
+                                            </div>
+                                            <br/>
+                                            <div>
+                                                <strong>With Pumping:</strong>
+                                                <input type="checkbox" t-att-checked="waterconnection.with_pumping" disabled="disabled"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 text-center">
+                                            <div class="d-flex flex-column justify-content-between" style="height: auto;">
+                                                <img t-att-src="'data:image/png;base64,%s' % waterconnection.image" alt="Water Connection Image" class="img-fluid" style="max-width: 100%; height: auto;"/>
+                                            </div>
+                                            <div name="buttons" class="col-md-12 text-center mt-auto">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <ul name="tabs_titles" class="nav nav-tabs" role="tablist">
+                                        <li class="active"><a href="#parcels" role="tab" data-toggle="tab">Parcels</a></li>
+                                        <li><a href="#partnerlinks" role="tab" data-toggle="tab"></a></li>
+                                    </ul>
+
+                                    <div name="tabs_content" class="tab-content">
+                                        <div class="tab-pane active" id="parcels">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Parcel</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <t t-foreach="waterconnection.irrigationpoint_ids" t-as="ip">
+                                                        <tr>
+                                                            <td>
+                                                                <a t-attf-href="/my/parcels/#{ip.parcel_id.partnerlink_ids.filtered(lambda l: l.partner_id == partner).id}">
+                                                                    <t t-esc="ip.parcel_id.name"/>
+                                                                </a>
+                                                            </td>
+                                                            <td><t t-esc="ip.partner_id.name"/></td>
+                                                            <td><t t-esc="ip.parcel_area_official"/></td>
+                                                            <td><t t-esc="ip.parcel_rural_location_county"/></td>
+                                                            <td><t t-esc="ip.parcel_cadastral_reference"/></td>
+                                                            <td><t t-esc="ip.parcel_cadastral_polygon"/></td>
+                                                            <td><t t-esc="ip.parcel_cadastral_parcel"/></td>
+                                                            <td>
+                                                                <button type="button" class="btn btn-default" t-if="ip.parcel_street_view_link">
+                                                                    <i class="fa fa-street-view"></i> Street View
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    </t>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="tab-pane" id="partnerlinks">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+        <template id="portal_my_parcels" name="Portal layout : parcel entries" inherit_id="base_wua_portal.portal_my_parcels" priority="925">
+            <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="inside">
+                <li>
+                    <a href="/my/waterconnections">Water connections</a>
+                </li>
+            </xpath>
+        </template>
+        <template id="portal_my_parcels_followup" name="Portal layout : parcel entries" inherit_id="base_wua_portal.parcels_followup" priority="925">
+            <xpath expr="//a[contains(@name,'gis_url_button')]" position="after">
+                <a t-if="cadastral_url" t-att-href="cadastral_url" target="_blank" class="btn oe_stat_button">
+                    <div class="fa fa-fw fa-cubes o_button_icon"></div>
+                    Catastral
+                </a>
+            </xpath>
+            <xpath expr="//ul[@name='tabs_titles']" position="inside">
+                <li><a href="#waterconnections" role="tab" data-toggle="tab">Water connections</a></li>
+            </xpath>
+
+            <xpath expr="//div[@name='tabs_content']" position="inside">
+                <div class="tab-pane" id="waterconnections">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Position</th>
+                                <th>Water connection</th>
+                                <th>Irrigationshed</th>
+                                <th>Hydraulicsector</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="parcel.irrigationpointwc_ids" t-as="wc">
+                                <tr>
+                                    <td><t t-esc="wcpos"/></td>
+                                    <td>
+                                        <a t-attf-href="/my/waterconnections/#{partner.waterconnectionlink_ids.filtered(lambda l: l.waterconnection_id == wc.waterconnection_id).id}">
+                                            <t t-esc="wc.waterconnection_id.name"/>
+                                        </a>
+                                    </td>
+                                    <td><t t-esc="wc.irrigationshed_id.name"/></td>
+                                    <td><t t-esc="wc.hydraulicsector_id.name"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </xpath>
+        </template>
+
+    </data>
+</odoo>

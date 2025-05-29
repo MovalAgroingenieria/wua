@@ -1,0 +1,114 @@
+<odoo>
+    <data>
+        <template id="portal_my_home_menu_wua" name="Portal layout : wua menu entries" inherit_id="base_wua_portal.portal_my_home_menu_wua" priority="925">
+            <xpath expr="//li/a[@name='parcels_menu']" position="after">
+                <li>
+                    <a href="/my/wausms">SMS</a>
+                </li>
+            </xpath>
+        </template>
+        <template id="portal_my_home_wua" inherit_id="base_wua_portal.portal_my_home_wua" name="Hide Quotes and Orders">
+            <xpath expr="//div[contains(@class,'o_my_home_content')]" position="inside">
+                <h3 class="page-header" style="order: 12;">
+                    <a href="/my/wausms">
+                        <i class="fa fa-fw fa-wausms-sms-registre"></i>
+                        Your SMS
+                        <small class="ml8">
+                            <t t-if="wausms_count">
+                                <span class='badge pull-right'><t t-esc="wausms_count"/></span>
+                            </t>
+                            <t t-if="not wausms_count">
+                                There are currently no sms for your account.
+                            </t>
+                        </small>
+                    </a>
+                </h3>
+            </xpath>
+        </template>
+        <template id="portal_my_wausms" name="My SMS">
+            <t t-call="website.layout">
+                <div class="container mt16">
+                    <div class="navbar navbar-default">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#oe-help-navbar-collapse">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a class="navbar-brand" href="/my/home">My Account</a>
+                        </div>
+                        <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
+                            <ul class="nav navbar-nav o_portal_submenu">
+                                <li><a href="/my/invoices">Invoices</a></li>
+                                <li><a href="/my/parcels">Parcels</a></li>
+                                <li><a href="/my/wausms">SMS</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="wrap">
+                    <div class="container mb64">
+                        <div class="col-md-12">
+                            <h3 class="page-header">Your SMS</h3>
+                            <t t-if="not wausms">
+                                <p>There are currently no sms for your account.</p>
+                            </t>
+                            <t t-if="wausms">
+                                <form action="/my/wausms" method="get" class="mb-3">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <select id="search_field" name="search_field" class="form-control">
+                                                <option value="sms_time_data" t-att-selected="'sms_time_data' == search_field">Date/Time</option>
+                                                <option value="sender" t-att-selected="'sender' == search_field">Sender</option>
+                                                <option value="invoice_id" t-att-selected="'invoice_id' == search_field">Invoice</option>
+                                                <option value="waterconnection_id" t-att-selected="'waterconnection_id' == search_field">Water Connection</option>
+                                                <option value="parcel_id" t-att-selected="'parcel_id' == search_field">Parcel</option>
+                                                <option value="subject" t-att-selected="'subject' == search_field">Subject</option>
+                                                <option value="sms_message" t-att-selected="'sms_message' == search_field">Message</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <input type="text" name="search" class="form-control" placeholder="Search wausms..." t-att-value="search_query or ''"/>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="submit" class="btn btn-primary btn-block">Search</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <table class="table table-hover o_my_status_table">
+                                    <thead>
+                                        <tr class="active">
+                                            <th>Date/Time</th>
+                                            <th>Sender</th>
+                                            <th>Invoice</th>
+                                            <th>Water Connection</th>
+                                            <th>Parcel</th>
+                                            <th>Subject</th>
+                                            <th style="width: 35%">Message</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="wausms" t-as="sms">
+                                            <tr>
+                                                <td><t t-esc="sms.sms_time_data"/></td>
+                                                <td><t t-esc="sms.sender"/></td>
+                                                <td><t t-esc="sms.invoice_id.name"/></td>
+                                                <td><t t-esc="sms.waterconnection_id.name"/></td>
+                                                <td><t t-esc="sms.parcel_id.name"/></td>
+                                                <td><t t-esc="sms.subject"/></td>
+                                                <td><t t-esc="sms.sms_message"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                                <div t-if="pager" class="o_portal_pager text-center">
+                                    <t t-call="website.pager"/>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

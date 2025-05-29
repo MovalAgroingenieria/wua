@@ -1,0 +1,213 @@
+<odoo>
+    <data>
+        <template id="portal_my_home_menu_wua" name="Portal layout : wua menu entries" inherit_id="base_wua_portal.portal_my_home_menu_wua" priority="925">
+            <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="inside">
+                <li style="order: 11;">
+                    <a href="/my/mails">Mails</a>
+                </li>
+            </xpath>
+        </template>
+        <template id="portal_my_home_wua" inherit_id="base_wua_portal.portal_my_home_wua" name="Hide Quotes and Orders">
+            <xpath expr="//div[contains(@class,'o_my_home_content')]" position="inside">
+                <h3 class="page-header" style="order: 11;">
+                    <a href="/my/mails">
+                        <i class="fa  fa-fw fa-envelope"/>
+                        Your Mails
+                        <small class="ml8">
+                            <t t-if="mail_count">
+                                <span class='badge pull-right'><t t-esc="mail_count"/></span>
+                            </t>
+                            <t t-if="not mail_count">
+                                There are currently no mails for your account.
+                            </t>
+                        </small>
+                    </a>
+                </h3>
+            </xpath>
+        </template>
+        <template id="portal_my_mails" name="My Mail">
+            <t t-call="website.layout">
+                <div class="container mt16">
+                    <div class="navbar navbar-default">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#oe-help-navbar-collapse">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a class="navbar-brand" href="/my/home">My Account</a>
+                        </div>
+                        <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
+                            <ul class="nav navbar-nav o_portal_submenu">
+                                <li><a href="/my/invoices">Invoices</a></li>
+                                <li><a href="/my/parcels">Parcels</a></li>
+                                <li><a href="/my/mails">Mail</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="wrap">
+                    <div class="container mb64">
+                        <div class="col-md-12">
+                            <h3 class="page-header">Your Mail</h3>
+                            <t t-if="not mails">
+                                <p>There are currently no mail for your account.</p>
+                            </t>
+                            <t t-if="mails">
+                                <form action="/my/mails" method="get" class="mb-3">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <select id="search_field" name="search_field" class="form-control">
+                                                <option value="date" t-att-selected="'date' == search_field">Date</option>
+                                                <option value="subject" t-att-selected="'subject' == search_field">Subject</option>
+                                                <option value="email_from" t-att-selected="'email_from' == search_field">Author</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <input type="text" name="search" class="form-control" placeholder="Search mail..." t-att-value="search_query or ''"/>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="submit" class="btn btn-primary btn-block">Search</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <table class="table table-hover o_my_status_table">
+                                    <thead>
+                                        <tr class="active">
+                                            <th style="width: 20%;">Date</th>
+                                            <th style="width: 45%;">Subject</th>
+                                            <th style="width: 35%;">Author</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="mails" t-as="mail">
+                                            <tr>
+                                                <td><t t-esc="mail.date"/></td>
+                                                <td>
+                                                    <a t-attf-href="/my/mails/#{mail.id}?#{keep_query()}">
+                                                        <t t-esc="mail.subject"/>
+                                                    </a>
+                                                </td>
+                                                <td><t t-esc="mail.email_from"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                                <div t-if="pager" class="o_portal_pager text-center">
+                                    <t t-call="website.pager"/>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+        <template id="portal_mails_followup" name="My Mail">
+            <t t-call="website.layout">
+                <div class="container mt16">
+                    <div class="navbar navbar-default">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#oe-help-navbar-collapse">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a class="navbar-brand" href="/my/home">My Mails</a>
+                        </div>
+                        <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
+                            <ul class="nav navbar-nav o_portal_submenu">
+                                <li><a href="/my/invoices">Invoices</a></li>
+                                <li><a href="/my/parcels">Parcels</a></li>
+                                <li><a href="/my/mails">Mail</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="wrap">
+                    <div class="container">
+                        <div class="oe_structure">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <ol class="breadcrumb mt8">
+                                        <li><a href="/my/home"><i class="fa fa-home"/></a></li>
+                                        <li>
+                                            <a t-attf-href="/my/mails">
+                                                <t>My Mails</t>
+                                            </a>
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                            <div id="optional_placeholder"></div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <h4>
+                                                <t>Mail</t>
+                                                <span t-esc="mail.subject"/>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-6 d-flex flex-column justify-content-between">
+                                            <div>
+                                                <strong>From:</strong>
+                                                <span t-esc="mail.email_from"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 d-flex flex-column justify-content-between">
+                                            <div>
+                                                <strong>Date:</strong>
+                                                <span t-esc="mail.date"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 d-flex flex-column justify-content-between">
+                                            <div>
+                                                <strong>Body:</strong><br/>
+                                                <span t-raw="mail.body_html"/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <ul name="tabs_titles" class="nav nav-tabs" role="tablist">
+                                        <li class="active"><a href="#attachments" role="tab" data-toggle="tab">Attachments</a></li>
+                                    </ul>
+
+                                    <div name="tabs_content" class="tab-content">
+                                        <div class="tab-pane active" id="attachments">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Names</th>
+                                                        <th>Date</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <t t-foreach="attachments" t-as="attachment">
+                                                        <tr>
+                                                            <td>
+                                                                <a t-attf-href="/my/mails/#{mail.id}/#{attachment.id}/attachment">
+                                                                    <t t-esc="attachment.name"/>
+                                                                </a>
+                                                            </td>
+                                                            <td>
+                                                                    <t t-esc="attachment.name"/>
+                                                            </td>
+                                                        </tr>
+                                                    </t>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

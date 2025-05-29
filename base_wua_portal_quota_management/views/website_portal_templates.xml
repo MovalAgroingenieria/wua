@@ -1,0 +1,388 @@
+<odoo>
+    <data>
+        <template id="portal_my_home_menu_wua" name="Portal layout : wua menu entries" inherit_id="base_wua_portal_infrastructure.portal_my_home_menu_wua" priority="925">
+            <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="inside">
+                <li style="order: 6;">
+                    <a href="/my/quotas">Quotas</a>
+                </li>
+                <li style="order: 7;">
+                    <a href="/my/quotas">Quota Aggregate Values</a>
+                </li>
+                <li style="order: 8;">
+                    <a href="/my/hydricmovements">Hydricmovements</a>
+                </li>
+            </xpath>
+        </template>
+        <template id="portal_my_home_wua" inherit_id="base_wua_portal_infrastructure.portal_my_home_wua" name="Quotas and hydricmovements">
+            <xpath expr="//div[contains(@class,'o_my_home_content')]" position="inside">
+                <h3 class="page-header" style="order: 6;">
+                    <a href="/my/quotas">
+                        <i class="fa fa-fw fa-moval-quotas"/>
+                        Your quotas
+                        <small class="ml8">
+                            <t t-if="quota_count">
+                                <span class='badge pull-right'><t t-esc="quota_count"/></span>
+                            </t>
+                            <t t-if="not quota_count">
+                                There are currently no quotas for your account.
+                            </t>
+                        </small>
+                    </a>
+                </h3>
+                <h3 class="page-header" style="order: 7;">
+                    <a href="/my/quotaaggregates">
+                        <i class="fa fa-fw fa-moval-quotas-aggregate"/>
+                        Your quota aggregate values
+                        <small class="ml8">
+                            <t t-if="quotaaggregates_count">
+                                <span class='badge pull-right'><t t-esc="quotaaggregates_count"/></span>
+                            </t>
+                            <t t-if="not quotaaggregates_count">
+                                There are currently no quota aggregate values for your account.
+                            </t>
+                        </small>
+                    </a>
+                </h3>
+                <h3 class="page-header" style="order: 8;">
+                    <a href="/my/hydricmovements">
+                        <i class="fa fa-fw fa-list-ol"/>
+                        Your hydricmovements
+                        <small class="ml8">
+                            <t t-if="hydricmovement_count">
+                                <span class='badge pull-right'><t t-esc="hydricmovement_count"/></span>
+                            </t>
+                            <t t-if="not hydricmovement_count">
+                                There are currently no hydricmovements for your account.
+                            </t>
+                        </small>
+                    </a>
+                </h3>
+            </xpath>
+        </template>
+        <template id="portal_my_quotas" name="My Readings">
+            <t t-call="website.layout">
+                <div class="container mt16">
+                    <div class="navbar navbar-default">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#oe-help-navbar-collapse">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a class="navbar-brand" href="/my/home">
+                                My Account
+                            </a>
+                        </div>
+                        <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
+                            <ul class="nav navbar-nav o_portal_submenu">
+                            <li>
+                                <a href="/my/invoices">Invoices</a>
+                            </li>
+                            <li>
+                                <a href="/my/parcels">Parcels</a>
+                            </li>
+                             <li>
+                                <a href="/my/waterconnections">Water Connections</a>
+                            </li>
+                            <li>
+                                <a href="/my/quotas">Quotas</a>
+                            </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="wrap">
+                    <div class="container mb64">
+                        <div class="col-md-12">
+                            <h3 class="page-header">Your Quotas</h3>
+                            <t t-if="not quotas">
+                                <p>There are currently no quotas for your account.</p>
+                            </t>
+
+                            <t t-if="quotas">
+                                <form action="/my/quotas" method="get" class="mb-3">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <select id="search_field" name="search_field" class="form-control">
+                                                <option value="period_initial_date" t-att-selected="'period_initial_date' == search_field">Period Initial Date</option>
+                                                <option value="period_end_date" t-att-selected="'period_end_date' == search_field">Period End Date</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <input type="text" name="search" class="form-control" placeholder="Search quotas..." t-att-value="search_query or ''"/>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="submit" class="btn btn-primary btn-block">Search</button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                                <table class="table table-hover o_my_status_table">
+                                    <thead>
+                                        <tr class="active">
+                                            <th>Quota Period</th>
+                                            <th>Superproduct</th>
+                                            <th>Accumulated Input</th>
+                                            <th>Accumulated Consumption</th>
+                                            <th>Balance</th>
+                                            <th>Available Quota %</th>
+                                            <th>Estim. Ending Balance</th>
+                                            <th>Exp. ending date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="quotas" t-as="quota">
+                                            <tr>
+                                                <td>
+                                                    <t t-esc="quota.quotaperiod_id.initial_date"/>
+                                                    <t t-esc="quota.quotaperiod_id.end_date"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="quota.superproduct_id.name"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="quota.accumulated_input"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="quota.accumulated_consumption"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="quota.balance"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="quota.available_quota_percentage"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="quota.estimated_balance"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="quota.expected_date_for_zero_balance"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+
+                                <div t-if="pager" class="o_portal_pager text-center">
+                                    <t t-call="website.pager"/>
+                                </div>
+                            </t>
+
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+        <template id="portal_my_quotaaggregates" name="My Readings">
+            <t t-call="website.layout">
+                <div class="container mt16">
+                    <div class="navbar navbar-default">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#oe-help-navbar-collapse">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a class="navbar-brand" href="/my/home">
+                                My Account
+                            </a>
+                        </div>
+                        <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
+                            <ul class="nav navbar-nav o_portal_submenu">
+                            <li>
+                                <a href="/my/invoices">Invoices</a>
+                            </li>
+                            <li>
+                                <a href="/my/parcels">Parcels</a>
+                            </li>
+                             <li>
+                                <a href="/my/waterconnections">Water Connections</a>
+                            </li>
+                            <li>
+                                <a href="/my/quotas">Quotas</a>
+                            </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="wrap">
+                    <div class="container mb64">
+                        <div class="col-md-12">
+                            <h3 class="page-header">Your Quota Aggregates</h3>
+                            <t t-if="not quotaaggregates">
+                                <p>There are currently no quotas for your account.</p>
+                            </t>
+
+                            <t t-if="quotaaggregates">
+                                <form action="/my/quotaaggregates" method="get" class="mb-3">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <select id="search_field" name="search_field" class="form-control">
+                                                <option value="waterconnection" t-att-selected="'waterconnection' == search_field">Water Connection</option>
+                                                <option value="watermeter" t-att-selected="'watermeter' == search_field">Water Meter</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <input type="text" name="search" class="form-control" placeholder="Search quotas..." t-att-value="search_query or ''"/>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="submit" class="btn btn-primary btn-block">Search</button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                                <table class="table table-hover o_my_status_table">
+                                    <thead>
+                                        <tr class="active">
+                                            <th>Quota Period</th>
+                                            <th>Accumulated Input</th>
+                                            <th>Accumulated Consumption</th>
+                                            <th>Balance</th>
+                                            <th>Available Quota %</th>
+                                            <th>Estim. Ending Balance</th>
+                                            <th>Exp. ending date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="quotaaggregates" t-as="quota">
+                                            <tr>
+                                                <td>
+                                                    <t t-esc="quota.quotaperiod_id.initial_date"/>
+                                                    <t t-esc="quota.quotaperiod_id.end_date"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="quota.accumulated_input"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="quota.accumulated_consumption"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="quota.balance"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="quota.available_quota_percentage"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="quota.estimated_balance"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="quota.expected_date_for_zero_balance"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+
+                                <div t-if="pager" class="o_portal_pager text-center">
+                                    <t t-call="website.pager"/>
+                                </div>
+                            </t>
+
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+        <template id="portal_my_hydricmovements" name="My Presconsumptions">
+            <t t-call="website.layout">
+            <div class="container mt16">
+                <div class="navbar navbar-default">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#oe-help-navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/my/home">
+                    My Account
+                    </a>
+                </div>
+                <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
+                    <ul class="nav navbar-nav o_portal_submenu">
+                    <li>
+                        <a href="/my/invoices">Invoices</a>
+                    </li>
+                    <li>
+                        <a href="/my/parcels">Parcels</a>
+                    </li>
+                    <li>
+                        <a href="/my/waterconnections">Water Connections</a>
+                    </li>
+                    <li>
+                        <a href="/my/hydricmovements">Hydricmovements</a>
+                    </li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <div id="wrap">
+                <div class="container mb64">
+                <div class="col-md-12">
+                    <h3 class="page-header">Your Hydricmovements</h3>
+                    <t t-if="not hydricmovements">
+                    <p>There are currently no hydricmovements for your account.</p>
+                    </t>
+
+                    <t t-if="hydricmovements">
+                    <form action="/my/hydricmovements" method="get" class="mb-3">
+                        <div class="row">
+                        <div class="col-md-2">
+                            <select id="search_field" name="search_field" class="form-control">
+                                <option value="waterconnection" t-att-selected="'waterconnection' == search_field">Water Connection</option>
+                                <option value="watermeter" t-att-selected="'watermeter' == search_field">Water Meter</option>
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" name="search" class="form-control" placeholder="Search hydricmovements..." t-att-value="search_query or ''"/>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary btn-block">Search</button>
+                        </div>
+                        </div>
+                    </form>
+
+                    <table class="table table-hover o_my_status_table">
+                        <thead>
+                            <tr class="active">
+                                <th>Date</th>
+                                <th>Superproduct</th>
+                                <th>Description</th>
+                                <th>Value (m³)</th>
+                                <th>Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="hydricmovements" t-as="hydricmovement">
+                                <tr>
+                                    <td>
+                                        <t t-esc="hydricmovement.event_time"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="hydricmovement.superproduct_id.name"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="hydricmovement.description"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="hydricmovement.accounting_volume"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="hydricmovement.balance"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+
+                    <div t-if="pager" class="o_portal_pager text-center">
+                        <t t-call="website.pager"/>
+                    </div>
+                    </t>
+
+                </div>
+                </div>
+            </div>
+            </t>
+        </template>
+    </data>
+</odoo>
