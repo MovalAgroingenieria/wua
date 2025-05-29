@@ -361,6 +361,8 @@ class WuaPreswateringrequest(models.Model):
 
     def _copy_single_request(self, request, copy_date):
         copy_date_str = copy_date.strftime('%Y-%m-%d')
+        if not request.partner_id or not request.partner_id.active:
+            return
         new_request_vals = {
             'preswateringperiod_id': request.preswateringperiod_id.id,
             'initial_date': copy_date_str,
