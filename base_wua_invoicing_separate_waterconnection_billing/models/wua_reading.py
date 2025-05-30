@@ -18,12 +18,9 @@ class WuaReading(models.Model):
 
     @api.depends('waterconnection_id')
     def _compute_watercosts_partner_id(self):
-        invoicing_based_on_wc = self.env['ir.values'].get_default(
-            'wua.invoicing.configuration', 'invoicing_based_on_wc')
-        if (invoicing_based_on_wc):
-            for record in self:
-                watercosts_partner_id = None
-                if record.waterconnection_id.watercosts_partner_id:
-                    watercosts_partner_id = record.waterconnection_id.\
-                        watercosts_partner_id
-                record.watercosts_partner_id = watercosts_partner_id
+        for record in self:
+            watercosts_partner_id = None
+            if record.waterconnection_id.watercosts_partner_id:
+                watercosts_partner_id = record.waterconnection_id.\
+                    watercosts_partner_id
+            record.watercosts_partner_id = watercosts_partner_id
