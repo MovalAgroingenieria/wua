@@ -14,6 +14,10 @@ class MaintenanceEquipment(models.Model):
                              'irrigationshed_id', 'pressuresensor_id',
                              'waterpipe_id']
 
+    name = fields.Char(
+        translate=False,
+    )
+
     tag_ids = fields.Many2many(
         string='Equipment Tags',
         comodel_name='maintenance.equipmenttag',

@@ -549,7 +549,7 @@ class ResPartner(models.Model):
                         'title': _('Warning'),
                         'message': _(
                             'The VAT number %s already exists in another '
-                        'partner with the same VAT: %s') % (self.vat, names),
-                    }
+                            'partner with the same VAT: %s') %
+                        (self.vat, names),
+                    },
                 }
-            
