@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <!-- Form view -->
+    <record id="wua_tertiarypipe_view_form" model="ir.ui.view">
+        <field name="name">Tertiary Pipe (form view)</field>
+        <field name="model">wua.tertiarypipe</field>
+        <field name="arch" type="xml">
+            <form string="Tertiary Pipe" duplicate="false">
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <field name="parcel_count" invisible="1"/>
+                        <button name="action_view_supplied_parcels"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-moval-parcel">
+                            <field name="parcel_count" widget="statinfo" string="Parcels"/>
+                        </button>
+                    </div>
+
+                    <group name="master_data">
+                        <group name="left">
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="description"/>
+                            <field name="material"/>
+                            <field name="diameter"/>
+                            <field name="nominal_pressure"/>
+                        </group>
+                        <group name="right">
+                            <field name="waterconnection_id"/>
+                            <field name="irrigationshed_id" readonly="1"/>
+                            <field name="watermeter_id" readonly="1"/>
+                            <field name="hydraulicsector_id" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Technical Notes">
+                            <field name="technical_notes"/>
+                        </page>
+                        <page string="General Notes">
+                            <field name="general_notes"/>
+                        </page>
+                        <page string="Photo">
+                            <group>
+                                <field name="photo" widget="image" class="oe_img_259_160" filename="name"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tree view -->
+    <record id="wua_tertiarypipe_view_tree" model="ir.ui.view">
+        <field name="name">Tertiary Pipe (tree view)</field>
+        <field name="model">wua.tertiarypipe</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="waterconnection_id"/>
+                <field name="irrigationshed_id"/>
+                <field name="watermeter_id"/>
+                <field name="hydraulicsector_id"/>
+                <field name="material"/>
+                <field name="diameter"/>
+                <field name="nominal_pressure"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Search view -->
+    <record id="wua_tertiarypipe_view_search" model="ir.ui.view">
+        <field name="name">Tertiary Pipe (search view)</field>
+        <field name="model">wua.tertiarypipe</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="waterconnection_id"/>
+                <field name="irrigationshed_id"/>
+                <field name="watermeter_id"/>
+                <field name="hydraulicsector_id"/>
+                <group expand="0" string="Group By">
+                    <filter string="Water Connection" context="{'group_by':'waterconnection_id'}"/>
+                    <filter string="Hydraulic Sector" context="{'group_by':'hydraulicsector_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="wua_tertiarypipe_action" model="ir.actions.act_window">
+        <field name="name">Tertiary Pipes</field>
+        <field name="res_model">wua.tertiarypipe</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids" eval="[(5, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('wua_tertiarypipe_view_tree')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('wua_tertiarypipe_view_form')})]"/>
+        <field name="search_view_id" ref="wua_tertiarypipe_view_search"/>
+    </record>
+
+    <!-- Menu item -->
+    <menuitem id="wua_tertiarypipe_menu"
+              name="Tertiary Pipes"
+              parent="base_wua_infrastructure.base_wua_infrastructure_pressurized_irrigation_menu"
+              action="wua_tertiarypipe_action"
+              sequence="2"
+              groups="base_wua.group_wua_user"/>
+
+</odoo>

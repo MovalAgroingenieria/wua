@@ -179,6 +179,185 @@ class WuaParcel(models.Model):
             """)
             self.env.cr.commit()
 
+    def check_gis_tertiarypipe_created(self):
+        resp = False
+        self.env.cr.execute("""
+            SELECT EXISTS(SELECT * FROM information_schema.tables
+            WHERE table_name='wua_gis_tertiarypipe')
+            """)
+        if self.env.cr.fetchone()[0]:
+            resp = True
+        return resp
+
+    def create_wua_gis_tertiarypipe_table(self):
+        # Check if wua gis table already exists
+        gis_tertiarypipe_table_created = \
+            self.check_gis_tertiarypipe_created()
+        # Check if extension postgis and schema postgis are created
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        # Postgis extension and schema exists, but gis tertiarypipe don't
+        if (not gis_tertiarypipe_table_created and
+                extension_schema_postgis_created):
+            self.env.cr.execute("""
+                CREATE SEQUENCE IF NOT EXISTS
+                    public.wua_gis_tertiarypipe_gid_seq
+                    INCREMENT 1
+                    START 1
+                    MINVALUE 1
+                    MAXVALUE 2147483647
+                    CACHE 1;
+            """)
+            self.env.cr.execute("""
+                CREATE TABLE IF NOT EXISTS public.wua_gis_tertiarypipe
+                    (
+                        gid integer NOT NULL DEFAULT nextval(
+                            'wua_gis_tertiarypipe_gid_seq'::regclass),
+                        name character varying(254)
+                            COLLATE pg_catalog."default",
+                        geom postgis.geometry(MultiLineString,25830),
+                        code bigint,
+                        level integer,
+                        UNIQUE(code),
+                        CONSTRAINT wua_gis_tertiarypipe_pkey
+                            PRIMARY KEY (gid)
+                    );
+            """)
+            self.env.cr.execute("""
+                CREATE INDEX IF NOT EXISTS
+                wua_gis_tertiarypipe_idx ON public.wua_gis_tertiarypipe
+                    USING gist (geom);
+            """)
+            self.env.cr.commit()
+
+    def create_tertiarypipe_triggers(self):
+        gis_tertiarypipe_table_created = \
+            self.check_gis_tertiarypipe_created()
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        if (gis_tertiarypipe_table_created and
+                extension_schema_postgis_created):
+            # Function that will update the wua_tertiarypipe data when the
+            # wua_gis_tertiarypipe table has some change, (Create, Update or
+            # Delete)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_gis_tertiarypipe_update_on_wua_tertiarypipe()
+                    RETURNS trigger AS
+                $BODY$
+                BEGIN
+                IF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
+                    UPDATE public.wua_tertiarypipe SET
+                        with_gis_tertiarypipe = False
+                    WHERE tertiarypipe_code = OLD.code;
+                END IF;
+                IF TG_OP = 'UPDATE' OR TG_OP = 'INSERT' THEN
+                    UPDATE public.wua_tertiarypipe SET
+                        with_gis_tertiarypipe = True
+                    WHERE tertiarypipe_code = NEW.code;
+                END IF;
+                RETURN NULL;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the gis tertiarypipe is
+            # unlinked and other when a gis tertiarypipe is created or
+            # updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_gis_tertiarypipe_write_trigger ON
+                    public.wua_gis_tertiarypipe;
+                DROP TRIGGER IF EXISTS
+                    wua_gis_tertiarypipe_create_unlink_trigger ON
+                    public.wua_gis_tertiarypipe;
+
+                CREATE TRIGGER wua_gis_tertiarypipe_write_trigger
+                AFTER UPDATE OF code ON
+                public.wua_gis_tertiarypipe FOR EACH ROW WHEN
+                (OLD.code IS DISTINCT FROM NEW.code)
+                EXECUTE PROCEDURE
+                    wua_gis_tertiarypipe_update_on_wua_tertiarypipe();
+
+                CREATE TRIGGER wua_gis_tertiarypipe_create_unlink_trigger
+                AFTER INSERT OR DELETE ON
+                public.wua_gis_tertiarypipe FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_gis_tertiarypipe_update_on_wua_tertiarypipe();
+            """)
+            self.env.cr.commit()
+            # Function that will update the wua_tertiarypipe data when the
+            # wua_tertiarypipe table has some change (Create, Update)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_tertiarypipe_update_on_wua_tertiarypipe() RETURNS
+                    trigger AS
+                $BODY$
+                BEGIN
+                    UPDATE wua_tertiarypipe SET with_gis_tertiarypipe =
+                    (SELECT NEW.tertiarypipe_code IN
+                        (SELECT code FROM wua_gis_tertiarypipe))
+                    WHERE tertiarypipe_code = NEW.tertiarypipe_code;
+                RETURN NULL;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the tertiarypipe is created
+            # and other when a gis tertiarypipe is created or updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_tertiarypipe_write_trigger ON
+                    public.wua_tertiarypipe;
+                DROP TRIGGER IF EXISTS wua_tertiarypipe_create_trigger ON
+                    public.wua_tertiarypipe;
+
+                CREATE TRIGGER wua_tertiarypipe_write_trigger
+                AFTER UPDATE OF tertiarypipe_code ON
+                public.wua_tertiarypipe FOR EACH ROW WHEN
+                (OLD.tertiarypipe_code IS DISTINCT FROM
+                    NEW.tertiarypipe_code)
+                EXECUTE PROCEDURE
+                    wua_tertiarypipe_update_on_wua_tertiarypipe();
+
+                CREATE TRIGGER wua_tertiarypipe_create_trigger
+                AFTER INSERT ON
+                public.wua_tertiarypipe FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_tertiarypipe_update_on_wua_tertiarypipe();
+            """)
+            self.env.cr.commit()
+
+    def set_gis_fields_tertiarypipe(self):
+        gis_tertiarypipe_ok = self.check_gis_tertiarypipe_created()
+        if gis_tertiarypipe_ok:
+            try:
+                self.env.cr.savepoint()
+                self.env.cr.execute("""
+                    UPDATE public.wua_tertiarypipe
+                    SET with_gis_tertiarypipe = FALSE
+                """)
+                self.env.cr.execute("""
+                    UPDATE public.wua_tertiarypipe ww1
+                    SET with_gis_tertiarypipe = TRUE
+                    FROM public.wua_gis_tertiarypipe wgw1 WHERE
+                    ww1.tertiarypipe_code = wgw1.code;
+                """)
+                self.env.cr.commit()
+                self.env.invalidate_all()
+            except Exception:
+                self.env.cr.rollback()
+                gis_tertiarypipe_ok = False
+        return gis_tertiarypipe_ok
+
+    # Expand original method
+    def set_gis_fields(self):
+        gis_parcels_ok = super(WuaParcel, self).set_gis_fields()
+        gis_tertiarypipe_ok = self.set_gis_fields_tertiarypipe()
+        return gis_parcels_ok and gis_tertiarypipe_ok
+
 
 class WuaParcelIrrigationpointWC(models.Model):
     _inherit = 'wua.parcel.irrigationpointwc'

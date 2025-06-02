@@ -41,6 +41,7 @@
         "views/wua_waterconnection_irrigation_shift_view.xml",
         "views/wua_irrigationshed_view.xml",
         "views/wua_zone_view.xml",
+        "views/wua_tertiarypipe_view.xml",
         "reports/wua_parcel_report.xml",
         "reports/wua_watermeter_report.xml",
         "data/wua_infrastructure_config_settings_data.xml",

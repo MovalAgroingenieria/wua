@@ -21,3 +21,4 @@ from . import wua_waterconnection_irrigation_schedule
 from . import wua_waterconnection_irrigation_event
 from . import wua_waterconnection_irrigation_shift
 from . import wua_irrigationshed
+from . import wua_tertiarypipe
