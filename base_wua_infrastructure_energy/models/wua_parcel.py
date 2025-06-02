@@ -244,8 +244,8 @@ class WuaParcel(models.Model):
             self.env.cr.commit()
 
             self.env.cr.execute("""
-                DROP TRIGGER IF EXISTS wua_gis_power_line_support_write_trigger ON
-                    public.wua_gis_power_line_support;
+                DROP TRIGGER IF EXISTS wua_gis_power_line_support_write_trigger
+                ON public.wua_gis_power_line_support;
                 DROP TRIGGER IF EXISTS
                     wua_gis_power_line_support_create_unlink_trigger ON
                     public.wua_gis_power_line_support;
@@ -338,7 +338,6 @@ class WuaParcel(models.Model):
         """)
         return self.env.cr.fetchone()[0]
 
-
     def create_wua_gis_processing_centre_table(self):
         gis_table_created = self.check_gis_processing_centre_table_created()
         postgis_ready = self.check_extension_and_schema_postgis_created()
@@ -403,8 +402,8 @@ class WuaParcel(models.Model):
             self.env.cr.commit()
 
             self.env.cr.execute("""
-                DROP TRIGGER IF EXISTS wua_gis_processing_centre_write_trigger ON
-                    public.wua_gis_processing_centre;
+                DROP TRIGGER IF EXISTS wua_gis_processing_centre_write_trigger
+                ON public.wua_gis_processing_centre;
                 DROP TRIGGER IF EXISTS
                     wua_gis_processing_centre_create_unlink_trigger ON
                     public.wua_gis_processing_centre;
@@ -484,3 +483,38 @@ class WuaParcel(models.Model):
         public_schema = self.env.cr.fetchone()[0]
 
         return postgis_ext and public_schema
+
+    def set_gis_fields_processing_centre(self):
+        gis_processing_centre_ok = self.check_gis_drainagevalve_created()
+        if (gis_processing_centre_ok):
+            try:
+                self.env.cr.savepoint()
+                self.env.cr.execute("""
+                    UPDATE public.wua_processing_centre
+                    SET with_gis_processing_centre = FALSE
+                """)
+                self.env.cr.execute("""
+                    UPDATE public.wua_processing_centre wi1
+                    SET with_gis_processing_centre = TRUE,
+                        gis_viewer_x = postgis.ST_X(wgi1.geom),
+                        gis_viewer_y = postgis.ST_Y(wgi1.geom)
+                    FROM public.wua_processing_centre wgi1 WHERE
+                        wi1.name = wgi1.name;
+                """)
+                self.env.cr.commit()
+                self.env.invalidate_all()
+            except Exception:
+                self.env.cr.rollback()
+                gis_processing_centre_ok = False
+        return gis_processing_centre_ok
+
+    def set_gis_fields(self):
+        gis_parcels_ok = super(WuaParcel, self).set_gis_fields()
+        # Processing centre GIS
+        gis_processing_centre_ok = self.set_gis_fields_irrigationshed()
+        # Power line support GIS
+        gis_power_line_support_ok = self.set_gis_fields_power_line_support()
+        # Power line GIS
+        gis_power_line_ok = self.set_gis_fields_power_line()
+        return gis_parcels_ok and gis_processing_centre_ok and \
+            gis_power_line_support_ok and gis_power_line_ok

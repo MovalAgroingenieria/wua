@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 # 2025 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
-import logging
-from odoo import models, fields, api, _
+from odoo import models, fields, api
 
 
 class WuaPowerLine(models.Model):
@@ -105,22 +104,24 @@ class WuaPowerLine(models.Model):
             'wua.infrastructure.configuration',
             'url_gis_viewer_power_line_param')
         for record in self:
-            url_for_record = url
-            if url_for_record:
-                if param:
-                    sep_char = '?' if '?' not in url_for_record else '&'
-                    url_for_record += sep_char + param + '=' + _(record.name)
-            if url_for_record and username and password:
-                cipher_text = self.env['wua.parcel']._get_viewer_credentials(
-                    username, password)
-                if cipher_text:
-                    sep_char = '?' if '?' not in url_for_record else '&'
-                    url_for_record += sep_char + "arg=" + cipher_text
-            record.gis_viewer_link = url_for_record or ''
+            final_url = url
+            if final_url:
+                query_params = []
+                if param and record.name:
+                    query_params.append('%s=%s' % (param, record.name))
+                if username and password:
+                    cipher_text = self.env[
+                        'wua.parcel']._get_viewer_credentials(
+                        username, password)
+                    if cipher_text:
+                        query_params.append('arg=%s' % cipher_text)
+                if query_params:
+                    sep = '?' if '?' not in final_url else '&'
+                    final_url += sep + '&'.join(query_params)
+            record.gis_viewer_link = final_url or ''
 
     @api.model_cr
     def init(self):
-        _logger = logging.getLogger(__name__)
         parcel_model = self.env['wua.parcel']
         try:
             parcel_model.create_wua_gis_power_line_table()

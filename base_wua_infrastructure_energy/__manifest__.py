@@ -20,7 +20,8 @@
         "views/wua_power_line_view.xml",
         "views/wua_power_line_support_view.xml",
         "views/base_wua_infrastructure_energy_menus.xml",
-    ],
+        "views/wua_infrastructure_config_settings_view.xml",
+        ],
     "installable": True,
     "application": True,
 }

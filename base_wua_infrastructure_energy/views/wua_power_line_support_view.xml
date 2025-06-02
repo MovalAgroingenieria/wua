@@ -43,23 +43,29 @@
                                       ['|',('gis_viewer_link','=',False),
                                       ('with_gis_power_line_support','=',False)]}"/>
                     </div>
-                    <group>
-                        <field name="name"/>
-                        <field name="tipology"/>
-                        <field name="wire_support"/>
-                        <field name="bird_friendly"/>
-                        <field name="construction_date"/>
-                        <field name="useful_height"/>
-                        <field name="material"/>
-                        <field name="insulator_type"/>
-                        <field name="singular_points"/>
-                        <field name="bypass"/>
-                        <field name="anticlimb_device"/>
-                        <field name="danger_signage"/>
-                        <field name="have_license_plate"/>
-                        <field name="license_plate" attrs="{'invisible': [('have_license_plate','=',False)]}"/>
+                        <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="tipology"/>
+                            <field name="wire_support"/>
+                            <field name="bird_friendly"/>
+                            <field name="construction_date"/>
+                        </group>
+
+                        <group>
+                            <field name="useful_height"/>
+                            <field name="material"/>
+                            <field name="insulator_type"/>
+                            <field name="singular_points"/>
+                            <field name="bypass"/>
+                            <field name="anticlimb_device"/>
+                            <field name="danger_signage"/>
+                            <field name="have_license_plate"/>
+                            <field name="license_plate"
+                                   attrs="{'invisible': [('have_license_plate','=',False)]}"/>
+                        </group>
                     </group>
-                    <notebook>
+                        <notebook>
                         <page string="Technical Characteristics">
                             <field name="technical_characteristics"/>
                         </page>
@@ -81,6 +87,7 @@
             </form>
         </field>
     </record>
+
 
     <record id="view_wua_power_line_support_search" model="ir.ui.view">
         <field name="name">wua.power.line.support.search</field>
