@@ -1578,6 +1578,30 @@ class WuaParcel(models.Model):
                 gis_drainagevalve_ok = False
         return gis_drainagevalve_ok
 
+    def set_gis_fields_building(self):
+        gis_building_ok = self.check_gis_building_created()
+        if (gis_building_ok):
+            try:
+                self.env.cr.savepoint()
+                self.env.cr.execute("""
+                    UPDATE public.wua_building
+                    SET with_gis_building = FALSE
+                """)
+                self.env.cr.execute("""
+                    UPDATE public.wua_building wi1
+                    SET with_gis_building = TRUE,
+                        gis_viewer_x = postgis.ST_X(wgi1.geom),
+                        gis_viewer_y = postgis.ST_Y(wgi1.geom)
+                    FROM public.wua_gis_building wgi1 WHERE
+                        wi1.name = wgi1.name;
+                """)
+                self.env.cr.commit()
+                self.env.invalidate_all()
+            except Exception:
+                self.env.cr.rollback()
+                gis_building_ok = False
+        return gis_building_ok
+
     def set_gis_fields(self):
         gis_parcels_ok = super(WuaParcel, self).set_gis_fields()
         # Irrigationshed GIS
@@ -1590,11 +1614,13 @@ class WuaParcel(models.Model):
         gis_airvalve_ok = self.set_gis_fields_airvalve()
         # valve GIS
         gis_valve_ok = self.set_gis_fields_valve()
+        # building GIS
+        gis_building_ok = self.set_gis_fields_building()
         # drainagevalve GIS
         gis_drainagevalve_ok = self.set_gis_fields_drainagevalve()
         return gis_parcels_ok and gis_irrigationshed_ok and \
             gis_irrigationditch_ok and gis_airvalve_ok and gis_valve_ok and \
-            gis_drainagevalve_ok and gis_flowdivider_ok
+            gis_drainagevalve_ok and gis_flowdivider_ok and gis_building_ok
 
     def populate_irrigationgates_to_add(self, vals):
         irrigationgates_to_add = []
@@ -2127,9 +2153,9 @@ class WuaParcel(models.Model):
                             'wua_gis_building_gid_seq'::regclass),
                         name character varying(254)
                             COLLATE pg_catalog."default",
-                        code bigint,
+                        name bigint,
                         geom postgis.geometry(MultiPolygon,25830),
-                        UNIQUE(code),
+                        UNIQUE(name),
                         CONSTRAINT wua_gis_building_pkey
                             PRIMARY KEY (gid)
                     );
@@ -2160,12 +2186,12 @@ class WuaParcel(models.Model):
                 IF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
                     UPDATE public.wua_building SET
                         with_gis_building = False
-                    WHERE building_code = OLD.code;
+                    WHERE name = OLD.name;
                 END IF;
                 IF TG_OP = 'UPDATE' OR TG_OP = 'INSERT' THEN
                     UPDATE public.wua_building SET
                         with_gis_building = True
-                    WHERE building_code = NEW.code;
+                    WHERE name = NEW.name;
                 END IF;
                 RETURN NULL;
                 END;
@@ -2185,9 +2211,9 @@ class WuaParcel(models.Model):
                     public.wua_gis_building;
 
                 CREATE TRIGGER wua_gis_building_write_trigger
-                AFTER UPDATE OF code ON
+                AFTER UPDATE OF name ON
                 public.wua_gis_building FOR EACH ROW WHEN
-                (OLD.code IS DISTINCT FROM NEW.code)
+                (OLD.name IS DISTINCT FROM NEW.name)
                 EXECUTE PROCEDURE
                     wua_gis_building_update_on_wua_building();
 
@@ -2208,9 +2234,9 @@ class WuaParcel(models.Model):
                 BEGIN
                     UPDATE public.wua_building SET
                         with_gis_building = (SELECT
-                            NEW.building_code IN
-                            (SELECT code FROM wua_gis_building))
-                    WHERE building_code = NEW.building_code;
+                            NEW.name IN
+                            (SELECT name FROM wua_gis_building))
+                    WHERE name = NEW.name;
                 RETURN NEW;
                 END;
                 $BODY$
@@ -2228,10 +2254,10 @@ class WuaParcel(models.Model):
                     public.wua_building;
 
                 CREATE TRIGGER wua_building_write_trigger
-                AFTER UPDATE OF building_code ON
+                AFTER UPDATE OF name ON
                 public.wua_building FOR EACH ROW WHEN
-                (OLD.building_code IS DISTINCT FROM
-                 NEW.building_code)
+                (OLD.name IS DISTINCT FROM
+                 NEW.name)
                 EXECUTE PROCEDURE
                     wua_building_update_on_wua_building();
 

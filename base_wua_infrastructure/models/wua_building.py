@@ -12,11 +12,11 @@ class WuaBuilding(models.Model):
         string='Identifier',
         required=True,
         index=True,
-        unique=True
+        unique=True,
     )
 
     description = fields.Char(
-        string='Description'
+        string='Description',
     )
 
     partner_id = fields.Many2one(
@@ -25,53 +25,62 @@ class WuaBuilding(models.Model):
     )
 
     notes = fields.Html(
-        string='Notes'
+        string='Notes',
     )
 
     technical_characteristics = fields.Html(
-        string='Technical Characteristics'
+        string='Technical Characteristics',
     )
 
     photo = fields.Binary(
         string='Photo',
-        attachment=True
+        attachment=True,
     )
 
     gis_viewer_link = fields.Char(
         string='GIS Viewer Link',
         compute='_compute_gis_viewer_link',
-        store=False
+        store=False,
     )
 
     with_gis_building = fields.Boolean(
         string='Linked with GIS Building',
-        readonly=True
+        readonly=True,
     )
 
     @api.multi
     def _compute_gis_viewer_link(self):
-        url = self.env['ir.values'].get_default(
+        url_base = self.env['ir.values'].get_default(
             'wua.configuration', 'url_gis_viewer')
         username = self.env['ir.values'].get_default(
             'wua.configuration', 'url_gis_viewer_username')
         password = self.env['ir.values'].get_default(
             'wua.configuration', 'url_gis_viewer_password')
-        param = self.env['ir.values'].get_default(
-            'wua.infrastructure.configuration',
-            'url_gis_viewer_building_param')
+        param = 'buildingid'
         for record in self:
-            url_for_record = url
-            if url_for_record:
-                if param:
-                    sep_char = '?' if '?' not in url_for_record else '&'
-                    url_for_record += sep_char + param + '=' + _(record.name)
-            if url_for_record and username and password:
-                cipher_text = self.env['wua.parcel']._get_viewer_credentials(
-                    username, password)
-                if cipher_text:
-                    sep_char = '?' if '?' not in url_for_record else '&'
-                    url_for_record += sep_char + "arg=" + cipher_text
-            record.gis_viewer_link = url_for_record or ''
+            url = url_base
+            if not url:
+                record.gis_viewer_link = ''
+                continue
+            sep_char = '?' if '?' not in url else '&'
+            url_with_params = url + sep_char + param + '=' + record.name
+            sep_char = '&'
+            cipher_text = self.env[
+                'wua.parcel']._get_viewer_credentials(username, password)
+            if cipher_text:
+                url_with_params += sep_char + 'arg=' + cipher_text
+
+            record.gis_viewer_link = url_with_params
+
+    @api.multi
+    def action_see_gis_viewer(self):
+        self.ensure_one()
+        if self.gis_viewer_link:
+            return {
+                'type': 'ir.actions.act_url',
+                'url': self.gis_viewer_link,
+                'target': 'new',
+            }
 
     @api.model_cr
     def init(self):
