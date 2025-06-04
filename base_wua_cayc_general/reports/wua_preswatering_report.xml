@@ -1,0 +1,622 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <report id="action_wua_preswatering_report"
+            string="Channels"
+            model="wua.preswatering"
+            report_type="qweb-pdf"
+            name="base_wua_cayc_general.report_wua_preswatering"
+            paperformat="base_wua_report.paperformat_wua_reports"
+            menu="True"
+            groups="base_wua.group_wua_user"/>
+
+    <template id="report_wua_preswatering">
+        <t t-call="report.html_container">
+            <t t-call="base_wua_report.wua_external_layout">
+                <div class="page">
+                    <t t-foreach="docs" t-as="o">
+                        <t t-call="base_wua_cayc_general.report_wua_preswatering_document"/>
+                    </t>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_wua_preswatering_document">
+        <t t-set="report_style" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+        <div name="full_report">
+            <div class="row h4 mt28 mb4" name="section_preswatering_data" style="padding-bottom: 4px;">
+                <t t-if="report_style == 'light'">
+                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                        <div style="float: left; width: 32px;"><span class="fa fa-clock-o"/></div>
+                        <div style="float: left; display: inline;"><strong>Preswatering Data</strong></div>
+                   </div>
+                </t>
+                <t t-else="">
+                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                        <div style="float: left; width: 32px;"><span class="fa fa-clock-o"/></div>
+                        <div style="float: left; display: inline;"><strong>Preswatering Data</strong></div>
+                    </div>
+                </t>
+                <div class="row" style="margin-top: 4px;">
+                    <div class="col-xs-12" style="display: table;">
+                        <div style="display: table-cell;">
+                            <table class="table-condensed" style="width:90%;">
+                                <tbody>
+                                    <tr>
+                                        <td><span>Zones United?</span></td>
+                                        <td class="text-right">
+                                            <t t-if="o.zones_united">
+                                                <span class="fa fa-check"/>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="fa fa-times"/>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><span>Rebombed flow (l/s)</span></td>
+                                        <td class="text-right">
+                                            <span t-field="o.rebombed_flow_ls"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><span>Loss Factor</span></td>
+                                        <td class="text-right">
+                                            <span t-field="o.loss_factor"/>
+                                            <span>%</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="display: table-cell; padding-left: 40px;">
+                            <table class="table-condensed" style="width:90%;">
+                                <tbody>
+                                    <tr>
+                                        <td><span>San Salvador: gravity outlet?</span></td>
+                                        <td class="text-right">
+                                            <t t-if="o.by_gravity_outlet">
+                                                <span class="fa fa-check"/>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="fa fa-times"/>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><span>San Salvador: pumping outlet?</span></td>
+                                        <td class="text-right">
+                                            <t t-if="o.by_pumping">
+                                                <span class="fa fa-check"/>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="fa fa-times"/>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><span>San Salvador: Esplús outlet?</span></td>
+                                        <td class="text-right">
+                                            <t t-if="o.by_surplus">
+                                                <span class="fa fa-check"/>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="fa fa-times"/>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Text -->
+            <div class="row h4 mt28 mb4" name="section_flow_summary" style="padding-bottom: 4px;">
+                <t t-if="report_style == 'light'">
+                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                        <div style="float: left; width: 32px;"><span class="fa fa-certificate"/></div>
+                        <div style="float: left; display: inline;"><strong>Flow Summary (l/s)</strong></div>
+                   </div>
+                </t>
+                <t t-else="">
+                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                        <div style="float: left; width: 32px;"><span class="fa fa-certificate"/></div>
+                        <div style="float: left; display: inline;"><strong>Flow Summary (l/s)</strong></div>
+                    </div>
+                </t>
+                <t t-set="time_limit" t-value="o.initial_time"/>
+                <t t-set="previous_preswatering" t-value="o.env['wua.preswatering'].search([('initial_time', '&lt;', time_limit)], order='initial_time desc', limit=1)"/>
+                <style>
+                    .section-header {
+                        background-color: #efefef;
+                        font-weight: bold;
+                        border-top: 2px solid #ccc;
+                        padding: 4px;
+                    }
+                </style>
+                <table class="table table-condensed table-striped">
+                    <thead>
+                        <tr>
+                            <th colspan="2"></th>
+                            <th class="text-right"><span t-field="previous_preswatering.initial_time" t-options="{'format': 'dd/MM/YYYY'}"/></th>
+                            <th class="text-right"><span t-field="o.initial_time" t-options="{'format': 'dd/MM/YYYY'}"/></th>
+                            <th class="text-right">Difference</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="5" class="section-header">
+                                <span>&amp;nbsp;</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Zones United</td>
+                            <td class="text-right">
+                                <t t-if="previous_preswatering.zones_united">
+                                    <span>Yes</span>
+                                </t>
+                                <t t-else="">
+                                    <span>No</span>
+                                </t>
+                            </td>
+                            <td class="text-right">
+                                <t t-if="o.zones_united">
+                                    <span>Yes</span>
+                                </t>
+                                <t t-else="">
+                                    <span>No</span>
+                                </t>
+                            </td>
+                            <td/>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Rebombed Flow (l/s)</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.rebombed_flow_ls" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.rebombed_flow_ls" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.rebombed_flow_ls - previous_preswatering.rebombed_flow_ls"  t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Outgoing Flow Barasona</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.tramo_1_total_flow - previous_preswatering.san_salvador_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.tramo_1_total_flow - o.san_salvador_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="(o.tramo_1_total_flow - o.san_salvador_total_flow) - (previous_preswatering.tramo_1_total_flow - previous_preswatering.san_salvador_total_flow)"  t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Outgoing Flow Santa Ana</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.santa_ana_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.santa_ana_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.santa_ana_total_flow - previous_preswatering.santa_ana_total_flow"  t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Outgoing Flow San Salvador</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.san_salvador_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.san_salvador_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.san_salvador_total_flow - previous_preswatering.san_salvador_total_flow"  t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Total Outgoing Flow</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.tramo_1_total_flow - previous_preswatering.san_salvador_total_flow + previous_preswatering.santa_ana_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.tramo_1_total_flow - o.san_salvador_total_flow + o.santa_ana_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="(o.tramo_1_total_flow - o.san_salvador_total_flow + o.santa_ana_total_flow) - (previous_preswatering.tramo_1_total_flow - previous_preswatering.san_salvador_total_flow + previous_preswatering.santa_ana_total_flow)"  t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="section-header">
+                                <span>Almunia Octroi</span>
+                                <span t-esc="o.almunia_affected_area" t-options='{"widget": "float", "precision": 4}'/>
+                                <span>(ha)</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Incoming Flow Octroi With Estada</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.tramo_1_total_flow - previous_preswatering.san_salvador_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.tramo_1_total_flow - o.san_salvador_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="(o.tramo_1_total_flow - o.san_salvador_total_flow) - (previous_preswatering.tramo_1_total_flow - previous_preswatering.san_salvador_total_flow)" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Incoming Flow San Sebastián</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.san_sebastian_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.san_sebastian_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.san_sebastian_total_flow - previous_preswatering.san_sebastian_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Octroi Consumption (with Estada)</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.tramo_1_granted_flow + previous_preswatering.san_sebastian_granted_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.tramo_1_granted_flow + o.san_sebastian_granted_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="(o.tramo_1_granted_flow + o.san_sebastian_granted_flow) - (previous_preswatering.tramo_1_granted_flow + previous_preswatering.san_sebastian_granted_flow)" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="section-header">
+                                <span>Zaidín Octroi</span>
+                                <span t-esc="o.zaidin_affected_area" t-options='{"widget": "float", "precision": 4}'/>
+                                <span>(ha)</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Incoming Flow Octroi</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.zaidin_total_flow - previous_preswatering.san_salvador_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.zaidin_total_flow - o.san_salvador_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="(o.zaidin_total_flow - o.san_salvador_total_flow) - (previous_preswatering.zaidin_total_flow - previous_preswatering.san_salvador_total_flow)" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Incoming Flow Valcarca</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.valcarca_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.valcarca_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.valcarca_total_flow - previous_preswatering.valcarca_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Incoming Flow Ripoll</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.ripoll_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.ripoll_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.ripoll_total_flow - previous_preswatering.ripoll_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Incoming Flow Esplus</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.esplus_total_flow - previous_preswatering.san_salvador_esplus_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.esplus_total_flow - o.san_salvador_esplus_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="(o.esplus_total_flow - o.san_salvador_esplus_flow) - (previous_preswatering.esplus_total_flow - previous_preswatering.san_salvador_esplus_flow)" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Flow Esplus San Salvador</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.san_salvador_esplus_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.san_salvador_esplus_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.san_salvador_esplus_flow - previous_preswatering.san_salvador_esplus_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Flow Zaidin San Salvador</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.san_salvador_gravity_flow + previous_preswatering.san_salvador_pumping_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.san_salvador_gravity_flow + o.san_salvador_pumping_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="(o.san_salvador_gravity_flow + o.san_salvador_pumping_flow) - (previous_preswatering.san_salvador_gravity_flow + previous_preswatering.san_salvador_pumping_flow)" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Octroi Consumption</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.zaidin_granted_flow + previous_preswatering.valcarca_granted_flow + previous_preswatering.esplus_granted_flow + previous_preswatering.ripoll_granted_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.zaidin_granted_flow + o.valcarca_granted_flow + o.esplus_granted_flow + o.ripoll_granted_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="(o.zaidin_granted_flow + o.valcarca_granted_flow + o.esplus_granted_flow + o.ripoll_granted_flow) -( previous_preswatering.zaidin_granted_flow + previous_preswatering.valcarca_granted_flow + previous_preswatering.esplus_granted_flow + previous_preswatering.ripoll_granted_flow)" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="section-header">
+                                <span>Tamarite Octroi</span>
+                                <span t-esc="o.tamarite_affected_area" t-options='{"widget": "float", "precision": 4}'/>
+                                <span>(ha)</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Tamarite Flow Upper Zone</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.tramo_2_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.tramo_2_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.tramo_2_total_flow - previous_preswatering.tramo_2_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Tamarite Flow Lower Zone</td>
+                            <td class="text-right">
+                                <t t-if="previous_preswatering.zones_united">
+                                    <span t-esc="previous_preswatering.tramo_3_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                                </t>
+                                <t t-else="">
+                                    <span>0</span>
+                                </t>
+                            </td>
+                            <td class="text-right">
+                                <t t-if="o.zones_united">
+                                    <span t-esc="o.tramo_3_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                                </t>
+                                <t t-else="">
+                                    <span>0</span>
+                                </t>
+                            </td>
+                            <td class="text-right">
+                                <t t-if="o.zones_united">
+                                    <span t-esc="o.tramo_3_total_flow - previous_preswatering.tramo_3_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                                </t>
+                                <t t-else="">
+                                    <span>0</span>
+                                </t>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Incoming Flow Olriols</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.olriols_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.olriols_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.olriols_total_flow - previous_preswatering.olriols_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Incoming Flow Mola</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.mola_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.mola_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.mola_total_flow - previous_preswatering.mola_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Incoming Flow Magdalena</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.magdalena_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.magdalena_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.magdalena_total_flow - previous_preswatering.magdalena_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Octroi Consumption</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.tramo_2_granted_flow + previous_preswatering.tramo_3_granted_flow + previous_preswatering.olriols_granted_flow + previous_preswatering.mola_granted_flow + previous_preswatering.magdalena_granted_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.tramo_2_granted_flow + o.tramo_3_granted_flow + o.olriols_granted_flow + o.mola_granted_flow + o.magdalena_granted_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="(o.tramo_2_granted_flow + o.tramo_3_granted_flow + o.olriols_granted_flow + o.mola_granted_flow + o.magdalena_granted_flow) -
+                                             (previous_preswatering.tramo_2_granted_flow + previous_preswatering.tramo_3_granted_flow + previous_preswatering.olriols_granted_flow + previous_preswatering.mola_granted_flow + previous_preswatering.magdalena_granted_flow)" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="section-header">
+                                <span>Raimat Octroi</span>
+                                <span t-esc="o.raimat_affected_area" t-options='{"widget": "float", "precision": 4}'/>
+                                <span>(ha)</span>
+                            </td>
+                        </tr>
+                        <tr >
+                            <td colspan="2">Incoming Flow Octroi</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.tramo_4_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.tramo_4_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.tramo_4_total_flow - previous_preswatering.tramo_4_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Incoming Flow Alguaire</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.alguaire_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.alguaire_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.alguaire_total_flow - previous_preswatering.alguaire_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Incoming Flow Alpicat</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.alpicat_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.alpicat_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.alpicat_total_flow - previous_preswatering.alpicat_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Incoming Flow Almacelles</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.almacelles_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.almacelles_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.almacelles_total_flow - previous_preswatering.almacelles_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Incoming Flow Valmanya</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.valmanya_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.valmanya_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.valmanya_total_flow - previous_preswatering.valmanya_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Octroi Consumption</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.tramo_4_granted_flow + previous_preswatering.alguaire_granted_flow + previous_preswatering.alpicat_granted_flow + previous_preswatering.almacelles_granted_flow + previous_preswatering.valmanya_granted_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.tramo_4_granted_flow + o.alguaire_granted_flow + o.alpicat_granted_flow + o.almacelles_granted_flow + o.valmanya_granted_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="(o.tramo_4_granted_flow + o.alguaire_granted_flow + o.alpicat_granted_flow + o.almacelles_granted_flow + o.valmanya_granted_flow) - (previous_preswatering.tramo_4_granted_flow + previous_preswatering.alguaire_granted_flow + previous_preswatering.alpicat_granted_flow + previous_preswatering.almacelles_granted_flow + previous_preswatering.valmanya_granted_flow)" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="section-header">
+                                <span>Fraga Octroi</span>
+                                <span t-esc="o.fraga_affected_area" t-options='{"widget": "float", "precision": 4}'/>
+                                <span>(ha)</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Incoming Flow Octroi</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.tramo_5_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.tramo_5_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.tramo_5_total_flow - previous_preswatering.tramo_5_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Incoming Flow Soses</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.soses_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.soses_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.soses_total_flow - previous_preswatering.soses_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Incoming Flow Monreal</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.monreal_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.monreal_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.monreal_total_flow - previous_preswatering.monreal_total_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Octroi Consumption</td>
+                            <td class="text-right">
+                                <span t-esc="previous_preswatering.tramo_5_granted_flow + previous_preswatering.soses_granted_flow + previous_preswatering.monreal_granted_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="o.tramo_5_granted_flow + o.soses_granted_flow + o.monreal_granted_flow" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="(o.tramo_5_granted_flow + o.soses_granted_flow + o.monreal_granted_flow) - (previous_preswatering.tramo_5_granted_flow + previous_preswatering.soses_granted_flow + previous_preswatering.monreal_granted_flow)" t-options='{"widget": "float", "precision": 0}'/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!-- Section: Fraga-Raimat Flow -->
+                <div class="row mt16">
+                    <div class="col-xs-12">
+                        <p>
+                            <strong>Fraga-Raimat Flow (l/s): </strong>
+                            <span t-esc="(o.tramo_4_granted_flow + o.alguaire_granted_flow + o.alpicat_granted_flow + o.almacelles_granted_flow + o.valmanya_granted_flow) + (o.tramo_5_granted_flow + o.soses_granted_flow + o.monreal_granted_flow)" t-options='{"widget": "float", "precision": 0}'/>
+                        </p>
+                        <t t-if="((o.tramo_4_granted_flow + o.alguaire_granted_flow + o.alpicat_granted_flow + o.almacelles_granted_flow + o.valmanya_granted_flow) + (o.tramo_5_granted_flow + o.soses_granted_flow + o.monreal_granted_flow)) &gt; 21800">
+                            <p style="color: red; font-weight: bold; background-color: #ffe6e6; padding: 8px; border: 1px solid red; border-radius: 4px;">
+                                Warning: total Fraga-Raimat flow exceeds the allowed limit of 21,800 l/s.
+                            </p>
+                        </t>
+                        <t t-if="o.tramo_2_total_flow &gt; 15000">
+                            <p style="color: red; font-weight: bold; background-color: #ffe6e6; padding: 8px; border: 1px solid red; border-radius: 4px;">
+                                Warning: total Tamarite flow exceeds the allowed limit of 15,000 l/s.
+                            </p>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+</odoo>

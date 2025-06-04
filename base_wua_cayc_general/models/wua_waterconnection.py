@@ -14,6 +14,21 @@ class WuaWaterconnection(models.Model):
         compute='_compute_maximum_nominal_flow',
     )
 
+    from_san_salvador_pumping = fields.Boolean(
+        string='From San Salvador Pumping',
+        default=False,
+    )
+
+    from_san_salvador_gravity = fields.Boolean(
+        string='From San Salvador Gravity',
+        default=False,
+    )
+
+    from_san_salvador_esplus = fields.Boolean(
+        string='From San Salvador Esplús',
+        default=False,
+    )
+
     @api.multi
     def _compute_maximum_nominal_flow(self):
         for record in self:

@@ -5,6 +5,7 @@ import pytz
 import logging
 import json
 import base64
+import math
 from datetime import datetime, timedelta, time
 from odoo import models, fields, api, exceptions, _
 
@@ -46,6 +47,12 @@ class WuaPresreswatering(models.Model):
         default=False,
     )
 
+    loss_factor = fields.Float(
+        string='Loss Factor',
+        digits=(32, 2),
+        default=2.0,
+    )
+
     nominal_flow_requested = fields.Float(
         digits=(32, 0),
     )
@@ -64,6 +71,337 @@ class WuaPresreswatering(models.Model):
 
     nominal_flow_ls_issued = fields.Float(
         digits=(32, 0),
+    )
+
+    almunia_affected_area = fields.Float(
+        string='Almunia Affected Area (ha)',
+        digits=(32, 4),
+        compute='_compute_affected_areas',
+    )
+
+    zaidin_affected_area = fields.Float(
+        string='Zaidin Affected Area (ha)',
+        digits=(32, 4),
+        compute='_compute_affected_areas',
+    )
+
+    tamarite_affected_area = fields.Float(
+        string='Tamarit Affected Area (ha)',
+        digits=(32, 4),
+        compute='_compute_affected_areas',
+    )
+
+    raimat_affected_area = fields.Float(
+        string='Raima Affected Area (ha)',
+        digits=(32, 4),
+        compute='_compute_affected_areas',
+    )
+
+    fraga_affected_area = fields.Float(
+        string='Fraga Affected Area (ha)',
+        digits=(32, 4),
+        compute='_compute_affected_areas',
+    )
+
+    tramo_1_granted_flow = fields.Float(
+        string='Tramo 1 Granted Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    tramo_2_granted_flow = fields.Float(
+        string='Tramo 2 Granted Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    tramo_3_granted_flow = fields.Float(
+        string='Tramo 3 Granted Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    tramo_4_granted_flow = fields.Float(
+        string='Tramo 4 Granted Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    tramo_5_granted_flow = fields.Float(
+        string='Tramo 5 Granted Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    zaidin_granted_flow = fields.Float(
+        string='Zaidin Granted Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    san_sebastian_granted_flow = fields.Float(
+        string='San Sebastian Granted Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    valcarca_granted_flow = fields.Float(
+        string='Valcarca Granted Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    esplus_granted_flow = fields.Float(
+        string='Esplus Granted Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    ripoll_granted_flow = fields.Float(
+        string='Ripoll Granted Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    olriols_granted_flow = fields.Float(
+        string='Olriols Granted Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    mola_granted_flow = fields.Float(
+        string='Mola Granted Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    magdalena_granted_flow = fields.Float(
+        string='Magdalena Granted Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    alguaire_granted_flow = fields.Float(
+        string='Alguaire Granted Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    alpicat_granted_flow = fields.Float(
+        string='Alpicat Granted Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    almacelles_granted_flow = fields.Float(
+        string='Almacelles Granted Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    valmanya_granted_flow = fields.Float(
+        string='Valmanya Granted Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    soses_granted_flow = fields.Float(
+        string='Soses Granted Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    monreal_granted_flow = fields.Float(
+        string='Monreal Granted Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    tramo_1_total_flow = fields.Float(
+        string='Tramo 1 Total Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    tramo_2_total_flow = fields.Float(
+        string='Tramo 2 Total Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    tramo_3_total_flow = fields.Float(
+        string='Tramo 3 Total Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    tramo_4_total_flow = fields.Float(
+        string='Tramo 4 Total Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    tramo_5_total_flow = fields.Float(
+        string='Tramo 5 Total Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    zaidin_total_flow = fields.Float(
+        string='Zaidin Total Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    san_sebastian_total_flow = fields.Float(
+        string='San Sebastian Total Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    valcarca_total_flow = fields.Float(
+        string='Valcarca Total Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    esplus_total_flow = fields.Float(
+        string='Esplus Total Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    ripoll_total_flow = fields.Float(
+        string='Ripoll Total Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    olriols_total_flow = fields.Float(
+        string='Olriols Total Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    mola_total_flow = fields.Float(
+        string='Mola Total Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    magdalena_total_flow = fields.Float(
+        string='Magdalena Total Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    alguaire_total_flow = fields.Float(
+        string='Alguaire Total Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    alpicat_total_flow = fields.Float(
+        string='Alpicat Total Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    almacelles_total_flow = fields.Float(
+        string='Almacelles Total Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    valmanya_total_flow = fields.Float(
+        string='Valmanya Total Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    soses_total_flow = fields.Float(
+        string='Soses Total Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    monreal_total_flow = fields.Float(
+        string='Monreal Total Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    san_salvador_gravity_flow = fields.Float(
+        string='San Salvador Gravity Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    san_salvador_pumping_flow = fields.Float(
+        string='San Salvador Pumping Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    san_salvador_esplus_flow = fields.Float(
+        string='San Salvador Esplus Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    san_salvador_total_flow = fields.Float(
+        string='San Salvador Total Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
+    )
+
+    santa_ana_total_flow = fields.Float(
+        string='Santa Ana Total Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+        compute='_compute_flows',
     )
 
     _sql_constraints = [
@@ -99,6 +437,229 @@ class WuaPresreswatering(models.Model):
                     'state': '01_not_checked',
                 }))
             self.condition_line_ids = condition_lines
+
+    @api.multi
+    def _compute_flows(self):
+        waterpipe_name_to_field = {
+            u'Tramo 1': 'tramo_1_granted_flow',
+            u'Acequia Estada': 'tramo_1_granted_flow',
+            u'Tramo 2': 'tramo_2_granted_flow',
+            u'Tramo 3': 'tramo_3_granted_flow',
+            u'Tramo 4': 'tramo_4_granted_flow',
+            u'Tramo 5': 'tramo_5_granted_flow',
+            u'Zaidin': 'zaidin_granted_flow',
+            u'San Sebastián': 'san_sebastian_granted_flow',
+            u'Valcarca': 'valcarca_granted_flow',
+            u'Esplus': 'esplus_granted_flow',
+            u'Ripoll': 'ripoll_granted_flow',
+            u'Olriols': 'olriols_granted_flow',
+            u'Mola': 'mola_granted_flow',
+            u'Magdalena': 'magdalena_granted_flow',
+            u'Alguaire': 'alguaire_granted_flow',
+            u'Alpicat': 'alpicat_granted_flow',
+            u'Almacelles': 'almacelles_granted_flow',
+            u'Valmanya': 'valmanya_granted_flow',
+            u'Soses': 'soses_granted_flow',
+            u'Monreal': 'monreal_granted_flow',
+        }
+        for record in self:
+            # Get totals for each waterpipe
+            totals = {field: 0.0 for field in waterpipe_name_to_field.values()}
+            for cons in record.presresconsumption_ids:
+                name = cons.waterconnection_id.irrigationshed_id.waterpipe_id.\
+                    name
+                field = waterpipe_name_to_field.get(name)
+                if field:
+                    totals[field] += cons.nominal_flow_ls_granted
+            for field, value in totals.items():
+                setattr(record, field, value)
+            factor = 1.0 + (record.loss_factor or 0.0) / 100.0
+            # Get totals flows for heads (Some are gonna be rewrite later)
+            for field in totals:
+                base = getattr(record, field, 0.0)
+                raw = base * (1 + (record.loss_factor or 0.0) / 100.0)
+                rounded = math.floor(raw + 10) // 10 * 10
+                total_field = field.replace('_granted_flow', '_total_flow')
+                setattr(record, total_field, rounded)
+            # Get San Salvador data
+            san_salvador_fields_gravity_flow = 0.0
+            if record.by_gravity_outlet:
+                san_salvador_fields_gravity_flow = sum(
+                    p.nominal_flow_ls_granted for p in
+                    record.presresconsumption_ids
+                    if (
+                        p.waterconnection_id.from_san_salvador_gravity
+                    )
+                ) * factor
+            record.san_salvador_gravity_flow = \
+                san_salvador_fields_gravity_flow
+            san_salvador_pumping_flow = 0.0
+            if record.by_pumping:
+                san_salvador_pumping_flow = sum(
+                    p.nominal_flow_ls_granted for p in
+                    record.presresconsumption_ids
+                    if (
+                        p.waterconnection_id.from_san_salvador_pumping
+                    )
+                ) * factor
+            record.san_salvador_pumping_flow = san_salvador_pumping_flow
+            san_salvador_esplus_flow = 0.0
+            if record.by_surplus:
+                san_salvador_esplus_flow = sum(
+                    p.nominal_flow_ls_granted for p in
+                    record.presresconsumption_ids
+                    if (
+                        p.waterconnection_id.from_san_salvador_esplus
+                    )
+                ) * factor
+            record.san_salvador_esplus_flow = san_salvador_esplus_flow
+            record.san_salvador_total_flow = \
+                record.san_salvador_gravity_flow + \
+                record.san_salvador_pumping_flow + \
+                record.san_salvador_esplus_flow
+            # Total Granted:
+            total_granted_flow = sum([
+                record.tramo_1_granted_flow,
+                record.tramo_2_granted_flow,
+                record.tramo_3_granted_flow,
+                record.tramo_4_granted_flow,
+                record.tramo_5_granted_flow,
+                record.zaidin_granted_flow,
+                record.san_sebastian_granted_flow,
+                record.valcarca_granted_flow,
+                record.esplus_granted_flow,
+                record.ripoll_granted_flow,
+                record.olriols_granted_flow,
+                record.mola_granted_flow,
+                record.magdalena_granted_flow,
+                record.alguaire_granted_flow,
+                record.alpicat_granted_flow,
+                record.almacelles_granted_flow,
+                record.valmanya_granted_flow,
+                record.soses_granted_flow,
+                record.monreal_granted_flow,
+            ])
+            # Get total flows on the irrigatoinheads and then apply factor
+            # Tramo 4
+            tramo_4_total_flow_irrigatationhead = (
+                (record.tramo_4_granted_flow +
+                 record.tramo_5_granted_flow +
+                 record.alguaire_granted_flow +
+                 record.alpicat_granted_flow +
+                 record.almacelles_granted_flow +
+                 record.valmanya_granted_flow +
+                 record.soses_granted_flow +
+                 record.monreal_granted_flow)
+            )
+            record.tramo_4_total_flow = math.floor(
+                tramo_4_total_flow_irrigatationhead * factor + 10) // 10 * 10
+            # Tramo 5
+            tramo_5_total_flow_irrigatationhead = (
+                (record.tramo_5_granted_flow +
+                 record.soses_granted_flow +
+                 record.monreal_granted_flow)
+            )
+            record.tramo_5_total_flow = math.floor(
+                tramo_5_total_flow_irrigatationhead * factor + 10) // 10 * 10
+            # Zaidin
+            zaidin_total_flow_irrigationhead = (
+                (record.zaidin_granted_flow +
+                 record.valcarca_granted_flow +
+                 record.esplus_granted_flow +
+                 record.ripoll_granted_flow)
+            )
+            record.zaidin_total_flow = math.floor(
+                zaidin_total_flow_irrigationhead * factor + 10) // 10 * 10
+            # Tramo 1
+            max_limit = 31000 / (1 + (record.loss_factor or 0.0) / 100.0)
+            tramo_1_total_flow_irrigationhead = 0
+            if record.zones_united:
+                tramo_1_total_flow_irrigationhead = (
+                    min(total_granted_flow, max_limit) -
+                    record.rebombed_flow_ls
+                )
+            else:
+                tramo_1_total_flow_irrigationhead = (
+                    record.tramo_1_granted_flow +
+                    record.tramo_2_granted_flow +
+                    record.zaidin_granted_flow +
+                    record.san_sebastian_granted_flow +
+                    record.valcarca_granted_flow +
+                    record.esplus_granted_flow +
+                    record.ripoll_granted_flow +
+                    record.olriols_granted_flow +
+                    record.mola_granted_flow -
+                    record.rebombed_flow_ls
+                )
+            record.tramo_1_total_flow = math.floor(
+                tramo_1_total_flow_irrigationhead * factor + 10) // 10 * 10
+            # Tramo 2
+            tramo_2_total_flow_irrigationhead = (
+                tramo_1_total_flow_irrigationhead -
+                record.tramo_1_granted_flow -
+                record.san_sebastian_granted_flow -
+                zaidin_total_flow_irrigationhead
+            )
+            record.tramo_2_total_flow = math.floor(
+                tramo_2_total_flow_irrigationhead * factor + 10) // 10 * 10
+            # Tramo 3
+            tramo_3_total_flow_irrigationhead = 0
+            if record.zones_united:
+                tramo_3_total_flow_irrigationhead = (
+                    tramo_2_total_flow_irrigationhead -
+                    record.tramo_2_granted_flow -
+                    record.mola_granted_flow -
+                    record.olriols_granted_flow
+                )
+            else:
+                tramo_3_total_flow_irrigationhead = (
+                    (record.tramo_3_granted_flow +
+                     record.magdalena_granted_flow +
+                     record.rebombed_flow_ls) * factor
+                )
+            record.tramo_3_total_flow = math.floor(
+                tramo_3_total_flow_irrigationhead * factor + 10) // 10 * 10
+            # Santa Ana
+            santa_ana_total_flow = 0.0
+            if record.zones_united:
+                santa_ana_total_flow = (
+                    total_granted_flow * (1 + (record.loss_factor / 100)) -
+                    (record.tramo_1_total_flow -
+                     record.san_salvador_total_flow)
+                )
+            else:
+                santa_ana_total_flow = (
+                    record.tramo_3_total_flow +
+                    record.tramo_4_total_flow
+                )
+            record.santa_ana_total_flow = santa_ana_total_flow
+
+    @api.multi
+    def _compute_affected_areas(self):
+        hydraulicsector_to_field = {
+            u'Almunia': 'almunia_affected_area',
+            u'Zaidín': 'zaidin_affected_area',
+            u'Tamarite': 'tamarite_affected_area',
+            u'Raimat': 'raimat_affected_area',
+            u'Fraga': 'fraga_affected_area',
+        }
+        for record in self:
+            # Ensure area of a waterconnection is only counted once
+            waterconnections_already_added = []
+            total_areas = {
+                field: 0.0 for field in hydraulicsector_to_field.values()}
+            for cons in record.presresconsumption_ids:
+                if cons.waterconnection_id.id not in \
+                        waterconnections_already_added:
+                    name = cons.waterconnection_id.hydraulicsector_id.name
+                    field = hydraulicsector_to_field.get(name)
+                    if field:
+                        total_areas[field] += \
+                            cons.total_affected_area_official_hec
+                    waterconnections_already_added.append(
+                        cons.waterconnection_id.id)
+            for field, value in total_areas.items():
+                setattr(record, field, value)
 
     @api.multi
     def write(self, vals):
