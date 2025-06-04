@@ -6,16 +6,16 @@ import psycopg2
 
 # SHP to SIGPAC table (if the table exists records will be added, otherwise the table will be created and records added afterwards).
 #
-# Examples:
+# Examples (replace <USER> and <PASSWORD> with your PostgreSQL credentials):
 #
 # 1. One SHP:
-# python load_sigpac.py 127.0.0.1 5432 v10_cr_campo_cartagena_restored_20221229 odoo10moval odoo10movalEis51n1970molino1750 /tmp/rec_30045_2022_20220113.shp 25830
+# python load_sigpac.py 127.0.0.1 5432 v10_cr_campo_cartagena_restored_20221229 <USER> <PASSWORD> /tmp/rec_30045_2022_20220113.shp 25830
 #
 # 2. Two SHP:
-# python load_sigpac.py 127.0.0.1 5432 v10_cr_campo_cartagena_restored_20221229 odoo10moval odoo10movalEis51n1970molino1750 /tmp/rec_03142_2022_20220113.shp#/tmp/rec_30045_2022_20220113.shp 25830
+# python load_sigpac.py 127.0.0.1 5432 v10_cr_campo_cartagena_restored_20221229 <USER> <PASSWORD> /tmp/rec_03142_2022_20220113.shp#/tmp/rec_30045_2022_20220113.shp 25830
 #
 # 3. Three SHP, a SHP with filter:
-# python load_sigpac.py 127.0.0.1 5432 v10_cr_campo_cartagena_restored_20221229 odoo10moval odoo10movalEis51n1970molino1750 '/tmp/rec_03142_2022_20220113.shp#/tmp/rec_30045_2022_20220113.shp("poligono">=529 and "poligono"<=539)#/tmp/rec_30045_2022_20220113.shp' 25830
+# python load_sigpac.py 127.0.0.1 5432 v10_cr_campo_cartagena_restored_20221229 <USER> <PASSWORD> '/tmp/rec_03142_2022_20220113.shp#/tmp/rec_30045_2022_20220113.shp("poligono">=529 and "poligono"<=539)#/tmp/rec_30045_2022_20220113.shp' 25830
 
 num_args = len(sys.argv)
 if num_args == 8:
@@ -68,9 +68,9 @@ if num_args == 8:
 else:
     print 'SHP to SIGPAC table, incorrect sintax. Use:\npython load_sigpac.py {host} {port} {dbname} {user} {password} {shp_list_with_optional_condition} {srs}'
     print '\nExample 1 (one SHP):\n'
-    print 'python load_sigpac.py 127.0.0.1 5432 v10_cr_campo_cartagena_restored_20221229 odoo10moval odoo10movalEis51n1970molino1750 /tmp/rec_30045_2022_20220113.shp 25830'
+    print 'python load_sigpac.py 127.0.0.1 5432 v10_cr_campo_cartagena_restored_20221229 <USER> <PASSWORD> /tmp/rec_30045_2022_20220113.shp 25830'
     print '\nExample 2 (two SHP):\n'
-    print 'python load_sigpac.py 127.0.0.1 5432 v10_cr_campo_cartagena_restored_20221229 odoo10moval odoo10movalEis51n1970molino1750 /tmp/rec_03142_2022_20220113.shp#/tmp/rec_30045_2022_20220113.shp 25830'
+    print 'python load_sigpac.py 127.0.0.1 5432 v10_cr_campo_cartagena_restored_20221229 <USER> <PASSWORD> /tmp/rec_03142_2022_20220113.shp#/tmp/rec_30045_2022_20220113.shp 25830'
     print '\nExample 3 (three SHP, a SHP with filter):\n'
-    print 'python load_sigpac.py 127.0.0.1 5432 v10_cr_campo_cartagena_restored_20221229 odoo10moval odoo10movalEis51n1970molino1750 \'/tmp/rec_03142_2022_20220113.shp#/tmp/rec_30045_2022_20220113.shp("poligono">=529 and "poligono"<=539)#/tmp/rec_30045_2022_20220113.shp\' 25830'
+    print 'python load_sigpac.py 127.0.0.1 5432 v10_cr_campo_cartagena_restored_20221229 <USER> <PASSWORD> \'/tmp/rec_03142_2022_20220113.shp#/tmp/rec_30045_2022_20220113.shp("poligono">=529 and "poligono"<=539)#/tmp/rec_30045_2022_20220113.shp\' 25830'
     sys.exit(255)
