@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_form_wua_irrigation_stretch" model="ir.ui.view">
+        <field name="name">wua.irrigation.stretch.form</field>
+        <field name="model">wua.irrigation.stretch</field>
+        <field name="arch" type="xml">
+            <form string="Irrigation Stretch">
+                <sheet>
+                    <group col="2">
+                        <group>
+                            <field name="name"/>
+                            <field name="type"/>
+                            <field name="channel_section_width"
+                                   attrs="{'invisible': [('type', '!=', 'gravity')]}"/>
+                            <field name="channel_cross_section_area" readonly="1"
+                                   attrs="{'invisible': [('type', '!=', 'gravity')]}"/>
+                            <field name="length_meters"
+                                   attrs="{'invisible': [('type', '!=', 'pressure')]}"/>
+                            <field name="channel_section_height"
+                                   attrs="{'invisible': [('type', '!=', 'gravity')]}"/>
+                            <field name="is_channel_covered"
+                                   attrs="{'invisible': [('type', '!=', 'gravity')]}"/>
+                            <field name="tag"
+                                   attrs="{'invisible': [('type', '!=', 'pressure')]}"/>
+                            <field name="material"
+                                   attrs="{'invisible': [('type', '!=', 'pressure')]}"/>
+                            <field name="pipe_specification"
+                                   attrs="{'invisible': [('type', '!=', 'pressure')]}"/>
+                            <field name="manufacturer"
+                                   attrs="{'invisible': [('type', '!=', 'pressure')]}"/>
+                            <field name="model"
+                                   attrs="{'invisible': [('type', '!=', 'pressure')]}"/>
+                            <field name="installation_date"
+                                   attrs="{'invisible': [('type', '!=', 'pressure')]}"/>
+                        </group>
+
+                        <group>
+                            <field name="roughness_coefficient"
+                                   attrs="{'invisible': [('type', '!=', 'pressure')]}"/>
+                            <field name="description"
+                                   attrs="{'invisible': [('type', '!=', 'pressure')]}"/>
+                            <field name="nominal_diameter"
+                                   attrs="{'invisible': [('type', '!=', 'pressure')]}"/>
+                            <field name="external_diameter"
+                                   attrs="{'invisible': [('type', '!=', 'pressure')]}"/>
+                            <field name="pipe_section"
+                                   attrs="{'invisible': [('type', '!=', 'pressure')]}"/>
+                            <field name="brand"
+                                   attrs="{'invisible': [('type', '!=', 'pressure')]}"/>
+                            <field name="technical_sheet"
+                                   attrs="{'invisible': [('type', '!=', 'pressure')]}"/>
+                            <field name="incident_code"
+                                   attrs="{'invisible': [('type', '!=', 'pressure')]}"/>
+                            <field name="nominal_pressure"
+                                   attrs="{'invisible': [('type', '!=', 'pressure')]}"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Notes">
+                            <group>
+                                <field name="notes"/>
+                            </group>
+                        </page>
+                        <page string="Observations">
+                            <group>
+                                <field name="observations"/>
+                            </group>
+                        </page>
+                        <page string="Photos">
+                            <group col="2">
+                                <field name="photo_01" widget="image"/>
+                                <field name="photo_02" widget="image"/>
+                            </group>
+                            <group>
+                                <field name="photo_url"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="view_tree_wua_irrigation_stretch_gravity" model="ir.ui.view">
+        <field name="name">wua.irrigation.stretch.tree.gravity</field>
+        <field name="model">wua.irrigation.stretch</field>
+        <field name="arch" type="xml">
+            <tree string="Gravity Stretches">
+                <field name="name"/>
+                <field name="channel_section_width"/>
+                <field name="channel_section_height"/>
+                <field name="channel_cross_section_area"/>
+                <field name="is_channel_covered"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_tree_wua_irrigation_stretch_pressure" model="ir.ui.view">
+        <field name="name">wua.irrigation.stretch.tree.pressure</field>
+        <field name="model">wua.irrigation.stretch</field>
+        <field name="arch" type="xml">
+            <tree string="Pressure Stretches">
+                <field name="name"/>
+                <field name="length_meters"/>
+                <field name="roughness_coefficient"/>
+                <field name="material"/>
+                <field name="nominal_diameter"/>
+                <field name="external_diameter"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_search_wua_irrigation_stretch" model="ir.ui.view">
+        <field name="name">wua.irrigation.stretch.search</field>
+        <field name="model">wua.irrigation.stretch</field>
+        <field name="arch" type="xml">
+            <search string="Search Irrigation Stretches">
+                <field name="name"/>
+                <field name="type"/>
+                <field name="material" attrs="{'invisible': [('type', '!=', 'pressure')]}"/>
+                <field name="is_channel_covered" attrs="{'invisible': [('type', '!=', 'gravity')]}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_wua_irrigation_stretch_pressure" model="ir.actions.act_window">
+        <field name="name">Pressure Stretches</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">wua.irrigation.stretch</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_tree_wua_irrigation_stretch_pressure"/>
+        <field name="domain">[('type', '=', 'pressure')]</field>
+        <field name="context">{'default_type': 'pressure'}</field>
+    </record>
+
+    <record id="action_wua_irrigation_stretch_gravity" model="ir.actions.act_window">
+        <field name="name">Gravity Stretches</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">wua.irrigation.stretch</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_tree_wua_irrigation_stretch_gravity"/>
+        <field name="domain">[('type', '=', 'gravity')]</field>
+        <field name="context">{'default_type': 'gravity'}</field>
+    </record>
+
+    <menuitem id="menu_wua_irrigation_stretch_pressure"
+              name="Irrigation Stretches"
+              parent="base_wua_infrastructure.base_wua_infrastructure_pressurized_irrigation_menu"
+              action="action_wua_irrigation_stretch_pressure"
+              sequence="30"
+              groups="base_wua.group_wua_user"/>
+
+    <menuitem id="menu_wua_irrigation_stretch_gravity"
+              name="Irrigation Stretches"
+              parent="base_wua_infrastructure.base_wua_infrastructure_gravityfed_irrigation_menu"
+              action="action_wua_irrigation_stretch_gravity"
+              sequence="30"
+              groups="base_wua.group_wua_user"/>
+
+</odoo>
