@@ -148,10 +148,16 @@ class WuaPresconsumption(models.Model):
          'CHECK (reading_end_time >= reading_initial_time)',
          'The reading end time must be greather than or equal to '
          'reading initial time.'),
-        ('valid_volume',
-         'CHECK (volume >= 0)',
-         'The consumption volume can not be a negative value.'),
         ]
+
+    @api.constrains('volume')
+    def _check_volume_non_negative(self):
+        for record in self:
+            if record.volume < 0:
+                raise exceptions.ValidationError(_(
+                    "The consumption volume cannot "
+                    "be a negative value. (%.4f)",
+                ) % record.volume)
 
     @api.depends('reading_ids')
     def _compute_reading_id(self):
