@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_irrigationditch_view_form" model="ir.ui.view">
+        <field name="name">Irrigation Ditches Gravity hierarchy (form view)</field>
+        <field name="model">wua.irrigationditch</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_irrigationditch_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='description']" position="after">
+                <field name="flowmeter_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_irrigationditch_view_tree" model="ir.ui.view">
+        <field name="name">Irrigation Ditches Gravity hierarchy (tree view)</field>
+        <field name="model">wua.irrigationditch</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_irrigationditch_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="flowmeter_id" invisible="1"/>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

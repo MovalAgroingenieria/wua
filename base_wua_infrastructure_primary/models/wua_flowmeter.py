@@ -93,6 +93,12 @@ class WuaFlowmeter(models.Model):
         store=True,
         index=True)
 
+    irrigationditch_ids = fields.One2many(
+        string='Irrigation Ditches',
+        comodel_name='wua.irrigationditch',
+        inverse_name='flowmeter_id',
+    )
+
     connected_to_intake = fields.Boolean(
         string="In intake",
         store=True,
