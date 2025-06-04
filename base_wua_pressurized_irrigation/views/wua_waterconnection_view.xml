@@ -70,6 +70,9 @@
                 <field name="last_reading_value"/>
                 <newline/>
                 <field name="last_reading_consumption" string="Last Reading (consumption)"/>
+                <field name="waterconnection_state_id" string="State"
+                 options="{'no_create': True, 'no_create_edit': True}"/>"
+                <field name="is_state_close" invisible="1"/>
             </xpath>
             <xpath expr="//page[@name='parcels_page']" position="after">
                 <page name="irrigation_shifts" string="Irrigation Shifts">
@@ -111,6 +114,7 @@
         <field name="arch" type="xml">
             <xpath expr="//tree" position="attributes">
                 <attribute name="class">o_base_wua_pressurized_irrigation_waterconnection_view_tree</attribute>
+                <attribute name="colors">red:is_state_close==True</attribute>
             </xpath>
             <xpath expr="//field[@name='number_of_parcels']" position="after">
                 <field name="number_of_irrigation_schedules" invisible="1"/>
@@ -143,6 +147,8 @@
                 <field name="average_consumption"/>
                 <field name="estimated_monthly_consumption" invisible="1"/>
                 <field name="last_reading_type"/>
+                <field name="waterconnection_state_id" string="State"/>
+                <field name="is_state_close" invisible="1"/>
             </xpath>
         </field>
     </record>

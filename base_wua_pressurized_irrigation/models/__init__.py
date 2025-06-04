@@ -4,6 +4,7 @@
 
 from . import wua_zone
 from . import wua_watermeter
+from . import wua_waterconnection_state
 from . import wua_waterconnection
 from . import wua_wc_wm
 from . import wua_reading

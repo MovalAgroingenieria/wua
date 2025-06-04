@@ -46,6 +46,8 @@
         "data/wua_infrastructure_config_settings_data.xml",
         "wizard/wizard_print_readings_view.xml",
         "reports/wua_waterconnection_readings_report.xml",
+        "views/wua_waterconnection_state_view.xml",
+        "data/wua_waterconnection_state_data.xml",
     ],
     "installable": True,
     "application": True,

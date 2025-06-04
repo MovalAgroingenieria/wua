@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_waterconnection_state_view_form" model="ir.ui.view">
+        <field name="name">Water Connections State (form view)</field>
+        <field name="model">wua.waterconnection.state</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object"
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                options='{"terminology": "active"}'/>
+                        </button>
+                    </div>
+                    <div name="master_data">
+                        <group name="data_fields_1">
+                            <field name="name"/>
+                            <field name="description"/>
+                            <field name="default_state"/>
+                            <field name="is_close"/>
+                        </group>
+                        <group name="data_fields_2">
+                            <field name="notes"/>
+                        </group>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_waterconnection_state_view_tree" model="ir.ui.view">
+        <field name="name">Water Connections State (tree view)</field>
+        <field name="model">wua.waterconnection.state</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_infrastructure_waterconnection_state_view_tree">
+                <field name="name"/>
+                <field name="description"/>
+                <field name="active"/>
+                <field name="default_state"/>
+                <field name="is_close"/>
+                <field name="notes"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_waterconnection_state_view_search" model="ir.ui.view">
+        <field name="name">Water Connections State (search view)</field>
+        <field name="model">wua.waterconnection.state</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="description"/>
+                <separator/>
+                <filter string="Archived" name="inactive"
+                 domain="[('active','=',False)]"/>
+                <filter string="Closed" name="closed"
+                 domain="[('is_close','=',True)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_waterconnection_state_view_pivot" model="ir.ui.view">
+        <field name="name">Water Connections State (pivot view)</field>
+        <field name="model">wua.waterconnection.state</field>
+        <field name="arch" type="xml">
+            <pivot string="Water Connections State">
+                <field name="name"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="wua_waterconnection_state_action" model="ir.actions.act_window">
+        <field name="name">Water Connections State</field>
+        <field name="res_model">wua.waterconnection.state</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_waterconnection_state_view_tree"/>
+        <field name="search_view_id"
+         ref="wua_waterconnection_state_view_search"/>
+    </record>
+
+    <menuitem id="wua_waterconnection_state_menu"
+              name="Water Connections State"
+              parent="base_wua_infrastructure.base_wua_infrastructure_configuration_menu"
+              action="wua_waterconnection_state_action"
+              sequence="3"
+              groups="base_wua.group_wua_user"/>
+
+</odoo>

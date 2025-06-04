@@ -4,6 +4,8 @@
 
 import datetime
 import json
+
+from bokeh.themes import default
 from lxml import etree
 from odoo import models, fields, api, tools, _
 
@@ -117,6 +119,20 @@ class WuaWaterconnection(models.Model):
         string='Last Reading (type)',
         store=True,
         compute='_compute_last_reading_type',
+    )
+    waterconnection_state_id = fields.Many2one(
+        string='Waterconnection State',
+        comodel_name='wua.waterconnection.state',
+        index=True,
+        default= lambda self: self.get_default_state(),
+        ondelete='restrict',
+    )
+    is_state_close = fields.Boolean(
+        string='Is State Closed',
+        related='waterconnection_state_id.is_close',
+        store=True,
+        help='Indicates whether the water connection is closed '
+             'and cannot be modified further.',
     )
 
     _sql_constraints = [
@@ -454,6 +470,10 @@ class WuaWaterconnection(models.Model):
             'context': {'from_shortcut': 1},
             }
         return act_window
+    
+    def get_default_state(self):
+        return self.env['wua.waterconnection.state'].search(
+            [('default_state', '=', True)], limit=1)
 
 
 class WuaWaterconnectionIrrigationShiftlink(models.Model):
