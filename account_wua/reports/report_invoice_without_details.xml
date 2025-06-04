@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Invoice without details -->
+    <report
+        id="account_invoice_without_details_report"
+        model="account.invoice"
+        string="Invoice report (without details)"
+        report_type="qweb-pdf"
+        name="account_wua.account_invoice_without_details_report_document"
+        file="account_wua.account_invoice_without_details_report_document"
+        attachment="(object.state in ('open','paid')) and ('INV'+(object.number or '').replace('/','')+'.pdf')"/>
+
+    <record id="account_wua.account_invoice_without_details_report" model="ir.actions.report.xml">
+        <field name="attachment_use" eval="False"/>
+    </record>
+
+    <template id="account_invoice_report_without_details" inherit_id="account.report_invoice_document" primary="True">
+        <xpath expr="//table[@name='details_table']" position="attributes">
+            <attribute name="t-att-style">"display: none"</attribute>
+        </xpath>
+        <xpath expr="//div[@name='product_resume_table']" position="attributes">
+            <attribute name="class">""</attribute>
+        </xpath>
+        <xpath expr="//caption[@name='product_summary_title']" position="attributes">
+            <attribute name="t-att-style">"display: none"</attribute>
+        </xpath>
+        <xpath expr="//th[@name='total_qty_th']" position="replace">
+            <th name="total_qty_th" class="text-right">Quantity</th>
+        </xpath>
+        <xpath expr="//th[@name='total_amnt_th']" position="replace">
+            <th name="total_amnt_th" class="text-right">Amount</th>
+        </xpath>
+        <xpath expr="//tr[@t-foreach='products']" position="after">
+            <t t-set="products_total_amount" t-value="0.0"/>
+            <t t-foreach="products" t-as="p">
+                <t t-set="product_total_amount" t-value="0.0"/>
+                <t t-foreach="o.invoice_line_ids" t-as="l">
+                    <t t-if="l.product_id.id == p.id">
+                        <t t-set="product_total_amount" t-value="product_total_amount + l.price_subtotal"/>
+                        <t t-set="products_total_amount" t-value="products_total_amount + product_total_amount"/>
+                    </t>
+                </t>
+            </t>
+            <tr name="products_total">
+                <td class="text-right" colspan="3">
+                    <strong><span t-esc="products_total_amount"
+                        t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></strong>
+                </td>
+            </tr>
+        </xpath>
+        <xpath expr="//div[@name='subtotal_table']" position="attributes">
+            <attribute name="t-att-style">"display: none"</attribute>
+        </xpath>
+    </template>
+
+    <template id="account_invoice_without_details_report_document">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="account_wua.account_invoice_report_without_details" t-lang="o.partner_id.lang"/>
+            </t>
+        </t>
+    </template>
+
+</odoo>

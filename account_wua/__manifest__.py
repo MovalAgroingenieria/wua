@@ -29,6 +29,7 @@
         "views/account_menuitem.xml",
         "reports/report_invoice_no_product_summary.xml",
         "reports/report_invoice_with_payments.xml",
+        "reports/report_invoice_without_details.xml",
     ],
     "installable": True,
     "application": False,
