@@ -509,7 +509,6 @@ class WuaParcel(models.Model):
             if subparcel_id[2] and 'cultivation_id' in subparcel_id[2]:
                 resp = self.env['wua.cultivation'].browse(
                     subparcel_id[2]['cultivation_id']).name
-                print('HOLAHOLA')
         return resp
 
     def get_variety_of_vals(self, subparcel_ids):
