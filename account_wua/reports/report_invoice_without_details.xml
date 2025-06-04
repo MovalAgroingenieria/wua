@@ -33,7 +33,9 @@
         </xpath>
         <xpath expr="//tr[@t-foreach='products']" position="after">
             <t t-set="products_total_amount" t-value="0.0"/>
+            <t t-set="num_of_products" t-value="0"/>
             <t t-foreach="products" t-as="p">
+                <t t-set="num_of_products" t-value="num_of_products + 1"/>
                 <t t-set="product_total_amount" t-value="0.0"/>
                 <t t-foreach="o.invoice_line_ids" t-as="l">
                     <t t-if="l.product_id.id == p.id">
@@ -42,12 +44,16 @@
                     </t>
                 </t>
             </t>
-            <tr name="products_total">
-                <td class="text-right" colspan="3">
-                    <strong><span t-esc="products_total_amount"
-                        t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></strong>
-                </td>
-            </tr>
+            <t t-if="num_of_products > 1">
+                <tr name="products_total">
+                    <td class="text-right" colspan="2">
+                        <strong>Total:</strong>
+                    </td>
+                    <td class="text-right">
+                        <strong><span t-esc="products_total_amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></strong>
+                    </td>
+                </tr>
+            </t>
         </xpath>
         <xpath expr="//div[@name='subtotal_table']" position="attributes">
             <attribute name="t-att-style">"display: none"</attribute>
