@@ -23,9 +23,13 @@ If the integration of frames for readings, consumptions and scheduing
 is enabled, then it is mandatory to have the following PHP on a
 web server: framebatchlineirriweb.php.
 
- Example::
+Example::
 
     http://127.0.0.1/framebatchlineirriweb.php
+
+The default configuration included in this repository contains
+placeholder values only. Actual connection parameters should be
+configured through the Odoo settings before using the module.
 
 Credits
 =======
