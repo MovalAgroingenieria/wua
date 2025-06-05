@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Invoice without details -->
+    <!-- Invoice without details
     <report
         id="account_invoice_without_details_report"
         model="account.invoice"
@@ -11,9 +11,11 @@
         file="account_wua.account_invoice_without_details_report_document"
         attachment="(object.state in ('open','paid')) and ('INV'+(object.number or '').replace('/','')+'.pdf')"/>
 
+
     <record id="account_wua.account_invoice_without_details_report" model="ir.actions.report.xml">
         <field name="attachment_use" eval="False"/>
     </record>
+     -->
 
     <template id="account_invoice_report_without_details" inherit_id="account.report_invoice_document" primary="True">
         <xpath expr="//table[@name='details_table']" position="attributes">
