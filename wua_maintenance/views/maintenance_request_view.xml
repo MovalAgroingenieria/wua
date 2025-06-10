@@ -76,6 +76,7 @@
                                         <field name="image"/>
                                         <field name="filename"/>
                                         <field name="id"/>
+                                        <field name="image_attachment_id"/>
                                         <templates>
                                             <t t-name="kanban-box">
                                                 <div style="
@@ -93,8 +94,8 @@
                                                     t-att-class="'o_kanban_small_image_card'">
                                                     <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right" style="color: red;"/>
                                                     <a t-if="record.image.raw_value"
-                                                        t-att-href="'/web/content/maintenance.request.attachment/' + record.id.raw_value + '/image?download=true'"
-                                                        t-att-download="record.filename.raw_value or 'imagen.jpg'"
+                                                        t-att-href="'/web/content/' + record.image_attachment_id.raw_value + '?download=true'"
+
                                                         class="fa fa-download pull-right"
                                                         title="Download"
                                                         style="color: #555;" />
@@ -122,6 +123,7 @@
                                         <field name="image"/>
                                         <field name="filename"/>
                                         <field name="id"/>
+                                        <field name="image_attachment_id"/>
                                         <templates>
                                             <t t-name="kanban-box">
                                                 <div style="
@@ -139,10 +141,10 @@
                                                     t-att-class="'o_kanban_small_image_card'">
                                                     <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right" style="color: red;"/>
                                                     <a t-if="record.image.raw_value"
-                                                        t-att-href="'/web/content/maintenance.request.attachment/' + record.id.raw_value + '/image?download=true'"
-                                                        t-att-download="record.filename.raw_value or 'imagen.jpg'"
+                                                        t-att-href="'/web/content/' + record.image_attachment_id.raw_value + '?download=true'"
                                                         class="fa fa-download pull-right"
                                                         title="Download"
+                                                        target="_blank"
                                                         style="color: #555;" />
                                                     <div class="o_kanban_image" style="text-align:center;">
                                                     <img t-if="record.image.raw_value"
@@ -159,6 +161,7 @@
                                         <field name="image"/>
                                         <field name="filename"/>
                                         <field name="id"/>
+                                        <field name="image_attachment_id"/>
                                         <templates>
                                             <t t-name="kanban-box">
                                                 <div style="
@@ -176,8 +179,7 @@
                                                     t-att-class="'o_kanban_small_image_card'">
                                                     <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right" style="color: red;"/>
                                                     <a t-if="record.image.raw_value"
-                                                        t-att-href="'/web/content/maintenance.request.attachment/' + record.id.raw_value + '/image?download=true'"
-                                                        t-att-download="record.filename.raw_value or 'imagen.jpg'"
+                                                        t-att-href="'/web/content/' + record.image_attachment_id.raw_value + '?download=true'"
                                                         class="fa fa-download pull-right"
                                                         title="Download"
                                                         style="color: #555;" />
@@ -236,6 +238,7 @@
             <kanban>
                 <field name="image"/>
                 <field name="filename"/>
+                <field name="image_attachment_id"/>
                 <templates>
                     <t t-name="kanban-box">
                         <div style="
@@ -253,8 +256,7 @@
                             t-att-class="'o_kanban_small_image_card'">
                             <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right" style="color: red;"/>
                             <a t-if="record.image.raw_value"
-                                t-att-href="'/web/content/maintenance.request.attachment/' + record.id.raw_value + '/image?download=true'"
-                                t-att-download="record.filename.raw_value or 'imagen.jpg'"
+                                t-att-href="'/web/content/' + record.image_attachment_id.raw_value + '?download=true'"
                                 class="fa fa-download pull-right"
                                 title="Download"
                                 style="color: #555;" />

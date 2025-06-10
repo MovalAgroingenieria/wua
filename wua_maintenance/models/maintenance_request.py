@@ -367,3 +367,38 @@ class MaintenanceRequestAttachment(models.Model):
     filename = fields.Char(
         string='Filename',
     )
+
+    image_attachment_id = fields.Integer(
+        string='Image attachemnt ID',
+        compute='_compute_image_attachment_id',
+        store=False,
+    )
+
+    @api.depends('image')
+    def _compute_image_attachment_id(self):
+        for rec in self:
+            image_attachment_id = False
+            attachment = self.env['ir.attachment'].search([
+                ('res_model', '=', self._name),
+                ('res_id', '=', rec.id),
+                ('res_field', '=', 'image'),
+            ], limit=1)
+            if attachment:
+                image_attachment_id = attachment.id
+            rec.image_attachment_id = image_attachment_id
+
+    @api.model
+    def create(self, vals):
+        record = super(MaintenanceRequestAttachment, self).create(vals)
+        if record.image and record.filename:
+            attachment = self.env['ir.attachment'].search([
+                ('res_model', '=', self._name),
+                ('res_id', '=', record.id),
+                ('res_field', '=', 'image'),
+            ], limit=1)
+            if attachment:
+                attachment.write({
+                    'name': record.filename,
+                    'datas_fname': record.filename,
+                })
+        return record
