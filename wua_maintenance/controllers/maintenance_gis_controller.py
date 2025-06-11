@@ -258,7 +258,10 @@ class MaintenanceGisController(http.Controller):
             'related_element_extradata': maintenance.related_element_extradata,
             'maintenance_type': maintenance_type_label,
             'maintenance_kind': maintenance.maintenance_kind_id.name or '',
-            'images_required': maintenance.maintenance_kind_id.images_required,
+            'image_before_required':
+                maintenance.maintenance_kind_id.image_before_required,
+            'image_after_required':
+                maintenance.maintenance_kind_id.image_after_required,
             'maintenance_team':
             maintenance.maintenance_team_id.name if
             maintenance.maintenance_team_id else _('Without team'),

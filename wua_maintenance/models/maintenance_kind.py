@@ -32,6 +32,16 @@ class MaintenanceKind(models.Model):
         default=True,
     )
 
+    image_before_required = fields.Boolean(
+        string='Before Image Required',
+        default=True,
+    )
+
+    image_after_required = fields.Boolean(
+        string='After Image Required',
+        default=True,
+    )
+
     @api.model
     def update_dynamic_fields(self, record, values):
         for field in self.dynamic_field_ids:
