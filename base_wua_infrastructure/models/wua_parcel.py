@@ -1590,8 +1590,6 @@ class WuaParcel(models.Model):
                 self.env.cr.execute("""
                     UPDATE public.wua_building wi1
                     SET with_gis_building = TRUE,
-                        gis_viewer_x = postgis.ST_X(wgi1.geom),
-                        gis_viewer_y = postgis.ST_Y(wgi1.geom)
                     FROM public.wua_gis_building wgi1 WHERE
                         wi1.name = wgi1.name;
                 """)
@@ -2153,7 +2151,6 @@ class WuaParcel(models.Model):
                             'wua_gis_building_gid_seq'::regclass),
                         name character varying(254)
                             COLLATE pg_catalog."default",
-                        name bigint,
                         geom postgis.geometry(MultiPolygon,25830),
                         UNIQUE(name),
                         CONSTRAINT wua_gis_building_pkey
