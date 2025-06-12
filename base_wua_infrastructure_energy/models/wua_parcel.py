@@ -12,7 +12,7 @@ class WuaParcel(models.Model):
         resp = False
         self.env.cr.execute("""
             SELECT EXISTS(SELECT * FROM information_schema.tables
-            WHERE table_name='wua_power_line')
+            WHERE table_name='wua_gis_power_line')
             """)
         if self.env.cr.fetchone()[0]:
             resp = True
@@ -511,7 +511,7 @@ class WuaParcel(models.Model):
     def set_gis_fields(self):
         gis_parcels_ok = super(WuaParcel, self).set_gis_fields()
         # Processing centre GIS
-        gis_processing_centre_ok = self.set_gis_fields_irrigationshed()
+        gis_processing_centre_ok = self.set_gis_fields_processing_centre()
         # Power line support GIS
         gis_power_line_support_ok = self.set_gis_fields_power_line_support()
         # Power line GIS

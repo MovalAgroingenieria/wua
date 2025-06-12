@@ -173,6 +173,16 @@ class WuaPowerLineSupport(models.Model):
                     final_url += sep + '&'.join(query_params)
             record.gis_viewer_link = final_url or ''
 
+    @api.multi
+    def action_see_gis_viewer(self):
+        self.ensure_one()
+        if self.gis_viewer_link:
+            return {
+                'type': 'ir.actions.act_url',
+                'url': self.gis_viewer_link,
+                'target': 'new',
+            }
+
     @api.model_cr
     def init(self):
         parcel_model = self.env['wua.parcel']

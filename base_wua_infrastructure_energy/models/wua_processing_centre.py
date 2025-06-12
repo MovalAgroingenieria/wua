@@ -84,14 +84,14 @@ class WuaProcessingCentre(models.Model):
     _sql_constraints = [
         (
             "positive_capacity_check",
-            "CHECK(capacity IS NULL OR capacity > 0)",
-            "Total capacity must be greater than 0.",
+            "CHECK(capacity IS NULL OR capacity >= 0)",
+            "Total capacity must be positive.",
         ),
         (
             "positive_transformers_check",
             "CHECK(number_of_transformers IS NULL OR "
-            "number_of_transformers > 0)",
-            "Number of transformers must be greater than 0.",
+            "number_of_transformers >= 0)",
+            "Number of transformers must be positive.",
         ),
         (
             "positive_installation_year_check",
@@ -127,6 +127,16 @@ class WuaProcessingCentre(models.Model):
                     sep = '?' if '?' not in final_url else '&'
                     final_url += sep + '&'.join(query_params)
             record.gis_viewer_link = final_url or ''
+
+    @api.multi
+    def action_see_gis_viewer(self):
+        self.ensure_one()
+        if self.gis_viewer_link:
+            return {
+                'type': 'ir.actions.act_url',
+                'url': self.gis_viewer_link,
+                'target': 'new',
+            }
 
     @api.model_cr
     def init(self):

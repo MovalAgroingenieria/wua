@@ -23,7 +23,7 @@ class WuaPowerLine(models.Model):
 
     type = fields.Selection([
         ('01_aerial', 'Aerial'),
-        ('02_underground', 'Underground')
+        ('02_underground', 'Underground'),
     ],
         string='Type',
         required=True,
@@ -43,7 +43,7 @@ class WuaPowerLine(models.Model):
     critical_crossings = fields.Selection([
         ('01_roads', 'Roads'),
         ('02_rivers', 'Rivers'),
-        ('03_railways', 'Railways')
+        ('03_railways', 'Railways'),
     ],
         string='Critical Crossings',
         default='01_roads',
@@ -76,13 +76,13 @@ class WuaPowerLine(models.Model):
     _sql_constraints = [
         (
             "positive_rated_voltage_check",
-            "CHECK(rated_voltage IS NULL OR rated_voltage > 0)",
-            "Rated voltage must be greater than zero.",
+            "CHECK(rated_voltage IS NULL OR rated_voltage >= 0)",
+            "Rated voltage must be positive.",
         ),
         (
             "positive_length_check",
-            "CHECK(length IS NULL OR length > 0)",
-            "Length must be greater than zero.",
+            "CHECK(length IS NULL OR length >= 0)",
+            "Length must be positive.",
         ),
         (
             "positive_construction_year_check",
@@ -119,6 +119,16 @@ class WuaPowerLine(models.Model):
                     sep = '?' if '?' not in final_url else '&'
                     final_url += sep + '&'.join(query_params)
             record.gis_viewer_link = final_url or ''
+
+    @api.multi
+    def action_see_gis_viewer(self):
+        self.ensure_one()
+        if self.gis_viewer_link:
+            return {
+                'type': 'ir.actions.act_url',
+                'url': self.gis_viewer_link,
+                'target': 'new',
+            }
 
     @api.model_cr
     def init(self):

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-26 07:47+0000\n"
-"PO-Revision-Date: 2025-05-26 07:47+0000\n"
+"POT-Creation-Date: 2025-06-12 10:26+0000\n"
+"PO-Revision-Date: 2025-06-12 10:26+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -53,6 +53,11 @@ msgstr "Desvío"
 #: selection:wua.power.line.support,material:0
 msgid "Concrete"
 msgstr "Hormigón"
+
+#. module: base_wua_infrastructure_energy
+#: model:ir.model,name:base_wua_infrastructure_energy.model_wua_infrastructure_configuration
+msgid "Configuration of base_wua_infrastructure_primary module"
+msgstr "Configuración del módulo base_wua_infrastructure_primary"
 
 #. module: base_wua_infrastructure_energy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_energy.field_wua_power_line_construction_date
@@ -116,7 +121,21 @@ msgstr "Fin de línea"
 #. module: base_wua_infrastructure_energy
 #: model:ir.model,name:base_wua_infrastructure_energy.model_wua_parcel
 msgid "Entity (parcel)"
-msgstr "Entidad (parcela)"
+msgstr "Elemento (parcela)"
+
+#. module: base_wua_infrastructure_energy
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_energy.view_wua_power_line_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_energy.view_wua_power_line_support_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_energy.view_wua_processing_centre_form
+msgid "GIS Viewer"
+msgstr "Visor GIS"
+
+#. module: base_wua_infrastructure_energy
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_energy.view_wua_power_line_support_tree
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_energy.view_wua_power_line_tree
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_energy.view_wua_processing_centre_tree
+msgid "GIS Viewer (zoom to point)"
+msgstr "Visor GIS (zoom al punto)"
 
 #. module: base_wua_infrastructure_energy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_energy.field_wua_power_line_gis_viewer_link
@@ -201,8 +220,8 @@ msgstr "Longitud (m)"
 
 #. module: base_wua_infrastructure_energy
 #: sql_constraint:wua.power.line:0
-msgid "Length must be greater than zero."
-msgstr "La longitud debe ser mayor que cero."
+msgid "Length must be positive."
+msgstr "La longitud tiene que ser positiva."
 
 #. module: base_wua_infrastructure_energy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_energy.field_wua_power_line_support_license_plate
@@ -232,6 +251,21 @@ msgid "Moorage"
 msgstr "Amarre"
 
 #. module: base_wua_infrastructure_energy
+#: model:ir.model.fields,help:base_wua_infrastructure_energy.field_wua_infrastructure_configuration_url_gis_viewer_power_line_param
+msgid "Name of the parameter for power line in GIS URL"
+msgstr "Nombre del parámetro para la línea eléctrica en la URL del Visor GIS"
+
+#. module: base_wua_infrastructure_energy
+#: model:ir.model.fields,help:base_wua_infrastructure_energy.field_wua_infrastructure_configuration_url_gis_viewer_power_line_support_param
+msgid "Name of the parameter for power line support in GIS URL"
+msgstr "Nombre del parámetro para la compatibilidad de líneas eléctricas en la URL del Visor GIS"
+
+#. module: base_wua_infrastructure_energy
+#: model:ir.model.fields,help:base_wua_infrastructure_energy.field_wua_infrastructure_configuration_url_gis_viewer_processing_centre_param
+msgid "Name of the parameter for processing centre in GIS URL"
+msgstr "Nombre del parámetro para el centro de procesamiento en la URL del Visor GIS"
+
+#. module: base_wua_infrastructure_energy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_energy.field_wua_power_line_notes
 #: model:ir.model.fields,field_description:base_wua_infrastructure_energy.field_wua_power_line_support_notes
 #: model:ir.model.fields,field_description:base_wua_infrastructure_energy.field_wua_processing_centre_notes
@@ -248,8 +282,8 @@ msgstr "Número de transformadores"
 
 #. module: base_wua_infrastructure_energy
 #: sql_constraint:wua.processing.centre:0
-msgid "Number of transformers must be greater than 0."
-msgstr "El número de transformadores debe ser mayor que 0."
+msgid "Number of transformers must be positive."
+msgstr "El número de transformadores tiene que ser positivo."
 
 #. module: base_wua_infrastructure_energy
 #: selection:wua.processing.centre,transformer_type:0
@@ -260,6 +294,21 @@ msgstr "Aceite"
 #: selection:wua.power.line.support,singular_points:0
 msgid "Others"
 msgstr "Otros"
+
+#. module: base_wua_infrastructure_energy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_energy.field_wua_infrastructure_configuration_url_gis_viewer_power_line_param
+msgid "Param for Power Line"
+msgstr "Parámetro para línea eléctrica"
+
+#. module: base_wua_infrastructure_energy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_energy.field_wua_infrastructure_configuration_url_gis_viewer_power_line_support_param
+msgid "Param for Power Line Support"
+msgstr "Parámetro para los soportes de linea eléctrica"
+
+#. module: base_wua_infrastructure_energy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_energy.field_wua_infrastructure_configuration_url_gis_viewer_processing_centre_param
+msgid "Param for Processing Centre"
+msgstr "Parámetro para el centro de procesado"
 
 #. module: base_wua_infrastructure_energy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_energy.field_wua_power_line_support_photo_01
@@ -350,8 +399,8 @@ msgstr "Tensión nominal (kV)"
 
 #. module: base_wua_infrastructure_energy
 #: sql_constraint:wua.power.line:0
-msgid "Rated voltage must be greater than zero."
-msgstr "La tensión nominal debe ser mayor que cero."
+msgid "Rated voltage must be positive."
+msgstr "La tensión nominal tiene que ser positiva."
 
 #. module: base_wua_infrastructure_energy
 #: selection:wua.power.line,critical_crossings:0
@@ -395,8 +444,8 @@ msgstr "Capacidad total (kVA)"
 
 #. module: base_wua_infrastructure_energy
 #: sql_constraint:wua.processing.centre:0
-msgid "Total capacity must be greater than 0."
-msgstr "La capacidad total debe ser mayor que 0."
+msgid "Total capacity must be positive."
+msgstr "La capacidad total tiene que ser positiva."
 
 #. module: base_wua_infrastructure_energy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_energy.field_wua_processing_centre_transformer_type

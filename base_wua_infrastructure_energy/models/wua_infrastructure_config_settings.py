@@ -11,19 +11,19 @@ class WuaInfrastructureConfiguration(models.TransientModel):
     url_gis_viewer_power_line_param = fields.Char(
         string='Param for Power Line',
         size=64,
-        help='Name of the parameter for power line in GIS URL'
+        help='Name of the parameter for power line in GIS URL',
     )
 
     url_gis_viewer_power_line_support_param = fields.Char(
         string='Param for Power Line Support',
         size=64,
-        help='Name of the parameter for power line support in GIS URL'
+        help='Name of the parameter for power line support in GIS URL',
     )
 
     url_gis_viewer_processing_centre_param = fields.Char(
         string='Param for Processing Centre',
         size=64,
-        help='Name of the parameter for processing centre in GIS URL'
+        help='Name of the parameter for processing centre in GIS URL',
     )
 
     @api.multi

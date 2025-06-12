@@ -16,6 +16,8 @@
         "base_wua_infrastructure_primary",
     ],
     "data": [
+        "data/wua_infrastructure_energy_config_settings_data.xml",
+        "security/ir.model.access.csv",
         "views/wua_processing_centre_view.xml",
         "views/wua_power_line_view.xml",
         "views/wua_power_line_support_view.xml",
