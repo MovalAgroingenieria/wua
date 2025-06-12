@@ -54,7 +54,10 @@ class website_account(website_account):
             }
             if search_field in field_map:
                 domain.append((field_map[search_field], 'ilike', search))
-        wausms = wausms_tracking_model.search(domain)
+        has_waterconnection = \
+            'waterconnection_id' in wausms_tracking_model._fields
+        wausms = \
+            wausms_tracking_model.search(domain, order='sms_time_data desc')
         wausms_count = len(wausms)
         items_per_page = self._items_per_page
         pager = request.website.pager(
@@ -74,9 +77,9 @@ class website_account(website_account):
             'pager': pager,
             'search_query': search,
             'search_field': search_field,
+            'has_waterconnection': has_waterconnection,
             'default_url': '/my/wausms',
         })
         return request.render(
             "base_wua_portal_wausms.portal_my_wausms",
             values)
-

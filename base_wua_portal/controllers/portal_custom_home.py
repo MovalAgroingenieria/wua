@@ -72,13 +72,14 @@ class website_account(website_account):
         parcels = \
             parcel_partnerlink_model.browse(
                 partnerlinks.mapped('parcel_id').ids)
-
+        has_extra_code = '' in parcel_partnerlink_model._fields
         values.update({
             'parcels': parcels,
             'partnerlinks': partnerlinks,
             'partner': partner,
             'pager': pager,
             'search_query': search,
+            'has_extra_code': has_extra_code,
             'search_field': search_field,
             'default_url': '/my/parcels',
         })

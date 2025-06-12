@@ -61,7 +61,9 @@
                                                 <option value="sms_time_data" t-att-selected="'sms_time_data' == search_field">Date/Time</option>
                                                 <option value="sender" t-att-selected="'sender' == search_field">Sender</option>
                                                 <option value="invoice_id" t-att-selected="'invoice_id' == search_field">Invoice</option>
+                                                <t t-if="has_waterconnection">
                                                 <option value="waterconnection_id" t-att-selected="'waterconnection_id' == search_field">Water Connection</option>
+                                                </t>
                                                 <option value="parcel_id" t-att-selected="'parcel_id' == search_field">Parcel</option>
                                                 <option value="subject" t-att-selected="'subject' == search_field">Subject</option>
                                                 <option value="sms_message" t-att-selected="'sms_message' == search_field">Message</option>
@@ -81,7 +83,9 @@
                                             <th>Date/Time</th>
                                             <th>Sender</th>
                                             <th>Invoice</th>
-                                            <th>Water Connection</th>
+                                            <t t-if="has_waterconnection">
+                                                <th>Water Connection</th>
+                                            </t>
                                             <th>Parcel</th>
                                             <th>Subject</th>
                                             <th style="width: 35%">Message</th>
@@ -93,7 +97,9 @@
                                                 <td><t t-esc="sms.sms_time_data"/></td>
                                                 <td><t t-esc="sms.sender"/></td>
                                                 <td><t t-esc="sms.invoice_id.name"/></td>
-                                                <td><t t-esc="sms.waterconnection_id.name"/></td>
+                                                <t t-if="has_waterconnection">
+                                                    <td><t t-esc="sms.waterconnection_id.name"/></td>
+                                                </t>
                                                 <td><t t-esc="sms.parcel_id.name"/></td>
                                                 <td><t t-esc="sms.subject"/></td>
                                                 <td><t t-esc="sms.sms_message"/></td>

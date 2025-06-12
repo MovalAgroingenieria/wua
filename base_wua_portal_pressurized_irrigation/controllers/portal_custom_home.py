@@ -12,7 +12,7 @@ class website_account(website_account):
 
     @http.route()
     def account(self, **kw):
-        """ Add readings and presconsumptions documents to main account page """
+        """ Add readings and presconsumptions documents to main account page"""
         response = super(website_account, self).account(**kw)
         partner = request.env.user.partner_id
 
@@ -22,9 +22,10 @@ class website_account(website_account):
         readings_count = request.env['wua.reading'].search_count([
             ('waterconnection_id', 'in', waterconnections)
         ])
-        presconsumptions_count = request.env['wua.presconsumption'].search_count([
-            ('waterconnection_id', 'in', waterconnections)
-        ])
+        presconsumptions_count = \
+            request.env['wua.presconsumption'].search_count([
+                ('waterconnection_id', 'in', waterconnections)
+            ])
         response.qcontext.update({
             'readings_count': readings_count,
             'presconsumptions_count': presconsumptions_count,
@@ -50,6 +51,7 @@ class website_account(website_account):
         waterconnections = \
             waterconnection_partnerlink_model.search(domain).mapped(
                 'waterconnection_id')
+        domain.append(('waterconnection_id', 'in', waterconnections.ids))
         readings_count = request.env['wua.reading'].search_count(domain)
         items_per_page = self._items_per_page
         pager = request.website.pager(

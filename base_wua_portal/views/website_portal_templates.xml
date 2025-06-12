@@ -26,7 +26,8 @@
                target="_blank">
                 <div t-field="user.partner_id" t-options='{"widget": "contact", "fields": ["email", "phone", "address", "name"]}'/>
                 <div class="mt8" t-if="user.partner_id.vat">
-                    <span t-field="user.partner_id.vat"/>
+                    <t t-set="vat_no_prefix" t-value="user.partner_id.vat[2:]"/>
+                    <span t-esc="vat_no_prefix"/>
                 </div>
             </a>
 
@@ -215,7 +216,9 @@
                                     <div class="col-md-2">
                                         <select id="search_field" name="search_field" class="form-control">
                                             <option value="name" t-att-selected="'name' == search_field">Parcel #</option>
-                                            <option value="extra_code" t-att-selected="'extra_code' == search_field">Extra Code</option>
+                                            <t t-if="has_extra_code">
+                                                <option value="extra_code" t-att-selected="'extra_code' == search_field">Extra Code</option>
+                                            </t>
                                             <option value="cadastral_reference" t-att-selected="'cadastral_reference' == search_field">Cadastral Reference</option>
                                             <option value="concession" t-att-selected="'concession' == search_field">Concessions</option>
                                         </select>
@@ -237,7 +240,9 @@
                                     <thead>
                                         <tr class="active">
                                             <th>Parcel #</th>
-                                            <th>Extra code</th>
+                                            <t t-if="has_extra_code">
+                                                <th>Extra code</th>
+                                            </t>
                                             <th>Cadastral Reference</th>
                                             <th>Concessions</th>
                                             <th>Profile</th>
@@ -252,7 +257,9 @@
                                                     <t t-esc="parcel.parcel_id.name"/>
                                                 </a>
                                             </td>
-                                            <td><t t-esc="parcel.parcel_id.extra_code"/></td>
+                                            <t t-if="has_extra_code">
+                                                <td><t t-esc="parcel.parcel_id.extra_code"/></td>
+                                            </t>
                                             <td><t t-esc="parcel.parcel_id.cadastral_reference"/></td>
                                             <td>
                                                 <t t-if="parcel.parcel_id.concession_ids">
