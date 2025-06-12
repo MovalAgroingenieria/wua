@@ -1,21 +1,25 @@
 # -*- coding: utf-8 -*-
+# 2025 Moval Agroingeniería
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+
 from odoo import models, fields, api
 
 
 class WuaIrrigationStretch(models.Model):
     _name = 'wua.irrigation.stretch'
-    _description = 'Irrigation Irrigation Stretch'
-    _order = 'id'
+    _description = 'Irrigation Stretch'
+    _order = 'name'
 
     type = fields.Selection([
         ('pressure', 'Pressure'),
         ('gravity', 'Gravity'),
-    ], string='Segment Type', required=True)
+        ], string='Segment Type',
+        required=True,
+    )
 
     name = fields.Char(
         string='Segment Identifier',
         required=True,
-        unique=True,
     )
 
     length_meters = fields.Float(
@@ -120,20 +124,15 @@ class WuaIrrigationStretch(models.Model):
         help='Indicates whether the gravity segment is enclosed (piped)',
     )
 
-    channel_cross_section_area = fields.Float(
-        string='Cross Section Area',
-        digits=(32, 4),
-        compute='_compute_channel_cross_section_area',
-        store=True,
-        readonly=True,
-    )
+    _sql_constraints = [
+        ('name_unique', 'UNIQUE(name)', 'The name must be unique.'),
+    ]
 
-    @api.depends('channel_section_width', 'channel_section_height')
-    def _compute_channel_cross_section_area(self):
-        for record in self:
-            record.channel_cross_section_area = (
-                record.channel_section_width * record.channel_section_height
-                if record.channel_section_width and
-                record.channel_section_height
-                else 0.0
-            )
+    @api.model_cr
+    def init(self):
+        parcel_model = self.env['wua.parcel']
+        try:
+            parcel_model.create_wua_gis_irrigation_stretch_table()
+            parcel_model.create_irrigation_stretch_triggers()
+        except Exception:
+            pass

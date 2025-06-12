@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="view_form_wua_irrigation_stretch" model="ir.ui.view">
+    <record id="wua_irrigation_stretch_view_form" model="ir.ui.view">
         <field name="name">wua.irrigation.stretch.form</field>
         <field name="model">wua.irrigation.stretch</field>
         <field name="arch" type="xml">
@@ -84,7 +84,7 @@
     </record>
 
 
-    <record id="view_tree_wua_irrigation_stretch_gravity" model="ir.ui.view">
+    <record id="wua_irrigation_stretch_gravity_view_tree" model="ir.ui.view">
         <field name="name">wua.irrigation.stretch.tree.gravity</field>
         <field name="model">wua.irrigation.stretch</field>
         <field name="arch" type="xml">
@@ -98,7 +98,7 @@
         </field>
     </record>
 
-    <record id="view_tree_wua_irrigation_stretch_pressure" model="ir.ui.view">
+    <record id="wua_irrigation_stretch_pressure_view_tree" model="ir.ui.view">
         <field name="name">wua.irrigation.stretch.tree.pressure</field>
         <field name="model">wua.irrigation.stretch</field>
         <field name="arch" type="xml">
@@ -113,7 +113,7 @@
         </field>
     </record>
 
-    <record id="view_search_wua_irrigation_stretch" model="ir.ui.view">
+    <record id="wua_irrigation_stretch_view_search" model="ir.ui.view">
         <field name="name">wua.irrigation.stretch.search</field>
         <field name="model">wua.irrigation.stretch</field>
         <field name="arch" type="xml">
@@ -131,7 +131,7 @@
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">wua.irrigation.stretch</field>
         <field name="view_mode">tree,form</field>
-        <field name="view_id" ref="view_tree_wua_irrigation_stretch_pressure"/>
+        <field name="view_id" ref="wua_irrigation_stretch_pressure_view_tree"/>
         <field name="domain">[('type', '=', 'pressure')]</field>
         <field name="context">{'default_type': 'pressure'}</field>
     </record>
@@ -141,19 +141,19 @@
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">wua.irrigation.stretch</field>
         <field name="view_mode">tree,form</field>
-        <field name="view_id" ref="view_tree_wua_irrigation_stretch_gravity"/>
+        <field name="view_id" ref="wua_irrigation_stretch_gravity_view_tree"/>
         <field name="domain">[('type', '=', 'gravity')]</field>
         <field name="context">{'default_type': 'gravity'}</field>
     </record>
 
-    <menuitem id="menu_wua_irrigation_stretch_pressure"
+    <menuitem id="wua_irrigation_stretch_pressure_menu"
               name="Irrigation Stretches"
               parent="base_wua_infrastructure.base_wua_infrastructure_pressurized_irrigation_menu"
               action="action_wua_irrigation_stretch_pressure"
               sequence="30"
               groups="base_wua.group_wua_user"/>
 
-    <menuitem id="menu_wua_irrigation_stretch_gravity"
+    <menuitem id="wua_irrigation_stretch_gravity_menu"
               name="Irrigation Stretches"
               parent="base_wua_infrastructure.base_wua_infrastructure_gravityfed_irrigation_menu"
               action="action_wua_irrigation_stretch_gravity"
