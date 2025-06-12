@@ -219,6 +219,15 @@
         <field name="model">maintenance.request</field>
         <field name="inherit_id" ref="maintenance.hr_equipment_request_view_search"/>
         <field name="arch" type="xml">
+            <xpath expr="//filter[@name='done']" position="attributes">
+                <attribute name="domain">[('stage_id.done', '=', True)]</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='kanban_state_block']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='progress']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
             <xpath expr="//filter[@name='inactive']" position="before">
                 <separator/>
                 <filter string='Field resolved' name='field_resolved' domain="[('field_resolved', '=', True)]"/>
