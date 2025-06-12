@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Invoice without details
+    <!-- Invoice without details -->
     <report
         id="account_invoice_without_details_report"
         model="account.invoice"
@@ -15,50 +15,74 @@
     <record id="account_wua.account_invoice_without_details_report" model="ir.actions.report.xml">
         <field name="attachment_use" eval="False"/>
     </record>
-     -->
 
     <template id="account_invoice_report_without_details" inherit_id="account.report_invoice_document" primary="True">
         <xpath expr="//table[@name='details_table']" position="attributes">
             <attribute name="t-att-style">"display: none"</attribute>
         </xpath>
-        <xpath expr="//div[@name='product_resume_table']" position="attributes">
-            <attribute name="class">""</attribute>
-        </xpath>
-        <xpath expr="//caption[@name='product_summary_title']" position="attributes">
-            <attribute name="t-att-style">"display: none"</attribute>
-        </xpath>
-        <xpath expr="//th[@name='total_qty_th']" position="replace">
-            <th name="total_qty_th" class="text-right">Quantity</th>
-        </xpath>
-        <xpath expr="//th[@name='total_amnt_th']" position="replace">
-            <th name="total_amnt_th" class="text-right">Amount</th>
-        </xpath>
-        <xpath expr="//tr[@t-foreach='products']" position="after">
-            <t t-set="products_total_amount" t-value="0.0"/>
-            <t t-set="num_of_products" t-value="0"/>
-            <t t-foreach="products" t-as="p">
-                <t t-set="num_of_products" t-value="num_of_products + 1"/>
-                <t t-set="product_total_amount" t-value="0.0"/>
-                <t t-foreach="o.invoice_line_ids" t-as="l">
-                    <t t-if="l.product_id.id == p.id">
-                        <t t-set="product_total_amount" t-value="product_total_amount + l.price_subtotal"/>
-                        <t t-set="products_total_amount" t-value="products_total_amount + product_total_amount"/>
-                    </t>
-                </t>
-            </t>
-            <t t-if="num_of_products > 1">
-                <tr name="products_total">
-                    <td class="text-right" colspan="2">
-                        <strong>Total:</strong>
-                    </td>
-                    <td class="text-right">
-                        <strong><span t-esc="products_total_amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></strong>
-                    </td>
-                </tr>
-            </t>
-        </xpath>
         <xpath expr="//div[@name='subtotal_table']" position="attributes">
             <attribute name="t-att-style">"display: none"</attribute>
+        </xpath>
+        <xpath expr="//div[@name='product_resume_table']" position="replace">
+            <div name="product_resume_table">
+                <t t-set="num_of_products" t-value="0"/>
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th name="product_th">Product</th>
+                            <th name="total_qty_th" class="text-right">Total quantity</th>
+                            <th name="product_price_summary_th" class="text-right">Price</th>
+                            <th name="total_amnt_th" class="text-right">Total amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="products" t-as="p">
+                            <t t-set="product_total_qty" t-value="0.0"/>
+                            <t t-set="product_total_amount" t-value="0.0"/>
+                            <t t-set="uom_id" t-value="empty"/>
+                            <t t-foreach="o.invoice_line_ids" t-as="l">
+                                <t t-if="l.product_id.id == p.id">
+                                    <t t-set="num_of_products" t-value="num_of_products + 1"/>
+                                    <t t-set="product_total_qty" t-value="product_total_qty + l.quantity"/>
+                                    <t t-set="product_total_amount" t-value="product_total_amount + l.price_subtotal"/>
+                                    <t t-set="uom_id" t-value="l.sudo().uom_id.name"/>
+                                </t>
+                            </t>
+                            <td>
+                                <span t-field="p.sudo().name"/>
+                                <t t-if="p.sudo().attribute_value_ids">
+                                    <t t-foreach="p.sudo().attribute_value_ids" t-as="a">
+                                        <span t-field="a.name"/>
+                                    </t>
+                                </t>
+                            </td>
+                            <td name="total_qty_td" class="text-right">
+                                <span name="span_product_total_qty" t-esc="product_total_qty" t-options='{"widget": "float", "precision": 4}'/>
+                                <span t-esc="uom_id"/>
+                            </td>
+                            <td name="product_price_summary_td" class="text-right">
+                                <span name="span_product_price_summary" t-field="p.lst_price" t-options='{"widget": "float", "precision": 4}'/>
+                                <span>€</span>
+                                <span>/</span>
+                                <span t-esc="p.uom_id.name"/>
+                            </td>
+                            <td name="total_amnt_td" class="text-right">
+                                <span t-esc="product_total_amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                            </td>
+                        </tr>
+                        <t t-if="num_of_products > 1">
+                            <tr name="products_total">
+                                <td class="text-right" colspan="3">
+                                    <strong>Total:</strong>
+                                </td>
+                                <td class="text-right">
+                                    <strong><span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></strong>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
         </xpath>
     </template>
 
