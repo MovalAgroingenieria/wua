@@ -111,6 +111,8 @@ def post_init_hook(cr, registry):
          'wua_valve', '03_gravity', False),
         ('wua_maintenance.equipment_category_filteringstation',
          'wua_filteringstation', '03_gravity', False),
+        ('wua_maintenance.equipment_category_building',
+         'wua_building', '01_general', False),
     ]
 
     for category_ref, table_name, \

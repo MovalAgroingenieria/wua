@@ -187,6 +187,15 @@
             <field name="geometry_type">01_point</field>
         </record>
 
+        <record id="equipment_category_building" model="maintenance.equipment.category" forcecreate="False">
+            <field name="name">Buildings</field>
+            <field name="is_wua">True</field>
+            <field name="infrastructure_type">01_general</field>
+            <field name="is_primary">False</field>
+            <field name="model_id" ref="base_wua_infrastructure.model_wua_building"/>
+            <field name="geometry_type">03_polygon</field>
+       </record>
+
     </data>
 
 </odoo>

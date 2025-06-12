@@ -325,6 +325,18 @@ class MaintenanceEquipment(models.Model):
         string='GeoJSON Geometry',
     )
 
+    building_ids = fields.One2many(
+        string='Buildings',
+        comodel_name='wua.building',
+        inverse_name='equipment_id',
+    )
+
+    building_id = fields.Many2one(
+        string='Building',
+        comodel_name='wua.building',
+        compute='_compute_building_id',
+    )
+
     @api.constrains('category_id', 'parent_id')
     def _check_parent_category_consistency(self):
         for record in self:
@@ -530,6 +542,16 @@ class MaintenanceEquipment(models.Model):
                 'base_table': 'wua_filteringstation',
                 'base_field': 'name',
                 'gis_table': 'wua_gis_filteringstation',
+                'gis_field': 'name',
+                'intermediate_table': False,
+                'intermediate_field': False,
+                'intermediate_gis_field': False,
+            },
+            env.ref(
+                'wua_maintenance.equipment_category_building').id: {
+                'base_table': 'wua_building',
+                'base_field': 'name',
+                'gis_table': 'wua_gis_building',
                 'gis_field': 'name',
                 'intermediate_table': False,
                 'intermediate_field': False,
@@ -835,6 +857,13 @@ class MaintenanceEquipment(models.Model):
                 filteringstation_id = record.filteringstation_ids[0]
             record.filteringstation_id = filteringstation_id
 
+    def _compute_building_id(self):
+        for record in self:
+            building_id = None
+            if record.building_ids:
+                building_id = record.building_ids[0]
+            record.building_id = building_id
+
     @api.depends('tag_ids')
     def _compute_tag_html(self):
         for record in self:
@@ -910,6 +939,9 @@ class MaintenanceEquipment(models.Model):
             self.env.ref(
                 'wua_maintenance.equipment_category_filteringstation').id:
                 ('wua.filteringstation', _('Filtering Station')),
+            self.env.ref(
+                'wua_maintenance.equipment_category_building').id:
+                ('wua.building', _('Building')),
         }
         res_model, name = category_mapping.get(
             current_equipment.category_id.id, (None, None))
