@@ -37,12 +37,12 @@
                     </thead>
                     <tbody>
                         <tr t-foreach="products" t-as="p">
+                            <t t-set="num_of_products" t-value="num_of_products + 1"/>
                             <t t-set="product_total_qty" t-value="0.0"/>
                             <t t-set="product_total_amount" t-value="0.0"/>
                             <t t-set="uom_id" t-value="empty"/>
                             <t t-foreach="o.invoice_line_ids" t-as="l">
                                 <t t-if="l.product_id.id == p.id">
-                                    <t t-set="num_of_products" t-value="num_of_products + 1"/>
                                     <t t-set="product_total_qty" t-value="product_total_qty + l.quantity"/>
                                     <t t-set="product_total_amount" t-value="product_total_amount + l.price_subtotal"/>
                                     <t t-set="uom_id" t-value="l.sudo().uom_id.name"/>
