@@ -5,7 +5,6 @@
 import datetime
 import json
 
-from bokeh.themes import default
 from lxml import etree
 from odoo import models, fields, api, tools, _
 
@@ -72,7 +71,8 @@ class WuaWaterconnection(models.Model):
         comodel_name='wua.waterconnection.irrigation.event',
         compute='_compute_last_irrigation_event_id',
         store=True,
-        index=True,)
+        index=True,
+    )
 
     number_of_irrigation_events = fields.Integer(
         string='N. Irrigtion Events',
@@ -125,7 +125,7 @@ class WuaWaterconnection(models.Model):
         comodel_name='wua.waterconnection.state',
         index=True,
         default= lambda self: self.get_default_state(),
-        ondelete='restrict',
+        ondelete= 'restrict',
     )
     is_state_close = fields.Boolean(
         string='Is State Closed',
@@ -309,7 +309,8 @@ class WuaWaterconnection(models.Model):
                 limit=1, order='assign_start desc')
         if last_wc_wm_registers_for_current_watermeter:
             vals_last_wc_wm_registers_for_current_watermeter = {
-                'assign_end': current_date, }
+                'assign_end': current_date,
+            }
             last_wc_wm_registers_for_current_watermeter.write(
                 vals_last_wc_wm_registers_for_current_watermeter)
         # For the new water connection...
@@ -317,7 +318,8 @@ class WuaWaterconnection(models.Model):
             vals_new_wc_wm_register = {
                 'waterconnection_id': waterconnection_id,
                 'watermeter_id': watermeter_id,
-                'assign_start': current_date, }
+                'assign_start': current_date,
+            }
             wc_wm_registers.create(vals_new_wc_wm_register)
             # It's necessary to create a initialization reading.
             last_reading_time = current_date
@@ -337,7 +339,8 @@ class WuaWaterconnection(models.Model):
                 'reading_time': last_reading_time,
                 'volume': last_reading_value,
                 'volume_real': last_reading_consumption,
-                'initialization_reading': True, }
+                'initialization_reading': True,
+            }
             self.env['wua.reading'].create(
                 vals_new_initialization_reading)
 
@@ -470,7 +473,7 @@ class WuaWaterconnection(models.Model):
             'context': {'from_shortcut': 1},
             }
         return act_window
-    
+
     def get_default_state(self):
         return self.env['wua.waterconnection.state'].search(
             [('default_state', '=', True)], limit=1)

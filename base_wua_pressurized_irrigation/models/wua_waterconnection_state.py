@@ -2,10 +2,9 @@
 # 2025 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-import datetime
-import json
-from lxml import etree
 from odoo import models, fields, api, tools, _
+from odoo.exceptions import ValidationError
+
 
 
 class WuaWaterconnectionState(models.Model):
@@ -45,11 +44,15 @@ class WuaWaterconnectionState(models.Model):
     
     @api.constrains('default_state')
     def _check_default_state(self):
-        if self.filtered(lambda x: x.default_state):
-            if len(self) > 1:
-                raise models.ValidationError(
-                    _('Only one state can be set as default.'))
-            if not self.active:
-                raise models.ValidationError(
-                    _('The default state must be active.'))
+        for record in self:
+            if record.default_state:
+                # Verifica si hay otro registro con default_state=True
+                others = self.search([
+                    ('id', '!=', record.id),
+                    ('default_state', '=', True),
+                ])
+                if others:
+                    raise ValidationError(_('Only one state can be set as default.'))
+                if not record.active:
+                    raise ValidationError(_('The default state must be active.'))
     
