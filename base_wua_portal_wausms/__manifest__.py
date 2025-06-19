@@ -13,10 +13,12 @@
     "license": "AGPL-3",
     "depends": [
         "base_wua_portal",
+        "base_wua_portal_mail",
         "wua_wausms_client_sms",
     ],
     "data": [
         "views/website_portal_templates.xml",
+        "views/portal_communications_templates.xml",
         'security/ir.model.access.csv',
     ],
     "installable": True,

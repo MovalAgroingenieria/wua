@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="portal_my_irrigationmanagement" inherit_id="base_wua_portal_infrastructure.portal_my_irrigationmanagement" name="Hide Quotes and Orders">
+            <xpath expr="//div[@name='irrigation_menu']" position="inside">
+                <h3 class="page-header" style="order: 9;">
+                    <a href="/my/irrigationreports">
+                        <i class="fa fa-fw fa-moval-file-irrigation"></i>
+                        Irrigationreports
+                        <small class="ml8">
+                            <t t-if="irrigationreports_count">
+                                <span class='badge pull-right'><t t-esc="irrigationreports_count"/></span>
+                            </t>
+                            <t t-if="not irrigationreports_count">
+                                There are currently no irrigationreport for your account.
+                            </t>
+                        </small>
+                    </a>
+                </h3>
+                <h3 class="page-header"  style="order: 10;">
+                    <a href="/my/irrigationreportrequests">
+                        <i class="fa fa-fw fa-moval-file-irrigation-request"></i>
+                        Irrigationreport Requests
+                        <small class="ml8">
+                            <t t-if="irrigationreport_requests_count">
+                                <span class='badge pull-right'><t t-esc="irrigationreport_requests_count"/></span>
+                            </t>
+                            <t t-if="not irrigationreport_requests_count">
+                                There are currently no irrigationreport requests for your account.
+                            </t>
+                        </small>
+                    </a>
+                </h3>
+            </xpath>
+        </template>
+    </data>
+</odoo>

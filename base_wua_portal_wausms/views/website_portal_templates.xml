@@ -7,24 +7,6 @@
                 </li>
             </xpath>
         </template>
-        <template id="portal_my_home_wua" inherit_id="base_wua_portal.portal_my_home_wua" name="Hide Quotes and Orders">
-            <xpath expr="//div[contains(@class,'o_my_home_content')]" position="inside">
-                <h3 class="page-header" style="order: 12;">
-                    <a href="/my/wausms">
-                        <i class="fa fa-fw fa-wausms-sms-registre"></i>
-                        Your SMS
-                        <small class="ml8">
-                            <t t-if="wausms_count">
-                                <span class='badge pull-right'><t t-esc="wausms_count"/></span>
-                            </t>
-                            <t t-if="not wausms_count">
-                                There are currently no sms for your account.
-                            </t>
-                        </small>
-                    </a>
-                </h3>
-            </xpath>
-        </template>
         <template id="portal_my_wausms" name="My SMS">
             <t t-call="website.layout">
                 <div class="container mt16">

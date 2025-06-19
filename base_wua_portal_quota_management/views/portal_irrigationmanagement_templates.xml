@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="portal_my_irrigationmanagement" inherit_id="base_wua_portal_infrastructure.portal_my_irrigationmanagement" name="Hide Quotes and Orders">
+            <xpath expr="//div[@name='irrigation_menu']" position="inside">
+                <h3 class="page-header" style="order: 6;">
+                    <a href="/my/quotas">
+                        <i class="fa fa-fw fa-moval-quotas"/>
+                        Quotas
+                        <small class="ml8">
+                            <t t-if="quota_count">
+                                <span class='badge pull-right'><t t-esc="quota_count"/></span>
+                            </t>
+                            <t t-if="not quota_count">
+                                There are currently no quotas for your account.
+                            </t>
+                        </small>
+                    </a>
+                </h3>
+                <h3 class="page-header" style="order: 7;">
+                    <a href="/my/quotaaggregates">
+                        <i class="fa fa-fw fa-moval-quotas-aggregate"/>
+                        Quota aggregate values
+                        <small class="ml8">
+                            <t t-if="quotaaggregates_count">
+                                <span class='badge pull-right'><t t-esc="quotaaggregates_count"/></span>
+                            </t>
+                            <t t-if="not quotaaggregates_count">
+                                There are currently no quota aggregate values for your account.
+                            </t>
+                        </small>
+                    </a>
+                </h3>
+                <h3 class="page-header" style="order: 8;">
+                    <a href="/my/hydricmovements">
+                        <i class="fa fa-fw fa-list-ol"/>
+                        Hydricmovements
+                        <small class="ml8">
+                            <t t-if="hydricmovement_count">
+                                <span class='badge pull-right'><t t-esc="hydricmovement_count"/></span>
+                            </t>
+                            <t t-if="not hydricmovement_count">
+                                There are currently no hydricmovements for your account.
+                            </t>
+                        </small>
+                    </a>
+                </h3>
+            </xpath>
+        </template>
+    </data>
+</odoo>

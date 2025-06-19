@@ -17,6 +17,8 @@
     ],
     "data": [
         "views/website_portal_templates.xml",
+        "views/portal_account_templates.xml",
+        "views/portal_communications_templates.xml",
         'security/ir.model.access.csv',
     ],
     "installable": True,

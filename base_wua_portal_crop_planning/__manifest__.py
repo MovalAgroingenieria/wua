@@ -13,6 +13,7 @@
     "license": "AGPL-3",
     "depends": [
         "base_wua_portal",
+        "base_wua_portal_pressurized_irrigation",
         "base_wua_crop_planning",
     ],
     "data": [

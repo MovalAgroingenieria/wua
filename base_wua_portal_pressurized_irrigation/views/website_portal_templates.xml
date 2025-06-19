@@ -10,38 +10,6 @@
                 </li>
             </xpath>
         </template>
-        <template id="portal_my_home_wua" inherit_id="base_wua_portal_infrastructure.portal_my_home_wua" name="Hide Quotes and Orders">
-            <xpath expr="//div[contains(@class,'o_my_home_content')]" position="inside">
-                <h3 class="page-header" style="order: 4;">
-                    <a href="/my/readings">
-                        <i class="fa fa-fw fa-list"/>
-                        Your Readings
-                        <small class="ml8">
-                            <t t-if="readings_count">
-                                <span class='badge pull-right'><t t-esc="readings_count"/></span>
-                            </t>
-                            <t t-if="not readings_count">
-                                There are currently no readings for your account.
-                            </t>
-                        </small>
-                    </a>
-                </h3>
-                <h3 class="page-header" style="order: 5;">
-                    <a href="/my/presconsumptions">
-                        <i class="fa fa-fw fa-moval-irrigation"/>
-                        Your presconsumptions
-                        <small class="ml8">
-                            <t t-if="presconsumptions_count">
-                                <span class='badge pull-right'><t t-esc="presconsumptions_count"/></span>
-                            </t>
-                            <t t-if="not presconsumptions_count">
-                                There are currently no presconsumptions for your account.
-                            </t>
-                        </small>
-                    </a>
-                </h3>
-            </xpath>
-        </template>
         <template id="portal_my_readings" name="My Readings">
             <t t-call="website.layout">
                 <div class="container mt16">
@@ -347,6 +315,38 @@
                     <div class="fa fa-fw fa-list o_button_icon"></div>
                     Consumptions
                 </a>
+            </xpath>
+            <xpath expr="//ul[@name='tabs_titles']" position="inside">
+                <li><a href="#irrigation_shifts" role="tab" data-toggle="tab">Irrigation Shifts</a></li>
+            </xpath>
+
+            <xpath expr="//div[@name='tabs_content']" position="inside">
+                <div class="tab-pane" id="irrigation_shifts">
+                    <h4>Irrigation Shifts</h4>
+                    <t t-if="not waterconnection.irrigation_shift_ids">
+                        <p>There are currently no irrigation shifts for this water connection.</p>
+                    </t>
+                    <t t-if="waterconnection.irrigation_shift_ids">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr class="active">
+                                    <th>Irrigation Shift</th>
+                                    <th>Description</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="waterconnection.irrigation_shift_ids" t-as="shift">
+                                    <tr>
+                                        <td><t t-esc="shift.irrigation_shift_id.name"/></td>
+                                        <td><t t-esc="shift.description"/></td>
+                                        <td><t t-esc="shift.notes"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </t>
+                </div>
             </xpath>
         </template>
     </data>

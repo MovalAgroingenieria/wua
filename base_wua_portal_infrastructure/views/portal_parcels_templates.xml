@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="portal_my_parcels" name="Portal layout : parcel entries" inherit_id="base_wua_portal.portal_my_parcels" priority="925">
+            <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="inside">
+                <li>
+                    <a href="/my/waterconnections">Water connections</a>
+                </li>
+            </xpath>
+        </template>
+        <template id="portal_my_parcels_followup" name="Portal layout : parcel entries" inherit_id="base_wua_portal.parcels_followup" priority="925">
+            <xpath expr="//a[contains(@name,'gis_url_button')]" position="after">
+                <a t-if="cadastral_url" t-att-href="cadastral_url" target="_blank" class="btn oe_stat_button">
+                    <div class="fa fa-fw fa-cubes o_button_icon"></div>
+                    Catastral
+                </a>
+            </xpath>
+            <xpath expr="//div[@name='left_column']" position="inside">
+                <br/>
+                <div><strong>Hydraulicsector:</strong> <span t-field="parcel.hydraulicsector_id.name"/></div>
+                <br/>
+            </xpath>
+            <xpath expr="//ul[@name='tabs_titles']" position="inside">
+                <li><a href="#waterconnections" role="tab" data-toggle="tab">Water connections</a></li>
+            </xpath>
+
+            <xpath expr="//div[@name='tabs_content']" position="inside">
+                <div class="tab-pane" id="waterconnections">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Position</th>
+                                <th>Water connection</th>
+                                <th>Irrigationshed</th>
+                                <th>Hydraulicsector</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="parcel.irrigationpointwc_ids" t-as="wc">
+                                <tr>
+                                    <td><t t-esc="wc.pos"/></td>
+                                    <td>
+                                        <a t-attf-href="/my/waterconnections/#{partner.waterconnectionlink_ids.filtered(lambda l: l.waterconnection_id == wc.waterconnection_id).id}">
+                                            <t t-esc="wc.waterconnection_id.name"/>
+                                        </a>
+                                    </td>
+                                    <td><t t-esc="wc.irrigationshed_id.name"/></td>
+                                    <td><t t-esc="wc.hydraulicsector_id.name"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </xpath>
+        </template>
+    </data>
+</odoo>

@@ -1,34 +1,12 @@
-# -*- coding: utf-8 -*-
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
-
+# Archivo: controllers/portal_parcels_controller.py
 from odoo import http
 from odoo.exceptions import AccessError
 from odoo.http import request, Response
-from odoo.addons.website_portal.controllers.main import website_account
 
 
-class website_account(website_account):
+class PortalParcels(http.Controller):
 
     _items_per_page = 10
-
-    @http.route()
-    def account(self, **kw):
-        """ Add parcels documents to main account page """
-        response = super(website_account, self).account(**kw)
-        partner = request.env.user.partner_id
-
-        parcels = request.env['wua.parcel.partnerlink']
-        parcel_count = parcels.search_count([
-            ('partner_id', '=', partner.id),
-        ])
-        gis_viewer_link = partner.gis_viewer_link
-        if gis_viewer_link and '&arg=' in gis_viewer_link:
-            gis_viewer_link = gis_viewer_link.split('&arg=')[0]
-        response.qcontext.update({
-            'parcel_count': parcel_count,
-            'gis_viewer_link': gis_viewer_link,
-        })
-        return response
 
     def _prepare_portal_layout_values(self):
         """ prepare the values to render portal layout """
@@ -82,12 +60,13 @@ class website_account(website_account):
             'has_extra_code': has_extra_code,
             'search_field': search_field,
             'default_url': '/my/parcels',
+            'parcel_id_list': ','.join(map(str, partnerlinks.ids)),
         })
         return request.render("base_wua_portal.portal_my_parcels", values)
 
-    @http.route(['/my/parcels/<int:parcel>'],
-                type='http', auth="user", website=True)
-    def parcels_followup(self, parcel=None, **kw):
+    @http.route(['/my/parcels/<int:parcel>'], type='http',
+                auth="user", website=True)
+    def parcels_followup(self, parcel=None, ids=None, **kw):
         partnerlink = request.env['wua.parcel.partnerlink'].browse([parcel])
         parcel = partnerlink.parcel_id
         try:
@@ -98,38 +77,30 @@ class website_account(website_account):
 
         parcel_sudo = parcel.sudo()
 
+        parcel_id_list = [int(i) for i in ids.split(',')] if ids else []
+        current_index = (
+            parcel_id_list.index(partnerlink.id)
+            if partnerlink.id in parcel_id_list else -1
+        )
+        prev_id = (
+            parcel_id_list[current_index - 1]
+            if current_index > 0 else None
+        )
+        next_id = (
+            parcel_id_list[current_index + 1]
+            if 0 <= current_index < len(parcel_id_list) - 1 else None
+        )
+
         return request.render("base_wua_portal.parcels_followup", {
             'parcel': parcel_sudo,
             'partner': request.env.user.partner_id,
             'gis_url': parcel.gis_viewer_link,
+            'prev_parcel_id': prev_id,
+            'next_parcel_id': next_id,
+            'ids': ids,
+            'parcel_index': current_index + 1 if current_index >= 0 else 0,
+            'parcel_total': len(parcel_id_list),
         })
-
-    @http.route('/my/report', type='http', auth="user", website=True)
-    def portal_wua_partner_report(self, **kw):
-        """Generates the Partner report and serves it as a PDF"""
-        partner = request.env.user.partner_id
-        partner_model = request.env['res.partner'].sudo()
-        model_report = request.env['report'].sudo()
-        partner = partner_model.search([('id', '=', partner.id)], limit=1)
-        if not partner:
-            return Response(
-                "No partner found",
-                status=404)
-        report_ref = \
-            'base_wua.wua_partner_report_document'
-        partner_report = model_report.with_context(
-            {'lang': partner.lang}).get_pdf(
-                [partner.id], report_ref)
-
-        response = request.make_response(
-            partner_report,
-            headers=[
-                ('Content-Type', 'application/pdf'),
-                ('Content-Disposition',
-                 'attachment; filename="wua_partner_report.pdf"')
-            ]
-        )
-        return response
 
     @http.route(['/my/parcels/<int:parcel>/report'],
                 type='http', auth="user", website=True)
@@ -162,25 +133,4 @@ class website_account(website_account):
                  'attachment; filename="wua_parcel_report.pdf"')
             ]
         )
-        return response
-
-    @http.route(['/my/account'], type='http', auth='user', website=True)
-    def details(self, redirect=None, **post):
-        response = \
-            super(website_account, self).details(redirect=redirect, **post)
-        partner = request.env.user.partner_id
-
-        mandates = request.env['account.banking.mandate'].sudo().search([
-            ('partner_id', '=', partner.id)
-        ])
-
-        if isinstance(response, dict):
-            response.update({
-                'mandates': mandates,
-            })
-        elif hasattr(response, 'qcontext'):
-            response.qcontext.update({
-                'mandates': mandates,
-            })
-
         return response

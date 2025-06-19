@@ -13,52 +13,6 @@
                 </li>
             </xpath>
         </template>
-        <template id="portal_my_home_wua" inherit_id="base_wua_portal_infrastructure.portal_my_home_wua" name="Quotas and hydricmovements">
-            <xpath expr="//div[contains(@class,'o_my_home_content')]" position="inside">
-                <h3 class="page-header" style="order: 6;">
-                    <a href="/my/quotas">
-                        <i class="fa fa-fw fa-moval-quotas"/>
-                        Your quotas
-                        <small class="ml8">
-                            <t t-if="quota_count">
-                                <span class='badge pull-right'><t t-esc="quota_count"/></span>
-                            </t>
-                            <t t-if="not quota_count">
-                                There are currently no quotas for your account.
-                            </t>
-                        </small>
-                    </a>
-                </h3>
-                <h3 class="page-header" style="order: 7;">
-                    <a href="/my/quotaaggregates">
-                        <i class="fa fa-fw fa-moval-quotas-aggregate"/>
-                        Your quota aggregate values
-                        <small class="ml8">
-                            <t t-if="quotaaggregates_count">
-                                <span class='badge pull-right'><t t-esc="quotaaggregates_count"/></span>
-                            </t>
-                            <t t-if="not quotaaggregates_count">
-                                There are currently no quota aggregate values for your account.
-                            </t>
-                        </small>
-                    </a>
-                </h3>
-                <h3 class="page-header" style="order: 8;">
-                    <a href="/my/hydricmovements">
-                        <i class="fa fa-fw fa-list-ol"/>
-                        Your hydricmovements
-                        <small class="ml8">
-                            <t t-if="hydricmovement_count">
-                                <span class='badge pull-right'><t t-esc="hydricmovement_count"/></span>
-                            </t>
-                            <t t-if="not hydricmovement_count">
-                                There are currently no hydricmovements for your account.
-                            </t>
-                        </small>
-                    </a>
-                </h3>
-            </xpath>
-        </template>
         <template id="portal_my_quotas" name="My Readings">
             <t t-call="website.layout">
                 <div class="container mt16">

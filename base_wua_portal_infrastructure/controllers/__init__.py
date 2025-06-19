@@ -1,1 +1,2 @@
-from . import portal_custom_home
+from . import portal_waterconnections_controller
+from . import portal_irrigationmanagement_controller

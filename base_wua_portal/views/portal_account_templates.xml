@@ -1,0 +1,328 @@
+<odoo>
+<data>
+    <template id="portal_my_home_menu_wua" name="Portal layout : wua menu entries" inherit_id="website_portal_sale.portal_my_home_menu_sale" priority="925">
+            <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="attributes">
+                <attribute name="style">display: flex; flex-direction: row; flex-wrap: wrap;</attribute>
+            </xpath>
+            <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="inside">
+                <li style="order: 2;">
+                    <a name="parcels_menu" href="/my/parcels">Parcels</a>
+                </li>
+            </xpath>
+            <xpath expr="//li[a[@href='/my/quotes']]" position="attributes">
+                <attribute name="style">display: none;</attribute>
+            </xpath>
+            <xpath expr="//li[a[@href='/my/orders']]" position="attributes">
+                <attribute name="style">display: none;</attribute>
+            </xpath>
+            <xpath expr="//div[@id='o_my_sidebar']" position="attributes">
+                <attribute name="t-if">default_url != '/my/parcels'</attribute>
+            </xpath>
+            <xpath expr="//div[@id='o_my_sidebar']//div[@class='o_my_details']//div[@t-field='user.partner_id']" position="attributes">
+                <attribute name="style">display: none;</attribute>
+            </xpath>
+            <xpath expr="//div[@id='o_my_sidebar']//div[@class='o_my_details']" position="inside">
+            <a t-attf-href="/my/report"
+               target="_blank">
+                <div t-field="user.partner_id" t-options='{"widget": "contact", "fields": ["email", "phone", "address", "name"]}'/>
+                <div class="mt8" t-if="user.partner_id.vat">
+                    <t t-set="vat_no_prefix" t-value="user.partner_id.vat[2:]"/>
+                    <span t-esc="vat_no_prefix"/>
+                </div>
+            </a>
+
+            <div class="col-md-12 text-center mt-auto">
+                <a name="gis_viewer_link" t-att-href="gis_viewer_link" target="_blank" class="btn oe_stat_button">
+                    <div class="fa fa-fw fa-map-marker o_button_icon"></div>
+                        View in Map
+                </a>
+            </div>
+            </xpath>
+        </template>
+        <template id="portal_my_home_wua" inherit_id="website_portal_sale.portal_my_home_sale" name="Hide Quotes and Orders">
+            <xpath expr="//div[contains(@class,'o_my_home_content')]" position="attributes">
+                <attribute name="style">display: flex; flex-direction: column;</attribute>
+            </xpath>
+            <xpath expr="//div[contains(@class,'o_my_home_content')]" position="inside">
+                <h3 name="parcels_home_header" class="page-header" style="order: 2;">
+                    <a href="/my/parcels">
+                    <i class="fa fa-fw fa-moval-parcel"></i>
+                        Parcels
+                        <small class="ml8">
+                            <t t-if="parcel_count">
+                                <span class='badge pull-right'><t t-esc="parcel_count"/></span>
+                            </t>
+                            <t t-if="not parcel_count">
+                                There are currently no parcels for your account.
+                            </t>
+                        </small>
+                    </a>
+                </h3>
+            </xpath>
+            <xpath expr="//h3[a[@href='/my/quotes']]" position="attributes">
+                <attribute name="style">display: none;</attribute>
+            </xpath>
+            <xpath expr="//h3[a[@href='/my/orders']]" position="attributes">
+                <attribute name="style">display: none;</attribute>
+            </xpath>
+            <xpath expr="//h3[a[@href='/my/invoices']]" position="attributes">
+                <attribute name="style">display: none;</attribute>
+            </xpath>
+            <xpath expr="//h3[a[@href='/my/invoices']]" position="after">
+                <h3 class="page-header" style="order: 1;">
+                    <a href="/my/invoices">
+                        <i class="fa fa-fw fa-pencil-square-o"></i>
+                        Invoices and Payments
+                        <small class="ml8">
+                            <t t-if="invoice_count">
+                                <span class='badge pull-right'><t t-esc="invoice_count"/></span>
+                            </t>
+                            <t t-if="not invoice_count">
+                                There are currently no invoices for your account.
+                            </t>
+                        </small>
+                    </a>
+                </h3>
+            </xpath>
+        </template>
+        <template id="custom_my_account_details" inherit_id="website_portal.details">
+            <xpath expr="//button[@type='submit']" position="replace">
+            </xpath>
+            <xpath expr="//div[@id='wrap']/div[@class='container']/h1" position="replace">
+                <h1>Partner Details</h1>
+            </xpath>
+            <xpath expr="//div[@class='row o_website_portal_details']/div[@class='col-md-8']/div[@class='row']" position="replace">
+                <div class="row">
+
+                    <div class="col-md-12">
+                        <span>For any change of info, write to: <t t-esc="company_email"/></span>
+                    </div>
+                    <div class="col-md-12">
+                        <h3>Contact Information</h3>
+                    </div>
+
+                    <div class="form-group col-lg-6">
+                        <label class="control-label">Your Name</label>
+                        <div>
+                            <span t-esc="partner.name"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-lg-6">
+                        <label class="control-label">Email</label>
+                        <div>
+                            <span t-esc="partner.email"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-lg-6">
+                        <label class="control-label">Phone</label>
+                        <div>
+                            <span t-esc="partner.phone"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-lg-6">
+                        <label class="control-label">Company Name</label>
+                        <div>
+                            <t t-if="partner.commercial_partner_id.is_company">
+                                <span t-esc="partner.commercial_company_name"/>
+                            </t>
+                            <t t-else="">
+                                <span t-esc="partner.company_name"/>
+                            </t>
+                        </div>
+                    </div>
+
+                    <t t-if="has_check_vat">
+                        <div class="form-group col-lg-6">
+                            <label class="control-label">VAT Number</label>
+                            <div>
+                                <t t-if="partner.vat">
+                                    <t t-set="vat_no_prefix" t-value="partner.vat[2:]"/>
+                                    <span t-esc="vat_no_prefix"/>
+                                </t>
+                                <t t-else="">
+                                    <span>-</span>
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+
+                    <div class="form-group col-lg-6">
+                        <label class="control-label">Street</label>
+                        <div>
+                            <span t-esc="partner.street"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-lg-6">
+                        <label class="control-label">City</label>
+                        <div>
+                            <span t-esc="partner.city"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-lg-6">
+                        <label class="control-label">Zip / Postal Code</label>
+                        <div>
+                            <span t-esc="partner.zip"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-lg-6">
+                        <label class="control-label">Country</label>
+                        <div>
+                            <span t-esc="partner.country_id.name"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-lg-6">
+                        <label class="control-label">State / Province</label>
+                        <div>
+                            <span t-esc="partner.state_id.name"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-lg-6">
+                        <label class="control-label">Number of Votes</label>
+                        <div>
+                            <span t-esc="partner.number_of_votes"/>
+                        </div>
+                    </div>
+                    <div class="clearfix"/>
+                    <h1 class="form-group col-lg-12">Partner roles</h1>
+                    <div class="form-group col-lg-4 text-center">
+                        <label class="control-label">Is Owner</label>
+                        <div>
+                            <input type="checkbox" t-att-checked="partner.is_owner" disabled="disabled"/>
+                        </div>
+                    </div>
+                    <div class="form-group col-lg-4 text-center">
+                        <label class="control-label">Is Lessee</label>
+                        <div>
+                            <input type="checkbox" t-att-checked="partner.is_lessee" disabled="disabled"/>
+                        </div>
+                    </div>
+                    <div class="form-group col-lg-4 text-center">
+                        <label class="control-label">Is Payer</label>
+                        <div>
+                            <input type="checkbox" t-att-checked="partner.is_payer" disabled="disabled"/>
+                        </div>
+                    </div>
+                    <h1 class="form-group col-lg-12">Bank Data</h1>
+                    <div  class="form-group col-lg-6">
+                        <label class="control-label">Customer Payment Mode</label>
+                        <div>
+                            <span t-esc="partner.customer_payment_mode_id.name"/>
+                        </div>
+                    </div>
+                    <h3 class="form-group col-lg-12">Bank Accounts</h3>
+                    <div class="form-group col-lg-12">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Bank Name</th>
+                                    <th>Account Number</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-if="partner.bank_ids">
+                                    <t t-foreach="partner.bank_ids" t-as="bank">
+                                        <tr>
+                                            <td><t t-esc="bank.bank_id.name"/></td>
+                                            <td><t t-esc="bank.acc_number"/></td>
+                                        </tr>
+                                    </t>
+                                </t>
+                                <t t-if="not partner.bank_ids">
+                                    <tr>
+                                        <td colspan="2">No bank accounts available</td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Banking Mandates
+                    <h3 class="form-group col-lg-12">Banking Mandates</h3>
+                    <div class="form-group col-lg-12">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Format</th>
+                                    <th>Unique Mandate Reference</th>
+                                    <th>Bank Account</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-if="mandates">
+                                    <t t-foreach="mandates" t-as="mandate">
+                                        <tr>
+                                            <td><t t-esc="mandate.format"/></td>
+                                            <td><t t-esc="mandate.unique_mandate_reference"/></td>
+                                            <td><t t-esc="mandate.partner_bank_id.acc_number"/></td>
+                                        </tr>
+                                    </t>
+                                </t>
+                                <t t-if="not mandates">
+                                    <tr>
+                                        <td colspan="3">No banking mandates available</td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                    -->
+                </div>
+            </xpath>
+            <xpath expr="//div[@class='row o_website_portal_details']/div[@class='col-md-8']" position="after">
+                <div class='col-md-4'>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Actions</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li>
+                                    <a href="/my/change_password" class="btn btn-secondary btn-block">Change Password</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </template>
+        <template id="change_password_template" name="Change Password Page">
+            <t t-call="website.layout">
+                <div class="container">
+                <h2>Change password</h2>
+
+                <t t-if="error"><div class="alert alert-danger"><t t-esc="error"/></div></t>
+                <t t-if="success"><div class="alert alert-success"><t t-esc="success"/></div></t>
+
+                <form action="/my/change_password/submit" method="post">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                    <div class="form-group">
+                    <label>Current password</label>
+                    <input type="password" name="old_password" class="form-control" required="true"/>
+                    </div>
+
+                    <div class="form-group">
+                    <label>New password</label>
+                    <input type="password" name="new_password" class="form-control" required="true"/>
+                    </div>
+
+                    <div class="form-group">
+                    <label>Confirm new password</label>
+                    <input type="password" name="confirm_password" class="form-control" required="true"/>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Change password</button>
+                </form>
+                </div>
+            </t>
+        </template>
+
+</data>
+</odoo>

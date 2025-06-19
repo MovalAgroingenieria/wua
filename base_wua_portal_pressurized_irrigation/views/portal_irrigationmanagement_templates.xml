@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="portal_my_irrigationmanagement" inherit_id="base_wua_portal_infrastructure.portal_my_irrigationmanagement" name="Hide Quotes and Orders">
+            <xpath expr="//div[@name='irrigation_menu']" position="inside">
+                <h3 class="page-header" style="order: 4;">
+                    <a href="/my/readings">
+                        <i class="fa fa-fw fa-list"/>
+                        Readings
+                        <small class="ml8">
+                            <t t-if="readings_count">
+                                <span class='badge pull-right'><t t-esc="readings_count"/></span>
+                            </t>
+                            <t t-if="not readings_count">
+                                There are currently no readings for your account.
+                            </t>
+                        </small>
+                    </a>
+                </h3>
+                <h3 class="page-header" style="order: 5;">
+                    <a href="/my/presconsumptions">
+                        <i class="fa fa-fw fa-moval-irrigation"/>
+                        Presconsumptions
+                        <small class="ml8">
+                            <t t-if="presconsumptions_count">
+                                <span class='badge pull-right'><t t-esc="presconsumptions_count"/></span>
+                            </t>
+                            <t t-if="not presconsumptions_count">
+                                There are currently no presconsumptions for your account.
+                            </t>
+                        </small>
+                    </a>
+                </h3>
+            </xpath>
+        </template>
+    </data>
+</odoo>

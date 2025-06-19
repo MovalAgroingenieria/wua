@@ -10,38 +10,6 @@
                 </li>
             </xpath>
         </template>
-        <template id="portal_my_home_wua" inherit_id="base_wua_portal.portal_my_home_wua" name="Hide Quotes and Orders">
-            <xpath expr="//div[contains(@class,'o_my_home_content')]" position="inside">
-                <h3 class="page-header" style="order: 14;">
-                    <a href="/my/files">
-                        <i class="fa fa-fw fa-filemgmt-files"/>
-                        Your Files
-                        <small class="ml8">
-                            <t t-if="files_count">
-                                <span class='badge pull-right'><t t-esc="files_count"/></span>
-                            </t>
-                            <t t-if="not files_count">
-                                There are currently no files for your account.
-                            </t>
-                        </small>
-                    </a>
-                </h3>
-                <h3 class="page-header" style="order: 15;">
-                    <a href="/my/registries">
-                    <i class="fa fa-fw fa-lettermgmt-inout"/>
-                        Your Registries
-                        <small class="ml8">
-                            <t t-if="registries_count">
-                                <span class='badge pull-right'><t t-esc="registries_count"/></span>
-                            </t>
-                            <t t-if="not registries_count">
-                                There are currently no registries for your account.
-                            </t>
-                        </small>
-                    </a>
-                </h3>
-            </xpath>
-        </template>
         <template id="portal_my_files" name="My Files">
             <t t-call="website.layout">
                 <div class="container mt16">

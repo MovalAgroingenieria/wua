@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    <template id="portal_my_irrigationmanagement" name="Portal Layout">
+        <t t-call="website.layout">
+            <div class="container mt16">
+                <div class="navbar navbar-default">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#oe-help-navbar-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="/my/home">
+                            My Account
+                        </a>
+                    </div>
+                    <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
+                        <ul class="nav navbar-nav o_portal_submenu">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div id="wrap">
+                <div class="container mb64">
+                    <div name="irrigation_menu" class="col-md-8">
+                        <h3 name="waterconnections_home_header" class="page-header" style="order: 3;">
+                            <a href="/my/waterconnections">
+                            <i class="fa fa-fw fa-moval-water-counter"></i>
+                                Water connections
+                                <small class="ml8">
+                                    <t t-if="waterconnection_count">
+                                        <span class='badge pull-right'><t t-esc="waterconnection_count"/></span>
+                                    </t>
+                                    <t t-if="not waterconnection_count">
+                                        There are currently no water connections for your account.
+                                    </t>
+                                </small>
+                            </a>
+                        </h3>
+                    </div>
+                    <div id="o_my_sidebar" class="col-md-3 col-md-offset-1 o_my_sidebar">
+                        <h3 class="page-header">Details <a href="/my/account" class="btn btn-default btn-xs">Consult</a></h3>
+                        <a t-attf-href="/my/report"
+                        target="_blank">
+                            <div t-field="user.partner_id" t-options='{"widget": "contact", "fields": ["email", "phone", "address", "name"]}'/>
+                            <div class="mt8" t-if="user.partner_id.vat">
+                                <t t-set="vat_no_prefix" t-value="user.partner_id.vat[2:]"/>
+                                <span t-esc="vat_no_prefix"/>
+                            </div>
+                        </a>
+
+                        <div class="col-md-12 text-center mt-auto">
+                            <a name="gis_viewer_link" t-att-href="gis_viewer_link" target="_blank" class="btn oe_stat_button">
+                                <div class="fa fa-fw fa-map-marker o_button_icon"></div>
+                                    View in Map
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+        </template>
+    </data>
+</odoo>

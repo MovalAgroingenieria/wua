@@ -1,186 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <template id="portal_my_home_menu_wua" name="Portal layout : wua menu entries" inherit_id="website_portal_sale.portal_my_home_menu_sale" priority="925">
-            <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="attributes">
-                <attribute name="style">display: flex; flex-direction: row; flex-wrap: wrap;</attribute>
-            </xpath>
-            <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="inside">
-                <li style="order: 2;">
-                    <a name="parcels_menu" href="/my/parcels">Parcels</a>
-                </li>
-            </xpath>
-            <xpath expr="//li[a[@href='/my/quotes']]" position="attributes">
-                <attribute name="style">display: none;</attribute>
-            </xpath>
-            <xpath expr="//li[a[@href='/my/orders']]" position="attributes">
-                <attribute name="style">display: none;</attribute>
-            </xpath>
-            <xpath expr="//div[@id='o_my_sidebar']" position="attributes">
-                <attribute name="t-if">default_url != '/my/parcels'</attribute>
-            </xpath>
-            <xpath expr="//div[@id='o_my_sidebar']//div[@class='o_my_details']//div[@t-field='user.partner_id']" position="attributes">
-                <attribute name="style">display: none;</attribute>
-            </xpath>
-            <xpath expr="//div[@id='o_my_sidebar']//div[@class='o_my_details']" position="inside">
-            <a t-attf-href="/my/report"
-               target="_blank">
-                <div t-field="user.partner_id" t-options='{"widget": "contact", "fields": ["email", "phone", "address", "name"]}'/>
-                <div class="mt8" t-if="user.partner_id.vat">
-                    <t t-set="vat_no_prefix" t-value="user.partner_id.vat[2:]"/>
-                    <span t-esc="vat_no_prefix"/>
-                </div>
-            </a>
-
-            <div class="col-md-12 text-center mt-auto">
-                <a name="gis_viewer_link" t-att-href="gis_viewer_link" target="_blank" class="btn oe_stat_button">
-                    <div class="fa fa-fw fa-map-marker o_button_icon"></div>
-                        View in Map
-                </a>
-            </div>
-            </xpath>
-        </template>
-        <template id="portal_my_home_wua" inherit_id="website_portal_sale.portal_my_home_sale" name="Hide Quotes and Orders">
-            <xpath expr="//div[contains(@class,'o_my_home_content')]" position="attributes">
-                <attribute name="style">display: flex; flex-direction: column;</attribute>
-            </xpath>
-            <xpath expr="//div[contains(@class,'o_my_home_content')]" position="inside">
-                <h3 name="parcels_home_header" class="page-header" style="order: 2;">
-                    <a href="/my/parcels">
-                    <i class="fa fa-fw fa-moval-parcel"></i>
-                        Your Parcels
-                        <small class="ml8">
-                            <t t-if="parcel_count">
-                                <span class='badge pull-right'><t t-esc="parcel_count"/></span>
-                            </t>
-                            <t t-if="not parcel_count">
-                                There are currently no parcels for your account.
-                            </t>
-                        </small>
-                    </a>
-                </h3>
-            </xpath>
-            <xpath expr="//h3[a[@href='/my/quotes']]" position="attributes">
-                <attribute name="style">display: none;</attribute>
-            </xpath>
-            <xpath expr="//h3[a[@href='/my/orders']]" position="attributes">
-                <attribute name="style">display: none;</attribute>
-            </xpath>
-            <xpath expr="//h3[a[@href='/my/invoices']]" position="attributes">
-                <attribute name="style">display: none;</attribute>
-            </xpath>
-            <xpath expr="//h3[a[@href='/my/invoices']]" position="after">
-                <h3 class="page-header" style="order: 1;">
-                    <a href="/my/invoices">
-                        <i class="fa fa-fw fa-pencil-square-o"></i>
-                        Your Invoices and Payments
-                        <small class="ml8">
-                            <t t-if="invoice_count">
-                                <span class='badge pull-right'><t t-esc="invoice_count"/></span>
-                            </t>
-                            <t t-if="not invoice_count">
-                                There are currently no invoices for your account.
-                            </t>
-                        </small>
-                    </a>
-                </h3>
-            </xpath>
-        </template>
-        <template id="custom_my_account_details" inherit_id="website_portal.details">
-            <xpath expr="//div[@id='wrap']/div[@class='container']/h1" position="replace">
-                <h1>Partner Details</h1>
-            </xpath>
-            <xpath expr="//form[@action='/my/account']/div[@class='row o_website_portal_details']/div[@class='col-md-8']/div[@class='row']" position="inside">
-                    <div class="form-group col-lg-6">
-                        <label class="control-label">Number of Votes</label>
-                        <div>
-                            <span t-esc="partner.number_of_votes"/>
-                        </div>
-                    </div>
-                    <div class="clearfix"/>
-                    <h1 class="form-group col-lg-12">Partner roles</h1>
-                    <div class="form-group col-lg-4 text-center">
-                        <label class="control-label">Is Owner</label>
-                        <div>
-                            <input type="checkbox" t-att-checked="partner.is_owner" disabled="disabled"/>
-                        </div>
-                    </div>
-                    <div class="form-group col-lg-4 text-center">
-                        <label class="control-label">Is Lessee</label>
-                        <div>
-                            <input type="checkbox" t-att-checked="partner.is_lessee" disabled="disabled"/>
-                        </div>
-                    </div>
-                    <div class="form-group col-lg-4 text-center">
-                        <label class="control-label">Is Payer</label>
-                        <div>
-                            <input type="checkbox" t-att-checked="partner.is_payer" disabled="disabled"/>
-                        </div>
-                    </div>
-                    <h1 class="form-group col-lg-12">Bank Data</h1>
-                    <div  class="form-group col-lg-6">
-                        <label class="control-label">Customer Payment Mode</label>
-                        <div>
-                            <span t-esc="partner.customer_payment_mode_id.name"/>
-                        </div>
-                    </div>
-                    <h3 class="form-group col-lg-12">Bank Accounts</h3>
-                    <div class="form-group col-lg-12">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Bank Name</th>
-                                    <th>Account Number</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <t t-if="partner.bank_ids">
-                                    <t t-foreach="partner.bank_ids" t-as="bank">
-                                        <tr>
-                                            <td><t t-esc="bank.bank_id.name"/></td>
-                                            <td><t t-esc="bank.acc_number"/></td>
-                                        </tr>
-                                    </t>
-                                </t>
-                                <t t-if="not partner.bank_ids">
-                                    <tr>
-                                        <td colspan="2">No bank accounts available</td>
-                                    </tr>
-                                </t>
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- Banking Mandates
-                    <h3 class="form-group col-lg-12">Banking Mandates</h3>
-                    <div class="form-group col-lg-12">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Format</th>
-                                    <th>Unique Mandate Reference</th>
-                                    <th>Bank Account</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <t t-if="mandates">
-                                    <t t-foreach="mandates" t-as="mandate">
-                                        <tr>
-                                            <td><t t-esc="mandate.format"/></td>
-                                            <td><t t-esc="mandate.unique_mandate_reference"/></td>
-                                            <td><t t-esc="mandate.partner_bank_id.acc_number"/></td>
-                                        </tr>
-                                    </t>
-                                </t>
-                                <t t-if="not mandates">
-                                    <tr>
-                                        <td colspan="3">No banking mandates available</td>
-                                    </tr>
-                                </t>
-                            </tbody>
-                        </table>
-                    </div>
-                    -->
-            </xpath>
-        </template>
         <template id="portal_my_parcels" name="My Parcels">
             <t t-call="website.layout">
                 <div class="container mt16">
@@ -210,7 +30,7 @@
                 <div id="wrap">
                     <div class="container mb64">
                         <div class="col-md-12">
-                            <h3 class="page-header">Your Parcels</h3>
+                            <h3 class="page-header">Parcels</h3>
                             <form action="/my/parcels" method="get" class="mb-3">
                                 <div class="row">
                                     <div class="col-md-2">
@@ -253,7 +73,7 @@
                                     <t t-foreach="partnerlinks" t-as="parcel">
                                         <tr>
                                             <td>
-                                                <a t-attf-href="/my/parcels/#{parcel.id}?#{keep_query()}">
+                                                <a t-attf-href="/my/parcels/#{parcel.id}?ids={{ parcel_id_list }}&amp;#{keep_query()}">
                                                     <t t-esc="parcel.parcel_id.name"/>
                                                 </a>
                                             </td>
@@ -313,19 +133,37 @@
                             <div class="panel panel-default">
                                 <div class="panel-heading">
                                     <div class="row">
-                                        <div class="col-md-8">
+                                        <div class="col-md-10">
                                             <h4>
                                                 <t>Parcel</t>
                                                 <a t-att-href="'/my/parcels/' + str(parcel.id) + '/report'">
                                                     <span t-esc="parcel.name"/>
                                                 </a>
+                                                <a t-att-href="'/my/parcels/' + str(parcel.id) + '/report'" class="ml8" title="Print">
+                                                    <i class="fa fa-print"/>
+                                                </a>
                                             </h4>
+                                        </div>
+                                        <div class="col-md-2 text-right">
+                                            <t t-if="parcel_total">
+                                                <span><t t-esc="parcel_index"/> / <t t-esc="parcel_total"/></span>
+                                            </t>
+                                            <t t-if="prev_parcel_id">
+                                                <a t-attf-href="/my/parcels/{{ prev_parcel_id }}?ids={{ ids }}" class="btn btn-secondary">
+                                                    <i class="fa fa-chevron-left"></i>
+                                                </a>
+                                            </t>
+                                            <t t-if="next_parcel_id">
+                                                <a t-attf-href="/my/parcels/{{ next_parcel_id }}?ids={{ ids }}" class="btn btn-secondary">
+                                                    <i class="fa fa-chevron-right"></i>
+                                                </a>
+                                            </t>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="panel-body">
                                     <div class="row">
-                                        <div class="col-md-4 d-flex flex-column justify-content-between">
+                                        <div name="left_column" class="col-md-4 d-flex flex-column justify-content-between">
                                             <div><strong>Cadastral Parcel:</strong> <span t-esc="parcel.cadastral_parcel"/></div>
                                             <br/>
                                             <div><strong>Cadastral Sector:</strong> <span t-field="parcel.cadastral_sector"/></div>
@@ -338,18 +176,18 @@
                                             <br/>
                                             <div><strong>Cadastral Reference:</strong> <span t-field="parcel.cadastral_reference"/></div>
                                             <br/>
-                                            <div><strong>Area (Cadaster):</strong> <span t-field="parcel.area_cadaster"/></div>
+                                            <div><strong>Area Cadaster(m2):</strong> <span t-field="parcel.area_cadaster"/></div>
                                         </div>
-                                        <div class="col-md-4 d-flex flex-column justify-content-between">
+                                        <div name="middle_column" class="col-md-4 d-flex flex-column justify-content-between">
                                             <div><strong>County:</strong> <span t-esc="parcel.county_id.name"/></div>
                                             <br/>
                                             <div t-if="parcel.farmproperty_id"><strong>Farm Property:</strong> <span t-field="parcel.farmproperty_id"/></div>
                                             <div t-if="parcel.farmproperty_id"><br/></div>
                                             <div t-if="parcel.rurallocation_id"><strong>Rural Location:</strong> <span t-field="parcel.rurallocation_id"/></div>
                                             <div t-if="parcel.rurallocation_id"><br/></div>
-                                            <div><strong>Area (Official):</strong> <span t-field="parcel.area_official"/></div>
+                                            <div><strong>Area Official(ha):</strong> <span t-field="parcel.area_official"/></div>
                                             <br/>
-                                            <div><strong>Area (GIS):</strong> <span t-field="parcel.area_gis"/></div>
+                                            <div><strong>Area GIS(ha):</strong> <span t-field="parcel.area_gis"/></div>
                                             <br/>
                                             <div><strong>With Votes:</strong>
                                                 <input type="checkbox" t-att-checked="parcel.with_votes" disabled="disabled"/>
@@ -364,7 +202,7 @@
                                             </div>
 
                                         </div>
-                                        <div class="col-md-4 text-center">
+                                        <div name="right_column" class="col-md-4 text-center">
                                             <div class="d-flex flex-column justify-content-between" style="height: 100%;">
                                                 <div t-if="parcel.aerial_img">
                                                     <img t-att-src="'/web/image?model=wua.parcel&amp;id=' + str(parcel.id) + '&amp;field=aerial_img'" class="img-thumbnail" style="width:100%; max-width:300px;"/>
@@ -486,7 +324,5 @@
                 </div>
             </t>
         </template>
-
-
     </data>
 </odoo>

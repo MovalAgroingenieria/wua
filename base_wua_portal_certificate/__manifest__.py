@@ -13,6 +13,7 @@
     "license": "AGPL-3",
     "depends": [
         "base_wua_portal",
+        "base_wua_portal_filemgmt",
         "base_wua_certificate",
     ],
     "data": [
