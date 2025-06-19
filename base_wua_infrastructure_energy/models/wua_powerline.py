@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 # 2025 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
-
 from odoo import models, fields, api
 
 
-class WuaPowerLineSupport(models.Model):
-    _name = 'wua.power.line.support'
-    _description = 'Power Line Support'
+class WuaPowerLine(models.Model):
+    _name = 'wua.powerline'
+    _description = 'Power Line'
     _order = 'name'
 
     name = fields.Char(
@@ -17,87 +16,42 @@ class WuaPowerLineSupport(models.Model):
         unique=True,
     )
 
-    tipology = fields.Selection([
-        ('01_end_line', 'End Line'),
-        ('02_moorage', 'Moorage'),
-        ('03_alignment', 'Alignment'),
-    ],
-        string='Tipology',
+    rated_voltage = fields.Float(
+        string='Rated Voltage (kV)',
+        digits=(32, 4),
     )
 
-    wire_support = fields.Selection([
-        ('01_moorage', 'Moorage'),
-        ('02_suspension', 'Suspension'),
-        ('03_anchorage', 'Anchorage'),
+    type = fields.Selection([
+        ('01_aerial', 'Aerial'),
+        ('02_underground', 'Underground'),
     ],
-        string='Wire Support',
-        default='01_moorage',
+        string='Type',
+        required=True,
+        default='01_aerial',
+        index=True,
     )
 
-    bird_friendly = fields.Boolean(
-        string='Bird Friendly',
-        default=False,
+    length = fields.Float(
+        string='Length (m)',
+        digits=(32, 4),
     )
 
     construction_date = fields.Integer(
         string='Construction Year',
     )
 
-    useful_height = fields.Float(
-        string='Useful Height (m)',
-        digits=(32, 4),
-    )
-
-    material = fields.Selection([
-        ('01_metal', 'Metal'),
-        ('02_concrete', 'Concrete'),
-        ('03_wood', 'Wood'),
+    critical_crossings = fields.Selection([
+        ('01_roads', 'Roads'),
+        ('02_rivers', 'Rivers'),
+        ('03_railways', 'Railways'),
     ],
-        string='Material',
-        default='01_metal',
+        string='Critical Crossings',
+        default='01_roads',
     )
 
-    insulator_type = fields.Selection([
-        ('01_polymeric', 'Polymeric'),
-        ('02_porcelain', 'Porcelain'),
-        ('03_glass', 'Glass'),
-    ],
-        string='Insulator Type',
-        default='01_polymeric',
-    )
-
-    singular_points = fields.Selection([
-        ('01_disconnectors', 'Disconnectors'),
-        ('02_downloaders', 'Downloaders'),
-        ('03_transformers', 'Transformers'),
-        ('04_others', 'Others'),
-    ],
-        string='Singular Points',
-        default='01_disconnectors',
-    )
-
-    bypass = fields.Boolean(
-        string='Bypass',
+    bird_friendly = fields.Boolean(
+        string='Bird Friendly',
         default=False,
-    )
-
-    anticlimb_device = fields.Boolean(
-        string='Anticlimb Device',
-        default=False,
-    )
-
-    danger_signage = fields.Boolean(
-        string='Danger Signage',
-        default=False,
-    )
-
-    have_license_plate = fields.Boolean(
-        string='Have License Plate',
-        default=False,
-    )
-
-    license_plate = fields.Char(
-        string='License Plate',
     )
 
     notes = fields.Html(
@@ -108,40 +62,33 @@ class WuaPowerLineSupport(models.Model):
         string='Technical Characteristics',
     )
 
-    photo_01 = fields.Binary(
-        string='Photo 01',
-        attachment=True,
-    )
-
-    photo_02 = fields.Binary(
-        string='Photo 02',
-        attachment=True,
-    )
-
     gis_viewer_link = fields.Char(
         string='GIS Viewer Link',
         compute='_compute_gis_viewer_link',
         store=False,
     )
 
-    with_gis_power_line_support = fields.Boolean(
-        string='With GIS Power Line Support',
+    with_gis_power_line = fields.Boolean(
+        string='With GIS Power Line',
         readonly=True,
     )
 
     _sql_constraints = [
         (
+            "positive_rated_voltage_check",
+            "CHECK(rated_voltage IS NULL OR rated_voltage >= 0)",
+            "Rated voltage must be positive.",
+        ),
+        (
+            "positive_length_check",
+            "CHECK(length IS NULL OR length >= 0)",
+            "Length must be positive.",
+        ),
+        (
             "positive_construction_year_check",
             "CHECK(construction_date IS NULL OR "
             "construction_date > 0)",
             "Construction year must be greater than zero.",
-        ),
-        (
-            "license_plate_consistency_check",
-            "CHECK(have_license_plate OR license_plate IS NULL OR "
-            "license_plate = '')",
-            "License Plate must be empty if 'Have License Plate' "
-            "is not checked.",
         ),
     ]
 
@@ -155,7 +102,7 @@ class WuaPowerLineSupport(models.Model):
             'wua.configuration', 'url_gis_viewer_password')
         param = self.env['ir.values'].get_default(
             'wua.infrastructure.configuration',
-            'url_gis_viewer_power_line_support_param')
+            'url_gis_viewer_power_line_param')
         for record in self:
             final_url = url
             if final_url:
@@ -187,7 +134,7 @@ class WuaPowerLineSupport(models.Model):
     def init(self):
         parcel_model = self.env['wua.parcel']
         try:
-            parcel_model.create_wua_gis_power_line_support_table()
-            parcel_model.create_power_line_support_triggers()
+            parcel_model.create_wua_gis_power_line_table()
+            parcel_model.create_power_line_triggers()
         except Exception:
             pass

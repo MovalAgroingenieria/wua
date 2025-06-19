@@ -28,3 +28,6 @@ from . import maintenance_settings
 from . import maintenance_stage
 from . import maintenance_plan
 from . import wua_building
+from . import wua_processingcentre
+from . import wua_powerline
+from . import wua_powerlinesupport

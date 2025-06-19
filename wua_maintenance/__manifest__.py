@@ -22,6 +22,7 @@
         "base_wua_infrastructure_primary",
         "base_wua_reservoir",
         "base_wua_infrastructure_pump",
+        "base_wua_infrastructure_energy",
     ],
     "data": [
         "security/security.xml",

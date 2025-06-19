@@ -196,6 +196,33 @@
             <field name="geometry_type">03_polygon</field>
        </record>
 
+        <record id="equipment_category_processingcentre" model="maintenance.equipment.category" forcecreate="False">
+            <field name="name">Processing Centre</field>
+            <field name="is_wua">True</field>
+            <field name="infrastructure_type">01_general</field>
+            <field name="is_primary">False</field>
+            <field name="model_id" ref="base_wua_infrastructure_energy.model_wua_processingcentre"/>
+            <field name="geometry_type">03_polygon</field>
+        </record>
+
+        <record id="equipment_category_powerline" model="maintenance.equipment.category" forcecreate="False">
+            <field name="name">Power Line</field>
+            <field name="is_wua">True</field>
+            <field name="infrastructure_type">01_general</field>
+            <field name="is_primary">False</field>
+            <field name="model_id" ref="base_wua_infrastructure_energy.model_wua_powerline"/>
+            <field name="geometry_type">02_line</field>
+        </record>
+
+        <record id="equipment_category_powerlinesupport" model="maintenance.equipment.category" forcecreate="False">
+            <field name="name">Power Line Support</field>
+            <field name="is_wua">True</field>
+            <field name="infrastructure_type">01_general</field>
+            <field name="is_primary">False</field>
+            <field name="model_id" ref="base_wua_infrastructure_energy.model_wua_powerlinesupport"/>
+            <field name="geometry_type">01_point</field>
+        </record>
+
     </data>
 
 </odoo>

@@ -111,6 +111,12 @@ def post_init_hook(cr, registry):
          'wua_valve', '03_gravity', False),
         ('wua_maintenance.equipment_category_filteringstation',
          'wua_filteringstation', '03_gravity', False),
+        ('wua_maintenance.equipment_category_processingcentre',
+         'wua_processing_centre', '01_general', False),
+        ('wua_maintenance.equipment_category_powerline',
+         'wua_power_line', '01_general', False),
+        ('wua_maintenance.equipment_category_powerlinesupport',
+         'wua_power_line_support', '01_general', False),
         ('wua_maintenance.equipment_category_building',
          'wua_building', '01_general', False),
     ]

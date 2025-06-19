@@ -283,6 +283,42 @@ class MaintenanceEquipment(models.Model):
         compute='_compute_filteringstation_id',
     )
 
+    processingcentre_ids = fields.One2many(
+        string='processingcentres',
+        comodel_name='wua.processingcentre',
+        inverse_name='equipment_id',
+    )
+
+    processingcentre_id = fields.Many2one(
+        string='processingcentre',
+        comodel_name='wua.processingcentre',
+        compute='_compute_processingcentre_id',
+    )
+
+    powerline_ids = fields.One2many(
+        string='powerlines',
+        comodel_name='wua.powerline',
+        inverse_name='equipment_id',
+    )
+
+    powerline_id = fields.Many2one(
+        string='powerline',
+        comodel_name='wua.powerline',
+        compute='_compute_powerline_id',
+    )
+
+    powerlinesupport_ids = fields.One2many(
+        string='powerlinesupports',
+        comodel_name='wua.powerlinesupport',
+        inverse_name='equipment_id',
+    )
+
+    powerlinesupport_id = fields.Many2one(
+        string='powerlinesupport',
+        comodel_name='wua.powerlinesupport',
+        compute='_compute_powerlinesupport_id',
+    )
+
     tag_html = fields.Html(
         string="Tag HTML",
         compute='_compute_tag_html',
@@ -552,6 +588,36 @@ class MaintenanceEquipment(models.Model):
                 'base_table': 'wua_building',
                 'base_field': 'name',
                 'gis_table': 'wua_gis_building',
+                'gis_field': 'name',
+                'intermediate_table': False,
+                'intermediate_field': False,
+                'intermediate_gis_field': False,
+            },
+            self.env.ref(
+                'wua_maintenance.equipment_category_processingcentre').id: {
+                'base_table': 'wua_processing_centre',
+                'base_field': 'name',
+                'gis_table': 'wua_gis_processingcentre',
+                'gis_field': 'name',
+                'intermediate_table': False,
+                'intermediate_field': False,
+                'intermediate_gis_field': False,
+            },
+            self.env.ref(
+                'wua_maintenance.equipment_category_powerline').id: {
+                'base_table': 'wua_power_line',
+                'base_field': 'name',
+                'gis_table': 'wua_gis_powerline',
+                'gis_field': 'name',
+                'intermediate_table': False,
+                'intermediate_field': False,
+                'intermediate_gis_field': False,
+            },
+            self.env.ref(
+                'wua_maintenance.equipment_category_powerlinesupport').id: {
+                'base_table': 'wua_power_line_support',
+                'base_field': 'name',
+                'gis_table': 'wua_gis_powerlinesupport',
                 'gis_field': 'name',
                 'intermediate_table': False,
                 'intermediate_field': False,
@@ -843,6 +909,27 @@ class MaintenanceEquipment(models.Model):
                 valve_id = record.valve_ids[0]
             record.valve_id = valve_id
 
+    def _compute_processingcentre_id(self):
+        for record in self:
+            processingcentre_id = None
+            if record.processingcentre_ids:
+                processingcentre_id = record.processingcentre_ids[0]
+            record.processingcentre_id = processingcentre_id
+
+    def _compute_powerline_id(self):
+        for record in self:
+            powerline_id = None
+            if record.powerline_ids:
+                powerline_id = record.powerline_ids[0]
+            record.powerline_id = powerline_id
+
+    def _compute_powerlinesupport_id(self):
+        for record in self:
+            powerlinesupport_id = None
+            if record.powerlinesupport_ids:
+                powerlinesupport_id = record.powerlinesupport_ids[0]
+            record.powerlinesupport_id = powerlinesupport_id
+
     def _compute_drainagevalve_id(self):
         for record in self:
             drainagevalve_id = None
@@ -942,6 +1029,15 @@ class MaintenanceEquipment(models.Model):
             self.env.ref(
                 'wua_maintenance.equipment_category_building').id:
                 ('wua.building', _('Building')),
+            self.env.ref(
+                'wua_maintenance.equipment_category_processingcentre').id:
+                ('wua.processingcentre', _('Processing Centre')),
+            self.env.ref(
+                'wua_maintenance.equipment_category_powerline').id:
+                ('wua.powerline', _('Power Line')),
+            self.env.ref(
+                'wua_maintenance.equipment_category_powerlinesupport').id:
+                ('wua.powerlinesupport', _('Power Line Support')),
         }
         res_model, name = category_mapping.get(
             current_equipment.category_id.id, (None, None))

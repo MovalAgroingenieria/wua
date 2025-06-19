@@ -1,56 +1,55 @@
 # -*- coding: utf-8 -*-
 # 2025 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+
 from odoo import models, fields, api
 
 
-class WuaPowerLine(models.Model):
-    _name = 'wua.power.line'
-    _description = 'Power Line'
-    _order = 'name'
+class WuaProcessingCentre(models.Model):
+    _name = 'wua.processingcentre'
+    _description = 'WUA Processing Centre'
 
     name = fields.Char(
         string='Identifier',
         required=True,
-        index=True,
         unique=True,
-    )
-
-    rated_voltage = fields.Float(
-        string='Rated Voltage (kV)',
-        digits=(32, 4),
+        index=True,
     )
 
     type = fields.Selection([
         ('01_aerial', 'Aerial'),
-        ('02_underground', 'Underground'),
-    ],
-        string='Type',
+        ('02_prefab', 'Prefabricated'),
+    ], string='Type',
         required=True,
         default='01_aerial',
         index=True,
     )
 
-    length = fields.Float(
-        string='Length (m)',
+    capacity = fields.Float(
+        string='Total Capacity (kVA)',
         digits=(32, 4),
+        default=0.0,
     )
 
-    construction_date = fields.Integer(
-        string='Construction Year',
+    number_of_transformers = fields.Integer(
+        string='Number of Transformers',
+        default=0,
     )
 
-    critical_crossings = fields.Selection([
-        ('01_roads', 'Roads'),
-        ('02_rivers', 'Rivers'),
-        ('03_railways', 'Railways'),
-    ],
-        string='Critical Crossings',
-        default='01_roads',
+    transformer_type = fields.Selection([
+        ('01_oil', 'Oil'),
+        ('02_vegetable_ester', 'Vegetable Ester'),
+    ], string='Transformer Type',
+        default='01_oil',
+        index=True)
+
+    installation_year = fields.Integer(
+        string='Installation Year',
+        default=0,
     )
 
-    bird_friendly = fields.Boolean(
-        string='Bird Friendly',
+    with_measurement_devices = fields.Boolean(
+        string='With Measurement Devices',
         default=False,
     )
 
@@ -62,33 +61,42 @@ class WuaPowerLine(models.Model):
         string='Technical Characteristics',
     )
 
+    photo_01 = fields.Binary(
+        string='Photo 1',
+        attachment=True,
+    )
+
+    photo_02 = fields.Binary(
+        string='Photo 2',
+        attachment=True,
+    )
+
     gis_viewer_link = fields.Char(
         string='GIS Viewer Link',
         compute='_compute_gis_viewer_link',
-        store=False,
     )
 
-    with_gis_power_line = fields.Boolean(
-        string='With GIS Power Line',
+    with_gis_processing_centre = fields.Boolean(
+        string='With GIS Processing centre',
         readonly=True,
     )
 
     _sql_constraints = [
         (
-            "positive_rated_voltage_check",
-            "CHECK(rated_voltage IS NULL OR rated_voltage >= 0)",
-            "Rated voltage must be positive.",
+            "positive_capacity_check",
+            "CHECK(capacity IS NULL OR capacity >= 0)",
+            "Total capacity must be positive.",
         ),
         (
-            "positive_length_check",
-            "CHECK(length IS NULL OR length >= 0)",
-            "Length must be positive.",
+            "positive_transformers_check",
+            "CHECK(number_of_transformers IS NULL OR "
+            "number_of_transformers >= 0)",
+            "Number of transformers must be positive.",
         ),
         (
-            "positive_construction_year_check",
-            "CHECK(construction_date IS NULL OR "
-            "construction_date > 0)",
-            "Construction year must be greater than zero.",
+            "positive_installation_year_check",
+            "CHECK(installation_year IS NULL OR installation_year > 0)",
+            "Installation year must be greater than 0.",
         ),
     ]
 
@@ -102,7 +110,7 @@ class WuaPowerLine(models.Model):
             'wua.configuration', 'url_gis_viewer_password')
         param = self.env['ir.values'].get_default(
             'wua.infrastructure.configuration',
-            'url_gis_viewer_power_line_param')
+            'url_gis_viewer_processing_centre_param')
         for record in self:
             final_url = url
             if final_url:
@@ -134,7 +142,7 @@ class WuaPowerLine(models.Model):
     def init(self):
         parcel_model = self.env['wua.parcel']
         try:
-            parcel_model.create_wua_gis_power_line_table()
-            parcel_model.create_power_line_triggers()
+            parcel_model.create_wua_gis_processing_centre_table()
+            parcel_model.create_processing_centre_triggers()
         except Exception:
             pass
