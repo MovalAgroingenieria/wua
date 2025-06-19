@@ -92,6 +92,7 @@ class MaintenanceKindDynamicField(models.Model):
     field_path = fields.Char(
         string='Field Path',
         required=True,
+        default='',
         help='Example: \'partner_id.name\'',
     )
 

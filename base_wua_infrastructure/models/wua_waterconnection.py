@@ -414,7 +414,7 @@ class WuaWaterconnection(models.Model):
             vals.update({'name': name})
 
     def refine_description(self, vals):
-        description = vals['description']
+        description = vals.get('description', '')
         if isinstance(description, basestring):
             description = description.strip()
             vals.update({'description': description})

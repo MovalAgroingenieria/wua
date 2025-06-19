@@ -94,7 +94,7 @@ class WuaIntake(models.Model):
     @api.model
     def create(self, vals):
         intake = super(WuaIntake, self).create(vals)
-        if vals['flowmeter_id']:
+        if 'flowmeter_id' in vals and vals['flowmeter_id']:
             self.update_wua_in_fm(intake.id, vals['flowmeter_id'])
         return intake
 

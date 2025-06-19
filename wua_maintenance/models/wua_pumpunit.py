@@ -11,10 +11,15 @@ class WuaPumpunit(models.Model):
 
     def _get_equipment_vals_for_create(self, item_vals):
         vals = {}
-        if 'name' in item_vals:
-            vals['name'] = item_vals['name']
-            vals['category_id'] = self.env.ref(
-                'wua_maintenance.equipment_category_pump').id
+        vals['category_id'] = self.env.ref(
+            'wua_maintenance.equipment_category_pump').id
+        if 'pumpgroup_id' in item_vals and 'pumpunit_number' in item_vals:
+            pumpgroup_id = self.env['wua.pumpgroup'].browse(
+                item_vals['pumpgroup_id'])
+            pumpunit_number = item_vals['pumpunit_number']
+            name = str(pumpgroup_id.pumpgroup_code).zfill(6) + \
+                ' - ' + str(pumpunit_number).zfill(6)
+            vals['name'] = name
         if ('pumpgroup_id' in item_vals and
                 item_vals['pumpgroup_id']):
             pumpgroup = self.env['wua.pumpgroup'].browse(
