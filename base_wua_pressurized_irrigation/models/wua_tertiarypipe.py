@@ -21,29 +21,31 @@ class WuaTertiaryPipe(models.Model):
         comodel_name='wua.waterconnection',
         string='Water Connection',
         required=True,
-        index=True
+        index=True,
     )
 
     irrigationshed_id = fields.Many2one(
         comodel_name='wua.irrigationshed',
         string='Irrigation Shed',
-        compute='_compute_dependent_fields',
+        compute='_compute_irrigationshed_id',
         store=True,
-        index=True
+        index=True,
     )
+
     watermeter_id = fields.Many2one(
         comodel_name='wua.watermeter',
         string='Water Meter',
-        compute='_compute_dependent_fields',
+        compute='_compute_watermeter_id',
         store=True,
-        index=True
+        index=True,
     )
+
     hydraulicsector_id = fields.Many2one(
         comodel_name='wua.hydraulicsector',
         string='Hydraulic Sector',
-        compute='_compute_dependent_fields',
+        compute='_compute_hydraulicsector_id',
         store=True,
-        index=True
+        index=True,
     )
 
     technical_notes = fields.Html(
@@ -87,10 +89,18 @@ class WuaTertiaryPipe(models.Model):
     ]
 
     @api.depends('waterconnection_id')
-    def _compute_dependent_fields(self):
+    def _compute_irrigationshed_id(self):
         for rec in self:
             rec.irrigationshed_id = rec.waterconnection_id.irrigationshed_id
+
+    @api.depends('waterconnection_id')
+    def _compute_watermeter_id(self):
+        for rec in self:
             rec.watermeter_id = rec.waterconnection_id.watermeter_id
+
+    @api.depends('waterconnection_id')
+    def _compute_hydraulicsector_id(self):
+        for rec in self:
             rec.hydraulicsector_id = rec.waterconnection_id.hydraulicsector_id
 
     @api.depends('waterconnection_id')
@@ -98,7 +108,7 @@ class WuaTertiaryPipe(models.Model):
         for rec in self:
             rec.parcel_count = self.env['wua.parcel'].search_count([
                 ('irrigationpoint_ids.waterconnection_id.id', '=',
-                 rec.waterconnection_id.id)
+                 rec.waterconnection_id.id),
             ])
 
     def action_view_supplied_parcels(self):
