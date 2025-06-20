@@ -94,12 +94,15 @@ class ResPartner(models.Model):
         self.ensure_one()
         condition = [('partner_id', '=', self.id)]
         id_tree_view = self.env.ref('base_wua_pressurized_irrigation_request.'
-                                    'wua_presresconsumption_view_tree').id
+                                'wua_presresconsumption_view_tree').id
         search_view = self.env.ref('base_wua_pressurized_irrigation_request.'
-                                   'wua_presresconsumption_view_search')
+                                'wua_presresconsumption_view_search')
         calendar_view = self.env.ref(
             'base_wua_pressurized_irrigation_request.'
             'wua_presresconsumption_view_calendar')
+        graph_view = self.env.ref(
+            'base_wua_pressurized_irrigation_request.'
+            'wua_presresconsumption_view_graph').id
         context = {
             'create': False,
             'edit': False,
@@ -107,19 +110,21 @@ class ResPartner(models.Model):
             'search_default_group_by_agriculturalseason': 1,
             # 'search_default_irrigationditch': 1,
             'search_default_group_by_preswateringperiod': 1,
-            }
-        # if self.env.user.has_group('base_wua.group_wua_user'):
-        #     context['search_default_executed'] = 1
+        }
         act_window = {
             'type': 'ir.actions.act_window',
             'name': _('Consumption Requests'),
             'res_model': 'wua.presresconsumption',
             'view_type': 'form',
-            'view_mode': 'tree',
-            'views': [(id_tree_view, 'tree'), (calendar_view.id, 'calendar')],
+            'view_mode': 'tree,graph',
+            'views': [
+                (id_tree_view, 'tree'),
+                (calendar_view.id, 'calendar'),
+                (graph_view, 'graph'),
+            ],
             'search_view_id': (search_view.id, search_view.name),
             'domain': condition,
             'target': 'current',
             'context': context,
-            }
+        }
         return act_window

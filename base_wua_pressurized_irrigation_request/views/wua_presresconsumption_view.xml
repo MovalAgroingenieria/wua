@@ -127,18 +127,6 @@
         </field>
     </record>
 
-    <record id="wua_presresconsumption_view_pivot" model="ir.ui.view">
-        <field name="name">wua.presresconsumption.pivot</field>
-        <field name="model">wua.presresconsumption</field>
-        <field name="arch" type="xml">
-            <pivot string="Agregated Values">
-                <field name="total_affected_area_official_hec" type="measure"/>
-                <field name="watering_duration" type="measure"/>
-                <field name="watering_volume" type="measure"/>
-            </pivot>
-        </field>
-    </record>
-
     <record id="wua_presresconsumption_view_calendar" model="ir.ui.view">
         <field name="name">Pres Watering Requests (calendar view)</field>
         <field name="model">wua.presresconsumption</field>
@@ -154,12 +142,42 @@
         </field>
     </record>
 
+    <record id="wua_presresconsumption_view_graph" model="ir.ui.view">
+        <field name="name">wua.presresconsumption.graph</field>
+        <field name="model">wua.presresconsumption</field>
+        <field name="arch" type="xml">
+            <graph string="Consumption Graph" type="bar">
+                <field name="preswateringperiod_id" type="row"/>
+                <field name="waterconnection_id" type="col"/>
+                <field name="watering_volume" type="measure"/>
+                <field name="watering_duration" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="wua_presresconsumption_view_pivot" model="ir.ui.view">
+        <field name="name">wua.presresconsumption.pivot</field>
+        <field name="model">wua.presresconsumption</field>
+        <field name="arch" type="xml">
+            <pivot string="Aggregated Values">
+                <field name="preswateringperiod_id" type="row"/>
+                <field name="waterconnection_id" type="row"/>
+                <field name="partner_id" type="row"/>
+                <field name="watering_duration" type="measure"/>
+                <field name="watering_volume" type="measure"/>
+                <field name="total_affected_area_official_hec" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
     <record id="wua_presresconsumption_action" model="ir.actions.act_window">
         <field name="name">Consumption Requests</field>
         <field name="res_model">wua.presresconsumption</field>
-        <field name="view_mode">tree,pivot,calendar,form</field>
+        <field name="view_mode">tree,pivot,calendar,form,graph</field>
         <field name="view_id" ref="wua_presresconsumption_view_tree"/>
         <field name="search_view_id" ref="wua_presresconsumption_view_search"/>
+        <field name="pivot_view_id" ref="wua_presresconsumption_view_pivot"/>
+        <field name="graph_view_id" ref="wua_presresconsumption_view_graph"/>
         <field name="target">current</field>
         <field name="context">{'search_default_group_by_preswateringperiod': 1}</field>
     </record>

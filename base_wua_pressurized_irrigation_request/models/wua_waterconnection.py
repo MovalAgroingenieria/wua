@@ -43,30 +43,53 @@ class WuaWaterconnection(models.Model):
     def action_see_presresconsumption(self):
         self.ensure_one()
         condition = [('waterconnection_id', '=', self.id)]
-        id_tree_view = self.env.ref('base_wua_pressurized_irrigation_request.'
-                                    'wua_presresconsumption_view_tree').id
-        search_view = self.env.ref('base_wua_pressurized_irrigation_request.'
-                                   'wua_presresconsumption_view_search')
+
+        id_tree_view = self.env.ref(
+            'base_wua_pressurized_irrigation_request.'
+            'wua_presresconsumption_view_tree'
+        ).id
+        calendar_view = self.env.ref(
+            'base_wua_pressurized_irrigation_request.'
+            'wua_presresconsumption_view_calendar'
+        ).id
+        pivot_view = self.env.ref(
+            'base_wua_pressurized_irrigation_request.'
+            'wua_presresconsumption_view_pivot'
+        ).id
+        graph_view = self.env.ref(
+            'base_wua_pressurized_irrigation_request.'
+            'wua_presresconsumption_view_graph'
+        ).id
+
+        search_view = self.env.ref(
+            'base_wua_pressurized_irrigation_request.'
+            'wua_presresconsumption_view_search'
+        )
+        search_view_id = search_view.id
+        search_view_name = search_view.name or 'Search'
+
         context = {
             'create': False,
             'edit': False,
             'delete': False,
-            # 'search_default_agriculturalseason': 1,
-            # 'search_default_irrigationditch': 1,
-            'search_default_preswateringperiod': 1,
-            }
-        # if self.env.user.has_group('base_wua.group_wua_user'):
-        #     context['search_default_executed'] = 1
-        act_window = {
+            'search_default_group_by_agriculturalseason': 1,
+            'search_default_group_by_preswateringperiod': 1,
+        }
+
+        return {
             'type': 'ir.actions.act_window',
             'name': _('Consumption Requests'),
             'res_model': 'wua.presresconsumption',
-            'view_type': 'form',
-            'view_mode': 'tree',
-            'views': [(id_tree_view, 'tree')],
-            'search_view_id': (search_view.id, search_view.name),
+            'view_mode': 'tree,form,calendar,pivot,graph',
+            'views': [
+                (id_tree_view, 'tree'),
+                (False, 'form'),
+                (calendar_view, 'calendar'),
+                (pivot_view, 'pivot'),
+                (graph_view, 'graph'),
+            ],
+            'search_view_id': (search_view_id, search_view_name),
             'domain': condition,
             'target': 'current',
             'context': context,
-            }
-        return act_window
+        }
