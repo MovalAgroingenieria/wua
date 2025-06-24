@@ -20,4 +20,4 @@ from . import wua_valve_type
 from . import wua_drainagevalve
 from . import wua_drainagevalve_type
 from . import wua_building
-from . import wua_irrigation_stretch
+from . import wua_irrigationstretch

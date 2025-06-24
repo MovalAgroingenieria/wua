@@ -39,7 +39,7 @@
         "views/hr_views.xml",
         "views/wua_zone_view.xml",
         "views/wua_building_view.xml",
-        "views/wua_irrigation_stretch_view.xml",
+        "views/wua_irrigationstretch_view.xml",
         "reports/wua_partner_infrastructure_report.xml",
         "reports/wua_parcel_report.xml",
         "data/notice_mail.xml",

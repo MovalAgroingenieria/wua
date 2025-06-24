@@ -1436,62 +1436,58 @@ class WuaParcel(models.Model):
             """)
             self.env.cr.commit()
 
-    def check_gis_irrigation_stretch_created(self):
+    def check_gis_irrigationstretch_created(self):
         self.env.cr.execute("""
             SELECT EXISTS (
                 SELECT 1 FROM information_schema.tables
-                WHERE table_name = 'wua_gis_irrigation_stretch'
+                WHERE table_name = 'wua_gis_irrigationstretch'
             )
         """)
         return self.env.cr.fetchone()[0]
 
-    def create_wua_gis_irrigation_stretch_table(self):
-        gis_created = self.check_gis_irrigation_stretch_created()
+    def create_wua_gis_irrigationstretch_table(self):
+        gis_created = self.check_gis_irrigationstretch_created()
         postgis_ready = self.check_extension_and_schema_postgis_created()
         if not gis_created and postgis_ready:
             self.env.cr.execute("""
                 CREATE SEQUENCE IF NOT EXISTS
-                    public.wua_gis_irrigation_stretch_gid_seq
+                    public.wua_gis_irrigationstretch_gid_seq
                     INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
             """)
             self.env.cr.execute("""
-                CREATE TABLE IF NOT EXISTS public.wua_gis_irrigation_stretch (
+                CREATE TABLE IF NOT EXISTS public.wua_gis_irrigationstretch (
                     gid INTEGER NOT NULL DEFAULT nextval(
-                        'wua_gis_irrigation_stretch_gid_seq'::regclass),
+                        'wua_gis_irrigationstretch_gid_seq'::regclass),
                     name VARCHAR(254),
-                    geom postgis.geometry(Point,25830),
+                    geom postgis.geometry(MultiLineString,25830),
                     UNIQUE(name),
-                    CONSTRAINT wua_gis_irrigation_stretch_pkey
+                    CONSTRAINT wua_gis_irrigationstretch_pkey
                     PRIMARY KEY (gid)
                 );
             """)
             self.env.cr.execute("""
-                CREATE INDEX IF NOT EXISTS wua_gis_irrigation_stretch_idx
-                ON public.wua_gis_irrigation_stretch USING gist (geom);
+                CREATE INDEX IF NOT EXISTS wua_gis_irrigationstretch_idx
+                ON public.wua_gis_irrigationstretch USING gist (geom);
             """)
             self.env.cr.commit()
 
-    def create_irrigation_stretch_triggers(self):
-        gis_created = self.check_gis_irrigation_stretch_created()
+    def create_irrigationstretch_triggers(self):
+        gis_created = self.check_gis_irrigationstretch_created()
         postgis_ready = self.check_extension_and_schema_postgis_created()
         if gis_created and postgis_ready:
             self.env.cr.execute("""
                 CREATE OR REPLACE FUNCTION
-                    wua_gis_irrigation_stretch_update_on_wua_irrigation_stretch()
+                    wua_gis_irrigationstretch_update_on_wua_irrigationstretch()
                 RETURNS trigger AS $BODY$
                 BEGIN
                     IF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
-                        UPDATE public.wua_irrigation_stretch
-                        SET with_gis_irrigation_stretch = FALSE,
-                            gis_viewer_x = 0,
-                            gis_viewer_y = 0
+                        UPDATE public.wua_irrigationstretch
+                        SET with_gis_irrigationstretch = FALSE,
                         WHERE name = OLD.name;
                     END IF;
                     IF TG_OP = 'UPDATE' OR TG_OP = 'INSERT' THEN
-                        UPDATE public.wua_irrigation_stretch
-                        SET with_gis_irrigation_stretch = TRUE,
-                            gis_viewer_x = postgis.ST_X(NEW.geom)::INTEGER,
-                            gis_viewer_y = postgis.ST_Y(NEW.geom)::INTEGER
+                        UPDATE public.wua_irrigationstretch
+                        SET with_gis_irrigationstretch = TRUE,
                         WHERE name = NEW.name;
                     END IF;
                     RETURN NULL;
@@ -1501,48 +1497,40 @@ class WuaParcel(models.Model):
             self.env.cr.commit()
 
             self.env.cr.execute("""
-                DROP TRIGGER IF EXISTS wua_gis_irrigation_stretch_write_trigger
-                ON public.wua_gis_irrigation_stretch;
+                DROP TRIGGER IF EXISTS wua_gis_irrigationstretch_write_trigger
+                ON public.wua_gis_irrigationstretch;
                 DROP TRIGGER IF EXISTS
-                    wua_gis_irrigation_stretch_create_unlink_trigger
-                ON public.wua_gis_irrigation_stretch;
+                    wua_gis_irrigationstretch_create_unlink_trigger
+                ON public.wua_gis_irrigationstretch;
 
-                CREATE TRIGGER wua_gis_irrigation_stretch_write_trigger
+                CREATE TRIGGER wua_gis_irrigationstretch_write_trigger
                 AFTER UPDATE OF name, geom
-                ON public.wua_gis_irrigation_stretch
+                ON public.wua_gis_irrigationstretch
                 FOR EACH ROW WHEN (
                     NOT postgis.ST_Equals(OLD.geom, NEW.geom)
                     OR OLD.name IS DISTINCT FROM NEW.name)
                 EXECUTE PROCEDURE
-                    wua_gis_irrigation_stretch_update_on_wua_irrigation_stretch();
+                    wua_gis_irrigationstretch_update_on_wua_irrigationstretch();
 
-                CREATE TRIGGER wua_gis_irrigation_stretch_create_unlink_trigger
+                CREATE TRIGGER wua_gis_irrigationstretch_create_unlink_trigger
                 AFTER INSERT OR DELETE
-                ON public.wua_gis_irrigation_stretch
+                ON public.wua_gis_irrigationstretch
                 FOR EACH ROW
                 EXECUTE PROCEDURE
-                    wua_gis_irrigation_stretch_update_on_wua_irrigation_stretch();
+                    wua_gis_irrigationstretch_update_on_wua_irrigationstretch();
             """)
             self.env.cr.commit()
 
             self.env.cr.execute("""
                 CREATE OR REPLACE FUNCTION
-                    wua_irrigation_stretch_update_on_wua_irrigation_stretch()
+                    wua_irrigationstretch_update_on_wua_irrigationstretch()
                 RETURNS trigger AS $BODY$
                 BEGIN
-                    UPDATE public.wua_irrigation_stretch
-                    SET with_gis_irrigation_stretch = (
+                    UPDATE public.wua_irrigationstretch
+                    SET with_gis_irrigationstretch = (
                             SELECT NEW.name IN (
-                                SELECT name FROM wua_gis_irrigation_stretch
+                                SELECT name FROM wua_gis_irrigationstretch
                             )),
-                        gis_viewer_x = (
-                            SELECT postgis.ST_X(geom)::INTEGER
-                            FROM wua_gis_irrigation_stretch
-                            WHERE name = NEW.name LIMIT 1),
-                        gis_viewer_y = (
-                            SELECT postgis.ST_Y(geom)::INTEGER
-                            FROM wua_gis_irrigation_stretch
-                            WHERE name = NEW.name LIMIT 1)
                     WHERE name = NEW.name;
                     RETURN NEW;
                 END;
@@ -1551,25 +1539,25 @@ class WuaParcel(models.Model):
             self.env.cr.commit()
 
             self.env.cr.execute("""
-                DROP TRIGGER IF EXISTS wua_irrigation_stretch_write_trigger
-                ON public.wua_irrigation_stretch;
-                DROP TRIGGER IF EXISTS wua_irrigation_stretch_create_trigger
-                ON public.wua_irrigation_stretch;
+                DROP TRIGGER IF EXISTS wua_irrigationstretch_write_trigger
+                ON public.wua_irrigationstretch;
+                DROP TRIGGER IF EXISTS wua_irrigationstretch_create_trigger
+                ON public.wua_irrigationstretch;
 
-                CREATE TRIGGER wua_irrigation_stretch_write_trigger
+                CREATE TRIGGER wua_irrigationstretch_write_trigger
                 AFTER UPDATE OF name
-                ON public.wua_irrigation_stretch
+                ON public.wua_irrigationstretch
                 FOR EACH ROW WHEN (
                     OLD.name IS DISTINCT FROM NEW.name)
                 EXECUTE PROCEDURE
-                    wua_irrigation_stretch_update_on_wua_irrigation_stretch();
+                    wua_irrigationstretch_update_on_wua_irrigationstretch();
 
-                CREATE TRIGGER wua_irrigation_stretch_create_trigger
+                CREATE TRIGGER wua_irrigationstretch_create_trigger
                 AFTER INSERT
-                ON public.wua_irrigation_stretch
+                ON public.wua_irrigationstretch
                 FOR EACH ROW
                 EXECUTE PROCEDURE
-                    wua_irrigation_stretch_update_on_wua_irrigation_stretch();
+                    wua_irrigationstretch_update_on_wua_irrigationstretch();
             """)
             self.env.cr.commit()
 
@@ -1737,21 +1725,19 @@ class WuaParcel(models.Model):
                 gis_building_ok = False
         return gis_building_ok
 
-    def set_gis_fields_irrigation_stretch(self):
-        gis_irrigation_stretch_ok = self.check_gis_irrigation_stretch_created()
-        if (gis_irrigation_stretch_ok):
+    def set_gis_fields_irrigationstretch(self):
+        gis_irrigationstretch_ok = self.check_gis_irrigationstretch_created()
+        if (gis_irrigationstretch_ok):
             try:
                 self.env.cr.savepoint()
                 self.env.cr.execute("""
-                    UPDATE public.wua_irrigation_stretch
-                    SET with_gis_irrigation_stretch = FALSE
+                    UPDATE public.wua_irrigationstretch
+                    SET with_gis_irrigationstretch = FALSE
                 """)
                 self.env.cr.execute("""
-                    UPDATE public.wua_irrigation_stretch wi1
-                    SET with_gis_irrigation_stretch = TRUE,
-                        gis_viewer_x = postgis.ST_X(wgi1.geom),
-                        gis_viewer_y = postgis.ST_Y(wgi1.geom)
-                    FROM public.wua_gis_irrigation_stretch wgi1 WHERE
+                    UPDATE public.wua_irrigationstretch wi1
+                    SET with_gis_irrigationstretch = TRUE,
+                    FROM public.wua_gis_irrigationstretch wgi1 WHERE
                         wi1.name = wgi1.name;
                 """)
                 self.env.cr.commit()
@@ -1778,10 +1764,11 @@ class WuaParcel(models.Model):
         # drainagevalve GIS
         gis_drainagevalve_ok = self.set_gis_fields_drainagevalve()
         # irrigation stretch GIS
-        gis_irrigation_stretch_ok = self.set_gis_fields_irrigation_stretch()
+        gis_irrigationstretch_ok = self.set_gis_fields_irrigationstretch()
         return gis_parcels_ok and gis_irrigationshed_ok and \
             gis_irrigationditch_ok and gis_airvalve_ok and gis_valve_ok and \
-            gis_drainagevalve_ok and gis_flowdivider_ok
+            gis_drainagevalve_ok and gis_flowdivider_ok and \
+            gis_building_ok and gis_irrigationstretch_ok
 
     def populate_irrigationgates_to_add(self, vals):
         irrigationgates_to_add = []

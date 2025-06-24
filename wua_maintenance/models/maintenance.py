@@ -343,6 +343,18 @@ class MaintenanceEquipment(models.Model):
         string='Tertiary Pipe',
     )
 
+    irrigationstretch_ids = fields.One2many(
+        string='Irrigation Stretches',
+        comodel_name='wua.irrigationstretch',
+        inverse_name='equipment_id',
+    )
+
+    irrigationstretch_id = fields.Many2one(
+        string='Irrigation Stretch',
+        comodel_name='wua.irrigationstretch',
+        compute='_compute_irrigationstretch_id',
+    )
+
     tag_html = fields.Html(
         string="Tag HTML",
         compute='_compute_tag_html',
@@ -672,6 +684,15 @@ class MaintenanceEquipment(models.Model):
                 'base_table': 'wua_tertiarypipe',
                 'base_field': 'name',
                 'gis_table': 'wua_gis_tertiarypipe',
+                'gis_field': 'name',
+                'intermediate_table': False,
+                'intermediate_field': False,
+                'intermediate_gis_field': False,
+            },
+            env.ref('wua_maintenance.equipment_category_irrigationstretch').id: {
+                'base_table': 'wua_irrigationstretch',
+                'base_field': 'name',
+                'gis_table': 'wua_gis_irrigationstretch',
                 'gis_field': 'name',
                 'intermediate_table': False,
                 'intermediate_field': False,
@@ -1020,6 +1041,13 @@ class MaintenanceEquipment(models.Model):
                 tertiarypipe_id = record.tertiarypipe_ids[0]
             record.tertiarypipe_id = tertiarypipe_id
 
+    def _compute_irrigationstretch_id(self):
+        for record in self:
+            irrigationstretch_id = None
+            if record.irrigationstretch_ids:
+                irrigationstretch_id = record.irrigationstretch_ids[0]
+            record.irrigationstretch_id = irrigationstretch_id
+
     @api.depends('tag_ids')
     def _compute_tag_html(self):
         for record in self:
@@ -1110,6 +1138,9 @@ class MaintenanceEquipment(models.Model):
             self.env.ref(
                 'wua_maintenance.equipment_category_measurement_device').id:
                 ('mdm.measurement.device', _('Measurement Device')),
+            self.env.ref(
+                'wua_maintenance.equipment_category_irrigationstretch').id:
+                ('wua.irrigationstretch', _('Irrigation Stretch')),
         }
         res_model, name = category_mapping.get(
             current_equipment.category_id.id, (None, None))
