@@ -120,13 +120,15 @@ class WuaWaterconnection(models.Model):
         store=True,
         compute='_compute_last_reading_type',
     )
+
     waterconnection_state_id = fields.Many2one(
         string='Waterconnection State',
         comodel_name='wua.waterconnection.state',
         index=True,
-        default= lambda self: self.get_default_state(),
-        ondelete= 'restrict',
+        default=lambda self: self.get_default_state(),
+        ondelete='restrict',
     )
+
     is_state_close = fields.Boolean(
         string='Is State Closed',
         related='waterconnection_state_id.is_close',

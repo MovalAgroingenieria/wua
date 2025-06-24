@@ -165,7 +165,12 @@
                  domain="[('with_watermeter','=',True)]"/>
                 <filter string="Without water meter" name="withoutwatermeter"
                  domain="[('with_watermeter','=',False)]"/>
-                 <separator/>
+                <separator/>
+                <filter string="Closed" name="closed"
+                 domain="[('is_state_close','=',True)]"/>
+                 <filter string="Is open" name="is_open"
+                 domain="[('is_state_close','!=',True)]"/>
+                <separator/>
                 <filter string="Last Reading (type): Estimated" name="last_reading_type_estimated"
                     domain="[('last_reading_type','=','01_estimated')]"/>
                 <filter string="Last Reading (type): Real Worker" name="last_reading_type_real_worker"

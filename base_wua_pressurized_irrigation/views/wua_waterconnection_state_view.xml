@@ -37,7 +37,6 @@
             <tree class="o_base_wua_infrastructure_waterconnection_state_view_tree">
                 <field name="name"/>
                 <field name="description"/>
-                <field name="active"/>
                 <field name="default_state"/>
                 <field name="is_close"/>
                 <field name="notes"/>
@@ -55,6 +54,7 @@
                 <separator/>
                 <filter string="Archived" name="inactive"
                  domain="[('active','=',False)]"/>
+                <separator/>
                 <filter string="Closed" name="closed"
                  domain="[('is_close','=',True)]"/>
             </search>
