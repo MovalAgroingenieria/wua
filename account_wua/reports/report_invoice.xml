@@ -185,7 +185,8 @@
                                 <div style="float: left; width: 32px;"><span class="fa fa-eur"/></div>
                                 <div style="float: left; display: inline;" name="invoice_type">
                                     <strong name="invoice_type_light">
-                                        <span t-if="o.type == 'out_invoice' and (o.state == 'open' or o.state == 'paid')">Invoice</span>
+                                        <span name="invoice_type_light_span_invoice"
+                                              t-if="o.type == 'out_invoice' and (o.state == 'open' or o.state == 'paid')">Invoice</span>
                                         <span t-if="o.type == 'out_invoice' and o.state == 'proforma2'">PRO-FORMA</span>
                                         <span t-if="o.type == 'out_invoice' and o.state == 'draft'">Draft&amp;nbsp;Invoice</span>
                                         <span t-if="o.type == 'out_invoice' and o.state == 'cancel'">Cancelled&amp;nbsp;Invoice</span>
@@ -204,7 +205,8 @@
                                 <div style="float: left; width: 32px;"><span class="fa fa-eur"/></div>
                                 <div style="float: left; display: inline;" name="invoice_type">
                                     <strong name="invoice_type_no_light">
-                                        <span t-if="o.type == 'out_invoice' and (o.state == 'open' or o.state == 'paid')">Invoice</span>
+                                        <span name="invoice_type_no_light_span_invoice"
+                                              t-if="o.type == 'out_invoice' and (o.state == 'open' or o.state == 'paid')">Invoice</span>
                                         <span t-if="o.type == 'out_invoice' and o.state == 'proforma2'">PRO-FORMA</span>
                                         <span t-if="o.type == 'out_invoice' and o.state == 'draft'">Draft&amp;nbsp;Invoice</span>
                                         <span t-if="o.type == 'out_invoice' and o.state == 'cancel'">Cancelled&amp;nbsp;Invoice</span>
