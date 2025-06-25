@@ -90,6 +90,17 @@
         </field>
     </record>
 
+    <record id="hr_equipment_category_view_tree_inherit_add_parent_id" model="ir.ui.view">
+        <field name="name">equipment.category.tree.inherit.add.parent.id</field>
+        <field name="model">maintenance.equipment.category</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_category_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree/field[1]" position="before">
+                <field name="parent_id" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
     <record id="hr_equipment_category_view_search" model="ir.ui.view">
         <field name="name">equipment.category.search.inherit</field>
         <field name="model">maintenance.equipment.category</field>
