@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="hr_equipment_view_form" model="ir.ui.view">
+        <field name="name">hr.equipment.view.form.inherit</field>
+        <field name="model">maintenance.equipment</field>
+        <field name="inherit_id" ref="wua_maintenance.hr_equipment_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='warranty']" position="after">
+                <field name="inventory_extra_data"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="maintenance_equipment_view_search_inherit_hr" model="ir.ui.view">
+        <field name="name">equipment.search.inherit</field>
+        <field name="model">maintenance.equipment</field>
+        <field name="inherit_id" ref="wua_maintenance.maintenance_equipment_view_search_inherit_hr" />
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='filter_without_infrastructure_gis']" position="after">
+                <separator/>
+                <filter string='Created from field' name="filter_is_created_from_field" domain="[('created_from_field', '=', True)]" />
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

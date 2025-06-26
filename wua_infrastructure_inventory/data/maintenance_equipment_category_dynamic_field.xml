@@ -1,0 +1,784 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data noupdate="0">
+
+        <!-- INTAKE -->
+
+        <record id="equipment_category_intake_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Name</field>
+            <field name="field_type">text</field>
+            <field name="field_path">name</field>
+            <field name="required">True</field>
+            <field name="gis_path">name</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_intake"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_intake_code" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Code</field>
+            <field name="field_type">number</field>
+            <field name="field_path">intake_code</field>
+            <field name="required">True</field>
+            <field name="gis_path">code</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_intake"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_intake_type" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Type</field>
+            <field name="field_type">selection</field>
+            <field name="field_path">type</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_intake"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_intake_category" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Category</field>
+            <field name="field_type">selection</field>
+            <field name="field_path">category</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_intake"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <!-- Reservoir -->
+
+        <record id="equipment_category_reservoir_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Name</field>
+            <field name="field_type">text</field>
+            <field name="field_path">name</field>
+            <field name="required">True</field>
+            <field name="gis_path">name</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_reservoir"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_reservoir_code" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Code</field>
+            <field name="field_type">number</field>
+            <field name="field_path">reservoir_code</field>
+            <field name="required">True</field>
+            <field name="gis_path">code</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_reservoir"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_reservoir_county" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">County</field>
+            <field name="field_type">many2one</field>
+            <field name="field_path">county_id</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_reservoir"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <!-- Pumpgroup -->
+
+        <record id="equipment_category_pumpgroup_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Name</field>
+            <field name="field_type">text</field>
+            <field name="field_path">name</field>
+            <field name="required">True</field>
+            <field name="gis_path">name</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_pumpgroup"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_pumpgroup_code" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Code</field>
+            <field name="field_type">number</field>
+            <field name="field_path">pumpgroup_code</field>
+            <field name="required">True</field>
+            <field name="gis_path">code</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_pumpgroup"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_pumpgroup_implementation_year" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Implementation Year</field>
+            <field name="field_type">number</field>
+            <field name="field_path">implementation_year</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_pumpgroup"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_pumpgroup_typology" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Tipology</field>
+            <field name="field_type">selection</field>
+            <field name="field_path">typology</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_pumpgroup"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_pumpgroup_nominal_flow" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Nominal Flow (m³/h)</field>
+            <field name="field_type">number</field>
+            <field name="field_path">nominal_flow</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_pumpgroup"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_pumpgroup_nominal_height" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Nominal Height (mca)</field>
+            <field name="field_type">number</field>
+            <field name="field_path">nominal_height</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_pumpgroup"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_pumpgroup_powersupply_type" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Powersupply Type</field>
+            <field name="field_type">selection</field>
+            <field name="field_path">powersupply_type</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_pumpgroup"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <!-- Photovoltaicplant -->
+
+        <record id="equipment_category_photovoltaicplant_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Name</field>
+            <field name="field_type">text</field>
+            <field name="field_path">name</field>
+            <field name="required">True</field>
+            <field name="gis_path">name</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_photovoltaicplant"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_photovoltaicplant_code" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Code</field>
+            <field name="field_type">number</field>
+            <field name="field_path">photovoltaicplant_code</field>
+            <field name="required">True</field>
+            <field name="gis_path">code</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_photovoltaicplant"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_photovoltaicplant_implementation_year" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Implementation Year</field>
+            <field name="field_type">number</field>
+            <field name="field_path">implementation_year</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_photovoltaicplant"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_photovoltaicplant_installed_capacity" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Installed Capacity</field>
+            <field name="field_type">number</field>
+            <field name="field_path">installed_capacity</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_photovoltaicplant"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <!-- Flowmeter -->
+
+        <record id="equipment_category_flowmeter_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Name</field>
+            <field name="field_type">text</field>
+            <field name="field_path">name</field>
+            <field name="required">True</field>
+            <field name="gis_path">name</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_flowmeter"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_flowmeter_state" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">State</field>
+            <field name="field_type">selection</field>
+            <field name="field_path">state</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_flowmeter"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_flowmeter_type" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Type</field>
+            <field name="field_type">selection</field>
+            <field name="field_path">type</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_flowmeter"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_flowmeter_nominal_water_flow" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Nominal Water Flow (m³/h)</field>
+            <field name="field_type">number</field>
+            <field name="field_path">nominal_water_flow</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_flowmeter"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_flowmeter_flow_direction" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Flow Direction</field>
+            <field name="field_type">selection</field>
+            <field name="field_path">flow_direction</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_flowmeter"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <!-- Pump -->
+
+        <record id="equipment_category_pump_pumpgroup_id" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Pumpgroup</field>
+            <field name="field_type">many2one</field>
+            <field name="field_path">pumpgroup_id</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_pump"/>
+            <field name="related_category_id" ref="wua_maintenance.equipment_category_pumpgroup"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_pump_pumpunit_number" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Pumpunit Number</field>
+            <field name="field_type">number</field>
+            <field name="field_path">pumpunit_number</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_pump"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_pump_typology" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Typology</field>
+            <field name="field_type">selection</field>
+            <field name="field_path">typology</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_pump"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_pump_nominal_flow" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Nominal Flow (m³/h)</field>
+            <field name="field_type">number</field>
+            <field name="field_path">nominal_flow</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_pump"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_pump_nominal_height" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Nominal Height (mca)</field>
+            <field name="field_type">number</field>
+            <field name="field_path">nominal_height</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_pump"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_pump_rpm" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">RPM</field>
+            <field name="field_type">number</field>
+            <field name="field_path">rpm</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_pump"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_pump_nominal_power" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Nominal Power (kW)</field>
+            <field name="field_type">number</field>
+            <field name="field_path">nominal_power</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_pump"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <!-- Waterpipe -->
+
+        <record id="equipment_category_waterpipe_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Name</field>
+            <field name="field_type">text</field>
+            <field name="field_path">name</field>
+            <field name="required">True</field>
+            <field name="gis_path">name</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_waterpipe"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_waterpipe_code" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Code</field>
+            <field name="field_type">text</field>
+            <field name="field_path">waterpipe_code</field>
+            <field name="required">True</field>
+            <field name="gis_path">code</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_waterpipe"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_waterpipe_hydraulicsector_id" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Hydraulicsector</field>
+            <field name="field_type">many2one</field>
+            <field name="field_path">hydraulicsector_id</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_waterpipe"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_waterpipe_is_main" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Is main</field>
+            <field name="field_type">checkbox</field>
+            <field name="field_path">is_main</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_waterpipe"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_waterpipe_waterpipe_id" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Supplied by</field>
+            <field name="field_type">many2one</field>
+            <field name="field_path">waterpipe_id</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_waterpipe"/>
+            <field name="related_category_id" ref="wua_maintenance.equipment_category_waterpipe"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <!-- Irrigationshed -->
+
+        <record id="equipment_category_irrigationshed_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Name</field>
+            <field name="field_type">text</field>
+            <field name="field_path">name</field>
+            <field name="required">True</field>
+            <field name="gis_path">name</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_irrigationshed"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_irrigationshed_hydraulicsector_id" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Hydraulicsector</field>
+            <field name="field_type">many2one</field>
+            <field name="field_path">hydraulicsector_id</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_irrigationshed"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_irrigationshed_elevation" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Elevation</field>
+            <field name="field_type">number</field>
+            <field name="field_path">elevation</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_irrigationshed"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <!-- Waterconnection -->
+
+        <record id="equipment_category_waterconnection_irrigationshed_id" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Irrigationshed</field>
+            <field name="field_type">many2one</field>
+            <field name="field_path">irrigationshed_id</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_waterconnection"/>
+            <field name="related_category_id" ref="wua_maintenance.equipment_category_irrigationshed"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_waterconnection_position" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Position</field>
+            <field name="field_type">number</field>
+            <field name="field_path">position</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_waterconnection"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_waterconnection_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Name</field>
+            <field name="field_type">text</field>
+            <field name="field_path">name</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_waterconnection"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_waterconnection_watermeter" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Watermeter</field>
+            <field name="field_type">many2one</field>
+            <field name="field_path">watermeter_id</field>
+            <field name="required">False</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_waterconnection"/>
+            <field name="related_category_id" ref="wua_maintenance.equipment_category_watermeter"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <!-- Watermeter -->
+
+        <record id="equipment_category_watermeter_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Name</field>
+            <field name="field_type">text</field>
+            <field name="field_path">name</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_watermeter"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_watermeter_state" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">State</field>
+            <field name="field_type">selection</field>
+            <field name="field_path">state</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_watermeter"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_watermeter_type" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Type</field>
+            <field name="field_type">selection</field>
+            <field name="field_path">type</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_watermeter"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_watermeter_nominal_diameter" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Nominal Diameter (mm)</field>
+            <field name="field_type">number</field>
+            <field name="field_path">nominal_diameter</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_watermeter"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_watermeter_nominal_water_flow" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Nominal Water Flow (m³/hora)</field>
+            <field name="field_type">number</field>
+            <field name="field_path">nominal_water_flow</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_watermeter"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_watermeter_nominal_water_flow" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Nominal Water Flow (m³/hora)</field>
+            <field name="field_type">number</field>
+            <field name="field_path">nominal_water_flow</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_watermeter"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_watermeter_pressure" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Pressure (bar)</field>
+            <field name="field_type">number</field>
+            <field name="field_path">pressure</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_watermeter"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <!-- Pressuresensor -->
+
+        <record id="equipment_category_pressuresensor_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Name</field>
+            <field name="field_type">text</field>
+            <field name="field_path">name</field>
+            <field name="required">True</field>
+            <field name="gis_path">name</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_pressuresensor"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <!-- Irrigationditch -->
+
+        <record id="equipment_category_irrigationditch_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Name</field>
+            <field name="field_type">text</field>
+            <field name="field_path">name</field>
+            <field name="required">True</field>
+            <field name="gis_path">name</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_irrigationditch"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_irrigationditch_code" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Code</field>
+            <field name="field_type">number</field>
+            <field name="field_path">irrigationditch_code</field>
+            <field name="required">True</field>
+            <field name="gis_path">code</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_irrigationditch"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_irrigationditch_hydraulic_order" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Hydraulic Order</field>
+            <field name="field_type">number</field>
+            <field name="field_path">hydraulic_order</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_irrigationditch"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <!-- Drainageditch -->
+
+        <record id="equipment_category_drainageditch_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Name</field>
+            <field name="field_type">text</field>
+            <field name="field_path">name</field>
+            <field name="required">True</field>
+            <field name="gis_path">name</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_drainageditch"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_drainageditch_code" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Code</field>
+            <field name="field_type">number</field>
+            <field name="field_path">drainageditch_code</field>
+            <field name="required">True</field>
+            <field name="gis_path">code</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_drainageditch"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <!-- Flowdivider -->
+
+        <record id="equipment_category_flowdivider_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Name</field>
+            <field name="field_type">text</field>
+            <field name="field_path">name</field>
+            <field name="required">True</field>
+            <field name="gis_path">name</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_flowdivider"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_flowdivider_irrigationditch_id" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Irrigationditch</field>
+            <field name="field_type">many2one</field>
+            <field name="field_path">irrigationditch_id</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_flowdivider"/>
+            <field name="related_category_id" ref="wua_maintenance.equipment_category_irrigationditch"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_flowdivider_delay_time" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Delay Time</field>
+            <field name="field_type">number</field>
+            <field name="field_path">delay_time</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_flowdivider"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_flowdivider_drainage_coefficient" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Drainage Coefficient</field>
+            <field name="field_type">number</field>
+            <field name="field_path">drainage_coefficient</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_flowdivider"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <!-- Irrigationgate -->
+
+        <record id="equipment_category_irrigationgate_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Name</field>
+            <field name="field_type">text</field>
+            <field name="field_path">name</field>
+            <field name="required">True</field>
+            <field name="gis_path">name</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_irrigationgate"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_irrigationgate_irrigationditch_id" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Irrigationditch</field>
+            <field name="field_type">many2one</field>
+            <field name="field_path">irrigationditch_id</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_irrigationgate"/>
+            <field name="related_category_id" ref="wua_maintenance.equipment_category_irrigationditch"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_irrigationgate_hydraulic_order" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Hydraulic Order</field>
+            <field name="field_type">number</field>
+            <field name="field_path">hydraulic_order</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_irrigationgate"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_irrigationgate_delay_order" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Delay Order</field>
+            <field name="field_type">number</field>
+            <field name="field_path">delay_order</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_irrigationgate"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <!-- Airvalve -->
+
+        <record id="equipment_category_airvalve_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Name</field>
+            <field name="field_type">text</field>
+            <field name="field_path">name</field>
+            <field name="required">True</field>
+            <field name="gis_path">name</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_airvalve"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_airvalve_type_id" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Type</field>
+            <field name="field_type">many2one</field>
+            <field name="field_path">type_id</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_airvalve"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <!-- Drainagevalve -->
+
+        <record id="equipment_category_drainagevalve_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Name</field>
+            <field name="field_type">text</field>
+            <field name="field_path">name</field>
+            <field name="required">True</field>
+            <field name="gis_path">name</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_drainagevalve"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_drainagevalve_type_id" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Type</field>
+            <field name="field_type">many2one</field>
+            <field name="field_path">type_id</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_drainagevalve"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <!-- Valve -->
+
+        <record id="equipment_category_valve_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Name</field>
+            <field name="field_type">text</field>
+            <field name="field_path">name</field>
+            <field name="required">True</field>
+            <field name="gis_path">name</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_valve"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_valve_type_id" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Type</field>
+            <field name="field_type">many2one</field>
+            <field name="field_path">type_id</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_valve"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_valve_valve_state" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">State</field>
+            <field name="field_type">selection</field>
+            <field name="field_path">valve_state</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_valve"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <!-- Filteringstation -->
+
+        <record id="equipment_category_filteringstation_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Name</field>
+            <field name="field_type">text</field>
+            <field name="field_path">name</field>
+            <field name="required">True</field>
+            <field name="gis_path">name</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_filteringstation"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_filteringstation_type_id" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Type</field>
+            <field name="field_type">many2one</field>
+            <field name="field_path">type_id</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_filteringstation"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <!-- Building -->
+
+        <record id="equipment_category_building_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Name</field>
+            <field name="field_type">text</field>
+            <field name="field_path">name</field>
+            <field name="required">True</field>
+            <field name="gis_path">name</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_building"/>
+            <field name="readonly">True</field>
+        </record>
+
+    </data>
+
+</odoo>

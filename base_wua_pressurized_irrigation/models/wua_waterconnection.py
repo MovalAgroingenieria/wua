@@ -280,7 +280,8 @@ class WuaWaterconnection(models.Model):
             new_watermeter_id = vals['watermeter_id']
         resp = super(WuaWaterconnection, self).write(vals)
         if len(self) == 1 and 'watermeter_id' in vals:
-            if previous_watermeter_id != new_watermeter_id:
+            if (previous_watermeter_id and previous_watermeter_id.id !=
+                    new_watermeter_id):
                 if previous_watermeter_id:
                     previous_watermeter_id = previous_watermeter_id.id
                 else:
