@@ -283,7 +283,7 @@ class WuaHydricBalanceOutput(models.Model):
                 )
                 SELECT nextval('wua_hydric_balance_output_line_id_seq'),
                     %s || ir.id::TEXT, %s, %s, now(), now(), %s, %s, %s,
-                    ir.report_initial_time, ir.report_end_time, ir.volume,
+                    ir.report_initial_time, ir.report_end_time, ir.volume_real,
                     ir.intake_id,
                     ir.id,
                     ihl.hydraulicsector_id,
