@@ -209,6 +209,16 @@
                             icon="fa-map-marker"
                             attrs="{'invisible':
                                     [('with_infrastructure_gis','=',False)]}"/>
+                    <button name="toggle_active"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-archive"
+                            confirm="Are you sure you want to toggle visibility?"
+                            groups="base_maintenance_config.group_maintenance_manager">
+                        <field name="active"
+                            widget="boolean_button"
+                            options='{"terminology": "archive"}'/>
+                    </button>
                 </div>
             </xpath>
         </field>

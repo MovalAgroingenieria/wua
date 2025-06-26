@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-19 13:26+0000\n"
-"PO-Revision-Date: 2025-06-19 13:26+0000\n"
+"POT-Creation-Date: 2025-06-26 10:29+0000\n"
+"PO-Revision-Date: 2025-06-26 10:29+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -153,10 +153,16 @@ msgid "Action type"
 msgstr "Tipus d'actuació"
 
 #. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_category_active
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_plan_active
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_active
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_stage_active
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_team_active
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_building_active
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_infrastructureitem_active
+#: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_category_view_search
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_kind_view_search
+#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_team_view_search
 msgid "Active"
 msgstr "Actiu"
 
@@ -197,13 +203,20 @@ msgid "Any related infrastructureitem"
 msgstr "Qualsevol element d'infraestructura relacionat"
 
 #. module: wua_maintenance
+#: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_category_view_search
 #: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_stage_view_search
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_kind_view_search
+#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_plan_view_search
+#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_team_view_search
 msgid "Archived"
 msgstr "Arxivat"
 
 #. module: wua_maintenance
+#: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_category_view_form
+#: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_request_view_form
 #: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_view_form
+#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_plan_configuration_view_form
+#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_team_view_form
 #: model:ir.ui.view,arch_db:wua_maintenance.view_maintenance_kind_form
 msgid "Are you sure you want to toggle visibility?"
 msgstr "Esteu segur que voleu modificar la visibilitat?"
@@ -252,7 +265,7 @@ msgid "Cancel"
 msgstr "Cancel·la"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:136
+#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:138
 #, python-format
 msgid "Cannot delete a WUA infrastructure category."
 msgstr "No es pot eliminar una categoria d'infraestructura WUA."
@@ -261,6 +274,7 @@ msgstr "No es pot eliminar una categoria d'infraestructura WUA."
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_equipment_view_search_inherit_hr
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_team_kanban
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_team_view_form
+#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_team_view_search
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_team_view_tree
 msgid "Category"
 msgstr "Categoria"
@@ -568,7 +582,7 @@ msgid "Equipment not available."
 msgstr "Element no disponible."
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:128
+#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:130
 #, python-format
 msgid "Error resolving template: {}"
 msgstr "Error en resoldre la plantilla: {}"
@@ -731,8 +745,9 @@ msgstr "Reg de gravetat"
 
 #. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_plan_view_search
+#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_team_view_search
 msgid "Group By"
-msgstr "Agrupar per"
+msgstr "Agrupa per"
 
 #. module: wua_maintenance
 #: selection:wizard.massive.maintenance.requests,priority:0
@@ -1002,7 +1017,7 @@ msgid "Maintenance category"
 msgstr "Categoria de manteniment"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:101
+#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:103
 #: sql_constraint:maintenance.equipment.category:0
 #, python-format
 msgid "Maintenance category already exists."
@@ -1057,7 +1072,7 @@ msgid "Next creation date"
 msgstr "Pròxima data de creació"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:113
+#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:115
 #, python-format
 msgid "No equipment found"
 msgstr "No s'ha trobat cap equip"

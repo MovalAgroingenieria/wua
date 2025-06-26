@@ -23,3 +23,5 @@ class MaintenanceTeam(models.Model):
     name = fields.Char(
         translate=True,
     )
+
+    active = fields.Boolean(default=True)

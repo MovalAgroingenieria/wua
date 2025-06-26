@@ -27,6 +27,8 @@ class MaintenancePlan(models.Model):
         store=True,
     )
 
+    active = fields.Boolean(default=True)
+
     @api.depends('days_to_create_new_maintenance', 'next_maintenance_date')
     def _compute_next_creation_date(self):
         for record in self:

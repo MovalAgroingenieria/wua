@@ -34,6 +34,7 @@
             <search>
                 <field name="equipment_id"/>
                 <group expand="0" string="Group By">
+                    <filter string="Archived" name="filter_archived" domain="[('active', '=', False)]"/>
                     <filter string="Equipment" name="equipment_id"
                      context="{'group_by':'equipment_id'}"/>
                 </group>
@@ -46,6 +47,18 @@
         <field name="model">maintenance.plan</field>
         <field name="arch" type="xml">
             <form string="Maintenance Plan">
+                <div name="buttons" class="oe_button_box">
+                    <button name="toggle_active"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-archive"
+                            confirm="Are you sure you want to toggle visibility?"
+                            groups="base.group_erp_manager">
+                        <field name="active"
+                                widget="boolean_button"
+                                options='{"terminology": "archive"}'/>
+                    </button>
+                </div>
                 <group>
                     <field name="equipment_id"/>
                     <field name="maintenance_kind_id"/>

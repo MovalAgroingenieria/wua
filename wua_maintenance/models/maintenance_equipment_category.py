@@ -96,6 +96,8 @@ class WuaMaintenanceEquipmentCategory(models.Model):
         required=True,
     )
 
+    active = fields.Boolean(default=True)
+
     _sql_constraints = [
         ('name_uniq', 'unique (name)',
          _('Maintenance category already exists.')),
