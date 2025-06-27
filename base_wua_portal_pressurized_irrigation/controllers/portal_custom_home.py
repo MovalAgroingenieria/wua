@@ -144,3 +144,66 @@ class website_account(website_account):
         return request.render(
             portal_view,
             values)
+
+    @http.route(['/my/irrigationevents',
+                 '/my/irrigationevents/page/<int:page>'],
+                type='http', auth="user", website=True)
+    def portal_my_irrigationevents(self, page=1, search=None,
+                                   search_field=None, selected_columns=None,
+                                   **kw):
+        values = self._prepare_portal_layout_values()
+        partner = request.env.user.partner_id
+        waterconnection_partnerlink_model = \
+            request.env['res.partner.waterconnection']
+        domain = [('partner_id', '=', partner.id)]
+
+        if search and search_field:
+            field_map = {
+                'waterconnection': 'waterconnection_id.name',
+            }
+            if search_field in field_map:
+                domain.append((field_map[search_field], 'ilike', search))
+
+        waterconnections = \
+            waterconnection_partnerlink_model.search(domain).mapped(
+                'waterconnection_id')
+        irrigationevents_domain = [
+            ('waterconnection_id', 'in', waterconnections.ids)
+        ]
+        if search and search_field:
+            field_map = {
+                'waterconnection': 'waterconnection_id.name',
+            }
+            if search_field in field_map:
+                irrigationevents_domain.append(
+                    (field_map[search_field], 'ilike', search))
+        irrigationevent_count = \
+            request.env['wua.waterconnection.irrigation.event'].search_count(
+                irrigationevents_domain)
+        items_per_page = self._items_per_page
+        pager = request.website.pager(
+            url="/my/irrigationevents",
+            total=irrigationevent_count,
+            page=page,
+            step=items_per_page,
+            url_args={
+                'search': search,
+                'search_field': search_field,
+            },
+        )
+        offset = (page - 1) * items_per_page
+        irrigationevents = request.env['wua.waterconnection.irrigation.event'].search(
+            irrigationevents_domain, limit=items_per_page, offset=offset)
+        values.update({
+            'irrigationevents': irrigationevents,
+            'waterconnections': waterconnections,
+            'pager': pager,
+            'search_query': search,
+            'search_field': search_field,
+            'default_url': '/my/irrigationevents',
+        })
+        portal_view = \
+            'base_wua_portal_pressurized_irrigation.portal_my_irrigationevents'
+        return request.render(
+            portal_view,
+            values)

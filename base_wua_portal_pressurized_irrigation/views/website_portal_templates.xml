@@ -230,6 +230,113 @@
             </div>
             </t>
         </template>
+        <template id="portal_my_irrigationevents" name="My Irrigation Events">
+            <t t-call="website.layout">
+            <div class="container mt16">
+                <div class="navbar navbar-default">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#oe-help-navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/my/home">
+                    My Account
+                    </a>
+                </div>
+                <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
+                    <ul class="nav navbar-nav o_portal_submenu">
+                    <li>
+                        <a href="/my/invoices">Invoices</a>
+                    </li>
+                    <li>
+                        <a href="/my/parcels">Parcels</a>
+                    </li>
+                    <li>
+                        <a href="/my/waterconnections">Water Connections</a>
+                    </li>
+                    <li>
+                        <a href="/my/presconsumptions">Presconsumptions</a>
+                    </li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <div id="wrap">
+                <div class="container mb64">
+                <div class="col-md-12">
+                    <h3 class="page-header">Your irrigationevents</h3>
+                    <t t-if="not irrigationevents">
+                    <p>There are currently no irrigationevents for your account.</p>
+                    </t>
+
+                    <t t-if="irrigationevents">
+                    <form action="/my/irrigationevents" method="get" class="mb-3">
+                        <div class="row">
+                        <div class="col-md-2">
+                            <select id="search_field" name="search_field" class="form-control">
+                                <option value="waterconnection" t-att-selected="'waterconnection' == search_field">Water Connection</option>
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" name="search" class="form-control" placeholder="Search irrigationevents..." t-att-value="search_query or ''"/>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary btn-block">Search</button>
+                        </div>
+                        </div>
+                    </form>
+
+                    <table class="table table-hover o_my_status_table">
+                        <thead>
+                        <tr class="active">
+                            <th>Water connection</th>
+                            <th>Initial irrigation date</th>
+                            <th>End irrigation date</th>
+                            <th>Volume (m3)</th>
+                            <th>Duration</th>
+                            <th>Irrigation flow(m3/h)</th>
+                            <th>Specific flow rate per surface (m3/hg/h)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <t t-foreach="irrigationevents" t-as="irrigationevent">
+                            <tr>
+                                <td>
+                                    <t t-esc="irrigationevent.waterconnection_id.name"/>
+                                </td>
+                                <td>
+                                    <t t-esc="irrigationevent.irrigation_start_date"/>
+                                </td>
+                                <td>
+                                    <t t-esc="irrigationevent.irrigation_end_date"/>
+                                </td>
+                                <td>
+                                    <t t-esc="irrigationevent.irrigation_volume"/>
+                                </td>
+                                <td>
+                                    <t t-esc="('%d:%02d' % (int(irrigationevent.irrigation_duration), round((irrigationevent.irrigation_duration % 1) * 60)))"/>                                </td>
+                                <td>
+                                    <t t-esc="irrigationevent.irrigation_flow"/>
+                                </td>
+                                <td>
+                                    <t t-esc="irrigationevent.irrigation_flow_per_surface"/>
+                                </td>
+                            </tr>
+                        </t>
+                        </tbody>
+                    </table>
+
+                    <div t-if="pager" class="o_portal_pager text-center">
+                        <t t-call="website.pager"/>
+                    </div>
+                    </t>
+
+                </div>
+                </div>
+            </div>
+            </t>
+        </template>
         <template id="readings_followup" name="Reading">
             <t t-call="website.layout">
                 <div id="wrap">
@@ -291,21 +398,21 @@
                 </div>
             </t>
         </template>
-        <template id="portal_my_parcels" name="Portal layout : parcel entries" inherit_id="base_wua_portal.portal_my_parcels" priority="925">
+        <template id="portal_my_parcels" name="Portal layout : parcel entries" inherit_id="base_wua_portal.portal_my_parcels" >
             <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="inside">
                 <li>
                     <a href="/my/readings">Readings</a>
                 </li>
             </xpath>
         </template>
-        <template id="portal_my_waterconnections" name="Portal layout : waterconnection entries" inherit_id="base_wua_portal_infrastructure.portal_my_waterconnections" priority="925">
+        <template id="portal_my_waterconnections" name="Portal layout : waterconnection entries" inherit_id="base_wua_portal_infrastructure.portal_my_waterconnections">
             <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="inside">
                 <li>
                     <a href="/my/readings">Readings</a>
                 </li>
             </xpath>
         </template>
-        <template id="portal_my_waterconnections" name="Portal layout : parcel entries" inherit_id="base_wua_portal_infrastructure.waterconnections_followup" priority="925">
+        <template id="waterconnections_followup" name="Portal layout : waterconnection entries" inherit_id="base_wua_portal_infrastructure.waterconnections_followup">
             <xpath expr="//div[contains(@name,'buttons')]" position="inside">
                 <a t-att-href="'/my/readings?search_field=waterconnection&amp;search=' + waterconnection.name" class="btn oe_stat_button">
                     <div class="fa fa-fw fa-list o_button_icon"></div>
@@ -314,6 +421,10 @@
                 <a t-att-href="'/my/presconsumptions?search_field=waterconnection&amp;search=' + waterconnection.name" class="btn oe_stat_button">
                     <div class="fa fa-fw fa-list o_button_icon"></div>
                     Consumptions
+                </a>
+                <a t-att-href="'/my/irrigationevents?search_field=waterconnection&amp;search=' + waterconnection.name" class="btn oe_stat_button">
+                    <div class="fa fa-fw fa-list o_button_icon"></div>
+                    Irrigation Events
                 </a>
             </xpath>
             <xpath expr="//ul[@name='tabs_titles']" position="inside">
