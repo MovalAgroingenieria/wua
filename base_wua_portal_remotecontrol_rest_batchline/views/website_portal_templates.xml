@@ -1,0 +1,137 @@
+<odoo>
+    <data>
+        <template id="waterconnections_followup" name="Portal layout : waterconnection entries" inherit_id="base_wua_portal_pressurized_irrigation.waterconnections_followup">
+            <xpath expr="//div[@class='panel-heading']/div[@class='row']/div[@class='col-md-8']" position="after">
+                <div class="col-md-4 text-right">
+                    <button type="button"
+                            class="btn btn-sm"
+                            data-toggle="modal"
+                            data-target="#schedulingModal">
+                        <div class="fa fa-fw fa-calendar o_button_icon"></div>
+                        <span>Scheduling</span>
+                    </button>
+                </div>
+            </xpath>
+            <xpath expr="//div[@id='wrap']" position="inside">
+                <div class="modal fade" id="schedulingModal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document" style="width:auto; max-width:90%;">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Scheduling</h4>
+                                <button type="button" class="close" data-dismiss="modal" style="margin-top: -25px;">
+                                X
+                                </button>
+                            </div>
+                            <div class="modal-body" id="schedulingModalBody">
+                                <t t-raw="waterconnection.html_scheduling_frame"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <t t-jquery="body" t-operation="append">
+                    <script type="text/javascript">
+                        (function () {
+                            document.addEventListener('DOMContentLoaded', function () {
+                                $('.open-frame-modal').click(function (e) {
+                                    e.preventDefault();
+                                    var html = $(this).data('frame-html');
+                                    var title = $(this).data('frame-title');
+                                    $('#frameModalLabel').text(title);
+                                    $('#frameModalBody').html(html);
+                                    $('#frameModal').modal('show');
+                                });
+                            });
+                        })();
+                    </script>
+                </t>
+            </xpath>
+            <xpath expr="//ul[@name='tabs_titles']" position="inside">
+                <li><a href="#readings_irriweb" role="tab" data-toggle="tab"> Readings(IrriWEB)</a></li>
+                <li><a href="#consumptions_irriweb" role="tab" data-toggle="tab"> Consumptions(IrriWEB)</a></li>
+            </xpath>
+
+            <xpath expr="//div[@name='tabs_content']" position="inside">
+                <div class="tab-pane" id="readings_irriweb">
+                    <t t-if="waterconnection.html_readings_frame">
+                        <t t-raw="waterconnection.html_readings_frame"/>
+                    </t>
+                </div>
+                <div class="tab-pane" id="consumptions_irriweb">
+                    <t t-if="waterconnection.html_consumptions_frame">
+                        <t t-raw="waterconnection.html_consumptions_frame"/>
+                    </t>
+                </div>
+            </xpath>
+        </template>
+
+        <template id="portal_my_waterconnections" inherit_id="base_wua_portal_pressurized_irrigation.portal_my_waterconnections">
+            <xpath expr="//table[@id='waterconnections-table']/thead/tr" position="inside">
+                <th style="width:3%;"></th>
+                <th style="width:3%;"></th>
+                <th style="width:3%;"></th>
+            </xpath>
+
+            <xpath expr="//table[@id='waterconnections-table']/tbody/t/tr" position="inside">
+                <td style="text-align:center; padding: 0;">
+                    <a href="#"
+                    class="btn btn-link open-frame-modal"
+                    title="Historical readings"
+                    data-frame-title="Historical readings"
+                    t-att-data-frame-html="link.waterconnection_id.html_readings_frame">
+                        <i class="fa fa-list"/>
+                    </a>
+                </td>
+                <td style="text-align:center; padding: 0;">
+                    <a href="#"
+                    class="btn btn-link open-frame-modal"
+                    title="Historical consumptions"
+                    data-frame-title="Historical consumptions"
+                    t-att-data-frame-html="link.waterconnection_id.html_consumptions_frame">
+                        <i class="fa fa-tint"/>
+                    </a>
+                </td>
+                <td style="text-align:center; padding: 0;">
+                    <a href="#"
+                    class="btn btn-link open-frame-modal"
+                    title="Waterconnection scheduling"
+                    data-frame-title="Scheduling"
+                    t-att-data-frame-html="link.waterconnection_id.html_scheduling_frame">
+                        <i class="fa fa-calendar"/>
+                    </a>
+                </td>
+            </xpath>
+            <xpath expr="//div[@id='wrap']" position="inside">
+                <div class="modal fade" id="frameModal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-lg" role="document" style="width:auto; max-width:70%;">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="frameModalLabel">Title</h4>
+                                <button type="button" class="close" data-dismiss="modal" style="margin-top: -25px;">
+                                    X
+                                </button>
+                            </div>
+                            <div class="modal-body" id="frameModalBody">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <t t-jquery="body" t-operation="append">
+                    <script type="text/javascript">
+                        (function () {
+                            document.addEventListener('DOMContentLoaded', function () {
+                                $('.open-frame-modal').click(function (e) {
+                                    e.preventDefault();
+                                    var html = $(this).data('frame-html');
+                                    var title = $(this).data('frame-title');
+                                    $('#frameModalLabel').text(title);
+                                    $('#frameModalBody').html(html);
+                                    $('#frameModal').modal('show');
+                                });
+                            });
+                        })();
+                    </script>
+                </t>
+            </xpath>
+        </template>
+    </data>
+</odoo>
