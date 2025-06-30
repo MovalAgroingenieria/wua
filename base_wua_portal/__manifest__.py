@@ -21,6 +21,7 @@
         "views/portal_account_templates.xml",
         "views/portal_parcels_templates.xml",
         "views/portal_invoices_templates.xml",
+        "views/res_users_view.xml",
         "security/ir.model.access.csv",
     ],
     "installable": True,

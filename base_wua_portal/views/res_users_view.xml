@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_users_search_inherit" model="ir.ui.view">
+        <field name="name">res.users.search.portal</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='no_share']" position="before">
+                <filter name="is_portal_user"
+                        string="Portal Users"
+                        domain="[('is_portal_user','=',True)]"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
