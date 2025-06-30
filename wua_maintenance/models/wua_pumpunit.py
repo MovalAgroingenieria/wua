@@ -27,6 +27,8 @@ class WuaPumpunit(models.Model):
             parent_id = pumpgroup.equipment_id
             if parent_id:
                 vals['parent_id'] = parent_id.id
+        if 'active' in item_vals:
+            vals['active'] = item_vals['active']
         return vals
 
     def _get_equipment_vals_for_write(self, item_vals):
@@ -40,4 +42,6 @@ class WuaPumpunit(models.Model):
             parent_id = pumpgroup.equipment_id
             if parent_id:
                 vals['parent_id'] = parent_id.id
+        if 'active' in item_vals:
+            vals['active'] = item_vals['active']
         return vals

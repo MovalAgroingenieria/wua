@@ -21,4 +21,6 @@ class WuaFilteringstation(models.Model):
         vals = {}
         if 'name' in item_vals:
             vals['name'] = item_vals['name']
+        if 'active' in item_vals:
+            vals['active'] = item_vals['active']
         return vals

@@ -148,17 +148,7 @@ class InventoryGisController(http.Controller):
             'category': equipment.category_id.name,
             'geometry_type': equipment.category_id.geometry_type,
             'geom': self._get_geojson_from_equipment_id(equipment),
-            'image': equipment.image,
             'write_date': equipment.write_date,
-            'attachments': request.env['ir.attachment'].search([
-                ('res_model', '=', 'maintenance.equipment'),
-                ('res_id', '=', equipment.id),
-            ]).mapped(
-                lambda attachment: {
-                    'name': attachment.name,
-                    'datas': attachment.datas,
-                    'mimetype': attachment.mimetype,
-                }),
             'dynamic_fields': dynamic_fields,
         }
 

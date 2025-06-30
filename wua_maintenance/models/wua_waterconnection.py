@@ -29,6 +29,8 @@ class WuaWaterconnection(models.Model):
                 watermeter = self.env['wua.watermeter'].browse(
                     item_vals['watermeter_id'])
                 watermeter.equipment_id.parent_id = parent_id
+        if 'active' in item_vals:
+            vals['active'] = item_vals['active']
         return vals
 
     def _get_equipment_vals_for_write(self, item_vals):
@@ -56,4 +58,6 @@ class WuaWaterconnection(models.Model):
             elif self.irrigationshed_id:
                 watermeter.equipment_id.parent_id = \
                     self.irrigationshed_id.equipment_id
+        if 'active' in item_vals:
+            vals['active'] = item_vals['active']
         return vals
