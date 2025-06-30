@@ -199,27 +199,33 @@
                     </notebook>
                 </group>
             </xpath>
-            <xpath expr="//sheet/*[1]" position="before">
-                <div name="buttons" class="oe_button_box">
-                    <field name="with_infrastructure_gis" invisible="1"/>
-                    <button name="action_see_gis_viewer"
-                            type="object"
-                            class="oe_stat_button"
-                            string="GIS Viewer"
-                            icon="fa-map-marker"
-                            attrs="{'invisible':
-                                    [('with_infrastructure_gis','=',False)]}"/>
-                    <button name="toggle_active"
-                            type="object"
-                            class="oe_stat_button"
-                            icon="fa-archive"
-                            confirm="Are you sure you want to toggle visibility?"
-                            groups="base_maintenance_config.group_maintenance_manager">
-                        <field name="active"
-                            widget="boolean_button"
-                            options='{"terminology": "archive"}'/>
-                    </button>
-                </div>
+        </field>
+    </record>
+
+    <record id="equipment_request_view_form" model="ir.ui.view">
+        <field name="model">maintenance.request</field>
+        <field name="inherit_id" ref="maintenance_form_buttons.equipment_request_view_form" />
+        <field name="groups_id" eval="[(4, ref('stock.group_stock_user'))]" />
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <field name="with_infrastructure_gis" invisible="1"/>
+                <button name="action_see_gis_viewer"
+                        type="object"
+                        class="oe_stat_button"
+                        string="GIS Viewer"
+                        icon="fa-map-marker"
+                        attrs="{'invisible':
+                                [('with_infrastructure_gis','=',False)]}"/>
+                <button name="toggle_active"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-archive"
+                        confirm="Are you sure you want to toggle visibility?"
+                        groups="base_maintenance_config.group_maintenance_manager">
+                    <field name="active"
+                        widget="boolean_button"
+                        options='{"terminology": "archive"}'/>
+                </button>
             </xpath>
         </field>
     </record>

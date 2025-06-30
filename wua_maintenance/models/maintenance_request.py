@@ -274,9 +274,15 @@ class MaintenanceRequest(models.Model):
                 sequence_maintenance_request_code.code)
         new_request = super(MaintenanceRequest, self).create(vals)
         # Assign default category if created_on_field is True
-        if (new_request.created_on_field and not new_request.category_id):
-            new_request.category_id = self.env.ref(
-                'wua_maintenance.equipment_category_field')
+        if (new_request.created_on_field):
+            default_team = self.env['maintenance.team'].search([
+                ('default_team_for_viewer_creation', '=', True)],
+                limit=1)
+            if default_team:
+                new_request.maintenance_team_id = default_team.id
+            if not new_request.category_id:
+                new_request.category_id = self.env.ref(
+                    'wua_maintenance.equipment_category_field')
         new_request._add_maintenance_team_followers()
         return new_request
 

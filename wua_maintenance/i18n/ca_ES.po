@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-26 12:47+0000\n"
-"PO-Revision-Date: 2025-06-26 12:47+0000\n"
+"POT-Creation-Date: 2025-06-30 09:39+0000\n"
+"PO-Revision-Date: 2025-06-30 09:39+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -218,8 +218,8 @@ msgid "Archived"
 msgstr "Arxivat"
 
 #. module: wua_maintenance
+#: model:ir.ui.view,arch_db:wua_maintenance.equipment_request_view_form
 #: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_category_view_form
-#: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_request_view_form
 #: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_view_form
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_plan_configuration_view_form
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_team_view_form
@@ -376,6 +376,11 @@ msgstr "Default GIS refresh interval (In seconds)"
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_stage_default_stage_for_viewer_creation
 msgid "Default stage for viewer creation"
 msgstr "Default stage for viewer creation"
+
+#. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_team_default_team_for_viewer_creation
+msgid "Default team for viewer creation"
+msgstr "Equip predeterminat per a la creació de visor"
 
 #. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_equipment_view_search_inherit_hr
@@ -708,7 +713,7 @@ msgid "Flowmeter"
 msgstr "Cabalímetre"
 
 #. module: wua_maintenance
-#: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_request_view_form
+#: model:ir.ui.view,arch_db:wua_maintenance.equipment_request_view_form
 #: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_request_view_tree
 #: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_view_form
 #: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_view_tree
@@ -914,7 +919,7 @@ msgstr "Etiqueta"
 #: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests___last_update
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_infrastructureitem___last_update
 msgid "Last Modified on"
-msgstr "Última modificació el "
+msgstr "Darrera modificació el"
 
 #. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipmenttag_write_uid
@@ -923,7 +928,7 @@ msgstr "Última modificació el "
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_attachment_write_uid
 #: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_write_uid
 msgid "Last Updated by"
-msgstr "Última actualització per"
+msgstr "Darrera Actualització per"
 
 #. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipmenttag_write_date
@@ -932,7 +937,7 @@ msgstr "Última actualització per"
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_attachment_write_date
 #: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_write_date
 msgid "Last Updated on"
-msgstr "Última actualització el"
+msgstr "Darrera Actualització el"
 
 #. module: wua_maintenance
 #: model:ir.model.fields,help:wua_maintenance.field_maintenance_equipment_category_legend_symbology
@@ -1114,6 +1119,12 @@ msgstr "Number"
 #, python-format
 msgid "Only one stage can be the default stage for viewer creation"
 msgstr "Only one stage can be the default stage for viewer creation"
+
+#. module: wua_maintenance
+#: code:addons/wua_maintenance/models/maintenance_team.py:43
+#, python-format
+msgid "Only one team can be the default team for viewer creation"
+msgstr "Només un equip pot ser l'equip predeterminat per a la creació de visor."
 
 #. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_request_view_form
@@ -1826,3 +1837,4 @@ msgstr "wizard.massive.maintenance.requests"
 #: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_category_view_form
 msgid "{{ equipment.name }}"
 msgstr "{{ equipment.name }}"
+
