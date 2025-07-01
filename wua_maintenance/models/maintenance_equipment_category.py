@@ -2,9 +2,10 @@
 # 2025 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from jinja2 import Template, TemplateError
+from jinja2 import Template, TemplateError, Markup
 from odoo import models, fields, api, _, exceptions
 from datetime import datetime
+import json
 import random
 
 
@@ -21,6 +22,7 @@ class WuaMaintenanceEquipmentCategory(models.Model):
         string='Part of WUA infrastructure?',
         default=False,
         readonly=True,
+        copy=False,
     )
 
     infrastructure_type = fields.Selection(
@@ -35,6 +37,7 @@ class WuaMaintenanceEquipmentCategory(models.Model):
         string='Primary infrastructure?',
         default=False,
         readonly=True,
+        copy=False,
     )
 
     extradata_template = fields.Text(
@@ -63,6 +66,12 @@ class WuaMaintenanceEquipmentCategory(models.Model):
         """,
     )
 
+    geojson_style_preview = fields.Html(
+        string="Style Preview",
+        compute="_compute_geojson_style_preview",
+        sanitize=False,
+    )
+
     legend_symbology = fields.Text(
         string='Legend symbology viewer data',
         help='Legend symbology for viewer data.',
@@ -79,6 +88,7 @@ class WuaMaintenanceEquipmentCategory(models.Model):
     model_id = fields.Many2one(
         string='Model',
         comodel_name='ir.model',
+        copy=False,
     )
 
     parent_id = fields.Many2one(
@@ -115,6 +125,61 @@ class WuaMaintenanceEquipmentCategory(models.Model):
             raise exceptions.ValidationError(_('No equipment found'))
         return equipment
 
+    def _generate_random_color(self):
+        return "#{:06x}".format(random.randint(0, 0xFFFFFF))
+
+    def _generate_random_style(self):
+        self.ensure_one()
+        try:
+            style = json.loads(self.geojson_style or '{}')
+        except Exception:
+            style = {}
+        new_fill_color = self._generate_random_color()
+        new_border_color = self._generate_random_color()
+        style['fillColor'] = new_fill_color
+        style['color'] = new_border_color
+        legend_symbology = [
+            {
+                "fontAwesomeSymbol": "far fa-check-circle",
+                "color": new_fill_color,
+            },
+        ]
+        return json.dumps(style, indent=2), json.dumps(
+            legend_symbology, indent=2)
+
+    @api.depends('geojson_style')
+    def _compute_geojson_style_preview(self):
+        for record in self:
+            try:
+                style = json.loads(record.geojson_style or '{}')
+                fill = style.get('fillColor', '#ccc')
+                stroke = style.get('color', '#000')
+            except Exception:
+                fill = '#ccc'
+                stroke = '#000'
+            svg = '''
+            <svg width="60" height="60" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="30" cy="30" r="20"
+                    fill="{fill}" stroke="{stroke}" stroke-width="3"/>
+            </svg>
+            '''.format(fill=fill, stroke=stroke)
+            record.geojson_style_preview = Markup(svg)
+
+    def copy(self, default=None):
+        self.ensure_one()
+        self = self.with_context(lang=None)
+        if default is None:
+            default = {}
+        base_name = self.name
+        names = self.search([]).mapped('name')
+        suffix = 1
+        copy_name = _("%s (copy)") % base_name
+        while copy_name in names:
+            suffix += 1
+            copy_name = _("%s (copy %d)") % (base_name, suffix)
+        default['name'] = copy_name
+        return super(WuaMaintenanceEquipmentCategory, self).copy(default)
+
     @api.multi
     def action_resolve_template(self):
         self.ensure_one()
@@ -130,6 +195,13 @@ class WuaMaintenanceEquipmentCategory(models.Model):
                     _('Error resolving template: {}'.format(err.message)))
         if message:
             self.extradata_template_resolved = message
+
+    @api.multi
+    def action_randomize_style(self):
+        self.ensure_one()
+        geojson_style, legend_symbology = self._generate_random_style()
+        self.geojson_style = geojson_style
+        self.legend_symbology = legend_symbology
 
     @api.multi
     def unlink(self):

@@ -649,7 +649,8 @@ class MaintenanceEquipment(models.Model):
                         JOIN category_hierarchy ch ON c.parent_id = ch.id
                     ),
                     equipment_with_infrastructure_gis AS (
-                        SELECT me.id AS equipment_id, ST_AsGeoJSON(gis.geom) AS geojson
+                        SELECT me.id AS equipment_id,
+                            ST_AsGeoJSON(gis.geom) AS geojson
                         FROM maintenance_equipment me
                         INNER JOIN {base_table} bt ON me.id = bt.equipment_id
                         INNER JOIN {intermediate_table} it ON bt.{base_field}

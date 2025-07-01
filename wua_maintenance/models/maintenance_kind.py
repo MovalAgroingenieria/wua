@@ -63,6 +63,39 @@ class MaintenanceKind(models.Model):
                 except Exception as e:
                     _logger.error(_('Error updating field %s: %s'), path, e)
 
+    def _resolve_field_path_preview(self, model_obj, field_path):
+        field_names = field_path.split('.')
+        target_model = model_obj
+        for field_name in field_names:
+            if '[' in field_name and ']' in field_name:
+                field_name = field_name.split('[')[0]
+            if field_name not in target_model._fields:
+                raise ValueError("Field '%s' not found in model '%s'" % (
+                    field_name, target_model._name))
+            field_obj = target_model._fields[field_name]
+            if field_obj.type == 'many2one':
+                target_model = self.env[field_obj.comodel_name]
+            elif field_obj.type in ['one2many', 'many2many']:
+                raise ValueError("Cannot follow field '%s' of type '%s'" % (
+                    field_name, field_obj.type))
+            else:
+                break
+
+    @api.multi
+    def action_validate_dynamic_fields(self):
+        self.ensure_one()
+        self.dynamic_field_ids.write({'validation_status': 'unchecked'})
+        if not self.category_id or not self.category_id.model_id:
+            return True
+        model = self.env[self.category_id.model_id.model]
+        for field in self.dynamic_field_ids:
+            try:
+                self._resolve_field_path_preview(model, field.field_path)
+                field.write({'validation_status': 'valid'})
+            except Exception:
+                field.write({'validation_status': 'invalid'})
+        return True
+
 
 class MaintenanceKindDynamicField(models.Model):
     _name = 'maintenance.kind.dynamic.field'
@@ -112,6 +145,15 @@ class MaintenanceKindDynamicField(models.Model):
     required = fields.Boolean(
         string='Required',
         default=False,
+    )
+
+    validation_status = fields.Selection([
+        ('unchecked', 'Unchecked'),
+        ('valid', 'Valid'),
+        ('invalid', 'Invalid'),
+        ],
+        string='Validation Status',
+        default='unchecked',
     )
 
 

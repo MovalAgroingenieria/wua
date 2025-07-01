@@ -130,6 +130,7 @@ class MaintenanceRequest(models.Model):
     with_infrastructure_gis = fields.Boolean(
         string='With Infrastructure GIS',
         compute='_compute_with_infrastructure_gis',
+        search='_search_with_infrastructure_gis',
     )
 
     active = fields.Boolean(default=True)
@@ -201,6 +202,17 @@ class MaintenanceRequest(models.Model):
                     record.equipment_id.with_infrastructure_gis:
                 with_infrastructure_gis = True
             record.with_infrastructure_gis = with_infrastructure_gis
+
+    @api.model
+    def _search_with_infrastructure_gis(self, operator, value):
+        if operator not in ('=', '!='):
+            return [('id', 'in', [])]
+        domain = [('equipment_id.with_infrastructure_gis', '=', True)]
+        ids = self.search(domain).ids
+        if (operator == '=' and value) or (operator == '!=' and not value):
+            return [('id', 'in', ids)]
+        else:
+            return [('id', 'not in', ids)]
 
     @api.multi
     def action_see_gis_viewer(self):

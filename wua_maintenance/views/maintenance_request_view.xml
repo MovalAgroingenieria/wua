@@ -250,6 +250,9 @@
                 <separator/>
                 <filter string='Created on field' name='created_on_field' domain="[('created_on_field', '=', True)]"/>
                 <separator/>
+                <filter string="GIS: Yes" name="with_infrastructure_gis" domain="[('with_infrastructure_gis', '=', True)]"/>
+                <filter string="GIS: No" name="without_infrastructure_gis" domain="[('with_infrastructure_gis', '=', False)]"/>
+                <separator/>
             </xpath>
             <xpath expr="//filter[@name='created_by']" position="before">
                     <filter string='Team' domain="[]" context="{'group_by' : 'maintenance_team_id'}"/>

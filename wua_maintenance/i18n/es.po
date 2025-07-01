@@ -6,14 +6,26 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-30 09:40+0000\n"
-"PO-Revision-Date: 2025-06-30 09:40+0000\n"
+"POT-Creation-Date: 2025-07-01 10:07+0000\n"
+"PO-Revision-Date: 2025-07-01 10:07+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: wua_maintenance
+#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:179
+#, python-format
+msgid "%s (copy %d)"
+msgstr "%s (copia %d)"
+
+#. module: wua_maintenance
+#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:176
+#, python-format
+msgid "%s (copy)"
+msgstr "%s (copia)"
 
 #. module: wua_maintenance
 #: model:ir.model.fields,help:wua_maintenance.field_maintenance_equipmenttag_color
@@ -271,7 +283,7 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:138
+#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:210
 #, python-format
 msgid "Cannot delete a WUA infrastructure category."
 msgstr "No se puede borrar una categoría estándar."
@@ -596,7 +608,7 @@ msgid "Equipment not available."
 msgstr "Elemento no disponible."
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:130
+#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:195
 #, python-format
 msgid "Error resolving template: {}"
 msgstr "Error al resolver la plantilla: {}"
@@ -719,6 +731,16 @@ msgstr "Caudalímetro"
 #: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_view_tree
 msgid "GIS Viewer"
 msgstr "Visor GIS"
+
+#. module: wua_maintenance
+#: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_request_view_search
+msgid "GIS: No"
+msgstr "Infraestructura GIS: No"
+
+#. module: wua_maintenance
+#: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_request_view_search
+msgid "GIS: Yes"
+msgstr "Infraestructura GIS: Si"
 
 #. module: wua_maintenance
 #: selection:maintenance.equipment,infrastructure_type:0
@@ -859,6 +881,11 @@ msgstr "Captación"
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_intake_ids
 msgid "Intakes"
 msgstr "Captaciones"
+
+#. module: wua_maintenance
+#: selection:maintenance.kind.dynamic.field,validation_status:0
+msgid "Invalid"
+msgstr "Inválido"
 
 #. module: wua_maintenance
 #: code:addons/wua_maintenance/models/maintenance_kind.py:57
@@ -1031,7 +1058,7 @@ msgid "Maintenance category"
 msgstr "Categoría de mantenimiento"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:103
+#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:113
 #: sql_constraint:maintenance.equipment.category:0
 #, python-format
 msgid "Maintenance category already exists."
@@ -1086,7 +1113,7 @@ msgid "Next creation date"
 msgstr "Siguiente fecha creación"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:115
+#: code:addons/wua_maintenance/models/maintenance_equipment_category.py:125
 #, python-format
 msgid "No equipment found"
 msgstr "No se encontró el equipamiento"
@@ -1281,6 +1308,11 @@ msgid "RESERVOIR"
 msgstr "BALSA"
 
 #. module: wua_maintenance
+#: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_category_view_form
+msgid "Randomize Style"
+msgstr "Aleatorizar estilo"
+
+#. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_related_element_extradata
 msgid "Related element extradata"
 msgstr "Información extra"
@@ -1429,6 +1461,11 @@ msgid "Sequence for maintenance requests"
 msgstr "Secuencia para peticiones de mantenimiento"
 
 #. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_category_geojson_style_preview
+msgid "Style Preview"
+msgstr "Previsualización estilo"
+
+#. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_tag_html
 msgid "Tag HTML"
 msgstr "Tag HTML"
@@ -1491,6 +1528,11 @@ msgid "Try to resolve the template using a random equipment.                    
 msgstr "Intenta resolver la plantilla usando un equipamiento aleatorio.                                             Nota: No todos los errores son detectados por el sistema."
 
 #. module: wua_maintenance
+#: selection:maintenance.kind.dynamic.field,validation_status:0
+msgid "Unchecked"
+msgstr "No comprobado"
+
+#. module: wua_maintenance
 #: code:addons/wua_maintenance/models/maintenance_kind.py:62
 #, python-format
 msgid "Updated field %s with value %s"
@@ -1505,6 +1547,21 @@ msgstr "Información actualizada"
 #: model:maintenance.equipment.category,name:wua_maintenance.equipment_category_valve
 msgid "VALVE"
 msgstr "VÁLVULA"
+
+#. module: wua_maintenance
+#: selection:maintenance.kind.dynamic.field,validation_status:0
+msgid "Valid"
+msgstr "Válido"
+
+#. module: wua_maintenance
+#: model:ir.ui.view,arch_db:wua_maintenance.view_maintenance_kind_form
+msgid "Validate Dynamic Fields"
+msgstr "Validar campos dinámicos"
+
+#. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_kind_dynamic_field_validation_status
+msgid "Validation Status"
+msgstr "Validación"
 
 #. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_kind_dynamic_field_selection_value

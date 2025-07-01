@@ -31,13 +31,20 @@
                     <group name="slave_data">
                         <notebook>
                             <page string="Dynamic Fields">
+                                <header>
+                                    <button name="action_validate_dynamic_fields" type="object" class="btn btn-link"
+                                        string="Validate Dynamic Fields" icon="fa-search" style="margin-top:2px; margin-bottom:2px;"
+                                    />
+                                </header>
                                 <field name="dynamic_field_ids">
-                                    <tree editable="bottom">
+                                    <tree colors="red:validation_status=='invalid';green:validation_status=='valid';gray:validation_status=='unchecked'"
+                                          editable="bottom">
                                         <field name="name"/>
                                         <field name="field_type"/>
                                         <field name="fixed_option_ids" widget="many2many_tags"/>
                                         <field name="required"/>
                                         <field name="field_path"/>
+                                        <field name="validation_status"/>
                                     </tree>
                                 </field>
                             </page>
