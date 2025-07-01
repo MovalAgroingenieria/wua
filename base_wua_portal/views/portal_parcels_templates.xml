@@ -230,6 +230,9 @@
                                                         <tr>
                                                             <th>Partner</th>
                                                             <th>Profile</th>
+                                                            <th>Ownership %</th>
+                                                            <th>Water Costs %</th>
+                                                            <th>Other Costs %</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -242,6 +245,9 @@
                                                                         <t t-if="partnerlink.profile == 'P'"><span>Payer</span></t>
                                                                         <t t-if="partnerlink.profile == 'L'"><span>Lessee</span></t>
                                                                     </td>
+                                                                    <td><t t-esc="partnerlink.ownership_percentage"/></td>
+                                                                    <td><t t-esc="partnerlink.water_costs_percentage"/></td>
+                                                                    <td><t t-esc="partnerlink.other_costs_percentage"/></td>
                                                                 </tr>
                                                             </t>
                                                         </t>

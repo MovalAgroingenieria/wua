@@ -11,8 +11,12 @@ class PortalInvoices(http.Controller):
     def _prepare_portal_layout_values(self):
         """ prepare the values to render portal layout """
         partner = request.env.user.partner_id
+        gis_viewer_link = partner.gis_viewer_link
+        if gis_viewer_link and '&arg=' in gis_viewer_link:
+            gis_viewer_link = gis_viewer_link.split('&arg=')[0]
         values = {
             'company': request.website.company_id,
+            'gis_viewer_link': gis_viewer_link,
             'user': request.env.user,
             'partner': partner
         }
@@ -61,7 +65,7 @@ class PortalInvoices(http.Controller):
         if search and search_field:
             field_map = {
                 'name': 'number',
-                'invoiceset': 'invoiceset_id.name',
+                'invoiceset': 'invoiceset_id.description',
             }
             if search_field in field_map:
                 domain.append((field_map[search_field], 'ilike', search))

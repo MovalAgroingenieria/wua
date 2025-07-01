@@ -173,8 +173,16 @@ class website_account(website_account):
         if search and search_field:
             field_map = {
                 'waterconnection': 'waterconnection_id.name',
+                'date': 'date',
             }
             if search_field in field_map:
+                if search_field == 'date':
+                    search_date = search.strip()
+                    irrigationevents_domain.append(
+                        ('irrigation_start_date', 'ilike', search_date))
+                    irrigationevents_domain.append(
+                        ('irrigation_end_date', 'ilike', search_date))
+            else:
                 irrigationevents_domain.append(
                     (field_map[search_field], 'ilike', search))
         irrigationevent_count = \
@@ -192,8 +200,9 @@ class website_account(website_account):
             },
         )
         offset = (page - 1) * items_per_page
-        irrigationevents = request.env['wua.waterconnection.irrigation.event'].search(
-            irrigationevents_domain, limit=items_per_page, offset=offset)
+        irrigationevents = \
+            request.env['wua.waterconnection.irrigation.event'].search(
+                irrigationevents_domain, limit=items_per_page, offset=offset)
         values.update({
             'irrigationevents': irrigationevents,
             'waterconnections': waterconnections,

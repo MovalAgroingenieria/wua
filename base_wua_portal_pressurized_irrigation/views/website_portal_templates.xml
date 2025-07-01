@@ -32,12 +32,6 @@
                             <li>
                                 <a href="/my/readings">Parcels</a>
                             </li>
-                             <li>
-                                <a href="/my/waterconnections">Water Connections</a>
-                            </li>
-                            <li>
-                                <a href="/my/readings">Readings</a>
-                            </li>
                             </ul>
                         </div>
                     </div>
@@ -143,12 +137,6 @@
                     <li>
                         <a href="/my/parcels">Parcels</a>
                     </li>
-                    <li>
-                        <a href="/my/waterconnections">Water Connections</a>
-                    </li>
-                    <li>
-                        <a href="/my/presconsumptions">Presconsumptions</a>
-                    </li>
                     </ul>
                 </div>
                 </div>
@@ -182,18 +170,22 @@
                     <table class="table table-hover o_my_status_table">
                         <thead>
                         <tr class="active">
+                            <th>Water Connection</th>
                             <th>Reading Initial Time</th>
                             <th>Reading End Time</th>
-                            <th>Volume</th>
-                            <th>Adjustment Volume</th>
-                            <th>Volume Real</th>
-                            <th>Water Connection</th>
-                            <th>Reading</th>
+                            <th>Volume(m3)</th>
+                            <th>Adjustment Volume(m3)</th>
+                            <th>Volume Real(m3)</th>
+                            <th>Initial Lecture(m3)</th>
+                            <th>Final Lecture(m3)</th>
                         </tr>
                         </thead>
                         <tbody>
                         <t t-foreach="presconsumptions" t-as="presconsumption">
                             <tr>
+                                <td>
+                                    <t t-esc="presconsumption.waterconnection_id.name"/>
+                                </td>
                                 <td>
                                     <t t-esc="presconsumption.reading_initial_time"/>
                                 </td>
@@ -210,10 +202,10 @@
                                     <t t-esc="presconsumption.volume_real"/>
                                 </td>
                                 <td>
-                                    <t t-esc="presconsumption.waterconnection_id.name"/>
+                                    <t t-esc="presconsumption.initial_volume"/>
                                 </td>
                                 <td>
-                                    <t t-esc="presconsumption.reading_id.name"/>
+                                    <t t-esc="presconsumption.end_volume"/>
                                 </td>
                             </tr>
                         </t>
@@ -252,12 +244,6 @@
                     <li>
                         <a href="/my/parcels">Parcels</a>
                     </li>
-                    <li>
-                        <a href="/my/waterconnections">Water Connections</a>
-                    </li>
-                    <li>
-                        <a href="/my/presconsumptions">Presconsumptions</a>
-                    </li>
                     </ul>
                 </div>
                 </div>
@@ -276,6 +262,7 @@
                         <div class="col-md-2">
                             <select id="search_field" name="search_field" class="form-control">
                                 <option value="waterconnection" t-att-selected="'waterconnection' == search_field">Water Connection</option>
+                                <option value="date" t-att-selected="'date' == search_field">Date</option>
                             </select>
                         </div>
                         <div class="col-md-8">
@@ -416,15 +403,15 @@
             <xpath expr="//div[contains(@name,'buttons')]" position="inside">
                 <a t-att-href="'/my/readings?search_field=waterconnection&amp;search=' + waterconnection.name" class="btn oe_stat_button">
                     <div class="fa fa-fw fa-list o_button_icon"></div>
-                    Readings
+                    <span>Readings</span>
                 </a>
                 <a t-att-href="'/my/presconsumptions?search_field=waterconnection&amp;search=' + waterconnection.name" class="btn oe_stat_button">
                     <div class="fa fa-fw fa-list o_button_icon"></div>
-                    Consumptions
+                    <span>Consumptions</span>
                 </a>
                 <a t-att-href="'/my/irrigationevents?search_field=waterconnection&amp;search=' + waterconnection.name" class="btn oe_stat_button">
                     <div class="fa fa-fw fa-list o_button_icon"></div>
-                    Irrigation Events
+                    <span>Irrigation Events</span>
                 </a>
             </xpath>
             <xpath expr="//ul[@name='tabs_titles']" position="inside">

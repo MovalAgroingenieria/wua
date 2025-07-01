@@ -90,11 +90,16 @@ class PortalParcels(http.Controller):
             parcel_id_list[current_index + 1]
             if 0 <= current_index < len(parcel_id_list) - 1 else None
         )
-
+        url = request.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer')
+        parcel_param = request.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_parcel_param')
+        if (url and parcel_param):
+            gis_viewer_link = url + '?' + parcel_param + '=' + parcel.name
         return request.render("base_wua_portal.parcels_followup", {
             'parcel': parcel_sudo,
             'partner': request.env.user.partner_id,
-            'gis_url': parcel.gis_viewer_link,
+            'gis_url': gis_viewer_link,
             'prev_parcel_id': prev_id,
             'next_parcel_id': next_id,
             'ids': ids,
