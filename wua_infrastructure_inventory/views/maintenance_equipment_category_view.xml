@@ -6,14 +6,19 @@
         <field name="model">maintenance.equipment.category</field>
         <field name="inherit_id" ref="wua_maintenance.hr_equipment_category_view_form" />
         <field name="arch" type="xml">
-
             <xpath expr="//field[@name='model_id']" position="after">
                 <field name="available_for_inventory"/>
             </xpath>
             <xpath expr="//page[@name='template_page']" position="after">
-                <page string="Dynamic Fields">
+                <page string="Dynamic Fields for GIS inventory">
+                    <header>
+                        <button name="action_validate_dynamic_fields" type="object" class="btn btn-link"
+                            string="Validate Dynamic Fields" icon="fa-search" style="margin-top:2px; margin-bottom:2px;"
+                        />
+                    </header>
                     <field name="dynamic_field_ids">
-                        <tree editable="bottom">
+                        <tree colors="green:validation_status=='valid';red:validation_status=='invalid'"
+                              editable="bottom">
                             <field name="readonly" invisible="1"/>
                             <field name="name"/>
                             <field name="field_type"
@@ -28,9 +33,21 @@
                                    attrs="{'readonly': [('readonly', '=', True)]}"/>
                             <field name="related_category_id"
                                    />
+                            <field name="validation_status" readonly="1"/>
                         </tree>
                     </field>
                 </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="hr_equipment_category_view_tree" model="ir.ui.view">
+        <field name="name">equipment.category.tree</field>
+        <field name="model">maintenance.equipment.category</field>
+        <field name="inherit_id" ref="wua_maintenance.hr_equipment_category_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='technician_user_id']" position="after">
+                <field name="available_for_inventory"/>
             </xpath>
         </field>
     </record>

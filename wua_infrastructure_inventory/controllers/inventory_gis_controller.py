@@ -191,7 +191,8 @@ class InventoryGisController(http.Controller):
     def get_inventory_categories_data(self, *args, **kwargs):
         categories_output = {}
         categories = request.env['maintenance.equipment.category'].search([
-            ('available_for_inventory', '=', True)])
+            ('available_for_inventory', '=', True)],
+            order='name asc')
         for category in categories:
             categories_output[self.to_valid_variable_name(category.name)] = {
                 'id': category.id,
@@ -214,7 +215,8 @@ class InventoryGisController(http.Controller):
     def get_inventory_init_config(self, *args, **kwargs):
         categories_output = {}
         categories = request.env['maintenance.equipment.category'].search([
-            ('available_for_inventory', '=', True)])
+            ('available_for_inventory', '=', True)],
+            order='name asc')
         for category in categories:
             categories_output[self.to_valid_variable_name(category.name)] = {
                 'id': category.id,
