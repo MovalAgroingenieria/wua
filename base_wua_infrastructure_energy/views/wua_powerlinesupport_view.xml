@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="wua_powerlinesupport_view_tree" model="ir.ui.view">
-        <field name="name">wua.power.line.support.tree</field>
+        <field name="name">wua.powerlinesupport.tree</field>
         <field name="model">wua.powerlinesupport</field>
         <field name="arch" type="xml">
             <tree>
                 <field name="name"/>
                 <field name="gis_viewer_link" invisible="1"/>
-                <field name="with_gis_power_line_support" invisible="1"/>
+                <field name="with_gis_powerlinesupport" invisible="1"/>
                 <button name="action_see_gis_viewer"
                         type="object" class="oe_stat_button"
                         string="GIS Viewer (zoom to point)"
                         icon="fa-map-marker"
                         attrs="{'invisible': ['|',('gis_viewer_link','=',False),
-                               ('with_gis_power_line_support','=',False)]}"/>
+                               ('with_gis_powerlinesupport','=',False)]}"/>
                 <field name="tipology"/>
                 <field name="wire_support"/>
                 <field name="bird_friendly"/>
@@ -26,13 +26,13 @@
     </record>
 
     <record id="wua_powerlinesupport_view_form" model="ir.ui.view">
-        <field name="name">wua.power.line.support.form</field>
+        <field name="name">wua.powerlinesupport.form</field>
         <field name="model">wua.powerlinesupport</field>
         <field name="arch" type="xml">
             <form string="Power Line Support">
                 <sheet>
                     <div name="buttons" class="oe_button_box">
-                        <field name="with_gis_power_line_support" invisible="1"/>
+                        <field name="with_gis_powerlinesupport" invisible="1"/>
                         <field name="gis_viewer_link" invisible="1"/>
                         <button name="action_see_gis_viewer"
                                 type="object"
@@ -41,7 +41,7 @@
                                 icon="fa-map-marker"
                                 attrs="{'invisible':
                                       ['|',('gis_viewer_link','=',False),
-                                      ('with_gis_power_line_support','=',False)]}"/>
+                                      ('with_gis_powerlinesupport','=',False)]}"/>
                     </div>
                         <group>
                         <group>
@@ -90,7 +90,7 @@
 
 
     <record id="wua_powerlinesupport_view_search" model="ir.ui.view">
-        <field name="name">wua.power.line.support.search</field>
+        <field name="name">wua.powerlinesupport.search</field>
         <field name="model">wua.powerlinesupport</field>
         <field name="arch" type="xml">
             <search>

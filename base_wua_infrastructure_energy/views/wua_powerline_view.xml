@@ -2,19 +2,19 @@
 <odoo>
 
     <record id="wua_powerline_view_tree" model="ir.ui.view">
-        <field name="name">wua.power.line.tree</field>
+        <field name="name">wua.powerline.tree</field>
         <field name="model">wua.powerline</field>
         <field name="arch" type="xml">
             <tree>
                 <field name="name"/>
                 <field name="gis_viewer_link" invisible="1"/>
-                <field name="with_gis_power_line" invisible="1"/>
+                <field name="with_gis_powerline" invisible="1"/>
                 <button name="action_see_gis_viewer"
                         type="object" class="oe_stat_button"
                         string="GIS Viewer (zoom to point)"
                         icon="fa-map-marker"
                         attrs="{'invisible': ['|',('gis_viewer_link','=',False),
-                               ('with_gis_power_line','=',False)]}"/>
+                               ('with_gis_powerline','=',False)]}"/>
                 <field name="rated_voltage"/>
                 <field name="type"/>
                 <field name="length"/>
@@ -26,13 +26,13 @@
     </record>
 
     <record id="wua_powerline_view_form" model="ir.ui.view">
-        <field name="name">wua.power.line.form</field>
+        <field name="name">wua.powerline.form</field>
         <field name="model">wua.powerline</field>
         <field name="arch" type="xml">
             <form string="Power Line">
                 <sheet>
                     <div name="buttons" class="oe_button_box">
-                        <field name="with_gis_power_line" invisible="1"/>
+                        <field name="with_gis_powerline" invisible="1"/>
                         <field name="gis_viewer_link" invisible="1"/>
                         <button name="action_see_gis_viewer"
                                 type="object"
@@ -41,7 +41,7 @@
                                 icon="fa-map-marker"
                                 attrs="{'invisible':
                                       ['|',('gis_viewer_link','=',False),
-                                      ('with_gis_power_line','=',False)]}"/>
+                                      ('with_gis_powerline','=',False)]}"/>
                     </div>
                     <group>
                         <field name="name"/>
@@ -66,7 +66,7 @@
     </record>
 
     <record id="wua_powerline_view_search" model="ir.ui.view">
-        <field name="name">wua.power.line.search</field>
+        <field name="name">wua.powerline.search</field>
         <field name="model">wua.powerline</field>
         <field name="arch" type="xml">
             <search>

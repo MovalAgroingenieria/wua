@@ -8,7 +8,7 @@
       <form string="Processing Centre">
         <sheet>
           <div name="buttons" class="oe_button_box">
-            <field name="with_gis_processing_centre" invisible="1"/>
+            <field name="with_gis_processingcentre" invisible="1"/>
             <field name="gis_viewer_link" invisible="1"/>
               <button name="action_see_gis_viewer"
                       type="object"
@@ -17,7 +17,7 @@
                       icon="fa-map-marker"
                       attrs="{'invisible':
                             ['|',('gis_viewer_link','=',False),
-                            ('with_gis_processing_centre','=',False)]}"/>
+                            ('with_gis_processingcentre','=',False)]}"/>
           </div>
           <group>
             <field name="name"/>
@@ -57,13 +57,13 @@
       <tree string="Processing Centres">
         <field name="name"/>
         <field name="gis_viewer_link" invisible="1"/>
-        <field name="with_gis_processing_centre" invisible="1"/>
+        <field name="with_gis_processingcentre" invisible="1"/>
                 <button name="action_see_gis_viewer"
                         type="object" class="oe_stat_button"
                         string="GIS Viewer (zoom to point)"
                         icon="fa-map-marker"
                         attrs="{'invisible': ['|',('gis_viewer_link','=',False),
-                               ('with_gis_processing_centre','=',False)]}"/>
+                               ('with_gis_processingcentre','=',False)]}"/>
         <field name="type"/>
         <field name="capacity"/>
         <field name="number_of_transformers"/>
@@ -83,7 +83,7 @@
         <field name="type"/>
         <field name="transformer_type"/>
         <filter string="With Measurement Devices" name="with_measurement_devices" domain="[('with_measurement_devices','=',True)]"/>
-        <filter string="With GIS Processing Centre" name="with_gis_processing_centre" domain="[('with_gis_processing_centre','=',True)]"/>
+        <filter string="With GIS Processing Centre" name="with_gis_processingcentre" domain="[('with_gis_processingcentre','=',True)]"/>
         <group expand="0" string="Group By">
           <filter string="Type" name="group_type" context="{'group_by': 'type'}"/>
           <filter string="Transformer Type" name="group_transformer_type" context="{'group_by': 'transformer_type'}"/>

@@ -76,7 +76,7 @@ class WuaProcessingCentre(models.Model):
         compute='_compute_gis_viewer_link',
     )
 
-    with_gis_processing_centre = fields.Boolean(
+    with_gis_processingcentre = fields.Boolean(
         string='With GIS Processing centre',
         readonly=True,
     )
@@ -110,7 +110,7 @@ class WuaProcessingCentre(models.Model):
             'wua.configuration', 'url_gis_viewer_password')
         param = self.env['ir.values'].get_default(
             'wua.infrastructure.configuration',
-            'url_gis_viewer_processing_centre_param')
+            'url_gis_viewer_processingcentre_param')
         for record in self:
             final_url = url
             if final_url:
@@ -142,7 +142,7 @@ class WuaProcessingCentre(models.Model):
     def init(self):
         parcel_model = self.env['wua.parcel']
         try:
-            parcel_model.create_wua_gis_processing_centre_table()
-            parcel_model.create_processing_centre_triggers()
+            parcel_model.create_wua_gis_processingcentre_table()
+            parcel_model.create_processingcentre_triggers()
         except Exception:
             pass

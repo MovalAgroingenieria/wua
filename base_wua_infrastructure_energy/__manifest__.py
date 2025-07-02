@@ -6,7 +6,7 @@
     "name": "Energy Infrastructure for Water Users Associations",
     "summary": "In a water users association, management of its "
                "energy infrastructure",
-    "version": '10.0.1.1.0',
+    "version": '10.0.1.1.1',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
@@ -18,9 +18,9 @@
     "data": [
         "data/wua_infrastructure_energy_config_settings_data.xml",
         "security/ir.model.access.csv",
-        "views/wua_processing_centre_view.xml",
-        "views/wua_power_line_view.xml",
-        "views/wua_power_line_support_view.xml",
+        "views/wua_processingcentre_view.xml",
+        "views/wua_powerline_view.xml",
+        "views/wua_powerlinesupport_view.xml",
         "views/base_wua_infrastructure_energy_menus.xml",
         "views/wua_infrastructure_config_settings_view.xml",
         ],

@@ -124,7 +124,7 @@ class WuaPowerLineSupport(models.Model):
         store=False,
     )
 
-    with_gis_power_line_support = fields.Boolean(
+    with_gis_powerlinesupport = fields.Boolean(
         string='With GIS Power Line Support',
         readonly=True,
     )
@@ -155,7 +155,7 @@ class WuaPowerLineSupport(models.Model):
             'wua.configuration', 'url_gis_viewer_password')
         param = self.env['ir.values'].get_default(
             'wua.infrastructure.configuration',
-            'url_gis_viewer_power_line_support_param')
+            'url_gis_viewer_powerlinesupport_param')
         for record in self:
             final_url = url
             if final_url:
@@ -187,7 +187,7 @@ class WuaPowerLineSupport(models.Model):
     def init(self):
         parcel_model = self.env['wua.parcel']
         try:
-            parcel_model.create_wua_gis_power_line_support_table()
-            parcel_model.create_power_line_support_triggers()
+            parcel_model.create_wua_gis_powerlinesupport_table()
+            parcel_model.create_powerlinesupport_triggers()
         except Exception:
             pass

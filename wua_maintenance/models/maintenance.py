@@ -595,7 +595,7 @@ class MaintenanceEquipment(models.Model):
             },
             self.env.ref(
                 'wua_maintenance.equipment_category_processingcentre').id: {
-                'base_table': 'wua_processing_centre',
+                'base_table': 'wua_processingcentre',
                 'base_field': 'name',
                 'gis_table': 'wua_gis_processingcentre',
                 'gis_field': 'name',
@@ -605,7 +605,7 @@ class MaintenanceEquipment(models.Model):
             },
             self.env.ref(
                 'wua_maintenance.equipment_category_powerline').id: {
-                'base_table': 'wua_power_line',
+                'base_table': 'wua_powerline',
                 'base_field': 'name',
                 'gis_table': 'wua_gis_powerline',
                 'gis_field': 'name',
@@ -615,7 +615,7 @@ class MaintenanceEquipment(models.Model):
             },
             self.env.ref(
                 'wua_maintenance.equipment_category_powerlinesupport').id: {
-                'base_table': 'wua_power_line_support',
+                'base_table': 'wua_powerlinesupport',
                 'base_field': 'name',
                 'gis_table': 'wua_gis_powerlinesupport',
                 'gis_field': 'name',
