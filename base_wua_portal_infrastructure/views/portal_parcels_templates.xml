@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <template id="portal_my_parcels" name="Portal layout : parcel entries" inherit_id="base_wua_portal.portal_my_parcels" priority="925">
-            <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="inside">
-                <li>
-                    <a href="/my/waterconnections">Water connections</a>
-                </li>
-            </xpath>
-        </template>
         <template id="portal_my_parcels_followup" name="Portal layout : parcel entries" inherit_id="base_wua_portal.parcels_followup" priority="925">
             <xpath expr="//a[contains(@name,'gis_url_button')]" position="after">
                 <a t-if="cadastral_url" t-att-href="cadastral_url" target="_blank" class="btn oe_stat_button">

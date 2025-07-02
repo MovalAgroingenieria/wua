@@ -51,8 +51,8 @@ class website_account(website_account):
         ]
         if search and search_field:
             field_map = {
-                'period_initial_date': 'period_id.initial_date',
-                'period_end_date': 'period_id.end_date',
+                'period_initial_date': 'quotaperiod_id.initial_date',
+                'period_end_date': 'quotaperiod_id.end_date',
             }
             if search_field in field_map:
                 domain.append((field_map[search_field], 'ilike', search))
@@ -158,6 +158,7 @@ class website_account(website_account):
             field_map = {
                 'quota': 'quota_id.name',
                 'reading_id': 'reading_id.name',
+                'event_time': 'event_time',
             }
             if search_field in field_map:
                 hydricmovements_domain.append(

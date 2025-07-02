@@ -1,18 +1,5 @@
 <odoo>
     <data>
-        <template id="portal_my_home_menu_wua" name="Portal layout : wua menu entries" inherit_id="base_wua_portal_infrastructure.portal_my_home_menu_wua" priority="925">
-            <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="inside">
-                <li style="order: 6;">
-                    <a href="/my/quotas">Quotas</a>
-                </li>
-                <li style="order: 7;">
-                    <a href="/my/quotas">Quota Aggregate Values</a>
-                </li>
-                <li style="order: 8;">
-                    <a href="/my/hydricmovements">Hydricmovements</a>
-                </li>
-            </xpath>
-        </template>
         <template id="portal_my_quotas" name="My Readings">
             <t t-call="website.layout">
                 <div class="container mt16">
@@ -266,6 +253,7 @@
                             <select id="search_field" name="search_field" class="form-control">
                                 <option value="waterconnection" t-att-selected="'waterconnection' == search_field">Water Connection</option>
                                 <option value="watermeter" t-att-selected="'watermeter' == search_field">Water Meter</option>
+                                <option value="event_time" t-att-selected="'event_time' == search_field">Date</option>
                             </select>
                         </div>
                         <div class="col-md-8">

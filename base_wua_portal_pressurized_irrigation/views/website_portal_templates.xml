@@ -1,15 +1,5 @@
 <odoo>
     <data>
-        <template id="portal_my_home_menu_wua" name="Portal layout : wua menu entries" inherit_id="base_wua_portal_infrastructure.portal_my_home_menu_wua" priority="925">
-            <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="inside">
-                <li style="order: 4;">
-                    <a href="/my/readings">Readings</a>
-                </li>
-                <li style="order: 5;">
-                    <a href="/my/readings">Presconsumptions</a>
-                </li>
-            </xpath>
-        </template>
         <template id="portal_my_readings" name="My Readings">
             <t t-call="website.layout">
                 <div class="container mt16">
@@ -51,6 +41,7 @@
                                             <select id="search_field" name="search_field" class="form-control">
                                                 <option value="waterconnection" t-att-selected="'waterconnection' == search_field">Water Connection</option>
                                                 <option value="watermeter" t-att-selected="'watermeter' == search_field">Water Meter</option>
+                                                <option value="reading_time" t-att-selected="'reading_time' == search_field">Date</option>
                                             </select>
                                         </div>
                                         <div class="col-md-8">
@@ -156,6 +147,7 @@
                             <select id="search_field" name="search_field" class="form-control">
                                 <option value="waterconnection" t-att-selected="'waterconnection' == search_field">Water Connection</option>
                                 <option value="watermeter" t-att-selected="'watermeter' == search_field">Water Meter</option>
+                                <option value="date" t-att-selected="'date' == search_field">Date</option>
                             </select>
                         </div>
                         <div class="col-md-8">
@@ -172,12 +164,12 @@
                         <tr class="active">
                             <th>Water Connection</th>
                             <th>Reading Initial Time</th>
+                            <th>Initial Lecture(m3)</th>
                             <th>Reading End Time</th>
+                            <th>Final Lecture(m3)</th>
                             <th>Volume(m3)</th>
                             <th>Adjustment Volume(m3)</th>
                             <th>Volume Real(m3)</th>
-                            <th>Initial Lecture(m3)</th>
-                            <th>Final Lecture(m3)</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -384,20 +376,6 @@
                     </div>
                 </div>
             </t>
-        </template>
-        <template id="portal_my_parcels" name="Portal layout : parcel entries" inherit_id="base_wua_portal.portal_my_parcels" >
-            <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="inside">
-                <li>
-                    <a href="/my/readings">Readings</a>
-                </li>
-            </xpath>
-        </template>
-        <template id="portal_my_waterconnections" name="Portal layout : waterconnection entries" inherit_id="base_wua_portal_infrastructure.portal_my_waterconnections">
-            <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="inside">
-                <li>
-                    <a href="/my/readings">Readings</a>
-                </li>
-            </xpath>
         </template>
         <template id="waterconnections_followup" name="Portal layout : waterconnection entries" inherit_id="base_wua_portal_infrastructure.waterconnections_followup">
             <xpath expr="//div[contains(@name,'buttons')]" position="inside">

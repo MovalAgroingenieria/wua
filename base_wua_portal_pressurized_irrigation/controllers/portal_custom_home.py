@@ -52,6 +52,14 @@ class website_account(website_account):
             waterconnection_partnerlink_model.search(domain).mapped(
                 'waterconnection_id')
         domain.append(('waterconnection_id', 'in', waterconnections.ids))
+        if search and search_field:
+            field_map = {
+                'waterconnection': 'waterconnection_id.name',
+                'watermeter': 'watermeter_id.name',
+                'reading_time': 'reading_time',
+            }
+        if search_field in field_map:
+            domain.append((field_map[search_field], 'ilike', search))
         readings_count = request.env['wua.reading'].search_count(domain)
         items_per_page = self._items_per_page
         pager = request.website.pager(
@@ -109,8 +117,18 @@ class website_account(website_account):
             field_map = {
                 'waterconnection': 'waterconnection_id.name',
                 'reading_id': 'reading_id.name',
+                'date': 'date',
             }
             if search_field in field_map:
+                if search_field == 'date':
+                    search_date = search.strip()
+                    presconsumptions_domain.append(
+                        ('reading_initial_time',
+                         'ilike', search_date))
+                    presconsumptions_domain.append(
+                        ('reading_end_time',
+                         'ilike', search_date))
+            else:
                 presconsumptions_domain.append(
                     (field_map[search_field], 'ilike', search))
 
