@@ -59,18 +59,13 @@
                                             <th>Last Reading Time</th>
                                             <th>Last Reading Value (m3)</th>
                                             <th>Volume Real (m3)</th>
-                                            <th>Data Time</th>
-                                            <th>Total (m3)</th>
-                                            <th>Waterflow</th>
-                                            <th>Valve Open</th>
-                                            <th>Valve Scheduled</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <t t-foreach="partnerlinks" t-as="link">
                                             <tr>
                                                 <td>
-                                                    <a t-attf-href="/my/waterconnections/#{link.id}">
+                                                <a t-attf-href="/my/waterconnections/#{link.id}?ids={{ waterconnection_id_list }}&amp;#{keep_query()}">
                                                         <t t-esc="link.waterconnection_id.name"/>
                                                     </a>
                                                 </td>
@@ -85,21 +80,6 @@
                                                 </td>
                                                 <td>
                                                     <t t-esc="link.volume_real"/>
-                                                </td>
-                                                <td>
-                                                    <t t-esc="link.last_data_time" t-options="{'widget': 'date'}"/>
-                                                </td>
-                                                <td>
-                                                    <t t-esc="link.last_total_volume"/>
-                                                </td>
-                                                <td>
-                                                    <t t-esc="link.last_waterflow"/>
-                                                </td>
-                                                <td>
-                                                    <input type="checkbox" t-att-checked="link.last_valve_open" disabled="disabled"/>
-                                                </td>
-                                                <td>
-                                                    <input type="checkbox" t-att-checked="link.last_valve_scheduled" disabled="disabled"/>
                                                 </td>
                                             </tr>
                                         </t>
@@ -142,6 +122,21 @@
                                                 <t>Water connection</t>
                                                 <span t-esc="waterconnection.name"/>
                                             </h4>
+                                        </div>
+                                        <div class="col-md-4 text-right">
+                                            <t t-if="waterconnection_total">
+                                                <span><t t-esc="waterconnection_index"/> / <t t-esc="waterconnection_total"/></span>
+                                            </t>
+                                            <t t-if="prev_waterconnection_id">
+                                                <a t-attf-href="/my/waterconnections/{{ prev_waterconnection_id }}?ids={{ ids }}" class="btn btn-secondary">
+                                                    <i class="fa fa-chevron-left"></i>
+                                                </a>
+                                            </t>
+                                            <t t-if="next_waterconnection_id">
+                                                <a t-attf-href="/my/waterconnections/{{ next_waterconnection_id }}?ids={{ ids }}" class="btn btn-secondary">
+                                                    <i class="fa fa-chevron-right"></i>
+                                                </a>
+                                            </t>
                                         </div>
                                     </div>
                                 </div>

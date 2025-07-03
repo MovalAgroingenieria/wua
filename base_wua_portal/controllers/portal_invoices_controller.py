@@ -66,6 +66,7 @@ class PortalInvoices(http.Controller):
             field_map = {
                 'name': 'number',
                 'invoiceset': 'invoiceset_id.description',
+                'date_invoice': 'date_invoice',
             }
             if search_field in field_map:
                 domain.append((field_map[search_field], 'ilike', search))

@@ -22,8 +22,8 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>Position</th>
                                 <th>Water connection</th>
+                                <th>Watermeter</th>
                                 <th>Irrigationshed</th>
                                 <th>Hydraulicsector</th>
                             </tr>
@@ -31,12 +31,12 @@
                         <tbody>
                             <t t-foreach="parcel.irrigationpointwc_ids" t-as="wc">
                                 <tr>
-                                    <td><t t-esc="wc.pos"/></td>
                                     <td>
                                         <a t-attf-href="/my/waterconnections/#{partner.waterconnectionlink_ids.filtered(lambda l: l.waterconnection_id == wc.waterconnection_id).id}">
                                             <t t-esc="wc.waterconnection_id.name"/>
                                         </a>
                                     </td>
+                                    <td><t t-esc="wc.watermeter_id.name"/></td>
                                     <td><t t-esc="wc.irrigationshed_id.name"/></td>
                                     <td><t t-esc="wc.hydraulicsector_id.name"/></td>
                                 </tr>

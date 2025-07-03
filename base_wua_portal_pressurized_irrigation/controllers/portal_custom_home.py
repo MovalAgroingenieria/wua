@@ -58,8 +58,8 @@ class website_account(website_account):
                 'watermeter': 'watermeter_id.name',
                 'reading_time': 'reading_time',
             }
-        if search_field in field_map:
-            domain.append((field_map[search_field], 'ilike', search))
+            if search_field in field_map:
+                domain.append((field_map[search_field], 'ilike', search))
         readings_count = request.env['wua.reading'].search_count(domain)
         items_per_page = self._items_per_page
         pager = request.website.pager(

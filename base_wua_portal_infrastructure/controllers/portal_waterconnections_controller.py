@@ -62,19 +62,6 @@ class website_account(website_account):
             waterconnection_partnerlink_model.browse(
                 partnerlinks.mapped('waterconnection_id').ids)
 
-        available_columns = [
-            "water_connection",
-            "description",
-            "last_reading_time",
-            "last_reading_value",
-            "volume_real",
-            "last_data_time",
-            "last_total_volume",
-            "last_waterflow",
-            "last_valve_open",
-            "last_valve_scheduled",
-        ]
-
         values.update({
             'waterconnections': waterconnections,
             'partnerlinks': partnerlinks,
@@ -82,7 +69,7 @@ class website_account(website_account):
             'search_query': search,
             'search_field': search_field,
             'default_url': '/my/waterconnections',
-            'available_columns': available_columns,
+            'waterconnection_id_list': ','.join(map(str, partnerlinks.ids)),
         })
         return request.render(
             "base_wua_portal_infrastructure.portal_my_waterconnections",
@@ -90,7 +77,7 @@ class website_account(website_account):
 
     @http.route(['/my/waterconnections/<int:waterconnection>'],
                 type='http', auth="user", website=True)
-    def waterconnections_followup(self, waterconnection=None, **kw):
+    def waterconnections_followup(self, waterconnection=None, ids=None, **kw):
         partnerlink = \
             request.env['res.partner.waterconnection'].browse(
                 [waterconnection])
@@ -103,9 +90,31 @@ class website_account(website_account):
 
         waterconnection_sudo = waterconnection.sudo()
 
+        waterconnection_id_list = \
+            [int(i) for i in ids.split(',')] if ids else []
+        current_index = (
+            waterconnection_id_list.index(partnerlink.id)
+            if partnerlink.id in waterconnection_id_list else -1
+        )
+        prev_id = (
+            waterconnection_id_list[current_index - 1]
+            if current_index > 0 else None
+        )
+        next_id = (
+            waterconnection_id_list[current_index + 1]
+            if 0 <= current_index < len(waterconnection_id_list) - 1 else None
+        )
+        partner = request.env.user.partner_id
+
         return request.render(
             "base_wua_portal_infrastructure.waterconnections_followup", {
                 'waterconnection': waterconnection_sudo,
-                'partner':  request.env.user.partner_id,
-                'gis_url': waterconnection.gis_viewer_link,
+                'partner':  partner,
+                'gis_url': partner.gis_viewer_link,
+                'prev_waterconnection_id': prev_id,
+                'next_waterconnection_id': next_id,
+                'ids': ids,
+                'waterconnection_index':
+                    current_index + 1 if current_index >= 0 else 0,
+                'waterconnection_total': len(waterconnection_id_list),
             })
