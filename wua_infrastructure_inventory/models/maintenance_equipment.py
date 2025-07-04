@@ -108,9 +108,11 @@ class MaintenanceEquipment(models.Model):
         dynamic_vals = {}
         for k, v in values.iteritems():
             path = v.get('field_path', '')
+            gis_path = v.get('gis_path', '')
             if path and '.' not in path:
                 direct_vals[path] = v.get('value')
-            elif (not path and not v.get('gis_path', '')) or '.' in path:
+            elif (not path and gis_path) or (not path and not gis_path) or (
+                    '.' in path):
                 dynamic_vals[k] = v
         category = self.env['maintenance.equipment.category'].browse(
             category_id)
