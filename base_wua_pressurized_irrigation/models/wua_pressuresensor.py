@@ -64,6 +64,13 @@ class WuaPressuresensor(models.Model):
         digits=(32, 2),
         compute="_compute_last_measurement")
 
+    serial_number = fields.Char(
+        size=40,
+        string="Serial Number",
+        index=True,
+        track_visibility='onchange',
+    )
+
     active = fields.Boolean(
         default=True,
         help='If the active field is set to False, it will allow you to ' +
