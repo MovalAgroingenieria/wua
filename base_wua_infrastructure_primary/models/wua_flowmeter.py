@@ -50,6 +50,10 @@ class WuaFlowmeter(models.Model):
         track_visibility='onchange',
     )
 
+    image = fields.Binary(
+        string='Photo / Image',
+        attachment=True)
+
     state = fields.Selection([
         ('active', 'Active'),
         ('stored', 'Stored'),

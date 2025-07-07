@@ -285,6 +285,10 @@ class WuaReservoir(models.Model):
     with_gis_reservoir = fields.Boolean(
         string='GIS Reservoir')
 
+    image = fields.Binary(
+        string='Photo / Image',
+        attachment=True)
+
     active = fields.Boolean(
         default=True,
         help='If the active field is set to False, it will allow you to ' +

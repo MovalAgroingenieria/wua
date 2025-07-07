@@ -91,6 +91,10 @@ class WuaIntake(models.Model):
         string='List of sectors (as text)',
         compute='_compute_sectors_as_text',)
 
+    image = fields.Binary(
+        string='Photo / Image',
+        attachment=True)
+
     _sql_constraints = [
         ('unique_intake_code',
          'UNIQUE (intake_code)',

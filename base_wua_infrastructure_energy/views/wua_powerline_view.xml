@@ -43,14 +43,19 @@
                                       ['|',('gis_viewer_link','=',False),
                                       ('with_gis_powerline','=',False)]}"/>
                     </div>
-                    <group>
-                        <field name="name"/>
-                        <field name="rated_voltage"/>
-                        <field name="type"/>
-                        <field name="length"/>
-                        <field name="construction_date"/>
-                        <field name="critical_crossings"/>
-                        <field name="bird_friendly"/>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="name"/>
+                            <field name="rated_voltage"/>
+                            <field name="type"/>
+                            <field name="length"/>
+                            <field name="construction_date"/>
+                            <field name="critical_crossings"/>
+                            <field name="bird_friendly"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="image" widget="image" class="oe_img_259_160"/>
+                        </group>
                     </group>
                     <notebook>
                         <page string="Technical Characteristics">

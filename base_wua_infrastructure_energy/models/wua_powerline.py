@@ -73,6 +73,10 @@ class WuaPowerLine(models.Model):
         readonly=True,
     )
 
+    image = fields.Binary(
+        string='Photo / Image',
+        attachment=True)
+
     _sql_constraints = [
         (
             "positive_rated_voltage_check",
