@@ -331,6 +331,18 @@ class MaintenanceEquipment(models.Model):
         compute='_compute_powerlinesupport_id',
     )
 
+    tertiarypipe_ids = fields.One2many(
+        comodel_name='wua.tertiarypipe',
+        inverse_name='equipment_id',
+        string='Tertiary Pipes',
+    )
+
+    tertiarypipe_id = fields.Many2one(
+        comodel_name='wua.tertiarypipe',
+        compute='_compute_tertiarypipe_id',
+        string='Tertiary Pipe',
+    )
+
     tag_html = fields.Html(
         string="Tag HTML",
         compute='_compute_tag_html',
@@ -651,6 +663,15 @@ class MaintenanceEquipment(models.Model):
                 'base_table': 'mdm_measurement_device',
                 'base_field': 'name',
                 'gis_table': 'mdm_gis_measurement_device',
+                'gis_field': 'name',
+                'intermediate_table': False,
+                'intermediate_field': False,
+                'intermediate_gis_field': False,
+            },
+            env.ref('wua_maintenance.equipment_category_tertiarypipe').id: {
+                'base_table': 'wua_tertiarypipe',
+                'base_field': 'name',
+                'gis_table': 'wua_gis_tertiarypipe',
                 'gis_field': 'name',
                 'intermediate_table': False,
                 'intermediate_field': False,
@@ -991,6 +1012,13 @@ class MaintenanceEquipment(models.Model):
             if record.building_ids:
                 building_id = record.building_ids[0]
             record.building_id = building_id
+
+    def _compute_tertiarypipe_id(self):
+        for record in self:
+            tertiarypipe_id = None
+            if record.tertiarypipe_ids:
+                tertiarypipe_id = record.tertiarypipe_ids[0]
+            record.tertiarypipe_id = tertiarypipe_id
 
     @api.depends('tag_ids')
     def _compute_tag_html(self):

@@ -32,3 +32,4 @@ from . import wua_processingcentre
 from . import wua_powerline
 from . import wua_powerlinesupport
 from . import mdm_measurement_device
+from . import wua_tertiarypipe

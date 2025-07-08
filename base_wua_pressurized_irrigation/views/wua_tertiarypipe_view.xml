@@ -17,6 +17,18 @@
                                 icon="fa-moval-parcel">
                             <field name="parcel_count" widget="statinfo" string="Parcels"/>
                         </button>
+
+                        <!-- GIS fields -->
+                        <field name="gis_viewer_link" invisible="1"/>
+                        <field name="with_gis_tertiarypipe" invisible="1"/>
+                        <button name="action_see_gis_viewer"
+                                type="object"
+                                class="oe_stat_button"
+                                string="GIS Viewer"
+                                icon="fa-map-marker"
+                                attrs="{'invisible':
+                                    ['|',('gis_viewer_link','=',False),
+                                    ('with_gis_tertiarypipe','=',False)]}"/>
                     </div>
 
                     <group name="master_data">
@@ -109,7 +121,6 @@
               name="Tertiary Pipes"
               parent="base_wua_infrastructure.base_wua_infrastructure_pressurized_irrigation_menu"
               action="wua_tertiarypipe_action"
-              sequence="2"
-              groups="base_wua.group_wua_user"/>
+              sequence="9"/>
 
 </odoo>

@@ -83,6 +83,14 @@ class WuaTertiaryPipe(models.Model):
         store=False,
     )
 
+    gis_viewer_link = fields.Char(
+        string='GIS Viewer',
+        compute='_compute_gis_viewer_link',
+    )
+
+    with_gis_tertiarypipe = fields.Boolean(
+        string='GIS Tertiary Pipe',)
+
     _sql_constraints = [
         ('name_unique', 'unique(name)', 'The name must be unique.'),
         ('code_unique', 'unique(code)', 'The code must be unique.'),
@@ -124,3 +132,49 @@ class WuaTertiaryPipe(models.Model):
             'context': {
                 'default_waterconnection_id': self.waterconnection_id.id},
         }
+
+    @api.depends('name')
+    def _compute_gis_viewer_link(self):
+        url = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer')
+        username = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_username')
+        password = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_password')
+        tertiarypipe_param = "tertiarypipeid"
+        for record in self:
+            url_for_record = url
+            if url_for_record:
+                if tertiarypipe_param:
+                    sep_char = '?'
+                    if '?' in url_for_record:
+                        sep_char = '&'
+                    url_for_record = "{}{}{}={}".format(url_for_record, sep_char, tertiarypipe_param, record.name)
+            if url_for_record and username and password:
+                cipher_text = self.env['wua.parcel']._get_viewer_credentials(
+                    username, password)
+                if cipher_text:
+                    sep_char = '?' if '?' not in url_for_record else '&'
+                    url_for_record = "{}{}arg={}".format(url_for_record, sep_char, cipher_text)
+            if not url_for_record:
+                url_for_record = ''
+            record.gis_viewer_link = url_for_record
+
+    @api.multi
+    def action_see_gis_viewer(self):
+        self.ensure_one()
+        if self.gis_viewer_link:
+            return {
+                'type': 'ir.actions.act_url',
+                'url': self.gis_viewer_link,
+                'target': 'new',
+            }
+
+    @api.model_cr
+    def init(self):
+        parcel_model = self.env['wua.parcel']
+        try:
+            parcel_model.create_wua_gis_tertiarypipe_table()
+            parcel_model.create_tertiarypipe_triggers()
+        except Exception:
+            pass
