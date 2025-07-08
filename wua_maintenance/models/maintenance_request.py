@@ -394,6 +394,25 @@ class MaintenanceRequestAttachment(models.Model):
         store=False,
     )
 
+    def action_preview_images(self):
+        images = self.search(
+            [('maintenance_id', '=', self.maintenance_id.id),
+             ('image_type', '=', self.image_type)])
+        wizard = self.env['wizard.image.preview'].create({
+            'image_ids': [(6, 0, images.ids)],
+            'current_index':
+                images.ids.index(self.id) if self.id in images.ids else 0,
+        })
+        return {
+            'name': 'Image Preview',
+            'type': 'ir.actions.act_window',
+            'res_model': 'wizard.image.preview',
+            'res_id': wizard.id,
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'form_view_initial_mode': 'readonly'},
+        }
+
     @api.depends('image')
     def _compute_image_attachment_id(self):
         for rec in self:
