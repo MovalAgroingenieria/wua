@@ -76,11 +76,11 @@ class WuaIrrigationStretch(models.Model):
         string='Installation Date',
     )
 
-    observations = fields.Text(
+    observations = fields.Html(
         string='Observations',
     )
 
-    notes = fields.Text(
+    notes = fields.Html(
         string='Notes',
     )
 

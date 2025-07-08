@@ -122,8 +122,7 @@ def post_init_hook(cr, registry):
         ('wua_maintenance.equipment_category_measurement_device',
          'mdm_measurement_device', '01_general', False),
         ('wua_maintenance.equipment_category_tertiarypipe',
-         'wua_tertiarypipe', '01_general', False),
-
+         'wua_tertiarypipe', '02_pressurized', False),
         ('wua_maintenance.equipment_category_irrigationstretch',
          'wua_irrigationstretch', '01_general', False),
     ]
