@@ -17,6 +17,11 @@ class ResPartnerWaterconnection(models.Model):
         digits=(32, 4),
     )
 
+    is_state_close = fields.Boolean(
+        string='State Close',
+        related='waterconnection_id.is_state_close',
+    )
+
     watermeter_id = fields.Many2one(
         string='Watermeter',
         comodel_name='wua.watermeter',
