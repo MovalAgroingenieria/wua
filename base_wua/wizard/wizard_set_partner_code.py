@@ -38,6 +38,7 @@ class WizardSetPartnerCode(models.TransientModel):
             record.write({
                 'is_wua_partner': True,
                 'partner_code': partner_code,
+                'customer': True,
             })
         else:
             raise UserError(
