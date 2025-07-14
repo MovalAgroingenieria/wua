@@ -2,7 +2,6 @@
 # Copyright 2018 Eduardo Iniesta - <einiesta@moval.es>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-import datetime
 from operator import itemgetter
 from odoo import models, fields, api, exceptions, _
 from odoo.exceptions import UserError
@@ -328,14 +327,11 @@ class WuaInvoiceset(models.Model):
             final_reading_label = default_final_reading_label
         if not consumption_label:
             consumption_label = default_consumption_label
-        reading_initial_time = fields.Datetime.context_timestamp(
-            self, datetime.datetime.strptime(
-                presconsumption.reading_initial_time, '%Y-%m-%d %H:%M:%S'))
-        reading_initial_time = reading_initial_time.strftime('%x')
-        reading_end_time = fields.Datetime.context_timestamp(
-            self, datetime.datetime.strptime(
-                presconsumption.reading_end_time, '%Y-%m-%d %H:%M:%S'))
-        reading_end_time = reading_end_time.strftime('%x')
+        parcel_model = self.env['wua.parcel']
+        reading_initial_time = parcel_model.transform_datetime_to_locale(
+            presconsumption.reading_initial_time, lang)
+        reading_end_time = parcel_model.transform_datetime_to_locale(
+            presconsumption.reading_end_time, lang)
         initial_volume = round(presconsumption.initial_volume)
         end_volume = round(presconsumption.end_volume)
         volume = end_volume - initial_volume

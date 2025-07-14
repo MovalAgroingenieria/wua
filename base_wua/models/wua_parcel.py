@@ -2798,13 +2798,13 @@ class WuaParcel(models.Model):
         return formated_date_str
 
     @api.model
-    def transform_datetime_to_locale(self, datetime, lang=False):
+    def transform_datetime_to_locale(self, date, lang=False):
         if (not lang):
             lang = 'es_ES'
             if ('lang' in self.env.context and self.env.context['lang']):
                 lang = self.env.context['lang']
         lang_model = self.env['res.lang'].search([('code', '=', lang)])
-        date_parsed = datetime.datetime.strptime(datetime, '%Y-%m-%d %H:%M:%S')
+        date_parsed = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
         formated_date_str = str(date_parsed)
         if (lang_model):
             date_format = lang_model.date_format + ' ' + lang_model.time_format
