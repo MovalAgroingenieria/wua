@@ -176,8 +176,11 @@
                                         <t t-foreach="quotaaggregates" t-as="quota">
                                             <tr>
                                                 <td>
-                                                    <t t-esc="quota.quotaperiod_id.initial_date"/>
-                                                    <t t-esc="quota.quotaperiod_id.end_date"/>
+                                                    <a t-attf-href="/my/quotareport"
+                                                       target="_blank">
+                                                        <t t-esc="quota.quotaperiod_id.initial_date"/>
+                                                        <t t-esc="quota.quotaperiod_id.end_date"/>
+                                                    </a>
                                                 </td>
                                                 <td>
                                                     <t t-esc="quota.accumulated_input"/>

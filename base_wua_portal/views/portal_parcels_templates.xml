@@ -64,10 +64,12 @@
                                                 <th>Extra code</th>
                                             </t>
                                             <th>Cadastral Reference</th>
-                                            <th>Concessions</th>
+                                            <!--<th>Concessions</th>-->
                                             <th>Profile</th>
                                             <th>Area Official</th>
-                                            <th>Ownership Percentage</th>
+                                            <th>Ownership %</th>
+                                            <th>Water Costs %</th>
+                                            <th>Other Costs %</th>
                                         </tr>
                                     </thead>
                                     <t t-foreach="partnerlinks" t-as="parcel">
@@ -81,6 +83,7 @@
                                                 <td><t t-esc="parcel.parcel_id.extra_code"/></td>
                                             </t>
                                             <td><t t-esc="parcel.parcel_id.cadastral_reference"/></td>
+                                            <!--
                                             <td>
                                                 <t t-if="parcel.parcel_id.concession_ids">
                                                     <div>
@@ -93,6 +96,7 @@
                                                     <span>No concessions</span>
                                                 </t>
                                             </td>
+                                            -->
                                             <td>
                                                 <t t-if="parcel.profile == 'O'"><span>Owner</span></t>
                                                 <t t-if="parcel.profile == 'P'"><span>Payer</span></t>
@@ -100,6 +104,8 @@
                                             </td>
                                             <td><t t-esc="parcel.parcel_id.area_official"/></td>
                                             <td><t t-esc="parcel.ownership_percentage"/></td>
+                                            <td><t t-esc="parcel.water_costs_percentage"/></td>
+                                            <td><t t-esc="parcel.other_costs_percentage"/></td>
                                         </tr>
                                     </t>
                                 </table>

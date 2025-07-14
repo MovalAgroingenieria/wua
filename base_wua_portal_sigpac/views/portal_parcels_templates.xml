@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="portal_my_parcels_followup" name="Portal layout : parcel entries" inherit_id="base_wua_portal.parcels_followup" priority="925">
+            <xpath expr="//ul[@name='tabs_titles']" position="inside">
+                <li><a href="#sigpac_enclosures" role="tab" data-toggle="tab">SIGPAC enclosures</a></li>
+            </xpath>
+
+            <xpath expr="//div[@name='tabs_content']" position="inside">
+                <div class="tab-pane" id="sigpac_enclosures">
+                    <!--
+                    <div t-if="parcel.aerial_img_sigpac" class="text-right">
+                        <img t-att-src="'/web/image?model=wua.parcel&amp;id=' + str(parcel.id) + '&amp;field=aerial_img_sigpac'" class="img-thumbnail" style="width:100%; max-width:300px;"/>
+                    </div>
+                    -->
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>SIGPAC Enclosure</th>
+                                <th></th>
+                                <th>Land Use</th>
+                                <th>Irrig. Coef. (0-100)</th>
+                                <th>Parcel Area (ha)</th>
+                                <th>Intersection (ha)</th>
+                                <th>% of parcel</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="parcel.sigpaclink_ids" t-as="sigpac">
+                                <tr>
+                                    <td>
+                                        <t t-esc="sigpac.enclosure_number"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="sigpac.sigpac_id.name"/>
+                                    </td>
+                                    <td>
+                                    <a t-att-href="sigpac.sigpac_link" target="_blank">
+                                        <i class="fa fa-map-marker"/>
+                                    </a>
+                                    </td>
+                                    <td>
+                                        <t t-esc="uso_sigpac_dict.get(sigpac.uso_sigpac, sigpac.uso_sigpac)"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="sigpac.coef_rega"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="sigpac.parcel_area_ha"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="sigpac.area_ha"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="sigpac.intersection_percentage"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </xpath>
+        </template>
+    </data>
+</odoo>

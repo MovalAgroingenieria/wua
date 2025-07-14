@@ -2,7 +2,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import http
-from odoo.http import request
+from odoo.http import request, Response
 from odoo.addons.website_portal.controllers.main import website_account
 
 
@@ -43,8 +43,15 @@ class website_account(website_account):
         partner = request.env.user.partner_id
         quota_model = \
             request.env['wua.quota']
+
+        current_season = \
+            request.env['wua.agriculturalseason'].search(
+                [('active_agriculturalseason', '=', True)], limit=1)
+
         domain = [
             ('partner_id', '=', partner.id),
+            ('agriculturalseason_id', '=', current_season.id),
+            ('quotaperiod_id.is_closed', '=', False),
             '|',
             ('accumulated_input', '!=', 0),
             ('accumulated_consumption', '!=', 0),
@@ -140,19 +147,14 @@ class website_account(website_account):
         partner = request.env.user.partner_id
         hydricmovement_model = \
             request.env['wua.hydricmovement']
-        domain = [('partner_id', '=', partner.id)]
 
-        if search and search_field:
-            field_map = {
-                'quota': 'quota_id.name',
-                'watermeter': 'watermeter_id.name',
-            }
-            if search_field in field_map:
-                domain.append((field_map[search_field], 'ilike', search))
-
-        hydricmovements = \
-            hydricmovement_model.search(domain)
+        current_season = \
+            request.env['wua.agriculturalseason'].search(
+                [('active_agriculturalseason', '=', True)], limit=1)
         hydricmovements_domain = [
+            ('partner_id', '=', partner.id),
+            ('agriculturalseason_id', '=', current_season.id),
+            ('quotaperiod_id.is_closed', '=', False),
         ]
         if search and search_field:
             field_map = {
@@ -164,6 +166,8 @@ class website_account(website_account):
                 hydricmovements_domain.append(
                     (field_map[search_field], 'ilike', search))
 
+        hydricmovements = \
+            hydricmovement_model.search(hydricmovements_domain)
         hydricmovements_count = \
             request.env['wua.hydricmovement'].search_count(
                 hydricmovements_domain)
@@ -193,3 +197,30 @@ class website_account(website_account):
         return request.render(
             portal_view,
             values)
+
+    @http.route('/my/quotareport', type='http', auth="user", website=True)
+    def portal_wua_partner_report(self, **kw):
+        """Generates the Partner quotareport and serves it as a PDF"""
+        partner = request.env.user.partner_id
+        partner_model = request.env['res.partner'].sudo()
+        model_report = request.env['report'].sudo()
+        partner = partner_model.search([('id', '=', partner.id)], limit=1)
+        if not partner:
+            return Response(
+                "No partner found",
+                status=404)
+        report_ref = \
+            'base_wua_quota_management.wua_partner_quota_report_document'
+        partner_report = model_report.with_context(
+            {'lang': partner.lang}).get_pdf(
+                [partner.id], report_ref)
+
+        response = request.make_response(
+            partner_report,
+            headers=[
+                ('Content-Type', 'application/pdf'),
+                ('Content-Disposition',
+                 'attachment; filename="wua_partner_quota_report.pdf"')
+            ]
+        )
+        return response

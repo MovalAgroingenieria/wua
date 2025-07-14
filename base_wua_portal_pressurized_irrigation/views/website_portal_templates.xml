@@ -396,11 +396,11 @@
             </xpath>
             <xpath expr="//ul[@name='tabs_titles']" position="inside">
                 <li><a href="#irrigation_shifts" role="tab" data-toggle="tab">Irrigation Shifts</a></li>
+                <li><a href="#irrigation_schedules" role="tab" data-toggle="tab">Irrigation Schedules</a></li>
             </xpath>
 
             <xpath expr="//div[@name='tabs_content']" position="inside">
                 <div class="tab-pane" id="irrigation_shifts">
-                    <h4>Irrigation Shifts</h4>
                     <t t-if="not waterconnection.irrigation_shift_ids">
                         <p>There are currently no irrigation shifts for this water connection.</p>
                     </t>
@@ -419,6 +419,57 @@
                                         <td><t t-esc="shift.irrigation_shift_id.name"/></td>
                                         <td><t t-esc="shift.description"/></td>
                                         <td><t t-esc="shift.notes"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </t>
+                </div>
+                <div class="tab-pane" id="irrigation_schedules">
+                    <t t-if="not waterconnection.irrigation_schedule_ids">
+                        <p>There are currently no irrigation schedules for this water connection.</p>
+                    </t>
+                    <t t-if="waterconnection.irrigation_schedule_ids">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr class="active">
+                                    <th>Start Day</th>
+                                    <th>Shift Number</th>
+                                    <th>Irrigation Start Hour</th>
+                                    <th>Irrigation End Hour</th>
+                                    <th>Irrigation Duration</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="waterconnection.irrigation_schedule_ids" t-as="schedule">
+                                    <tr>
+                                        <td>
+                                        <t t-if="schedule.irrigation_start_day == '00_monday'">Monday</t>
+                                        <t t-elif="schedule.irrigation_start_day == '01_tuesday'">Tuesday</t>
+                                        <t t-elif="schedule.irrigation_start_day == '02_wednesday'">Wednesday</t>
+                                        <t t-elif="schedule.irrigation_start_day == '03_thursday'">Thursday</t>
+                                        <t t-elif="schedule.irrigation_start_day == '04_friday'">Friday</t>
+                                        <t t-elif="schedule.irrigation_start_day == '05_saturday'">Saturday</t>
+                                        <t t-elif="schedule.irrigation_start_day == '06_sunday'">Sunday</t>
+                                        </td>
+                                        <td><t t-esc="schedule.shift_number"/></td>
+                                        <td>
+                                            <t t-set="start_hour" t-value="int(schedule.irrigation_start_hour)"/>
+                                            <t t-set="start_minute" t-value="int(round((schedule.irrigation_start_hour % 1) * 60))"/>
+                                            <t t-esc="('%02d:%02d' % (start_hour, start_minute))"/>
+                                        </td>
+
+                                        <td>
+                                            <t t-set="end_hour" t-value="int(schedule.irrigation_end_hour)"/>
+                                            <t t-set="end_minute" t-value="int(round((schedule.irrigation_end_hour % 1) * 60))"/>
+                                            <t t-esc="('%02d:%02d' % (end_hour, end_minute))"/>
+                                        </td>
+
+                                        <td>
+                                            <t t-set="dur_hour" t-value="int(schedule.irrigation_duration)"/>
+                                            <t t-set="dur_minute" t-value="int(round((schedule.irrigation_duration % 1) * 60))"/>
+                                            <t t-esc="('%02d:%02d' % (dur_hour, dur_minute))"/>
+                                        </td>
                                     </tr>
                                 </t>
                             </tbody>

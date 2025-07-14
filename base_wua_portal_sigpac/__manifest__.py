@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 {
-    "name": "Water Users Association: Quota Management Portal user experience",
+    "name": "Water Users Association: Portal SIGPAC user experience",
     "summary": "Module that improves the user experience of the portal",
     "version": '10.0.0.0.0',
     "category": "Water Users Associations",
@@ -11,14 +11,12 @@
     "author": "Moval Agroingeniería",
     "license": "AGPL-3",
     "depends": [
-        "base_wua_portal_infrastructure",
-        "wua_structure_irrigation",
-        "base_wua_quota_management",
+        "base_wua_portal",
+        "base_wua_sigpac",
     ],
     "data": [
-        "views/website_portal_templates.xml",
-        "views/portal_irrigationmanagement_templates.xml",
-        'security/ir.model.access.csv',
+        "views/portal_parcels_templates.xml",
+        "security/ir.model.access.csv",
     ],
     "installable": True,
     "application": False,
