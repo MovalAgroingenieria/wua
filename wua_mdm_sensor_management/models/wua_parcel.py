@@ -188,8 +188,5 @@ class WuaParcel(models.Model):
 
     def set_gis_fields(self):
         gis_parcels_ok = super(WuaParcel, self).set_gis_fields()
-        # Processing centre GIS
         gis_measurement_device_ok = self.set_gis_fields_measurement_device()
-        # Power line support GIS
-
-        return gis_parcels_ok and gis_processingcentre_ok
+        return gis_parcels_ok and gis_measurement_device_ok
