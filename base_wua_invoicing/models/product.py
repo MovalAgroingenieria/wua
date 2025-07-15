@@ -160,6 +160,14 @@ class ProductTemplate(models.Model):
         default=False,
         store=True)
 
+    invoicing_conversion_factor = fields.Float(
+        string='Invoicing Conversion Factor',
+        default=1.0,
+        required=True,
+        help="Conversion factor to apply to the product quantity on "
+             "invoicesets. ",
+    )
+
     @api.depends('categ_id')
     def _compute_is_wua_product(self):
         for record in self:

@@ -1221,6 +1221,11 @@ class WuaInvoiceset(models.Model):
                 product_id = invoice_data_line['product_id']
                 price_account = self.get_price_account_product(
                     product_data, product_id)
+                # Check if quantity have a conversion factor
+                product = self.env['product.product'].browse(product_id)
+                invoice_data_line['quantity'] = \
+                    invoice_data_line['quantity'] * \
+                    product.invoicing_conversion_factor
                 if price_account:
                     data = {
                         'product_id': product_id,
