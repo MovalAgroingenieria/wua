@@ -380,6 +380,24 @@
         </field>
     </record>
 
+    <record id="mdm_device_view_form_inherit_gis" model="ir.ui.view">
+        <field name="name">Measurement Device (Form View)</field>
+        <field name="model">mdm.measurement.device</field>
+        <field name="inherit_id" ref="mdm_sensor_management.mdm_device_view_form"/>
+        <field name="arch" type="xml">
+        <xpath expr="//button[@name='action_see_gis_viewer']" position="after">
+             <field name="equipment_id" invisible="1" />
+                <button name="action_get_equipment" type="object" class="oe_stat_button" icon="fa-gear"
+                        groups="base_wua.group_wua_user" attrs="{'invisible': [('equipment_id', '=', None)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Associated</span>
+                        <span class="o_stat_text">Equipment</span>
+                    </div>
+                </button>
+        </xpath>
+        </field>
+    </record>
+
     <record id="wua_powerline_view_form" model="ir.ui.view">
         <field name="name">Power Lines (form view)</field>
         <field name="model">wua.powerline</field>

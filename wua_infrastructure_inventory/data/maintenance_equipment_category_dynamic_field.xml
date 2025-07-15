@@ -1075,6 +1075,28 @@
             <field name="readonly">True</field>
         </record>
 
+        <!-- Measurement Device-->
+
+        <record id="equipment_category_measurement_device_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Name</field>
+            <field name="field_type">text</field>
+            <field name="field_path">name</field>
+            <field name="required">True</field>
+            <field name="gis_path">name</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_measurement_device"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_measurement_device_photo" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Photo</field>
+            <field name="field_type">binary</field>
+            <field name="field_path">photo</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_measurement_device"/>
+            <field name="readonly">False</field>
+        </record>
+
     </data>
 
 </odoo>

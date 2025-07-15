@@ -295,6 +295,18 @@ class MaintenanceEquipment(models.Model):
         compute='_compute_processingcentre_id',
     )
 
+    measurement_device_ids = fields.One2many(
+        string='measurementdevices',
+        comodel_name='mdm.measurement.device',
+        inverse_name='equipment_id',
+    )
+
+    measurement_device_id = fields.Many2one(
+        string='measurementdevice',
+        comodel_name='mdm.measurement.device',
+        compute='_compute_measurement_device_id',
+    )
+
     powerline_ids = fields.One2many(
         string='powerlines',
         comodel_name='wua.powerline',
@@ -634,6 +646,16 @@ class MaintenanceEquipment(models.Model):
                 'intermediate_field': False,
                 'intermediate_gis_field': False,
             },
+            self.env.ref(
+                'wua_maintenance.equipment_category_measurement_device').id: {
+                'base_table': 'mdm_measurement_device',
+                'base_field': 'name',
+                'gis_table': 'mdm_measurement_device_gis',
+                'gis_field': 'name',
+                'intermediate_table': False,
+                'intermediate_field': False,
+                'intermediate_gis_field': False,
+            },
         }
         return category_mapping
 
@@ -928,6 +950,13 @@ class MaintenanceEquipment(models.Model):
                 processingcentre_id = record.processingcentre_ids[0]
             record.processingcentre_id = processingcentre_id
 
+    def _compute_measurement_device_id(self):
+        for record in self:
+            measurement_device_id = None
+            if record.measurement_device_ids:
+                measurement_device_id = record.measurement_device_ids[0]
+            record.measurement_device_id = measurement_device_id
+
     def _compute_powerline_id(self):
         for record in self:
             powerline_id = None
@@ -1050,6 +1079,9 @@ class MaintenanceEquipment(models.Model):
             self.env.ref(
                 'wua_maintenance.equipment_category_powerlinesupport').id:
                 ('wua.powerlinesupport', _('Power Line Support')),
+            self.env.ref(
+                'wua_maintenance.equipment_category_measurement_device').id:
+                ('mdm.measurement.device', _('Measurement Device')),
         }
         res_model, name = category_mapping.get(
             current_equipment.category_id.id, (None, None))
