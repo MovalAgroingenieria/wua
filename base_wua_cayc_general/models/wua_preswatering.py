@@ -1029,7 +1029,7 @@ class WuaPresreswatering(models.Model):
             for condition in last_preswatering.condition_line_ids:
                 condition_lines.append((0, 0, {
                     'condition_id': condition.condition_id.id,
-                    'specific_proration': preswatering_period.proration,
+                    'specific_proration': last_preswatering.proration,
                     'state': '01_not_checked',
                 }))
             new_preswatering = self.create({
@@ -1037,7 +1037,7 @@ class WuaPresreswatering(models.Model):
                 'number': number,
                 'state': '01_draft',
                 'initial_time': initial_time,
-                'proration': preswatering_period.proration,
+                'proration': last_preswatering.proration,
                 'condition_line_ids': condition_lines,
             })
             new_preswatering._onchange_preswateringperiod_id()
