@@ -24,6 +24,7 @@
         "base_wua_reservoir",
         "base_wua_infrastructure_pump",
         "base_wua_infrastructure_energy",
+        "wua_mdm_sensor_management",
     ],
     "data": [
         "security/security.xml",
