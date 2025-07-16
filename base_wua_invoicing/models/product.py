@@ -162,6 +162,7 @@ class ProductTemplate(models.Model):
 
     invoicing_conversion_factor = fields.Float(
         string='Invoicing Conversion Factor',
+        digits=(32, 6),
         default=1.0,
         required=True,
         help="Conversion factor to apply to the product quantity on "
