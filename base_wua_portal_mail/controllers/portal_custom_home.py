@@ -41,7 +41,8 @@ class website_account(website_account):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
         mails_model = request.env['mail.mail']
-        domain = [('recipient_ids', 'in', [partner.id])]
+        domain = ['|', ('recipient_ids', 'in', [partner.id]),
+                  ('email_to', 'ilike', partner.email)]
         if search and search_field:
             field_map = {
                 'date': 'date',
