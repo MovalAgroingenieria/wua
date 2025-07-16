@@ -1772,6 +1772,9 @@ class WuaInvoicesetLine(models.Model):
     @api.multi
     def action_select_linked_items(self):
         self.ensure_one()
+        limit = 10000000
+        if not self.product_id.show_all_registers_on_invoiceset:
+            limit = 80
         if not self.configured_line:
             self.populate_items_select()
         data_items_select = self.get_data_items_select(self.product_id.name)
@@ -1787,7 +1790,7 @@ class WuaInvoicesetLine(models.Model):
                         'view_type': 'form',
                         'view_mode': 'tree',
                         'domain': [["invoicesetline_id", "=", self.id]],
-                        'limit': 10000000,
+                        'limit': limit,
                         }
                     return act_window
 
@@ -1833,9 +1836,15 @@ class WuaInvoicesetLine(models.Model):
     # Hook function for other modules to add new fields on query without
     # Rewriting all
     def _get_sql_select_fields_select_parcel(self):
+        selected = 'TRUE'
+        if self.product_id.productcategory_code in (1, 3, 4):
+            if self.product_id.parcel_selected_by_default:
+                selected = 'TRUE'
+            else:
+                selected = 'FALSE'
         return """
         nextval('wua_invoiceset_line_parcel_id_seq'), %s, %s, now(), now(),
-        %s, TRUE, id, cadastral_reference, is_billable_water,
+        %s, """ + selected + """, id, cadastral_reference, is_billable_water,
         is_billable_expenses, leased_parcel, area_official, partner_id,
         hydraulic_infrastructure_type, pressurized_irrigation_right,
         gravityfed_irrigation_right, hydraulicsector_id, irrigationditch_id,

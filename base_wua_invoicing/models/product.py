@@ -131,6 +131,18 @@ class ProductTemplate(models.Model):
         default=True,
         store=True)
 
+    parcel_selected_by_default = fields.Boolean(
+        string='Parcel Selected by Default',
+        default=True,
+        store=True,
+    )
+
+    show_all_registers_on_invoiceset = fields.Boolean(
+        string='Show All Registers on Invoiceset',
+        default=False,
+        store=True,
+    )
+
     productcategory_code = fields.Integer(
         string='Code',
         index=True,
@@ -261,6 +273,18 @@ class ProductProduct(models.Model):
         compute='_compute_invoiceset_selectable',
         store='True')
 
+    parcel_selected_by_default = fields.Boolean(
+        string='Parcel Selected by Default',
+        compute='_compute_parcel_selected_by_default',
+        store=True,
+    )
+
+    show_all_registers_on_invoiceset = fields.Boolean(
+        string='Show All Registers on Invoiceset',
+        compute='_compute_show_all_registers_on_invoiceset',
+        store=True,
+    )
+
     @api.multi
     def action_see_invoice_lines(self):
         self.ensure_one()
@@ -289,3 +313,19 @@ class ProductProduct(models.Model):
             if record.product_tmpl_id:
                 record.invoiceset_selectable = \
                     record.product_tmpl_id.invoiceset_selectable
+
+    @api.depends('product_tmpl_id.parcel_selected_by_default')
+    def _compute_parcel_selected_by_default(self):
+        for record in self:
+            record.parcel_selected_by_default = False
+            if record.product_tmpl_id:
+                record.parcel_selected_by_default = \
+                    record.product_tmpl_id.parcel_selected_by_default
+
+    @api.depends('product_tmpl_id.show_all_registers_on_invoiceset')
+    def _compute_show_all_registers_on_invoiceset(self):
+        for record in self:
+            record.show_all_registers_on_invoiceset = False
+            if record.product_tmpl_id:
+                record.show_all_registers_on_invoiceset = \
+                    record.product_tmpl_id.show_all_registers_on_invoiceset
