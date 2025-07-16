@@ -45,6 +45,16 @@
             <field name="readonly">True</field>
         </record>
 
+        <record id="equipment_category_intake_image" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Photo</field>
+            <field name="field_type">binary</field>
+            <field name="field_path">image</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_intake"/>
+            <field name="readonly">True</field>
+        </record>
+
         <!-- Reservoir -->
 
         <record id="equipment_category_reservoir_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
@@ -71,6 +81,16 @@
             <field name="name">County</field>
             <field name="field_type">many2one</field>
             <field name="field_path">county_id</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_reservoir"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_reservoir_image" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Photo</field>
+            <field name="field_type">binary</field>
+            <field name="field_path">image</field>
             <field name="required">True</field>
             <field name="gis_path"></field>
             <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_reservoir"/>
@@ -149,6 +169,26 @@
             <field name="readonly">True</field>
         </record>
 
+        <record id="equipment_category_pumpgroup_photo_01" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Photo 1</field>
+            <field name="field_type">binary</field>
+            <field name="field_path">photo_01</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_pumpgroup"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_pumpgroup_photo_02" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Photo 2</field>
+            <field name="field_type">binary</field>
+            <field name="field_path">photo_02</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_pumpgroup"/>
+            <field name="readonly">True</field>
+        </record>
+
         <!-- Photovoltaicplant -->
 
         <record id="equipment_category_photovoltaicplant_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
@@ -185,6 +225,26 @@
             <field name="name">Installed Capacity</field>
             <field name="field_type">number</field>
             <field name="field_path">installed_capacity</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_photovoltaicplant"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_photovoltaicplant_photo_01" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Photo 1</field>
+            <field name="field_type">binary</field>
+            <field name="field_path">photo_01</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_photovoltaicplant"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_photovoltaicplant_photo_02" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Photo 2</field>
+            <field name="field_type">binary</field>
+            <field name="field_path">photo_02</field>
             <field name="required">True</field>
             <field name="gis_path"></field>
             <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_photovoltaicplant"/>
@@ -237,6 +297,16 @@
             <field name="name">Flow Direction</field>
             <field name="field_type">selection</field>
             <field name="field_path">flow_direction</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_flowmeter"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_flowmeter_image" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Photo</field>
+            <field name="field_type">binary</field>
+            <field name="field_path">Image</field>
             <field name="required">True</field>
             <field name="gis_path"></field>
             <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_flowmeter"/>
@@ -310,6 +380,26 @@
             <field name="name">Nominal Power (kW)</field>
             <field name="field_type">number</field>
             <field name="field_path">nominal_power</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_pump"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_pump_photo_01" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Photo 1</field>
+            <field name="field_type">binary</field>
+            <field name="field_path">photo_01</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_pump"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_pump_photo_02" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Photo 2</field>
+            <field name="field_type">binary</field>
+            <field name="field_path">photo_02</field>
             <field name="required">True</field>
             <field name="gis_path"></field>
             <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_pump"/>
@@ -401,6 +491,16 @@
             <field name="readonly">True</field>
         </record>
 
+        <record id="equipment_category_irrigationshed_image" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Photo</field>
+            <field name="field_type">binary</field>
+            <field name="field_path">image</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_irrigationshed"/>
+            <field name="readonly">True</field>
+        </record>
+
         <!-- Waterconnection -->
 
         <record id="equipment_category_waterconnection_irrigationshed_id" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
@@ -442,6 +542,16 @@
             <field name="gis_path"></field>
             <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_waterconnection"/>
             <field name="related_category_id" ref="wua_maintenance.equipment_category_watermeter"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_waterconnection_image" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Photo</field>
+            <field name="field_type">binary</field>
+            <field name="field_path">image</field>
+            <field name="required">False</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_waterconnection"/>
             <field name="readonly">True</field>
         </record>
 
@@ -626,6 +736,16 @@
             <field name="readonly">True</field>
         </record>
 
+        <record id="equipment_category_flowdivider_image" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Photo</field>
+            <field name="field_type">binary</field>
+            <field name="field_path">image</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_flowdivider"/>
+            <field name="readonly">True</field>
+        </record>
+
         <!-- Irrigationgate -->
 
         <record id="equipment_category_irrigationgate_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
@@ -669,6 +789,16 @@
             <field name="readonly">True</field>
         </record>
 
+        <record id="equipment_category_irrigationgate_image" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Photo</field>
+            <field name="field_type">binary</field>
+            <field name="field_path">image</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_irrigationgate"/>
+            <field name="readonly">True</field>
+        </record>
+
         <!-- Airvalve -->
 
         <record id="equipment_category_airvalve_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
@@ -691,6 +821,16 @@
             <field name="readonly">True</field>
         </record>
 
+        <record id="equipment_category_airvalve_image" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Photo</field>
+            <field name="field_type">binary</field>
+            <field name="field_path">image</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_airvalve"/>
+            <field name="readonly">True</field>
+        </record>
+
         <!-- Drainagevalve -->
 
         <record id="equipment_category_drainagevalve_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
@@ -707,6 +847,16 @@
             <field name="name">Type</field>
             <field name="field_type">many2one</field>
             <field name="field_path">type_id</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_drainagevalve"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_drainagevalve_image" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Photo</field>
+            <field name="field_type">binary</field>
+            <field name="field_path">image</field>
             <field name="required">True</field>
             <field name="gis_path"></field>
             <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_drainagevalve"/>
@@ -745,6 +895,16 @@
             <field name="readonly">True</field>
         </record>
 
+        <record id="equipment_category_valve_image" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Photo</field>
+            <field name="field_type">binary</field>
+            <field name="field_path">image</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_valve"/>
+            <field name="readonly">True</field>
+        </record>
+
         <!-- Filteringstation -->
 
         <record id="equipment_category_filteringstation_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
@@ -767,6 +927,16 @@
             <field name="readonly">True</field>
         </record>
 
+        <record id="equipment_category_filteringstation_image" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Photo</field>
+            <field name="field_type">binary</field>
+            <field name="field_path">image</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_filteringstation"/>
+            <field name="readonly">True</field>
+        </record>
+
         <!-- Building -->
 
         <record id="equipment_category_building_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
@@ -776,6 +946,132 @@
             <field name="required">True</field>
             <field name="gis_path">name</field>
             <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_building"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_building_photo" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Photo</field>
+            <field name="field_type">binary</field>
+            <field name="field_path">photo</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_building"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <!-- Processing Centre -->
+
+        <record id="equipment_category_processingcentre_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Name</field>
+            <field name="field_type">text</field>
+            <field name="field_path">name</field>
+            <field name="required">True</field>
+            <field name="gis_path">name</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_processingcentre"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_processingcentre_type" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Type</field>
+            <field name="field_type">selection</field>
+            <field name="field_path">type</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_processingcentre"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_processingcentre_photo_01" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Photo 1</field>
+            <field name="field_type">binary</field>
+            <field name="field_path">photo_01</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_processingcentre"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_processingcentre_photo_02" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Photo 2</field>
+            <field name="field_type">binary</field>
+            <field name="field_path">photo_02</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_processingcentre"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <!-- Powerline -->
+
+        <record id="equipment_category_powerline_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Name</field>
+            <field name="field_type">text</field>
+            <field name="field_path">name</field>
+            <field name="required">True</field>
+            <field name="gis_path">name</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_powerline"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_powerline_type" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Type</field>
+            <field name="field_type">selection</field>
+            <field name="field_path">type</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_powerline"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_powerline_image" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Photo</field>
+            <field name="field_type">binary</field>
+            <field name="field_path">image</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_powerline"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <!-- Powerlinesupport -->
+
+        <record id="equipment_category_powerlinesupport_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Name</field>
+            <field name="field_type">text</field>
+            <field name="field_path">name</field>
+            <field name="required">True</field>
+            <field name="gis_path">name</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_powerlinesupport"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_powerlinesupport_construction_date" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Construction Date</field>
+            <field name="field_type">number</field>
+            <field name="field_path">construction_date</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_powerlinesupport"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_powerlinesupport_photo_01" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Photo 1</field>
+            <field name="field_type">binary</field>
+            <field name="field_path">photo_01</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_powerlinesupport"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_powerlinesupport_photo_02" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Photo 2</field>
+            <field name="field_type">binary</field>
+            <field name="field_path">photo_02</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_powerlinesupport"/>
             <field name="readonly">True</field>
         </record>
 
