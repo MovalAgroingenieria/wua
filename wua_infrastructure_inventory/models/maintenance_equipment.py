@@ -175,6 +175,11 @@ class MaintenanceEquipment(models.Model):
             updated_dynamic_fields = []
             updated_dynamic_extra_fields = []
             for field in dynamic_fields.values():
+                # Special handling of binary fields when value is None
+                # just dont use it, to avoid the ORM trying to set it
+                if field.get('field_type') == 'binary' and \
+                        field.get('value') is None:
+                    continue
                 field_path = field.get('field_path')
                 gis_path = field.get('gis_path')
                 value = field.get('value')
