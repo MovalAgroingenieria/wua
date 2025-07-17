@@ -19,6 +19,7 @@
         "security/ir.model.access.csv",
         "data/maintenance_config_settings_data.xml",
         "data/maintenance_equipment_category_dynamic_field.xml",
+        "wizard/wizard_maintenance_dynamic_field_import_view.xml",
         "views/maintenance_equipment_category_view.xml",
         "views/maintenance_equipment_view.xml",
         "views/maintenance_settings_view.xml",

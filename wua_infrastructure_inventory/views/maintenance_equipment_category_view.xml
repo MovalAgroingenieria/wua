@@ -12,6 +12,10 @@
             <xpath expr="//page[@name='template_page']" position="after">
                 <page string="Dynamic Fields for GIS inventory">
                     <header>
+                        <button name="%(action_import_dynamic_fields)d" type="action"
+                                class="btn btn-link"
+                                string="Import Dynamic Fields" icon="fa-download"
+                                style="margin-top:2px; margin-bottom:2px;"/>
                         <button name="action_validate_dynamic_fields" type="object" class="btn btn-link"
                             string="Validate Dynamic Fields" icon="fa-search" style="margin-top:2px; margin-bottom:2px;"
                         />
@@ -50,6 +54,14 @@
                 <field name="available_for_inventory"/>
             </xpath>
         </field>
+    </record>
+
+    <record id="action_import_dynamic_fields" model="ir.actions.act_window">
+        <field name="name">Import Dynamic Fields</field>
+        <field name="res_model">wizard.maintenance.dynamic.field.import</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'default_category_id': active_id}</field>
     </record>
 
 </odoo>

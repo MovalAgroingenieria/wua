@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-16 09:39+0000\n"
-"PO-Revision-Date: 2025-07-16 09:39+0000\n"
+"POT-Creation-Date: 2025-07-17 10:50+0000\n"
+"PO-Revision-Date: 2025-07-17 10:50+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -27,13 +27,24 @@ msgstr "Disponible per a inventari"
 
 #. module: wua_infrastructure_inventory
 #: selection:maintenance.equipment.category.dynamic.field,field_type:0
+#: selection:wizard.maintenance.dynamic.field.import.line,field_type:0
 msgid "Binary"
 msgstr "Binari"
+
+#. module: wua_infrastructure_inventory
+#: model:ir.ui.view,arch_db:wua_infrastructure_inventory.view_wizard_import_dynamic_fields_form
+msgid "Bring Fields"
+msgstr "Porta Camps"
 
 #. module: wua_infrastructure_inventory
 #: model:res.groups,name:wua_infrastructure_inventory.group_can_inventory
 msgid "Can Inventory"
 msgstr "Inventari de pots"
+
+#. module: wua_infrastructure_inventory
+#: model:ir.ui.view,arch_db:wua_infrastructure_inventory.view_wizard_import_dynamic_fields_form
+msgid "Cancel"
+msgstr "Cancel·la"
 
 #. module: wua_infrastructure_inventory
 #: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_maintenance_equipment_category_dynamic_field_maintenance_category_id
@@ -43,6 +54,7 @@ msgstr "Categoria"
 
 #. module: wua_infrastructure_inventory
 #: selection:maintenance.equipment.category.dynamic.field,field_type:0
+#: selection:wizard.maintenance.dynamic.field.import.line,field_type:0
 msgid "Checkbox"
 msgstr "Checkbox"
 
@@ -70,6 +82,8 @@ msgstr "Municipi"
 #. module: wua_infrastructure_inventory
 #: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_maintenance_category_dynamic_field_selection_create_uid
 #: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_maintenance_equipment_category_dynamic_field_create_uid
+#: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_wizard_maintenance_dynamic_field_import_create_uid
+#: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_wizard_maintenance_dynamic_field_import_line_create_uid
 msgid "Created by"
 msgstr "Creat per"
 
@@ -82,6 +96,8 @@ msgstr "Creat a partir de camp"
 #. module: wua_infrastructure_inventory
 #: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_maintenance_category_dynamic_field_selection_create_date
 #: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_maintenance_equipment_category_dynamic_field_create_date
+#: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_wizard_maintenance_dynamic_field_import_create_date
+#: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_wizard_maintenance_dynamic_field_import_line_create_date
 msgid "Created on"
 msgstr "Creat el"
 
@@ -92,6 +108,7 @@ msgstr "Permisos personalitzats relacionats amb la gestió d'inventari"
 
 #. module: wua_infrastructure_inventory
 #: selection:maintenance.equipment.category.dynamic.field,field_type:0
+#: selection:wizard.maintenance.dynamic.field.import.line,field_type:0
 msgid "Date"
 msgstr "Data"
 
@@ -113,6 +130,8 @@ msgstr "Retard"
 #. module: wua_infrastructure_inventory
 #: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_maintenance_category_dynamic_field_selection_display_name
 #: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_maintenance_equipment_category_dynamic_field_display_name
+#: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_wizard_maintenance_dynamic_field_import_display_name
+#: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_wizard_maintenance_dynamic_field_import_line_display_name
 msgid "Display Name"
 msgstr "Mostrar Nom"
 
@@ -147,22 +166,36 @@ msgid "Example: 'partner_id.name'"
 msgstr "Example: 'partner_id.name'"
 
 #. module: wua_infrastructure_inventory
+#: model:ir.model,name:wua_infrastructure_inventory.model_wizard_maintenance_dynamic_field_import_line
+msgid "Field Line for Dynamic Field Import"
+msgstr "Línia de camp per a la importació dinàmica de camps"
+
+#. module: wua_infrastructure_inventory
 #: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_maintenance_equipment_category_dynamic_field_name
+#: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_wizard_maintenance_dynamic_field_import_line_name
 msgid "Field Name"
 msgstr "Camp de Nom "
 
 #. module: wua_infrastructure_inventory
 #: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_maintenance_equipment_category_dynamic_field_field_path
+#: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_wizard_maintenance_dynamic_field_import_line_field_path
 msgid "Field Path"
-msgstr "Ruta camp"
+msgstr "Field Path"
 
 #. module: wua_infrastructure_inventory
 #: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_maintenance_equipment_category_dynamic_field_field_type
+#: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_wizard_maintenance_dynamic_field_import_line_field_type
 msgid "Field Type"
 msgstr "Tipus de camp"
 
 #. module: wua_infrastructure_inventory
+#: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_wizard_maintenance_dynamic_field_import_field_ids
+msgid "Fields to Import"
+msgstr "Camps a importar"
+
+#. module: wua_infrastructure_inventory
 #: selection:maintenance.equipment.category.dynamic.field,field_type:0
+#: selection:wizard.maintenance.dynamic.field.import.line,field_type:0
 msgid "Fixed"
 msgstr "Fixat"
 
@@ -191,6 +224,8 @@ msgstr "Sector hidràulic"
 #. module: wua_infrastructure_inventory
 #: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_maintenance_category_dynamic_field_selection_id
 #: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_maintenance_equipment_category_dynamic_field_id
+#: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_wizard_maintenance_dynamic_field_import_id
+#: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_wizard_maintenance_dynamic_field_import_line_id
 msgid "ID"
 msgstr "ID"
 
@@ -204,6 +239,28 @@ msgstr "Si està marcada, aquesta categoria està disponible per a l'inventari a
 #: model:maintenance.equipment.category.dynamic.field,name:wua_infrastructure_inventory.equipment_category_pumpgroup_implementation_year
 msgid "Implementation Year"
 msgstr "Any d'execució"
+
+#. module: wua_infrastructure_inventory
+#: model:ir.actions.act_window,name:wua_infrastructure_inventory.action_import_dynamic_fields
+#: model:ir.ui.view,arch_db:wua_infrastructure_inventory.hr_equipment_category_view_form
+#: model:ir.ui.view,arch_db:wua_infrastructure_inventory.view_wizard_import_dynamic_fields_form
+msgid "Import Dynamic Fields"
+msgstr "Importa camps dinàmics"
+
+#. module: wua_infrastructure_inventory
+#: model:ir.model,name:wua_infrastructure_inventory.model_wizard_maintenance_dynamic_field_import
+msgid "Import Dynamic Fields from Model"
+msgstr "Importa camps dinàmics des del model"
+
+#. module: wua_infrastructure_inventory
+#: model:ir.ui.view,arch_db:wua_infrastructure_inventory.view_wizard_import_dynamic_fields_form
+msgid "Import Selected"
+msgstr "Importa el seleccionat"
+
+#. module: wua_infrastructure_inventory
+#: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_wizard_maintenance_dynamic_field_import_line_to_import
+msgid "Import?"
+msgstr "Importar?"
 
 #. module: wua_infrastructure_inventory
 #: model:maintenance.equipment.category.dynamic.field,name:wua_infrastructure_inventory.equipment_category_photovoltaicplant_installed_capacity
@@ -254,23 +311,35 @@ msgstr "Etiqueta"
 #. module: wua_infrastructure_inventory
 #: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_maintenance_category_dynamic_field_selection___last_update
 #: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_maintenance_equipment_category_dynamic_field___last_update
+#: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_wizard_maintenance_dynamic_field_import___last_update
+#: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_wizard_maintenance_dynamic_field_import_line___last_update
 msgid "Last Modified on"
 msgstr "Última modificació el "
 
 #. module: wua_infrastructure_inventory
 #: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_maintenance_category_dynamic_field_selection_write_uid
 #: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_maintenance_equipment_category_dynamic_field_write_uid
+#: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_wizard_maintenance_dynamic_field_import_line_write_uid
+#: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_wizard_maintenance_dynamic_field_import_write_uid
 msgid "Last Updated by"
 msgstr "Última actualització per"
 
 #. module: wua_infrastructure_inventory
 #: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_maintenance_category_dynamic_field_selection_write_date
 #: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_maintenance_equipment_category_dynamic_field_write_date
+#: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_wizard_maintenance_dynamic_field_import_line_write_date
+#: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_wizard_maintenance_dynamic_field_import_write_date
 msgid "Last Updated on"
 msgstr "Última actualització el"
 
 #. module: wua_infrastructure_inventory
+#: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_wizard_maintenance_dynamic_field_import_category_id
+msgid "Maintenance Category"
+msgstr "Categoria de manteniment"
+
+#. module: wua_infrastructure_inventory
 #: selection:maintenance.equipment.category.dynamic.field,field_type:0
+#: selection:wizard.maintenance.dynamic.field.import.line,field_type:0
 msgid "Many2one"
 msgstr "Many2one"
 
@@ -334,6 +403,7 @@ msgstr "Caudal nominal d'aigua (m³/hora)"
 
 #. module: wua_infrastructure_inventory
 #: selection:maintenance.equipment.category.dynamic.field,field_type:0
+#: selection:wizard.maintenance.dynamic.field.import.line,field_type:0
 msgid "Number"
 msgstr "Número"
 
@@ -424,6 +494,7 @@ msgstr "Requerit"
 
 #. module: wua_infrastructure_inventory
 #: selection:maintenance.equipment.category.dynamic.field,field_type:0
+#: selection:wizard.maintenance.dynamic.field.import.line,field_type:0
 msgid "Selection"
 msgstr "Selecció"
 
@@ -446,6 +517,7 @@ msgstr "Subministrat per"
 
 #. module: wua_infrastructure_inventory
 #: selection:maintenance.equipment.category.dynamic.field,field_type:0
+#: selection:wizard.maintenance.dynamic.field.import.line,field_type:0
 msgid "Text"
 msgstr "Texte"
 
@@ -501,6 +573,11 @@ msgstr "Valor"
 #: model:maintenance.equipment.category.dynamic.field,name:wua_infrastructure_inventory.equipment_category_waterconnection_watermeter
 msgid "Watermeter"
 msgstr "Comptador"
+
+#. module: wua_infrastructure_inventory
+#: model:ir.model.fields,field_description:wua_infrastructure_inventory.field_wizard_maintenance_dynamic_field_import_line_wizard_id
+msgid "Wizard id"
+msgstr "Assistent"
 
 #. module: wua_infrastructure_inventory
 #: model:ir.model,name:wua_infrastructure_inventory.model_maintenance_category_dynamic_field_selection
