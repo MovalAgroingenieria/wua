@@ -2812,6 +2812,15 @@ class WuaParcel(models.Model):
         return formated_date_str
 
     @api.model
+    def transform_datetime_to_locale_with_format(
+            self, date, format_str="%Y-%m-%d %H:%M:%S"):
+        date_parsed = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
+        formated_date_str = str(date_parsed)
+        if (format_str):
+            formated_date_str = date_parsed.strftime(format_str)
+        return formated_date_str
+
+    @api.model
     def is_html_field_filled(self, html_field):
         filled = False
         if html_field and tools.html2plaintext(html_field).strip():

@@ -328,10 +328,12 @@ class WuaInvoiceset(models.Model):
         if not consumption_label:
             consumption_label = default_consumption_label
         parcel_model = self.env['wua.parcel']
-        reading_initial_time = parcel_model.transform_datetime_to_locale(
-            presconsumption.reading_initial_time, lang)
-        reading_end_time = parcel_model.transform_datetime_to_locale(
-            presconsumption.reading_end_time, lang)
+        reading_initial_time = parcel_model.\
+            transform_datetime_to_locale_with_format(
+                presconsumption.reading_initial_time, '%d/%m/%y')
+        reading_end_time = parcel_model.\
+            transform_datetime_to_locale_with_format(
+                presconsumption.reading_end_time, '%d/%m/%y')
         initial_volume = round(presconsumption.initial_volume)
         end_volume = round(presconsumption.end_volume)
         volume = end_volume - initial_volume
