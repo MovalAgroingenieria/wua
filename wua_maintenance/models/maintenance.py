@@ -373,6 +373,17 @@ class MaintenanceEquipment(models.Model):
         compute='_compute_building_id',
     )
 
+    @api.model_cr
+    def init(self):
+        try:
+            self.env.cr.savepoint()
+            self.env.cr.execute("""
+                ALTER TABLE maintenance_equipment DROP CONSTRAINT
+                maintenance_equipment_serial_no
+                """)
+        except Exception:
+            self.env.cr.rollback()
+
     @api.constrains('category_id', 'parent_id')
     def _check_parent_category_consistency(self):
         for record in self:
