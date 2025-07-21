@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-22 10:45+0000\n"
-"PO-Revision-Date: 2025-05-22 10:45+0000\n"
+"POT-Creation-Date: 2025-07-21 10:06+0000\n"
+"PO-Revision-Date: 2025-07-21 10:06+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -138,7 +138,7 @@ msgid "(image of"
 msgstr "(imagen de"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1287
+#: code:addons/base_wua/models/wua_parcel.py:1296
 #, python-format
 msgid ", please, contact the community to regularize your situation"
 msgstr ", por favor, contacte con la comunidad para regularizar su situación"
@@ -194,6 +194,44 @@ msgstr "<br/>\n"
 
 #. module: base_wua
 #: model:mail.template,body_html:base_wua.lease_near_end_leaser_partner_report_email_template
+msgid "<p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
+"                    Dear Mr/Ms ${object.leaser_id.name}.\n"
+"\n"
+"                    According to the information available to the ${object.partner_id.company_id.name|safe}. The lease of the parcel ${object.name} will end on ${object.days_until_lease_ends} days.\n"
+"                </p>\n"
+"                <br/>\n"
+"                <p style=\"margin: 0px; padding: 0px;\">\n"
+"                    If you want to regularize the available information, contact with ${object.partner_id.company_id.name|safe} via mail ${(object.partner_id.company_id.email or user.email)|safe} or phone ${(object.partner_id.company_id.phone)|safe}.\n"
+"                </p>\n"
+"                <br/>\n"
+"                <p style=\"margin: 0px; padding: 0px;\">\n"
+"                    In case of not receiving news, the lease will be terminated.\n"
+"                </p>\n"
+"                <br/>\n"
+"                <p>\n"
+"                    Receive a cordial greeting.\n"
+"                </p>\n"
+"            "
+msgstr "<p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
+"                    Dear Mr/Ms ${object.leaser_id.name}.\n"
+"\n"
+"                    According to the information available to the ${object.partner_id.company_id.name|safe}. The lease of the parcel ${object.name} will end on ${object.days_until_lease_ends} days.\n"
+"                </p>\n"
+"                <br/>\n"
+"                <p style=\"margin: 0px; padding: 0px;\">\n"
+"                    If you want to regularize the available information, contact with ${object.partner_id.company_id.name|safe} via mail ${(object.partner_id.company_id.email or user.email)|safe} or phone ${(object.partner_id.company_id.phone)|safe}.\n"
+"                </p>\n"
+"                <br/>\n"
+"                <p style=\"margin: 0px; padding: 0px;\">\n"
+"                    In case of not receiving news, the lease will be terminated.\n"
+"                </p>\n"
+"                <br/>\n"
+"                <p>\n"
+"                    Receive a cordial greeting.\n"
+"                </p>\n"
+"            "
+
+#. module: base_wua
 #: model:mail.template,body_html:base_wua.lease_near_end_partner_report_email_template
 msgid "<p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
 "                    Dear Mr/Ms ${object.owner_id.name}.\n"
@@ -790,6 +828,11 @@ msgid "Archived"
 msgstr "Archivado"
 
 #. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_parcel_view_form
+msgid "Are you sure you want to get GIS data from the cadastre? This will overwrite existing GIS data."
+msgstr "¿Está seguro de que quiere recuperar la información GIS de catastro? Esto sobreescribirá los datos actuales."
+
+#. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.view_partner_form
 #: model:ir.ui.view,arch_db:base_wua.wua_cultivation_view_form
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_view_form
@@ -1293,6 +1336,14 @@ msgid "Cotton"
 msgstr "Algodón"
 
 #. module: base_wua
+#: code:addons/base_wua/models/wua_parcel.py:1943
+#, python-format
+msgid "Could not retrieve geometry from Cadastre. HTTP status: %s\n"
+"URL: %s"
+msgstr "No se pudo recuperar la geometría del Catastro. Estado HTTP: %s\n"
+"URL: %s"
+
+#. module: base_wua
 #: model:ir.actions.act_window,name:base_wua.wua_region_state_county_action
 #: model:ir.model.fields,field_description:base_wua.field_wua_region_state_county_ids
 #: model:ir.ui.menu,name:base_wua.wua_county_menu
@@ -1485,7 +1536,6 @@ msgstr "Borrar"
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_maintenance_equipmenttag_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_airvalve_type_description
-#: model:ir.model.fields,field_description:base_wua.field_wua_cattlespecie_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_concession_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_cultivation_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_cultivation_variety_description
@@ -1500,7 +1550,6 @@ msgstr "Borrar"
 #: model:ir.model.fields,field_description:base_wua.field_wua_parceltag_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_productionmethod_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_rurallocation_description
-#: model:ir.model.fields,field_description:base_wua.field_wua_soiltype_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_subparceltype_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_valve_type_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_waterreservoir_description
@@ -1618,13 +1667,13 @@ msgid "Empty Cadastral Code."
 msgstr "Código catastral en blanco."
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1112
+#: code:addons/base_wua/models/wua_parcel.py:1121
 #, python-format
 msgid "Empty Cadastral Parcel."
 msgstr "Parcela catastral en blanco."
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1096
+#: code:addons/base_wua/models/wua_parcel.py:1105
 #, python-format
 msgid "Empty Cadastral Polygon."
 msgstr "Polígono catastral en blanco."
@@ -1660,7 +1709,7 @@ msgid "Empty Value."
 msgstr "Valor en blanco."
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1066
+#: code:addons/base_wua/models/wua_parcel.py:1075
 #: code:addons/base_wua/wizard/wizard_change_parcel_name.py:38
 #, python-format
 msgid "Empty parcel code."
@@ -1762,6 +1811,14 @@ msgstr "Código de parcela existente."
 #, python-format
 msgid "Export"
 msgstr "Exportar"
+
+#. module: base_wua
+#: code:addons/base_wua/models/wua_parcel.py:1938
+#, python-format
+msgid "Failed to connect to the Cadastre WFS service: %s\n"
+"URL: %s"
+msgstr "No se pudo conectar al servicio WFS de Catastro: %s\n"
+"URL: %s"
 
 #. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_019
@@ -1966,6 +2023,11 @@ msgstr "Generar SHP de parcela"
 #: model:ir.model.fields,field_description:base_wua.field_wua_gis_parcel_view_geojson_data
 msgid "Geojson Data"
 msgstr "Información Geojson"
+
+#. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_parcel_view_form
+msgid "Get Cadastre GIS"
+msgstr "Obtener Catastro GIS"
 
 #. module: base_wua
 #: model:ir.actions.server,name:base_wua.wua_technical_global_vote_calculation_action
@@ -2193,6 +2255,14 @@ msgid "Intervals (m2)"
 msgstr "Intervalos (m²)"
 
 #. module: base_wua
+#: code:addons/base_wua/models/wua_parcel.py:1968
+#, python-format
+msgid "Invalid or empty geometry retrieved from Cadastre.\n"
+"URL: %s"
+msgstr "Geometría no válida o vacía recuperada del Catastro.\n"
+"URL: %s"
+
+#. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_partner_id
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_subparcel_partner_id
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_subparcel_view_search
@@ -2249,13 +2319,13 @@ msgid "Is a company (marked)"
 msgstr "Condición de empresa (sí/no)"
 
 #. module: base_wua
-#: code:addons/base_wua/wizard/wizard_set_partner_code.py:39
+#: code:addons/base_wua/wizard/wizard_set_partner_code.py:45
 #, python-format
 msgid "Is not possible to change the partner_code of a partner that is already a WUA partner"
 msgstr "No es posible cambiar el código de socio de un socio que ya es un socio WUA."
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1641
+#: code:addons/base_wua/models/wua_parcel.py:1650
 #, python-format
 msgid "It is not possible to create the files of SHP."
 msgstr "No es posible crear los ficheros de los SHP."
@@ -2386,7 +2456,7 @@ msgid "Lease is close to end"
 msgstr "Arrendamiento cercano a finalización"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1275
+#: code:addons/base_wua/models/wua_parcel.py:1284
 #, python-format
 msgid "Lease of parcel"
 msgstr "Arrendamiento de la parcela"
@@ -2412,6 +2482,11 @@ msgstr "Parcela arrendada"
 #: model:ir.model.fields,field_description:base_wua.field_wua_configuration_leased_dates_required
 msgid "Leased dates required"
 msgstr "Fechas de arrendamiento obligatorias"
+
+#. module: base_wua
+#: model:ir.model.fields,field_description:base_wua.field_wua_parcel_leaser_id
+msgid "Leaser"
+msgstr "Arrendador"
 
 #. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_127
@@ -2631,10 +2706,18 @@ msgid "No SHP: The user must be a portal user, or it is not possible to obtain S
 msgstr "Sin archivo SHP: el usuario debe ser un usuario del portal, o no es posible obtener archivos SHP fuera del programa principal."
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1694
+#: code:addons/base_wua/models/wua_parcel.py:1703
 #, python-format
 msgid "No parcel with gis relation."
 msgstr "No hay parcelas con vínculo GIS."
+
+#. module: base_wua
+#: code:addons/base_wua/models/wua_parcel.py:1981
+#, python-format
+msgid "No valid geometry found in the Cadastre response.\n"
+"URL: %s"
+msgstr "No se encontró geometría válida en la respuesta del Catastro.\n"
+"URL: %s"
 
 #. module: base_wua
 #: selection:wua.configuration,polling_system_type:0
@@ -2804,13 +2887,13 @@ msgid "Only one legal representative is allowed."
 msgstr "Sólo se permite tener un único representante legal."
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:3299
+#: code:addons/base_wua/models/wua_parcel.py:3359
 #, python-format
 msgid "Only one usufructuary per parcel."
 msgstr "Solo un usufructuario por parcela."
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:3292
+#: code:addons/base_wua/models/wua_parcel.py:3352
 #, python-format
 msgid "Only owners can be usufructuaries."
 msgstr "Solo los propietarios pueden ser usufructuarios."
@@ -2922,6 +3005,7 @@ msgid "Owned percentage"
 msgstr "Porcentaje de propiedad"
 
 #. module: base_wua
+#: model:ir.model.fields,field_description:base_wua.field_wua_parcel_owner_id
 #: model:ir.ui.view,arch_db:base_wua.view_partner_search
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_partnerlink_view_search
 #: selection:wua.parcel.partnerlink,profile:0
@@ -3009,7 +3093,7 @@ msgid "Parcel Type"
 msgstr "Tipo de parcela"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1075
+#: code:addons/base_wua/models/wua_parcel.py:1084
 #, python-format
 msgid "Parcel does not have any concession, add one or mark it as not required."
 msgstr "La parcela no tiene ninguna concesión asociada, añada una o márquela como no requerida."
@@ -3023,8 +3107,8 @@ msgstr "Parcela:"
 #: code:addons/base_wua/controllers/partner.py:43
 #: code:addons/base_wua/controllers/partner.py:75
 #: code:addons/base_wua/models/res_partner.py:682
-#: code:addons/base_wua/models/wua_parcel.py:1732
-#: code:addons/base_wua/models/wua_parcel.py:3589
+#: code:addons/base_wua/models/wua_parcel.py:1741
+#: code:addons/base_wua/models/wua_parcel.py:3649
 #: model:ir.actions.act_window,name:base_wua.res_partner_partnerlink_action
 #: model:ir.actions.act_window,name:base_wua.wua_parcel_action
 #: model:ir.model.fields,field_description:base_wua.field_res_partner_parcel_ids
@@ -3136,13 +3220,13 @@ msgid "Partners (WUA Portal User)"
 msgstr "Socios"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1444
+#: code:addons/base_wua/models/wua_parcel.py:1453
 #, python-format
 msgid "Partners: the sum of all percentages must be 100, or there are repeated partners.On parcel: %s."
 msgstr "Socios: la suma de todos los porcentajes debe ser 100, o bien hay socios repetidos.En la parcela: %s."
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:2190
+#: code:addons/base_wua/models/wua_parcel.py:2234
 #, python-format
 msgid "Partners: the sum of all percentages must be 100, or there are repeated partners.on parcel: %s."
 msgstr "Socios: la suma de todos los porcentajes debe ser 100, o bien hay socios repetidos.En la parcela: %s."
@@ -3346,6 +3430,7 @@ msgid "Profile"
 msgstr "Perfil"
 
 #. module: base_wua
+#: model:ir.model.fields,field_description:base_wua.field_wua_parcel_partnerlink_propietary_partner_id
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_partnerlink_view_search
 msgid "Propietary"
 msgstr "Propietario"
@@ -3393,7 +3478,6 @@ msgstr "Frambueso"
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_maintenance_equipmenttag_readonly
 #: model:ir.model.fields,field_description:base_wua.field_wua_airvalve_type_readonly
-#: model:ir.model.fields,field_description:base_wua.field_wua_cattlespecie_readonly
 #: model:ir.model.fields,field_description:base_wua.field_wua_concession_readonly
 #: model:ir.model.fields,field_description:base_wua.field_wua_cultivation_readonly
 #: model:ir.model.fields,field_description:base_wua.field_wua_cultivation_variety_readonly
@@ -3407,7 +3491,6 @@ msgstr "Frambueso"
 #: model:ir.model.fields,field_description:base_wua.field_wua_parceltag_readonly
 #: model:ir.model.fields,field_description:base_wua.field_wua_productionmethod_readonly
 #: model:ir.model.fields,field_description:base_wua.field_wua_rurallocation_readonly
-#: model:ir.model.fields,field_description:base_wua.field_wua_soiltype_readonly
 #: model:ir.model.fields,field_description:base_wua.field_wua_subparceltype_readonly
 #: model:ir.model.fields,field_description:base_wua.field_wua_valve_type_readonly
 #: model:ir.model.fields,field_description:base_wua.field_wua_waterreservoir_readonly
@@ -3520,7 +3603,7 @@ msgid "Rustic Parcel"
 msgstr "Parcela rústica"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1086
+#: code:addons/base_wua/models/wua_parcel.py:1095
 #, python-format
 msgid "Rustic Parcel: Cadastral Sector not valid."
 msgstr "Parcela rústica: sector catastral no válido."
@@ -3563,7 +3646,7 @@ msgid "Second Initial Code"
 msgstr "Inicio cod. alternativo"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1132
+#: code:addons/base_wua/models/wua_parcel.py:1141
 #, python-format
 msgid "Sector, polygon or parcel is empty."
 msgstr "Sector, polígono o parcela en blanco."
@@ -3783,14 +3866,14 @@ msgid "Tenant"
 msgstr "Arrendatario"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1690
+#: code:addons/base_wua/models/wua_parcel.py:1699
 #, python-format
 msgid "The \"URL GIS Viewer WFS\" parameter is not populated."
 msgstr "parámetro \"URL del servicio WFS\" no ha sido inicializado."
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:857
-#: code:addons/base_wua/models/wua_parcel.py:1817
+#: code:addons/base_wua/models/wua_parcel.py:866
+#: code:addons/base_wua/models/wua_parcel.py:1826
 #, python-format
 msgid "The \"URL GIS Viewer WMS\" parameter or \"URL GIS Viewer WFS\" are not populated."
 msgstr "El parámetro \"URL del servicio WMS\" o el parámetro \"URL del servicio WFS\" no ha sido inicializado."
@@ -3830,19 +3913,19 @@ msgid "The cadastral area must be a value zero or positive."
 msgstr "El área catastral debe ser un valor cero o positivo."
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1118
+#: code:addons/base_wua/models/wua_parcel.py:1127
 #, python-format
 msgid "The cadastral parcel must be a positive value."
 msgstr "La parcela catastral debe ser un valor positivo."
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1102
+#: code:addons/base_wua/models/wua_parcel.py:1111
 #, python-format
 msgid "The cadastral polygon must be a positive value."
 msgstr "El polígono catastral debe ser un valor positivo."
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1165
+#: code:addons/base_wua/models/wua_parcel.py:1174
 #, python-format
 msgid "The cadastral reference already exists."
 msgstr "La referencia catastral ya existe."
@@ -3861,7 +3944,7 @@ msgid "The code of the link-to-partners, subparcels and other dependent entities
 msgstr "El código de los enlaces a socios, subparcelas y resto de entidades dependientes también será modificado"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1621
+#: code:addons/base_wua/models/wua_parcel.py:1630
 #, python-format
 msgid "The database has no GIS layers, or the \"Path of frompgtoshp\" parameter is not populated."
 msgstr "La base de datos no tiene capas GIS, o el parámetro \"Ruta de frompgtoshp\" no se ha indicado."
@@ -3888,13 +3971,13 @@ msgid "The gis area must be a value zero or positive."
 msgstr "El área gis debe ser un valor cero o positivo."
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1285
+#: code:addons/base_wua/models/wua_parcel.py:1294
 #, python-format
 msgid "The lease of the parcel"
 msgstr "El arrendamiento de la parcela"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1127
+#: code:addons/base_wua/models/wua_parcel.py:1136
 #, python-format
 msgid "The length of the cadastral reference is not correct."
 msgstr "Referencia catastral incorrecta (longitud)."
@@ -3943,6 +4026,7 @@ msgstr "El código de socio ya existe."
 
 #. module: base_wua
 #: code:addons/base_wua/models/res_partner.py:443
+#: code:addons/base_wua/wizard/wizard_set_partner_code.py:35
 #, python-format
 msgid "The partner code must be a positive value."
 msgstr "El código de socio debe ser un valor positivo."
@@ -3953,13 +4037,21 @@ msgid "The polling system interval must be a value zero or positive."
 msgstr "El intervalo del sistema de votación debe ser un valor cero o positivo."
 
 #. module: base_wua
+#: code:addons/base_wua/models/wua_parcel.py:1986
+#, python-format
+msgid "The response from the Cadastre service contains malformed XML.\n"
+"URL: %s"
+msgstr "La respuesta del servicio Catastro contiene XML mal formado.\n"
+"URL: %s"
+
+#. module: base_wua
 #: sql_constraint:wua.configuration:0
 msgid "The second initial code for partners must be a value zero or positive."
 msgstr "El valor inicial para la codificación alternativa debe ser un valor cero o positivo."
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1432
-#: code:addons/base_wua/models/wua_parcel.py:2178
+#: code:addons/base_wua/models/wua_parcel.py:1441
+#: code:addons/base_wua/models/wua_parcel.py:2222
 #, python-format
 msgid "The sum of subparcel areas must be the parcel official area for parcel: %s."
 msgstr "La suma de las áreas de las subparcelas debe coincidir con el área declarada: %s."
@@ -4091,15 +4183,15 @@ msgid "Two digits of the official cadastral code."
 msgstr "Dos dígitos del código catastral oficial."
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1453
-#: code:addons/base_wua/models/wua_parcel.py:2197
+#: code:addons/base_wua/models/wua_parcel.py:1462
+#: code:addons/base_wua/models/wua_parcel.py:2241
 #, python-format
 msgid "Two or more lessees is not allowed."
 msgstr "No se permite más de un arrendatario."
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1458
-#: code:addons/base_wua/models/wua_parcel.py:2201
+#: code:addons/base_wua/models/wua_parcel.py:1467
+#: code:addons/base_wua/models/wua_parcel.py:2245
 #, python-format
 msgid "Two or more partners as manager are not allowed, or there is no manager."
 msgstr "No se ha elegido ningún regante, o bien se ha designado a más de uno."
@@ -4122,6 +4214,15 @@ msgstr "Tipo de sistema de votación en juntas"
 #, python-format
 msgid "Unarchive"
 msgstr "Desarchivar"
+
+#. module: base_wua
+#: code:addons/base_wua/models/wua_parcel.py:1991
+#, python-format
+msgid "Unexpected error while processing the Cadastre geometry: %s\n"
+"URL: %s"
+msgstr "
+Error inesperado al procesar la geometría del Catastro: %s\n"
+"URL: %s"
 
 #. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_071
@@ -4274,7 +4375,7 @@ msgid "Walnut"
 msgstr "Nogal fruto"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1164
+#: code:addons/base_wua/models/wua_parcel.py:1173
 #, python-format
 msgid "Warning"
 msgstr "Aviso"
@@ -4466,15 +4567,15 @@ msgid "Zucchini"
 msgstr "Calabacín"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1261
 #: code:addons/base_wua/models/wua_parcel.py:1270
+#: code:addons/base_wua/models/wua_parcel.py:1279
 #, python-format
 msgid "ha"
 msgstr "ha"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1212
-#: code:addons/base_wua/models/wua_parcel.py:3052
+#: code:addons/base_wua/models/wua_parcel.py:1221
+#: code:addons/base_wua/models/wua_parcel.py:3106
 #, python-format
 msgid "hectares"
 msgstr "hectáreas"
@@ -4490,7 +4591,7 @@ msgid "ir.attachment"
 msgstr "ir.attachment"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1286
+#: code:addons/base_wua/models/wua_parcel.py:1295
 #, python-format
 msgid "will end on"
 msgstr "finalizará el"
@@ -4499,3 +4600,4 @@ msgstr "finalizará el"
 #: model:ir.model,name:base_wua.model_wua_gis_parcel_view
 msgid "wua.gis.parcel.view"
 msgstr "wua.gis.parcel.view"
+

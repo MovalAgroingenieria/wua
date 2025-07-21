@@ -220,16 +220,19 @@ class WuaParcel(models.Model):
         string='Area intersected with the perimeter',
         digits=(32, 4),
         compute='_compute_area_intersected_perimeter',
-        store=False,)
+        store=False,
+    )
 
     is_area_intersected_computed = fields.Boolean(
         string='Area intersected is calculated',
-        default=False,)
+        default=False,
+    )
 
     area_intersected_perimeter_static = fields.Float(
         string='Area intersected with the perimeter (Stored)',
         digits=(32, 4),
-        default=0.0,)
+        default=0.0,
+    )
 
     leased_parcel = fields.Boolean(
         string='Leased Parcel',
@@ -253,7 +256,8 @@ class WuaParcel(models.Model):
     leased_to = fields.Date(
         string="Date To",
         track_visibility='onchange',
-        index=True,)
+        index=True,
+    )
 
     days_until_lease_ends = fields.Integer(
         string='Days until lease ends',
@@ -262,19 +266,23 @@ class WuaParcel(models.Model):
 
     close_to_end_lease = fields.Boolean(
         string='Lease is close to end',
-        compute='_compute_close_to_end_lease',)
+        compute='_compute_close_to_end_lease',
+    )
 
     lease_ended = fields.Boolean(
         string='Lease has ended',
-        compute='_compute_lease_ended',)
+        compute='_compute_lease_ended',
+    )
 
     lease_dates_required = fields.Boolean(
         string='Lease dates required',
-        compute='_compute_lease_dates_required',)
+        compute='_compute_lease_dates_required',
+    )
 
     concessions_required = fields.Boolean(
         string='Concessions required',
-        compute='_compute_concessions_required',)
+        compute='_compute_concessions_required',
+    )
 
     internal_notes = fields.Html(string='Internal Notes')
 
@@ -318,7 +326,8 @@ class WuaParcel(models.Model):
 
     optional_concessions = fields.Boolean(
         string='Concessions not mandatory',
-        default=False,)
+        default=False,
+    )
 
     concession_ids = fields.Many2many(
         string='Concessions',
@@ -1355,7 +1364,7 @@ class WuaParcel(models.Model):
                 })
                 sms_wizard.send_sms_action({
                     'mode': 'partner',
-                    'active_ids': [parcel.leaser_id.id]
+                    'active_ids': [parcel.leaser_id.id],
                 })
 
     @api.model
@@ -1915,14 +1924,27 @@ class WuaParcel(models.Model):
 
     @api.multi
     def action_get_gis_data_from_cadastre(self):
+        self.ensure_one()
         espg_code = '25830'
         if self.cadastral_reference and not self.with_gis_parcel:
-            wfs_url = 'https://ovc.catastro.meh.es/INSPIRE/wfsCP.aspx?' + \
-                'service=wfs&version=2&request=getfeature&STOREDQUERIE_ID=' + \
-                'GetParcel&refcat=%s&srsname=EPSG::%s' % (
-                    self.cadastral_reference, espg_code)
-            response = requests.get(wfs_url, verify=False)
-            if response.status_code == 200:
+            wfs_url = (
+                'https://ovc.catastro.meh.es/INSPIRE/wfsCP.aspx?'
+                'service=wfs&version=2.0.0&request=getfeature&STOREDQUERIE_ID='
+                'GetParcel&refcat=%s&srsname=EPSG::%s'
+            ) % (self.cadastral_reference, espg_code)
+            try:
+                response = requests.get(wfs_url, verify=False)
+            except Exception as e:
+                raise exceptions.ValidationError(_(
+                    "Failed to connect to the Cadastre WFS service: "
+                    "%s\nURL: %s",
+                ) % (str(e), wfs_url))
+            if response.status_code != 200:
+                raise exceptions.ValidationError(_(
+                    "Could not retrieve geometry from Cadastre. "
+                    "HTTP status: %s\nURL: %s",
+                ) % (response.status_code, wfs_url))
+            try:
                 gml_content = response.content
                 epsg_regex = re.compile(
                     r'http://www.opengis.net/def/crs/EPSG/0/(\d+)')
@@ -1932,22 +1954,44 @@ class WuaParcel(models.Model):
                 root = tree.getroot()
                 ns = {
                     'gml': 'http://www.opengis.net/gml/3.2',
-                    'cp': 'http://inspire.ec.europa.eu/schemas/cp/4.0'
+                    'cp': 'http://inspire.ec.europa.eu/schemas/cp/4.0',
                 }
+                geometry_found = False
                 for member in root.findall('.//cp:CadastralParcel', ns):
                     for feature in member:
                         geom = feature.find('.//gml:MultiSurface', ns)
                         if geom is not None:
+                            geometry_found = True
                             geom_gml = ElementTree.tostring(
                                 geom, encoding='utf-8')
-                            # Prepare the SQL insert statement
+                            if b'posList' not in geom_gml:
+                                raise exceptions.ValidationError(_(
+                                    "Invalid or empty geometry retrieved from "
+                                    "Cadastre.\nURL: %s",
+                                ) % wfs_url)
+
                             sql = """
                                 INSERT INTO wua_gis_parcel (name, geom)
-                                VALUES ('%s', postgis.ST_GeomFromGML('%s'))
-                            """ % (self.name, geom_gml)
-                            self.env.cr.execute(sql)
+                                VALUES (%s, ST_GeomFromGML(%s))
+                            """
+                            self.env.cr.execute(sql, (self.name, geom_gml))
                             self.env.cr.commit()
                             self.env.invalidate_all()
+                if not geometry_found:
+                    raise exceptions.ValidationError(_(
+                        "No valid geometry found in the Cadastre "
+                        "response.\nURL: %s",
+                    ) % wfs_url)
+            except ElementTree.ParseError:
+                raise exceptions.ValidationError(_(
+                    "The response from the Cadastre service contains "
+                    "malformed XML.\nURL: %s",
+                ) % wfs_url)
+            except Exception as e:
+                raise exceptions.ValidationError(_(
+                    "Unexpected error while processing the Cadastre geometry: "
+                    "%s\nURL: %s",
+                ) % (str(e), wfs_url))
 
     def check_gis_parcel_created(self):
         resp = False
@@ -2985,12 +3029,12 @@ class WuaParcelSubparcel(models.Model):
         if self.cultivation_id.id:
             return {
                 'domain': {'cultivationvariety_id':
-                           [('cultivation_id', '=', self.cultivation_id.id)]}
+                           [('cultivation_id', '=', self.cultivation_id.id)]},
             }
         else:
             return {
                 'domain': {'cultivationvariety_id':
-                           [('cultivation_id', '>=', 1)]}
+                           [('cultivation_id', '>=', 1)]},
             }
 
     @api.onchange('area_perc')
@@ -3124,25 +3168,30 @@ class WuaParcelPartnerlink(models.Model):
     leased_parcel = fields.Boolean(
         string='Leased Parcel',
         store=True,
-        related='parcel_id.leased_parcel',)
+        related='parcel_id.leased_parcel',
+    )
 
     leased_to = fields.Date(
         string='Date To',
         store=True,
         related='parcel_id.leased_to',
-        index=True,)
+        index=True,
+    )
 
     close_to_end_lease = fields.Boolean(
         string='Lease is close to end',
-        related='parcel_id.close_to_end_lease',)
+        related='parcel_id.close_to_end_lease',
+    )
 
     lease_ended = fields.Boolean(
         string='Lease has ended',
-        related='parcel_id.lease_ended',)
+        related='parcel_id.lease_ended',
+    )
 
     lease_dates_required = fields.Boolean(
         string='Lease dates required',
-        related='parcel_id.lease_dates_required',)
+        related='parcel_id.lease_dates_required',
+    )
 
     partner_id = fields.Many2one(
         string='Partner Name',
@@ -3259,7 +3308,8 @@ class WuaParcelPartnerlink(models.Model):
     concession_ids = fields.Many2many(
         string='Concessions',
         comodel_name='wua.concession',
-        related='parcel_id.concession_ids',)
+        related='parcel_id.concession_ids',
+    )
 
     # Aux fields
     lease_info_html_table = fields.Html(

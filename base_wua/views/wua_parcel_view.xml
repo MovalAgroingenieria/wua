@@ -7,15 +7,19 @@
         <field name="arch" type="xml">
             <form string="Parcels" duplicate="false">
                 <header>
+                    <field name="id" invisible="1"/>
                     <button name="%(action_change_parcel_name)d"
                             id="change_parcel_name"
                             type="action" string="Change Code"
                             groups="base_wua.group_wua_manager"/>
-                    <!-- <button name="action_get_gis_data_from_cadastre"
+                    <button name="action_get_gis_data_from_cadastre"
                             string="Get Cadastre GIS"
                             type="object"
-                            groups="base.user_root"
-                            attrs="{'invisible': ['|', ('with_gis_parcel', '=', True), ('cadastral_reference', '=', False)]}"/> -->
+                            groups="base_wua.group_wua_manager"
+                            confirm="Are you sure you want to get GIS data from the cadastre? This will overwrite existing GIS data."
+                            invisible="1"
+                            />
+                    <!-- attrs="{'invisible': ['|', '|', ('id', '=', False), ('with_gis_parcel', '=', True), ('cadastral_reference', '=', False)]}" -->
                     <field name="state"
                            widget="statusbar"
                            statusbar_visible="notbillable,billable"/>
