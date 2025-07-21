@@ -27,7 +27,7 @@
                     <div class="col-xs-12" style="display: table;">
                         <div style="border-right: 1px solid white; width: 60%; display: table-cell;">
                             <p style="margin-bottom: 0px"><i>Invoicing address</i></p>
-                            <div>
+                            <div name="invoicing_address">
                                 <t t-if="o.name"><strong><span t-field="o.name"/></strong></t><br/>
                                 <t t-if="o.vat">
                                     <t t-set="mod_vat" t-value="o.vat[2:]"/>
@@ -56,12 +56,14 @@
                             </div>
                         </div>
                         <div style="width: 40%; display: table-cell; padding: 0px 8px;">
+                            <t t-set="showing_invoicing_address_in_shipping_address" t-value="True"/>
                             <p style="margin-bottom: 0px"><i>Shipping Address</i></p>
                             <t name="t_if_child_ids" t-if="o.child_ids">
                                 <t t-foreach="o.child_ids" t-as="address">
                                     <t t-if="address.type == 'delivery'">
                                         <t t-set="shipping_address" t-value="address"/>
-                                        <div>
+                                        <t t-set="showing_invoicing_address_in_shipping_address" t-value="False"/>
+                                        <div name="shipping_address">
                                             <t t-if="shipping_address.name"><strong><span t-field="shipping_address.name"/></strong></t><br/>
                                             <t t-if="shipping_address.street_type_show"><span t-field="shipping_address.street_type_show"/></t>
                                             <t t-if="shipping_address.street"><span t-field="shipping_address.street"/></t>
@@ -84,33 +86,9 @@
                                             </t>
                                         </div>
                                     </t>
-                                     <t t-else="">
-                                        <div>
-                                            <t t-if="o.name"><strong><span t-field="o.name"/></strong></t><br/>
-                                            <t t-if="o.street_type_show"><span t-field="o.street_type_show"/></t>
-                                            <t t-if="o.street"><span t-field="o.street"/></t>
-                                            <t t-if="o.street_num"><span t-field="o.street_num"/></t>
-                                            <t t-if="o.street2"><span t-field="o.street2"/></t>
-                                            <br/>
-                                            <t t-if="o.city"><span t-field="o.city"/></t>
-                                            <t t-if="o.zip">
-                                                <span>&amp;nbsp;-&amp;nbsp;</span>
-                                                <span t-field="o.zip"/>
-                                            </t>
-                                            <t id="state_address" t-if="o.state_id">
-                                                <span t-tag="span">(</span><span t-field="o.state_id"/>
-                                                <t t-if="not o.country_id"><span>)</span></t>
-                                                <t t-else=""><span>-</span></t>
-                                            </t>
-                                            <t id="country_address" t-if="o.country_id">
-                                                <t t-if="not o.state_id"><span>(</span></t>
-                                                <span t-field="o.country_id"></span><span>)</span>
-                                            </t>
-                                        </div>
-                                    </t>
                                 </t>
                             </t>
-                            <t t-else="">
+                            <t t-if="showing_invoicing_address_in_shipping_address">
                                 <div>
                                     <t t-if="o.name"><strong><span t-field="o.name"/></strong></t><br/>
                                     <t t-if="o.street_type_show"><span t-field="o.street_type_show"/></t>
