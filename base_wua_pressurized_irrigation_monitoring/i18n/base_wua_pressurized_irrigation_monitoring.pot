@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-19 10:32+0000\n"
-"PO-Revision-Date: 2024-12-19 10:32+0000\n"
+"POT-Creation-Date: 2025-07-22 10:43+0000\n"
+"PO-Revision-Date: 2025-07-22 10:43+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -517,6 +517,12 @@ msgid "Accuracy (m/px)"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlpresconsumption_active
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlreading_active
+msgid "Active"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_cultivation_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_cultivation_presconsumption_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_global_view_search
@@ -653,6 +659,24 @@ msgstr ""
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wizard_generate_controlperiods_view_form
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_monitoring_config_settings_view_form
 msgid "Apply"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.actions.server,name:base_wua_pressurized_irrigation_monitoring.wua_archive_controlpresconsumption
+#: model:ir.actions.server,name:base_wua_pressurized_irrigation_monitoring.wua_archive_controlreadings
+msgid "Archive"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_controlpresconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_controlreading_view_search
+msgid "Archived: No"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_controlpresconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_controlreading_view_search
+msgid "Archived: Yes"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
@@ -943,8 +967,8 @@ msgid "Consumption Category"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlpresconsumption.py:304
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlpresconsumption.py:339
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlpresconsumption.py:308
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlpresconsumption.py:343
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_cultivation.py:101
 #, python-format
 msgid "Consumptions"
@@ -2502,21 +2526,21 @@ msgid "Remote C.: GIS Viewer"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:435
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:443
 #, python-format
 msgid "Remote Control: Error getting readings"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:429
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:436
 #, python-format
 msgid "Remote Control: Getting readings"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:523
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:546
 #, python-format
-msgid "Remote Control: Saved readings"
+msgid "Remote Control: Saved Controlreadings"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
@@ -2758,7 +2782,7 @@ msgid "The agricultural season is not active."
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:451
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:474
 #, python-format
 msgid "The communication with the remote control is not enabled."
 msgstr ""
@@ -2864,7 +2888,7 @@ msgid "The reading end time must be greather than or equal to reading initial ti
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:232
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:236
 #, python-format
 msgid "The reading time is minor than the time of the previous reading."
 msgstr ""
@@ -2875,7 +2899,7 @@ msgid "The reading volume must be a non-negative value."
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:396
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:400
 #, python-format
 msgid "The remote control is not enabled."
 msgstr ""
@@ -2892,7 +2916,7 @@ msgid "The uniformity of irrigation application must be a value zero or positive
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlpresconsumption.py:160
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlpresconsumption.py:164
 #, python-format
 msgid "The water meter is mandatory, it must be active and it must have a water connection."
 msgstr ""
@@ -2908,7 +2932,7 @@ msgid "Theoretical Consumption"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:354
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:358
 #, python-format
 msgid "There are different water meters."
 msgstr ""
@@ -2920,19 +2944,19 @@ msgid "There are no subparcels with monitored cultivations."
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:356
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:360
 #, python-format
 msgid "There can be no final readings without eliminating."
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:370
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:374
 #, python-format
 msgid "There can be no intermediate readings without eliminating."
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:400
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:404
 #, python-format
 msgid "There is not a URL for the remote control application."
 msgstr ""
@@ -2983,6 +3007,12 @@ msgstr ""
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_view_search
 msgid "Unacceptable Irrigation"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.actions.server,name:base_wua_pressurized_irrigation_monitoring.wua_unarchive_controlpresconsumption
+#: model:ir.actions.server,name:base_wua_pressurized_irrigation_monitoring.wua_unarchive_controlreadings
+msgid "Unarchive"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
@@ -3119,8 +3149,8 @@ msgstr ""
 #. module: base_wua_pressurized_irrigation_monitoring
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:321
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:330
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:549
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:558
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:579
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:588
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_parcel.py:606
 #, python-format
 msgid "You do not have permission to execute this action."
@@ -3191,3 +3221,4 @@ msgstr ""
 #: model:ir.model,name:base_wua_pressurized_irrigation_monitoring.model_wua_soiltype
 msgid "wua.soiltype"
 msgstr ""
+

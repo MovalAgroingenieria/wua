@@ -18,6 +18,9 @@
                         <img src="/base_wua_pressurized_irrigation/static/image/img_last.png"
                              hspace="2"
                              attrs="{'invisible':[('is_last_reading', '=', False)]}"/>
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                        </button>
                     </div>
                     <group name="master_data">
                         <group name="master_data_left">
@@ -89,13 +92,18 @@
                 <separator id="validate_separator"/>
                 <filter string="Validated Reading: Yes" name="isvalidatedyes"
                  domain="[('validated','=',True)]"/>
-               <filter string="Validated Reading: No" name="isvalidatedno"
+                <filter string="Validated Reading: No" name="isvalidatedno"
                  domain="[('validated','=',False)]"/>
                 <separator id="is_last_reading_separator"/>
                 <filter string="Last Reading: Yes" name="islastreadingyes"
                  domain="[('is_last_reading','=',True)]"/>
                 <filter string="Last Reading: No" name="islastreadingno"
                  domain="[('is_last_reading','=',False)]"/>
+                <separator id="archive_separator"/>
+                <filter string="Archived: Yes" name="archivedyes"
+                 domain="[('active','=',False)]"/>
+                <filter string="Archived: No" name="archivedno"
+                 domain="[('active','=',True)]"/>
                 <group expand="0" string="Group By">
                     <filter string="Hydraulic Sector"
                      name="hydraulicsector"
@@ -170,6 +178,42 @@
         <field name="key">action</field>
         <field name="key2">client_action_multi</field>
         <field name="value" eval="'ir.actions.server,' + str(ref('wua_cancel_controlreadings'))"/>
+    </record>
+
+    <record id="wua_archive_controlreadings" model="ir.actions.server">
+        <field name="name">Archive</field>
+        <field name="model_id" ref="model_wua_controlreading"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.controlreading'].archive_controlreadings(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_archive_controlreadings" model="ir.values">
+        <field name="name">Archive</field>
+        <field name="model">wua.controlreading</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_archive_controlreadings'))"/>
+    </record>
+
+    <record id="wua_unarchive_controlreadings" model="ir.actions.server">
+        <field name="name">Unarchive</field>
+        <field name="model_id" ref="model_wua_controlreading"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.controlreading'].unarchive_controlreadings(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_unarchive_controlreadings" model="ir.values">
+        <field name="name">Unarchive</field>
+        <field name="model">wua.controlreading</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_unarchive_controlreadings'))"/>
     </record>
 
 </odoo>

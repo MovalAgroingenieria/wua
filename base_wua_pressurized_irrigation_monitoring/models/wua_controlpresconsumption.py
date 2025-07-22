@@ -118,6 +118,10 @@ class WuaControlpresconsumption(models.Model):
         store=True,
         compute='_compute_validated')
 
+    active = fields.Boolean(
+        string='Active',
+        default=True, )
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing Consumption.'),
         ('valid_reading_limits',
@@ -343,3 +347,19 @@ class WuaControlpresconsumption(models.Model):
             'target': 'current',
             'context': self.env.context,
             }
+
+    @api.multi
+    def archive_controlpresconsumption(
+            self, active_controlpresconsumptions):
+        presconsumptions = self.env['wua.controlpresconsumption'].browse(
+            active_controlpresconsumptions)
+        for record in presconsumptions:
+            record.active = False
+
+    @api.multi
+    def unarchive_controlpresconsumption(
+            self, unactive_controlpresconsumptions):
+        presconsumptions = self.env['wua.controlpresconsumption'].browse(
+            unactive_controlpresconsumptions)
+        for record in presconsumptions:
+            record.active = True

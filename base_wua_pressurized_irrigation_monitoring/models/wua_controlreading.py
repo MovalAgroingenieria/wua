@@ -109,6 +109,10 @@ class WuaControlreading(models.Model):
         default=True,
         required=True)
 
+    active = fields.Boolean(
+        string='Active',
+        default=True, )
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'Existing Reading.'),
@@ -587,3 +591,15 @@ class WuaControlreading(models.Model):
         for reading in readings:
             if reading.validated:
                 reading.cancel_controlreading()
+
+    @api.multi
+    def archive_controlreadings(self, active_readings):
+        readings = self.env['wua.controlreading'].browse(active_readings)
+        for record in readings:
+            record.active = False
+
+    @api.multi
+    def unarchive_controlreadings(self, unactive_readings):
+        readings = self.env['wua.controlreading'].browse(unactive_readings)
+        for record in readings:
+            record.active = True
