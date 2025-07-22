@@ -456,8 +456,19 @@
 
     <menuitem id="maintenance_equipmenttag_menu" name="Equipment Tags" parent="maintenance.menu_maintenance_configuration" action="maintenance_equipmenttag_action" sequence="4" />
 
+        <record id="maintenance_equipment_view_pivot" model="ir.ui.view">
+        <field name="name">maintenance.equipment.pivot</field>
+        <field name="model">maintenance.equipment</field>
+        <field name="arch" type="xml">
+            <pivot string="Equipments">
+                <field name="category_id" type="row"/>
+            </pivot>
+        </field>
+    </record>
+
+
     <record id="maintenance.hr_equipment_action" model="ir.actions.act_window">
-        <field name="view_mode">tree,kanban,form</field>
+        <field name="view_mode">tree,kanban,form,pivot</field>
         <field name="view_id" ref="wua_maintenance.hr_equipment_view_tree" />
         <field name="search_view_id" ref="wua_maintenance.maintenance_equipment_view_search_inherit_hr" />
         <field name="context">{}</field>
