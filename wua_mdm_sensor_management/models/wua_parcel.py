@@ -12,19 +12,19 @@ class WuaParcel(models.Model):
         self.env.cr.execute("""
             SELECT EXISTS (
                 SELECT * FROM information_schema.tables
-                WHERE table_name = 'mdm_measurement_device_gis'
+                WHERE table_name = 'mdm_gis_measurement_device'
             )
         """)
         return self.env.cr.fetchone()[0]
 
-    def create_mdm_measurement_device_gis_table(self):
+    def create_mdm_gis_measurement_device_table(self):
         gis_table_created = self.check_gis_measurement_device_table_created()
         postgis_ready = self.check_extension_and_schema_postgis_created()
 
         if not gis_table_created and postgis_ready:
             self.env.cr.execute("""
                 CREATE SEQUENCE IF NOT EXISTS
-                    public.mdm_measurement_device_gis_gid_seq
+                    public.mdm_gis_measurement_device_gid_seq
                     INCREMENT 1
                     START 1
                     MINVALUE 1
@@ -32,21 +32,21 @@ class WuaParcel(models.Model):
                     CACHE 1;
             """)
             self.env.cr.execute("""
-                CREATE TABLE IF NOT EXISTS public.mdm_measurement_device_gis (
+                CREATE TABLE IF NOT EXISTS public.mdm_gis_measurement_device (
                     gid integer NOT NULL DEFAULT nextval(
-                        'mdm_measurement_device_gis_gid_seq'::regclass),
+                        'mdm_gis_measurement_device_gid_seq'::regclass),
                     name character varying(254)
                         COLLATE pg_catalog."default",
                     geom postgis.geometry(Point,25830),
                     UNIQUE(name),
-                    CONSTRAINT mdm_measurement_device_gis_pkey
+                    CONSTRAINT mdm_gis_measurement_device_pkey
                         PRIMARY KEY (gid)
                 );
             """)
             self.env.cr.execute("""
                 CREATE INDEX IF NOT EXISTS
-                    mdm_measurement_device_gis_idx ON
-                    public.mdm_measurement_device_gis
+                    mdm_gis_measurement_device_idx ON
+                    public.mdm_gis_measurement_device
                     USING gist (geom);
             """)
             self.env.cr.commit()
@@ -58,7 +58,7 @@ class WuaParcel(models.Model):
         if gis_table_created and postgis_ready:
             self.env.cr.execute("""
                 CREATE OR REPLACE FUNCTION
-                    mdm_measurement_device_gis_update_on_mdm_measurement_device()
+                    mdm_gis_measurement_device_update_on_mdm_measurement_device()
                     RETURNS trigger AS
                 $BODY$
                 BEGIN
@@ -81,24 +81,24 @@ class WuaParcel(models.Model):
             self.env.cr.commit()
 
             self.env.cr.execute("""
-                DROP TRIGGER IF EXISTS mdm_measurement_device_gis_write_trigger
-                ON public.mdm_measurement_device_gis;
+                DROP TRIGGER IF EXISTS mdm_gis_measurement_device_write_trigger
+                ON public.mdm_gis_measurement_device;
                 DROP TRIGGER IF EXISTS
-                    mdm_measurement_device_gis_create_unlink_trigger ON
-                    public.mdm_measurement_device_gis;
+                    mdm_gis_measurement_device_create_unlink_trigger ON
+                    public.mdm_gis_measurement_device;
 
-                CREATE TRIGGER mdm_measurement_device_gis_write_trigger
+                CREATE TRIGGER mdm_gis_measurement_device_write_trigger
                 AFTER UPDATE OF name ON
-                public.mdm_measurement_device_gis FOR EACH ROW WHEN
+                public.mdm_gis_measurement_device FOR EACH ROW WHEN
                 (OLD.name IS DISTINCT FROM NEW.name)
                 EXECUTE PROCEDURE
-                    mdm_measurement_device_gis_update_on_mdm_measurement_device();
+                    mdm_gis_measurement_device_update_on_mdm_measurement_device();
 
-                CREATE TRIGGER mdm_measurement_device_gis_create_unlink_trigger
+                CREATE TRIGGER mdm_gis_measurement_device_create_unlink_trigger
                 AFTER INSERT OR DELETE ON
-                public.mdm_measurement_device_gis FOR EACH ROW
+                public.mdm_gis_measurement_device FOR EACH ROW
                 EXECUTE PROCEDURE
-                    mdm_measurement_device_gis_update_on_mdm_measurement_device();
+                    mdm_gis_measurement_device_update_on_mdm_measurement_device();
             """)
             self.env.cr.commit()
 
@@ -111,7 +111,7 @@ class WuaParcel(models.Model):
                     UPDATE public.mdm_measurement_device SET
                         with_gis_measurement_device = (
                             SELECT NEW.name IN (
-                                SELECT name FROM mdm_measurement_device_gis
+                                SELECT name FROM mdm_gis_measurement_device
                             )
                         )
                     WHERE name = NEW.name;

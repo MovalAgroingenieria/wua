@@ -650,7 +650,7 @@ class MaintenanceEquipment(models.Model):
                 'wua_maintenance.equipment_category_measurement_device').id: {
                 'base_table': 'mdm_measurement_device',
                 'base_field': 'name',
-                'gis_table': 'mdm_measurement_device_gis',
+                'gis_table': 'mdm_gis_measurement_device',
                 'gis_field': 'name',
                 'intermediate_table': False,
                 'intermediate_field': False,

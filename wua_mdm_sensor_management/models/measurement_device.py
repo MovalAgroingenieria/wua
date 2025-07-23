@@ -59,7 +59,7 @@ class MeasurementDevice(models.Model):
     def init(self):
         parcel_model = self.env['wua.parcel']
         try:
-            parcel_model.create_mdm_measurement_device_gis_table()
+            parcel_model.create_mdm_gis_measurement_device_table()
             parcel_model.create_measurement_device_triggers()
         except Exception:
             pass
