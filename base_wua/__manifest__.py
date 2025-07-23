@@ -52,6 +52,7 @@
         "account_payment_partner_extended",
         "generic_excel_reports",
         "user_info_help_entries",
+        "web_ir_actions_act_window_message",
     ],
     "data": [
         "security/security.xml",

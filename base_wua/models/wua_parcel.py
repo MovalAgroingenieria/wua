@@ -1198,9 +1198,11 @@ class WuaParcel(models.Model):
         res = super(WuaParcel, self).fields_view_get(
             view_id=view_id, view_type=view_type, toolbar=toolbar,
             submenu=submenu)
+        config_model = self.env['ir.values']
+        show_get_cadastre_gis_button = config_model.get_default(
+            'wua.configuration', 'show_get_cadastre_gis_button')
         if view_type in ['form', 'tree']:
             doc = etree.XML(res['arch'])
-            config_model = self.env['ir.values']
             area_measurement_type = config_model.get_default(
                 'wua.configuration', 'area_measurement_type')
             area_measurement_name = config_model.get_default(
@@ -1215,6 +1217,12 @@ class WuaParcel(models.Model):
                         node.set('invisible', '1')
                         node.set('modifiers', '{"tree_invisible": true}')
             if view_type == 'form':
+                if not show_get_cadastre_gis_button:
+                    for node in doc.xpath(
+                            "//button[@name="
+                            "'action_get_gis_data_from_cadastre']"):
+                        # Remove invisible attribute
+                        node.set('invisible', '1')
                 if area_measurement_type == 1:
                     measurement_label = area_measurement_name.lower()
                 else:
@@ -1256,6 +1264,17 @@ class WuaParcel(models.Model):
                             original_label = original_label[:posBracket]
                         node.set('string', "%s (%s)" % (
                             original_label, area_measurement_name.lower()))
+            # Remove the generate cadastre action if not enabled
+            if not show_get_cadastre_gis_button:
+                actions_to_remove = [
+                    'base_wua.wua_get_gis_data_from_cadastre',
+                ]
+                actions_menu = res.get('toolbar', {}).get('action', [])
+                actions_to_show = []
+                for action_menu in actions_menu:
+                    if action_menu['xml_id'] not in actions_to_remove:
+                        actions_to_show.append(action_menu)
+                res['toolbar']['action'] = actions_to_show
             res['arch'] = etree.tostring(doc)
         return res
 
@@ -1924,74 +1943,132 @@ class WuaParcel(models.Model):
 
     @api.multi
     def action_get_gis_data_from_cadastre(self):
-        self.ensure_one()
         espg_code = '25830'
-        if self.cadastral_reference and not self.with_gis_parcel:
-            wfs_url = (
-                'https://ovc.catastro.meh.es/INSPIRE/wfsCP.aspx?'
-                'service=wfs&version=2.0.0&request=getfeature&STOREDQUERIE_ID='
-                'GetParcel&refcat=%s&srsname=EPSG::%s'
-            ) % (self.cadastral_reference, espg_code)
-            try:
-                response = requests.get(wfs_url, verify=False)
-            except Exception as e:
-                raise exceptions.ValidationError(_(
-                    "Failed to connect to the Cadastre WFS service: "
-                    "%s\nURL: %s",
-                ) % (str(e), wfs_url))
-            if response.status_code != 200:
-                raise exceptions.ValidationError(_(
-                    "Could not retrieve geometry from Cadastre. "
-                    "HTTP status: %s\nURL: %s",
-                ) % (response.status_code, wfs_url))
-            try:
-                gml_content = response.content
-                epsg_regex = re.compile(
-                    r'http://www.opengis.net/def/crs/EPSG/0/(\d+)')
-                gml_content = epsg_regex.sub(r'EPSG:\1', gml_content)
-                tree = ElementTree.ElementTree(
-                    ElementTree.fromstring(gml_content))
-                root = tree.getroot()
-                ns = {
-                    'gml': 'http://www.opengis.net/gml/3.2',
-                    'cp': 'http://inspire.ec.europa.eu/schemas/cp/4.0',
-                }
-                geometry_found = False
-                for member in root.findall('.//cp:CadastralParcel', ns):
-                    for feature in member:
-                        geom = feature.find('.//gml:MultiSurface', ns)
-                        if geom is not None:
-                            geometry_found = True
-                            geom_gml = ElementTree.tostring(
-                                geom, encoding='utf-8')
-                            if b'posList' not in geom_gml:
-                                raise exceptions.ValidationError(_(
-                                    "Invalid or empty geometry retrieved from "
-                                    "Cadastre.\nURL: %s",
-                                ) % wfs_url)
-
-                            sql = """
-                                INSERT INTO wua_gis_parcel (name, geom)
-                                VALUES (%s, ST_GeomFromGML(%s))
-                            """
-                            self.env.cr.execute(sql, (self.name, geom_gml))
-                            self.env.cr.commit()
-                            self.env.invalidate_all()
-                if not geometry_found:
-                    raise exceptions.ValidationError(_(
-                        "No valid geometry found in the Cadastre "
-                        "response.\nURL: %s",
-                    ) % wfs_url)
-            except ElementTree.ParseError:
-                raise exceptions.ValidationError(_(
-                    "The response from the Cadastre service contains "
-                    "malformed XML.\nURL: %s",
-                ) % wfs_url)
-            except Exception as e:
-                raise exceptions.ValidationError(_(
-                    "Unexpected error while processing the Cadastre geometry: "
-                    "%s\nURL: %s",
-                ) % (str(e), wfs_url))
+        errors = []
+        updated = []
+        skipped = []
+        for record in self:
+            if record.cadastral_reference and not record.with_gis_parcel:
+                wfs_url = (
+                    'https://ovc.catastro.meh.es/INSPIRE/wfsCP.aspx?'
+                    'service=wfs&version=2.0.0&request=getfeature&'
+                    'STOREDQUERIE_ID=GetParcel&refcat=%s&srsname=EPSG::%s'
+                ) % (record.cadastral_reference, espg_code)
+                try:
+                    response = requests.get(wfs_url, verify=False)
+                    if response.status_code != 200:
+                        errors.append(
+                            _("<b>%s</b>: Could not retrieve geometry from "
+                              "Cadastre. HTTP code: %s") % (
+                                record.name, response.status_code))
+                        continue
+                    # Parse and normalize GML content
+                    gml_content = response.content
+                    epsg_regex = re.compile(
+                        r'http://www.opengis.net/def/crs/EPSG/0/(\d+)')
+                    gml_content = epsg_regex.sub(r'EPSG:\1', gml_content)
+                    tree = ElementTree.ElementTree(ElementTree.fromstring(
+                        gml_content))
+                    root = tree.getroot()
+                    ns = {
+                        'gml': 'http://www.opengis.net/gml/3.2',
+                        'cp': 'http://inspire.ec.europa.eu/schemas/cp/4.0',
+                    }
+                    geometry_found = False
+                    for member in root.findall('.//cp:CadastralParcel', ns):
+                        for feature in member:
+                            geom = feature.find('.//gml:MultiSurface', ns)
+                            if geom is not None:
+                                geometry_found = True
+                                geom_gml = ElementTree.tostring(
+                                    geom, encoding='utf-8')
+                                if b'posList' not in geom_gml:
+                                    errors.append(_(
+                                        "<b>%s</b>: Geometry retrieved from "
+                                        "Cadastre is empty or invalid.") %
+                                        record.name)
+                                    continue
+                                # Insert geometry into database
+                                sql = """
+                                    INSERT INTO wua_gis_parcel (name, geom)
+                                    VALUES (%s, ST_GeomFromGML(%s))
+                                """
+                                self.env.cr.execute(sql, (
+                                    record.name, geom_gml))
+                                self.env.cr.commit()
+                                self.env.invalidate_all()
+                                updated.append(record.name)
+                    if not geometry_found:
+                        errors.append(
+                            _("<b>%s</b>: No valid geometry found in the "
+                              "Cadastre response.") % record.name)
+                except ElementTree.ParseError:
+                    errors.append(
+                        _("<b>%s</b>: Malformed XML received from Cadastre "
+                          "service.") % record.name)
+                except Exception as e:
+                    errors.append(_(
+                        "<b>%s</b>: Unexpected error occurred: %s") %
+                        (record.name, str(e)))
+            else:
+                skipped.append(record.name)
+        # Build HTML message
+        message_parts = []
+        if updated:
+            updated_list = ''.join([
+                '<li style="color:green;font-weight:bold;">%s</li>' % name
+                for name in updated
+            ])
+            message_parts.append(
+                '<h4 style="margin-top:15px;">%s</h4><ul>%s</ul>' % (
+                    _('Parcels successfully updated'), updated_list),
+            )
+        if errors:
+            error_list = ''.join([
+                '<li style="color:red;font-weight:bold;">%s</li>' % msg
+                for msg in errors
+            ])
+            message_parts.append(
+                '<h4 style="margin-top:15px;">%s</h4><ul>%s</ul>' % (
+                    _('Parcels with errors'), error_list),
+            )
+        if skipped:
+            skipped_list = ''.join([
+                '<li style="color:orange;">%s</li>' % name
+                for name in skipped
+            ])
+            message_parts.append(
+                '<h4 style="margin-top:15px;">%s</h4><ul>%s</ul>' % (
+                    _('Parcels skipped (missing reference or already linked)'),
+                    skipped_list),
+            )
+        message = (
+            '<div style="font-family:sans-serif">'
+            '<p style="font-size:16px;margin-bottom:10px;">'
+            '<b style="font-size:18px;color:#2c3e50;">%s</b>'
+            '</p>%s</div>'
+        ) % (
+            _('Cadastre GIS Import Summary'),
+            ''.join(message_parts),
+        )
+        return {
+            'type': 'ir.actions.act_window.message',
+            'title': _('Cadastre GIS import result'),
+            'message': message,
+            'is_html_message': True,
+            'close_button_title': False,
+            'buttons': [
+                {
+                    'type': 'ir.actions.act_window_close',
+                    'name': _('Close'),
+                },
+                {
+                    'type': 'ir.actions.client',
+                    'tag': 'reload',
+                    'name': _('Refresh Page'),
+                },
+            ],
+        }
 
     def check_gis_parcel_created(self):
         resp = False

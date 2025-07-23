@@ -12,14 +12,6 @@
                             id="change_parcel_name"
                             type="action" string="Change Code"
                             groups="base_wua.group_wua_manager"/>
-                    <button name="action_get_gis_data_from_cadastre"
-                            string="Get Cadastre GIS"
-                            type="object"
-                            groups="base_wua.group_wua_manager"
-                            confirm="Are you sure you want to get GIS data from the cadastre? This will overwrite existing GIS data."
-                            invisible="1"
-                            />
-                    <!-- attrs="{'invisible': ['|', '|', ('id', '=', False), ('with_gis_parcel', '=', True), ('cadastral_reference', '=', False)]}" -->
                     <field name="state"
                            widget="statusbar"
                            statusbar_visible="notbillable,billable"/>
@@ -913,6 +905,22 @@
         <field name="key">action</field>
         <field name="key2">client_action_multi</field>
         <field name="value" eval="'ir.actions.server,' + str(ref('wua_regenerate_aerial_img_individual'))"/>
+    </record>
+
+    <record id="wua_get_gis_data_from_cadastre" model="ir.actions.server">
+        <field name="name">Get GIS Data from Cadastre</field>
+        <field name="model_id" ref="base_wua.model_wua_parcel"/>
+        <field name="code">
+            action =  env['wua.parcel'].browse(context['active_ids']).action_get_gis_data_from_cadastre()
+        </field>
+    </record>
+
+    <record id="wua_action_get_gis_data_from_cadastre" model="ir.values">
+        <field name="name">Get GIS Data from Cadastre</field>
+        <field name="model">wua.parcel</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_get_gis_data_from_cadastre'))"/>
     </record>
 
     <record id="wua_generate_parcel_shp" model="ir.actions.server">

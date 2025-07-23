@@ -194,22 +194,29 @@ class WuaConfiguration(models.TransientModel):
         string='Leased dates required',
         default=False,
         help='If checked the leased from and leased to fields becomes '
-             'mandatory')
+             'mandatory',
+    )
 
     notice_leased_days = fields.Integer(
         string='Nº days end lease notice',
         default=15,
         help='Number of days until the end of the lease in which notice '
-             'is given'
+             'is given',
     )
 
     mail_leaser_address = fields.Char(
-        string='Mail receiver for lease reports',)
+        string='Mail receiver for lease reports',
+    )
 
     show_partner_notes = fields.Boolean(
         string='Show partner notes',
         default=False,
-        help='If checked the partner notes of the partner will be advised'
+        help='If checked the partner notes of the partner will be advised',
+    )
+
+    show_get_cadastre_gis_button = fields.Boolean(
+        string='Show Get Cadastre GIS Button',
+        default=False,
     )
 
     _sql_constraints = [
@@ -228,7 +235,7 @@ class WuaConfiguration(models.TransientModel):
         ('valid_second_initial_partner_code',
          'CHECK (second_initial_partner_code >= 0)',
          'The second initial code for partners must be a value zero or ' +
-         'positive.')
+         'positive.'),
         ]
 
     @api.multi
@@ -304,9 +311,11 @@ class WuaConfiguration(models.TransientModel):
                            'is_area_intersected_calculated',
                            self.is_area_intersected_calculated)
         values.set_default('wua.configuration', 'intersection_perimeter_table',
-                           self.intersection_perimeter_table),
+                           self.intersection_perimeter_table)
         values.set_default('wua.configuration', 'show_partner_notes',
                            self.show_partner_notes)
+        values.set_default('wua.configuration', 'show_get_cadastre_gis_button',
+                           self.show_get_cadastre_gis_button)
         # If is gonna be calculated, then check postgis and table selected
         # exists
         if (self.is_area_intersected_calculated and
