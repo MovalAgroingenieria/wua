@@ -9,6 +9,31 @@ class MeasurementDevice(models.Model):
     _name = 'mdm.measurement.device'
     _inherit = ['mdm.measurement.device']
 
+    subparcel_id = fields.Many2one(
+        string='Subparcel',
+        comodel_name='wua.parcel.subparcel',
+        index=True,
+        ondelete='restrict',
+    )
+
+    parcel_id = fields.Many2one(
+        string='Parcel',
+        comodel_name='wua.parcel',
+        compute='_compute_parcel_id',
+        store=True,
+        index=True,
+        ondelete='restrict',
+    )
+
+    partner_id = fields.Many2one(
+        string='Partner',
+        comodel_name='res.partner',
+        compute='_compute_partner_id',
+        store=True,
+        index=True,
+        ondelete='restrict',
+    )
+
     gis_viewer_link = fields.Char(
         string='GIS Viewer Link',
         compute='_compute_gis_viewer_link',
@@ -18,6 +43,22 @@ class MeasurementDevice(models.Model):
         string='With GIS Measurement Device',
         readonly=True,
     )
+
+    @api.depends('subparcel_id', 'subparcel_id.partner_id')
+    def _compute_parcel_id(self):
+        for record in self:
+            parcel_id = None
+            if record.subparcel_id:
+                parcel_id = record.subparcel_id.parcel_id.id
+            record.parcel_id = parcel_id
+
+    @api.depends('parcel_id', 'parcel_id.partner_id')
+    def _compute_partner_id(self):
+        for record in self:
+            partner_id = None
+            if record.parcel_id and record.parcel_id.partner_id:
+                partner_id = record.parcel_id.partner_id.id
+            record.partner_id = partner_id
 
     @api.multi
     def _compute_gis_viewer_link(self):

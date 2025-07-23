@@ -1589,7 +1589,7 @@ class WuaParcel(models.Model):
                 """)
                 self.env.cr.execute("""
                     UPDATE public.wua_building wi1
-                    SET with_gis_building = TRUE,
+                    SET with_gis_building = TRUE
                     FROM public.wua_gis_building wgi1 WHERE
                         wi1.name = wgi1.name;
                 """)

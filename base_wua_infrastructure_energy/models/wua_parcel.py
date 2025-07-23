@@ -485,7 +485,8 @@ class WuaParcel(models.Model):
         return postgis_ext and public_schema
 
     def set_gis_fields_processingcentre(self):
-        gis_processingcentre_ok = self.check_gis_drainagevalve_created()
+        gis_processingcentre_ok = \
+            self.check_gis_processingcentre_table_created()
         if (gis_processingcentre_ok):
             try:
                 self.env.cr.savepoint()
@@ -495,9 +496,7 @@ class WuaParcel(models.Model):
                 """)
                 self.env.cr.execute("""
                     UPDATE public.wua_processingcentre wi1
-                    SET with_gis_processingcentre = TRUE,
-                        gis_viewer_x = postgis.ST_X(wgi1.geom),
-                        gis_viewer_y = postgis.ST_Y(wgi1.geom)
+                    SET with_gis_processingcentre = TRUE
                     FROM public.wua_processingcentre wgi1 WHERE
                         wi1.name = wgi1.name;
                 """)

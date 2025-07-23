@@ -1,25 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-  <record id="mdm_device_view_form" model="ir.ui.view">
-    <field name="name">mdm.measurement.device.form.gis</field>
-    <field name="model">mdm.measurement.device</field>
-    <field name="inherit_id" ref="mdm_sensor_management.mdm_device_view_form"/>
-    <field name="arch" type="xml">
-      <xpath expr="//div[@class='oe_button_box']" position="inside">
-        <field name="with_gis_measurement_device" invisible="1"/>
-        <field name="gis_viewer_link" invisible="1"/>
-        <button name="action_see_gis_viewer"
-                type="object"
-                class="oe_stat_button"
-                icon="fa-map-marker"
-                string="GIS Viewer"
-                attrs="{
-                  'invisible': ['|',
-                    ('gis_viewer_link','=',False),
-                    ('with_gis_measurement_device','=',False)
+    <record id="mdm_device_view_form" model="ir.ui.view">
+        <field name="name">mdm.measurement.device.form.gis</field>
+        <field name="model">mdm.measurement.device</field>
+        <field name="inherit_id" ref="mdm_sensor_management.mdm_device_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@class='oe_button_box']" position="inside">
+                <field name="with_gis_measurement_device" invisible="1"/>
+                <field name="gis_viewer_link" invisible="1"/>
+                <button
+                    name="action_see_gis_viewer"
+                    type="object"
+                    class="oe_stat_button oe_read_only"
+                    icon="fa-map-marker"
+                    string="GIS Viewer" attrs="{
+                  'invisible': ['|', ('gis_viewer_link','=',False), ('with_gis_measurement_device','=',False)
                   ]
                 }"/>
-      </xpath>
-    </field>
-  </record>
+            </xpath>
+            <xpath expr="//field[@name='location']" position="after">
+                <field name="subparcel_id"/>
+                <field name="parcel_id"/>
+                <field name="partner_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="mdm_device_view_tree" model="ir.ui.view">
+        <field name="name">mdm.measurement.device.form.gis</field>
+        <field name="model">mdm.measurement.device</field>
+        <field name="inherit_id" ref="mdm_sensor_management.mdm_device_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='location']" position="after">
+                <field name="subparcel_id"/>
+                <field name="partner_id"/>
+                <field name="with_gis_measurement_device" invisible="1"/>
+                <field name="gis_viewer_link" invisible="1"/>
+                <button
+                    name="action_see_gis_viewer"
+                    type="object"
+                    class="oe_stat_button"
+                    icon="fa-map-marker"
+                    string="GIS Viewer" attrs="{
+                  'invisible': ['|', ('gis_viewer_link','=',False), ('with_gis_measurement_device','=',False)
+                  ]
+                }"/>
+            </xpath>
+        </field>
+    </record>
 </odoo>

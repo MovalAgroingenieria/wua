@@ -174,7 +174,7 @@ class WuaParcel(models.Model):
                 """)
                 self.env.cr.execute("""
                     UPDATE public.mdm_measurement_device wi1
-                    SET with_gis_measurement_device = TRUE,
+                    SET with_gis_measurement_device = TRUE
 
                     FROM public.mdm_measurement_device wgi1 WHERE
                         wi1.name = wgi1.name;
