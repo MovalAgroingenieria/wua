@@ -351,15 +351,63 @@ class WuaControlpresconsumption(models.Model):
     @api.multi
     def archive_controlpresconsumption(
             self, active_controlpresconsumptions):
-        presconsumptions = self.env['wua.controlpresconsumption'].browse(
-            active_controlpresconsumptions)
-        for record in presconsumptions:
-            record.active = False
+        # Archive control presconsumption
+        try:
+            self.env.cr.savepoint()
+            self.env.cr.execute("""
+                UPDATE public.wua_controlpresconsumption
+                   SET active = FALSE
+                 WHERE id IN %s""", (tuple(active_controlpresconsumptions),))
+            self.env.cr.commit()
+            self.env.invalidate_all()
+        except Exception:
+            self.env.cr.rollback()
+        # Archive control readings associated with control presconsumptions
+        try:
+            self.env.cr.execute("""
+                SELECT controlreading_id
+                  FROM public.wua_controlpresconsumption
+                 WHERE id IN %s""", (tuple(active_controlpresconsumptions),))
+            controlreading_ids_raw = self.env.cr.fetchall()
+            controlreading_ids = [x[0] for x in controlreading_ids_raw]
+            self.env.cr.savepoint()
+            self.env.cr.execute("""
+                UPDATE public.wua_controlreading
+                   SET active = FALSE
+                 WHERE id IN %s""", (tuple(controlreading_ids),))
+            self.env.cr.commit()
+            self.env.invalidate_all()
+        except Exception:
+            self.env.cr.rollback()
 
     @api.multi
     def unarchive_controlpresconsumption(
             self, unactive_controlpresconsumptions):
-        presconsumptions = self.env['wua.controlpresconsumption'].browse(
-            unactive_controlpresconsumptions)
-        for record in presconsumptions:
-            record.active = True
+        # Unarchive control readings
+        try:
+            self.env.cr.savepoint()
+            self.env.cr.execute("""
+                UPDATE public.wua_controlpresconsumption
+                   SET active = TRUE
+                 WHERE id IN %s""", (tuple(unactive_controlpresconsumptions),))
+            self.env.cr.commit()
+            self.env.invalidate_all()
+        except Exception:
+            self.env.cr.rollback()
+        # Unarchive control readings associated with control presconsumption
+        try:
+            self.env.cr.execute("""
+                SELECT controlreading_id
+                  FROM public.wua_controlpresconsumption
+                 WHERE id IN %s""", (tuple(unactive_controlpresconsumptions),))
+            controlreading_ids_raw = self.env.cr.fetchall()
+            controlreading_ids = [x[0] for x in controlreading_ids_raw]
+            self.env.cr.savepoint()
+            self.env.cr.execute("""
+                UPDATE public.wua_controlreading
+                   SET active = TRUE
+                 WHERE id IN %s""", (tuple(controlreading_ids),))
+            self.env.cr.commit()
+            self.env.invalidate_all()
+        except Exception:
+            self.env.cr.rollback()
