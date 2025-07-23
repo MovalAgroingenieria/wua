@@ -1,0 +1,112 @@
+<odoo>
+    <data>
+        <template id="portal_my_fertconsumptions" name="My fertconsumptions">
+            <t t-call="website.layout">
+            <div class="container mt16">
+                <div class="navbar navbar-default">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#oe-help-navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/my/home">
+                    My Account
+                    </a>
+                </div>
+                <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
+                    <ul class="nav navbar-nav o_portal_submenu">
+                    <li>
+                        <a href="/my/invoices">Invoices</a>
+                    </li>
+                    <li>
+                        <a href="/my/parcels">Parcels</a>
+                    </li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <div id="wrap">
+                <div class="container mb64">
+                <div class="col-md-12">
+                    <h3 class="page-header">Your fertconsumptions</h3>
+                    <t t-if="not fertconsumptions">
+                    <p>There are currently no fertconsumptions for your account.</p>
+                    </t>
+
+                    <t t-if="fertconsumptions">
+                    <form action="/my/fertconsumptions" method="get" class="mb-3">
+                        <div class="row">
+                        <div class="col-md-2">
+                            <select id="search_field" name="search_field" class="form-control">
+                                <option value="waterconnection" t-att-selected="'waterconnection' == search_field">Water Connection</option>
+                                <option value="date" t-att-selected="'date' == search_field">Date</option>
+                                <option value="product" t-att-selected="'product' == search_field">Fertilizer</option>
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" name="search" class="form-control" placeholder="Search fertconsumptions..." t-att-value="search_query or ''"/>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary btn-block">Search</button>
+                        </div>
+                        </div>
+                    </form>
+
+                    <table class="table table-hover o_my_status_table">
+                        <thead>
+                        <tr class="active">
+                            <th>Reading Initial Time</th>
+                            <th>Reading End Time</th>
+                            <th>Water Connection</th>
+                            <th>Amount</th>
+                            <th>Fertilizer</th>
+                            <th>Measure unit</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <t t-foreach="fertconsumptions" t-as="fertconsumption">
+                            <tr>
+                                <td>
+                                    <t t-esc="fertconsumption.reading_initial_time"/>
+                                </td>
+                                <td>
+                                    <t t-esc="fertconsumption.reading_end_time"/>
+                                </td>
+                                <td>
+                                    <t t-esc="fertconsumption.waterconnection_id.name"/>
+                                </td>
+                                <td>
+                                    <t t-esc="fertconsumption.amount"/>
+                                </td>
+                                <td>
+                                    <t t-esc="fertconsumption.product_id.name"/>
+                                </td>
+                                <td>
+                                    <t t-esc="fertconsumption.uom_id.name"/>
+                                </td>
+                            </tr>
+                        </t>
+                        </tbody>
+                    </table>
+
+                    <div t-if="pager" class="o_portal_pager text-center">
+                        <t t-call="website.pager"/>
+                    </div>
+                    </t>
+
+                </div>
+                </div>
+            </div>
+            </t>
+        </template>
+        <template id="waterconnections_followup" name="Portal layout : waterconnection entries" inherit_id="base_wua_portal_infrastructure.waterconnections_followup">
+            <xpath expr="//div[contains(@name,'buttons')]" position="inside">
+                <a t-att-href="'/my/fertconsumptions?search_field=waterconnection&amp;search=' + waterconnection.name" class="btn oe_stat_button">
+                    <div class="fa fa-fw fa-moval-leaf-npk o_button_icon"></div>
+                    <span>Fert Consumptions</span>
+                </a>
+            </xpath>
+        </template>
+    </data>
+</odoo>

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
+# 2025 Moval Agroingeniería
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import http, _
+from odoo import http
 from odoo.http import request, Response
 from odoo.addons.website_portal.controllers.main import website_account
 
@@ -20,7 +21,8 @@ class website_account(website_account):
         files_count = files.search_count(
             [('partner_id', '=', partner.id)])
         registries = request.env['res.letter']
-        domain = ['|',
+        domain = [('state', '=', 'rec'),
+                  '|',
                   ('recipient_partner_id', '=', partner.id),
                   ('sender_partner_id', '=', partner.id)]
         registries_count = registries.search_count(domain)
@@ -45,6 +47,7 @@ class website_account(website_account):
             }
             if search_field in field_map:
                 domain.append((field_map[search_field], 'ilike', search))
+        domain.append(('file_id.available_on_portal', '=', True))
         files_partnerlinks = file_partnerlink_model.search(domain)
         files = files_partnerlinks.mapped('file_id')
         files_count = len(files)
@@ -88,6 +91,7 @@ class website_account(website_account):
             }
             if search_field in field_map:
                 domain.append((field_map[search_field], 'ilike', search))
+        domain.append(('state', '=', 'rec'))
         registries = registry_model.search(domain)
         registries_count = len(registries)
         items_per_page = self._items_per_page

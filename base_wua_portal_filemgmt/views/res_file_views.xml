@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- File views -->
+    <record id="res_file_view_form" model="ir.ui.view">
+        <field name="name">Files (form view)</field>
+        <field name="model">res.file</field>
+        <field name="inherit_id" ref="crm_filemgmt.res_file_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='tag_ids']" position="after">
+                <field name="available_on_portal" colspan="2"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

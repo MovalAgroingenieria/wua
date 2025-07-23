@@ -63,9 +63,14 @@
                                                     <t t-esc="file.category_id.name"/>
                                                 </td>
                                                 <td>
+                                                <t t-if="file.category_report_id">
                                                     <a t-att-href="'/my/files/' + str(file.id) + '/report'">
                                                         <t t-esc="file.name"/>
                                                     </a>
+                                                    </t>
+                                                <t t-else="">
+                                                    <t t-esc="file.name"/>
+                                                </t>
                                                 </td>
                                                 <td>
                                                     <t t-esc="file.stage_id.name"/>
@@ -117,7 +122,6 @@
                                 <select id="search_field" name="search_field" class="form-control">
                                 <option value="name" t-att-selected="'name' == search_field">Name</option>
                                 <option value="date" t-att-selected="'date' == search_field">Date</option>
-                                <option value="state" t-att-selected="'state' == search_field">State</option>
                                 </select>
                             </div>
                             <div class="col-md-8">
@@ -131,24 +135,29 @@
                     <table class="table table-hover o_my_status_table">
                         <thead>
                         <tr class="active">
-                            <th>Name</th>
-                            <th>Date</th>
-                            <th>State</th>
+                            <th style="width: 20%;">Date</th>
+                            <th style="width: 20%;">Type</th>
+                            <th style="width: 20%;">Number</th>
+                            <th style="width: 40%;">Subject</th>
                         </tr>
                         </thead>
                         <tbody>
                         <t t-foreach="registries" t-as="registry">
                             <tr>
                             <td>
-                                <a t-att-href="'/my/registries/' + str(registry.id) + '/report'">
-                                <t t-esc="registry.name"/>
-                                </a>
-                            </td>
-                            <td>
                                 <t t-esc="registry.date"/>
                             </td>
                             <td>
-                                <t t-esc="registry.state"/>
+                                <t t-if="registry.move == 'in'"><span>In</span></t>
+                                <t t-elif="registry.move == 'out'"><span>Out</span></t>
+                            </td>
+                            <td>
+                                <t t-esc="registry.number"/>
+                            </td>
+                            <td>
+                                <a t-att-href="'/my/registries/' + str(registry.id) + '/report'">
+                                    <t t-esc="registry.name"/>
+                                </a>
                             </td>
                             </tr>
                         </t>

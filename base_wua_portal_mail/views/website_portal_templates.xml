@@ -34,7 +34,7 @@
                                             <select id="search_field" name="search_field" class="form-control">
                                                 <option value="date" t-att-selected="'date' == search_field">Date</option>
                                                 <option value="subject" t-att-selected="'subject' == search_field">Subject</option>
-                                                <option value="email_from" t-att-selected="'email_from' == search_field">Author</option>
+                                                <option value="state" t-att-selected="'state' == search_field">State</option>
                                             </select>
                                         </div>
                                         <div class="col-md-8">
@@ -49,17 +49,44 @@
                                     <thead>
                                         <tr class="active">
                                             <th style="width: 30%;">Date</th>
-                                            <th style="width: 70%;">Subject</th>
+                                            <th style="width: 60%;">Subject</th>
+                                            <th style="width: 10%;">State</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <t t-foreach="mails" t-as="mail">
                                             <tr>
-                                                <td><t t-esc="mail.date"/></td>
                                                 <td>
-                                                    <a t-attf-href="/my/mails/#{mail.id}?#{keep_query()}">
-                                                        <t t-esc="mail.subject"/>
-                                                    </a>
+                                                    <t t-esc="mail.time"/>
+                                                </td>
+                                                <t t-if="mail.mail_id">
+                                                    <td>
+                                                        <a t-attf-href="/my/mails/#{mail.mail_id.id}?#{keep_query()}">
+                                                            <t t-esc="mail.name"/>
+                                                        </a>
+                                                    </td>
+                                                </t>
+                                                <t t-elif="mail.mass_mailing_id">
+                                                    <td>
+                                                        <a t-attf-href="/my/massmails/#{mail.mass_mailing_id.id}?#{keep_query()}">
+                                                            <t t-esc="mail.name"/>
+                                                        </a>
+                                                    </td>
+                                                </t>
+                                                <t t-else="">
+                                                    <td>
+                                                        <a t-attf-href="/my/mailmessages/#{mail.mail_message_id.id}?#{keep_query()}">
+                                                            <t t-esc="mail.name"/>
+                                                        </a>
+                                                    </td>
+                                                </t>
+                                                <td>
+                                                    <t t-if="mail.state == 'sent'">
+                                                            <span>Sent</span>
+                                                    </t>
+                                                    <t t-elif="mail.state == 'opened'">
+                                                            <span>Opened</span>
+                                                    </t>
                                                 </td>
                                             </tr>
                                         </t>
@@ -139,6 +166,218 @@
                                             <div>
                                                 <strong>Body:</strong><br/>
                                                 <span t-raw="mail.body_html"/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <ul name="tabs_titles" class="nav nav-tabs" role="tablist">
+                                        <li class="active"><a href="#attachments" role="tab" data-toggle="tab">Attachments</a></li>
+                                    </ul>
+
+                                    <div name="tabs_content" class="tab-content">
+                                        <div class="tab-pane active" id="attachments">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Names</th>
+                                                        <th>Date</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <t t-foreach="attachments" t-as="attachment">
+                                                        <tr>
+                                                            <td>
+                                                                <a t-attf-href="/my/mails/#{mail.id}/#{attachment.id}/attachment">
+                                                                    <t t-esc="attachment.name"/>
+                                                                </a>
+                                                            </td>
+                                                            <td>
+                                                                    <t t-esc="attachment.name"/>
+                                                            </td>
+                                                        </tr>
+                                                    </t>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+        <template id="portal_mass_mails_followup" name="My Mass Mails">
+            <t t-call="website.layout">
+                <div class="container mt16">
+                    <div class="navbar navbar-default">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#oe-help-navbar-collapse">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a class="navbar-brand" href="/my/home">My Mails</a>
+                        </div>
+                        <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
+                            <ul class="nav navbar-nav o_portal_submenu">
+                                <li><a href="/my/invoices">Invoices</a></li>
+                                <li><a href="/my/parcels">Parcels</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="wrap">
+                    <div class="container">
+                        <div class="oe_structure">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <ol class="breadcrumb mt8">
+                                        <li><a href="/my/home"><i class="fa fa-home"/></a></li>
+                                        <li>
+                                            <a t-attf-href="/my/mails">
+                                                <t>My Mails</t>
+                                            </a>
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                            <div id="optional_placeholder"></div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <h4>
+                                                <t>Mail</t>
+                                                <span t-esc="mail.name"/>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-6 d-flex flex-column justify-content-between">
+                                            <div>
+                                                <strong>From:</strong>
+                                                <span t-esc="mail.email_from"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 d-flex flex-column justify-content-between">
+                                            <div>
+                                                <strong>Date:</strong>
+                                                <span t-esc="mail.sent_date"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 d-flex flex-column justify-content-between">
+                                            <div>
+                                                <strong>Body:</strong><br/>
+                                                <span t-raw="mail.body_html"/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <ul name="tabs_titles" class="nav nav-tabs" role="tablist">
+                                        <li class="active"><a href="#attachments" role="tab" data-toggle="tab">Attachments</a></li>
+                                    </ul>
+
+                                    <div name="tabs_content" class="tab-content">
+                                        <div class="tab-pane active" id="attachments">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Names</th>
+                                                        <th>Date</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <t t-foreach="attachments" t-as="attachment">
+                                                        <tr>
+                                                            <td>
+                                                                <a t-attf-href="/my/mails/#{mail.id}/#{attachment.id}/attachment">
+                                                                    <t t-esc="attachment.name"/>
+                                                                </a>
+                                                            </td>
+                                                            <td>
+                                                                    <t t-esc="attachment.name"/>
+                                                            </td>
+                                                        </tr>
+                                                    </t>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+        <template id="portal_mail_message_followup" name="My Mail messages">
+            <t t-call="website.layout">
+                <div class="container mt16">
+                    <div class="navbar navbar-default">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#oe-help-navbar-collapse">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a class="navbar-brand" href="/my/home">My Mails</a>
+                        </div>
+                        <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
+                            <ul class="nav navbar-nav o_portal_submenu">
+                                <li><a href="/my/invoices">Invoices</a></li>
+                                <li><a href="/my/parcels">Parcels</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="wrap">
+                    <div class="container">
+                        <div class="oe_structure">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <ol class="breadcrumb mt8">
+                                        <li><a href="/my/home"><i class="fa fa-home"/></a></li>
+                                        <li>
+                                            <a t-attf-href="/my/mails">
+                                                <t>My Mails</t>
+                                            </a>
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                            <div id="optional_placeholder"></div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <h4>
+                                                <t>Mail</t>
+                                                <span t-esc="mail.subject"/>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-6 d-flex flex-column justify-content-between">
+                                            <div>
+                                                <strong>From:</strong>
+                                                <span t-esc="mail.email_from"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 d-flex flex-column justify-content-between">
+                                            <div>
+                                                <strong>Date:</strong>
+                                                <span t-esc="mail.date"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 d-flex flex-column justify-content-between">
+                                            <div>
+                                                <strong>Body:</strong><br/>
+                                                <span t-raw="mail.body"/>
                                             </div>
                                         </div>
                                     </div>

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
+# 2025 Moval Agroingeniería
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+
 import base64
 from odoo import http
 from odoo.http import request, Response
@@ -40,14 +42,17 @@ class website_account(website_account):
                         search_field=None, selected_columns=None, **kw):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
-        mails_model = request.env['mail.mail']
-        domain = ['|', ('recipient_ids', 'in', [partner.id]),
-                  ('email_to', 'ilike', partner.email)]
+        mails_model = request.env['mail.tracking.email']
+        domain = ['&',
+                  '|', ('partner_id', 'in', [partner.id]),
+                  ('recipient', 'ilike', partner.email),
+                  ('sender', 'not ilike', 'Administrator')]
+        domain.append(('state', 'in', ['opened', 'sent']))
         if search and search_field:
             field_map = {
                 'date': 'date',
                 'subject': 'subject',
-                'email_from': 'email_from',
+                'state': 'state',
             }
             if search_field in field_map:
                 domain.append((field_map[search_field], 'ilike', search))
@@ -94,6 +99,101 @@ class website_account(website_account):
                 type='http', auth="user", website=True)
     def download_mail_attachment(self, mail=None, attachment=None, **kw):
         mail = request.env['mail.mail'].browse(mail).sudo()
+
+        if not attachment or not mail.attachment_ids:
+            return request.not_found()
+
+        attachment_record = \
+            request.env['ir.attachment'].sudo().browse(attachment)
+
+        if (not attachment_record or attachment_record.id
+                not in mail.attachment_ids.ids):
+            return request.not_found()
+
+        if not attachment_record.datas:
+            return request.not_found()
+
+        try:
+            content = base64.decodestring(
+                attachment_record.datas.encode('utf-8'))
+        except Exception:
+            return request.not_found()
+
+        headers = [
+            ('Content-Type',
+             attachment_record.mimetype or 'application/octet-stream'),
+            ('Content-Disposition',
+             'attachment; filename="{}"'.format(attachment_record.name)),
+        ]
+
+        return Response(content, headers=headers)
+
+    @http.route(['/my/massmails/<int:mail>'],
+                type='http', auth="user", website=True)
+    def massmails_followup(self, mail=None, **kw):
+        mail = request.env['mail.mass_mailing'].browse([mail])
+
+        mail_sudo = mail.sudo()
+
+        return request.render(
+            "base_wua_portal_mail.portal_mass_mails_followup", {
+                'mail': mail_sudo,
+                'partner': request.env.user.partner_id,
+                'attachments': mail_sudo.attachment_ids
+            })
+
+    @http.route(['/my/massmails/<int:mail>/<int:attachment>/attachment'],
+                type='http', auth="user", website=True)
+    def download_massmails_attachment(self, mail=None, attachment=None, **kw):
+        mail = request.env['mail.mass_mailing'].browse(mail).sudo()
+
+        if not attachment or not mail.attachment_ids:
+            return request.not_found()
+
+        attachment_record = \
+            request.env['ir.attachment'].sudo().browse(attachment)
+
+        if (not attachment_record or attachment_record.id
+                not in mail.attachment_ids.ids):
+            return request.not_found()
+
+        if not attachment_record.datas:
+            return request.not_found()
+
+        try:
+            content = base64.decodestring(
+                attachment_record.datas.encode('utf-8'))
+        except Exception:
+            return request.not_found()
+
+        headers = [
+            ('Content-Type',
+             attachment_record.mimetype or 'application/octet-stream'),
+            ('Content-Disposition',
+             'attachment; filename="{}"'.format(attachment_record.name)),
+        ]
+
+        return Response(content, headers=headers)
+
+    @http.route(['/my/mailmessages/<int:mail>'],
+                type='http', auth="user", website=True)
+    def mailmessages_followup(self, mail=None, **kw):
+        mail = request.env['mail.message'].browse([mail])
+
+        mail_sudo = mail.sudo()
+
+        return request.render(
+            "base_wua_portal_mail.portal_mail_message_followup", {
+                'mail': mail_sudo,
+                'partner': request.env.user.partner_id,
+                'attachments': mail_sudo.attachment_ids
+            })
+
+    @http.route(['/my/mailmessages/<int:mail>/<int:attachment>/attachment'],
+                type='http', auth="user", website=True)
+    def download_mailmessages_attachment(self, mail=None,
+                                         attachment=None, **kw):
+        mail = request.env['mail.message'].browse(mail).sudo()
 
         if not attachment or not mail.attachment_ids:
             return request.not_found()

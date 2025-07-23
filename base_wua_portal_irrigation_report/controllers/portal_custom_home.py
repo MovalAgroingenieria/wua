@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
+# 2025 Moval Agroingeniería
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import http
 from odoo.http import request, Response
@@ -161,7 +162,8 @@ class website_account(website_account):
             'default_url': '/my/irrigationreportrequests',
         })
         return request.render(
-            "base_wua_portal_irrigation_report.portal_my_irrigationreportrequests",
+            "base_wua_portal_irrigation_report" +
+            ".portal_my_irrigationreportrequests",
             values)
 
     @http.route(['/my/irrigationreportrequests/<int:reportrequest>/report'],
@@ -181,7 +183,8 @@ class website_account(website_account):
                 "No reportrequest found",
                 status=404)
         report_ref = \
-            'base_wua_irrigation_report_request.report_wua_irrigationreport_request'
+            'base_wua_irrigation_report_request' + \
+            '.report_wua_irrigationreport_request'
         irrigationreport_report = model_report.with_context(
             {'lang': partner.lang}).get_pdf(
                 [reportrequest.id], report_ref)

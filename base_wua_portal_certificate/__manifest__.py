@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# 2024 Moval Agroingeniería
+# 2025 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 {
@@ -13,7 +13,6 @@
     "license": "AGPL-3",
     "depends": [
         "base_wua_portal",
-        "base_wua_portal_filemgmt",
         "base_wua_certificate",
     ],
     "data": [
