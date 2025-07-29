@@ -1274,7 +1274,8 @@ class WuaParcel(models.Model):
                 for action_menu in actions_menu:
                     if action_menu['xml_id'] not in actions_to_remove:
                         actions_to_show.append(action_menu)
-                res['toolbar']['action'] = actions_to_show
+                if 'toolbar' in res and 'action' in res['toolbar']:
+                    res['toolbar']['action'] = actions_to_show
             res['arch'] = etree.tostring(doc)
         return res
 
