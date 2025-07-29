@@ -108,6 +108,12 @@ class WuaHydricBalanceResult(models.Model):
         index=True,
         ondelete='restrict',
     )
+    hydraulicsector_id = fields.Many2one(
+        comodel_name='wua.hydraulicsector',
+        string='Hydraulic Sector',
+        index=True,
+        ondelete='restrict',
+    )
 
     @api.depends('hydric_balance_id.name', 'result_type')
     def _compute_name(self):

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-<template id="wua_hydric_balance_report">
+<template id="wua_hydric_balance_resume_report">
     <t t-call="base_wua_report.wua_external_layout">
         <t t-foreach="docs" t-as="o">
             <div class="page">
@@ -184,75 +184,77 @@
                         <t t-if="o.hydric_balance_output_ids and len(o.hydric_balance_output_ids) > 0">
                             <table class="table table-striped" style="width:100%;">
                                 <thead>
-                                    <th name="th_type">Type</th>
-                                    <th name="th_waterconnection" class="text-right">Waterconnection</th>
-                                    <th name="th_irrigationditch" class="text-right">Irrigationditch</th>
-                                    <th name="th_intake" class="text-right">Intake</th>
-                                    <th name="th_flowmeter" class="text-right">Flowmeter</th>
-                                    <th name="th_intake" class="text-right">Volume (m³)</th>
+                                    <tr>
+                                        <th name="th_type">Type</th>
+                                        <th name="th_hydraulicsector" class="text-right">Hydraulicsector</th>
+                                        <th name="th_irrigationditch" class="text-right">Irrigationditch</th>
+                                        <th name="th_intake" class="text-right">Intake</th>
+                                        <th name="th_flowmeter" class="text-right">Flowmeter</th>
+                                        <th name="th_volume" class="text-right">Volume (m³)</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                    <t t-if="o.hydric_balance_output_ids">
-                                        <t t-set="total_output_volume" t-value="0"/>
-                                        <t t-foreach="o.hydric_balance_result_ids" t-as="i" style="page-break-inside: avoid;">
-                                            <t t-if="i.result_type == '02_output' and i.volume != 0">
+                                    <t t-set="sector_ids" t-value="[]"/>
+                                    <t t-set="total_output_volume" t-value="0.0"/>
+
+                                    <t t-foreach="o.hydric_balance_result_ids" t-as="i">
+                                        <t t-if="i.result_type == '02_output' and i.volume != 0">
+                                            <t t-if="i.hydraulicsector_id and i.hydraulicsector_id.id not in sector_ids">
+                                                <t t-set="sector_ids" t-value="sector_ids + [i.hydraulicsector_id.id]"/>
+                                                <t t-set="sector_volume" t-value="sum([r.volume for r in o.hydric_balance_result_ids if r.hydraulicsector_id.id == i.hydraulicsector_id.id])"/>
                                                 <tr>
-                                                    <td name="td_type">
-                                                        <span t-field="i.output_type"/>
-                                                    </td>
-                                                    <td name="td_waterconnection" class="text-right">
-                                                        <t t-if="i.waterconnection_id">
-                                                            <span t-field="i.waterconnection_id"/>
-                                                        </t>
-                                                        <t t-else="">
-                                                            <span/>
-                                                        </t>
-                                                    </td>
-                                                    <td name="td_irrigationditch" class="text-right">
-                                                        <t t-if="i.irrigationditch_id">
-                                                            <span t-field="i.irrigationditch_id"/>
-                                                        </t>
-                                                        <t t-else="">
-                                                            <span/>
-                                                        </t>
-                                                    </td>
-                                                    <td name="td_intake" class="text-right">
-                                                        <t t-if="i.intake_id">
-                                                            <span t-field="i.intake_id"/>
-                                                        </t>
-                                                        <t t-else="">
-                                                            <span/>
-                                                        </t>
-                                                    </td>
-                                                    <td name="td_output_flowmeter" class="text-right">
-                                                        <t t-if="i.flowmeter_id">
-                                                            <span t-field="i.flowmeter_id"/>
-                                                        </t>
-                                                        <t t-else="">
-                                                            <span/>
-                                                        </t>
-                                                    </td>
-                                                    <td name="td_output_volume" class="text-right">
-                                                        <t t-if="i.volume">
-                                                            <span t-esc="o.env['wua.parcel'].transform_float_to_locale(i.volume, 0)"/>
-                                                        </t>
-                                                        <t t-else="">
-                                                            <span/>
-                                                        </t>
-                                                    </td>
-                                                    <t t-set="total_output_volume" t-value="total_output_volume + i.volume"/>
+                                                    <td><span t-field="i.output_type"/></td>
+                                                    <td class="text-right"><span t-field="i.hydraulicsector_id.name"/></td>
+                                                    <td class="text-right"><span t-field="i.irrigationditch_id"/></td>
+                                                    <td class="text-right"><span t-field="i.intake_id"/></td>
+                                                    <td class="text-right"><span t-field="i.flowmeter_id"/></td>
+                                                    <td class="text-right"><t t-esc="sector_volume"/></td>
                                                 </tr>
+                                                <t t-set="total_output_volume" t-value="total_output_volume + sector_volume"/>
                                             </t>
                                         </t>
-                                        <tr>
-                                            <td colspan="5" class="text-right">
-                                                <strong>Total Volume</strong>
-                                            </td>
-                                            <td name="td_total_output_volume" class="text-right">
-                                                <strong><span t-esc="total_output_volume" t-options="{'widget': 'float', 'precision': 0}"/></strong>
-                                            </td>
-                                        </tr>
                                     </t>
+
+                                    <t t-foreach="o.hydric_balance_result_ids" t-as="i">
+                                        <t t-if="i.result_type == '02_output' and i.volume != 0 and (not i.hydraulicsector_id)">
+                                            <tr>
+                                                <td><span t-field="i.output_type"/></td>
+                                                <td class="text-right">
+                                                    <t t-if="i.waterconnection_id">
+                                                        <span t-field="i.waterconnection_id"/>
+                                                    </t>
+                                                </td>
+                                                <td class="text-right">
+                                                    <t t-if="i.irrigationditch_id">
+                                                        <span t-field="i.irrigationditch_id"/>
+                                                    </t>
+                                                </td>
+                                                <td class="text-right">
+                                                    <t t-if="i.intake_id">
+                                                        <span t-field="i.intake_id"/>
+                                                    </t>
+                                                </td>
+                                                <td class="text-right">
+                                                    <t t-if="i.flowmeter_id">
+                                                        <span t-field="i.flowmeter_id"/>
+                                                    </t>
+                                                </td>
+                                                <td class="text-right">
+                                                    <span t-esc="o.env['wua.parcel'].transform_float_to_locale(i.volume, 0)"/>
+                                                </td>
+                                            </tr>
+                                            <t t-set="total_output_volume" t-value="total_output_volume + i.volume"/>
+                                        </t>
+                                    </t>
+
+                                    <tr>
+                                        <td colspan="5" class="text-right">
+                                            <strong>Total Volume</strong>
+                                        </td>
+                                        <td class="text-right">
+                                            <strong><span t-esc="total_output_volume" t-options="{'widget': 'float', 'precision': 0}"/></strong>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </t>
@@ -295,6 +297,8 @@
                                 <thead>
                                     <th name="th_type">Type</th>
                                     <th name="th_reservoir" class="text-right">Reservoir</th>
+                                    <th name="th_initial_volume" class="text-right">Initial Volume (m³)</th>
+                                    <th name="th_end_volume" class="text-right">End Volume (m³)</th>
                                     <th name="th_variation_volume" class="text-right">Variation (m³)</th>
                                 </thead>
                                 <tbody>
@@ -309,6 +313,12 @@
                                                     <td name="td_area" class="text-right">
                                                         <span t-field="r.reservoir_id"/>
                                                     </td>
+                                                    <td name="td_initial_volume" class="text-right">
+                                                        <span t-esc="o.env['wua.parcel'].transform_float_to_locale(r.initial_volume, 0)"/>
+                                                    </td>
+                                                    <td name="td_end_volume" class="text-right">
+                                                        <span t-esc="o.env['wua.parcel'].transform_float_to_locale(r.end_volume, 0)"/>
+                                                    </td>
                                                     <td name="td_variation_volume" class="text-right">
                                                         <span t-esc="o.env['wua.parcel'].transform_float_to_locale(r.volume, 0)"/>
                                                     </td>
@@ -317,7 +327,7 @@
                                             </t>
                                         </t>
                                         <tr>
-                                            <td colspan="2" class="text-right">
+                                            <td colspan="4" class="text-right">
                                                 <strong>Total Variation</strong>
                                             </td>
                                             <td name="td_total_variation_volume" class="text-right">
@@ -340,9 +350,9 @@
     </t>
 </template>
 
-    <report id="report_hydric_balance_print" model="wua.hydric.balance"
-        string="Hydric balance report" report_type="qweb-pdf"
-        name="base_wua_hydric_balance.wua_hydric_balance_report"
-        file="base_wua_hydric_balance.wua_hydric_balance_report"
+    <report id="report_hydric_balance_resume_print" model="wua.hydric.balance"
+        string="Hydric balance report resume" report_type="qweb-pdf"
+        name="base_wua_hydric_balance.wua_hydric_balance_resume_report"
+        file="base_wua_hydric_balance.wua_hydric_balance_resume_report"
         paperformat="base_wua_report.paperformat_wua_reports"/>
 </odoo>

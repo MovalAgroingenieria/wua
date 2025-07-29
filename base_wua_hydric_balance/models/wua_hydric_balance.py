@@ -330,6 +330,8 @@ class WuaHydricBalance(models.Model):
                             element_volumes[element_name] = {
                                 'volume': 0.0,
                                 'field_id': line[element_name_field].id,
+                                'hydraulicsector_id':
+                                    line.hydraulicsector_id.id,
                             }
                         element_volumes[element_name]['volume'] += line.volume
                 for element_name, data in element_volumes.items():
@@ -342,6 +344,8 @@ class WuaHydricBalance(models.Model):
                         'volume': data['volume'] * -1,
                         'initial_volume': 0.0,
                         'end_volume': data['volume'],
+                        'hydraulicsector_id':
+                            data['hydraulicsector_id'] or False,
                     })
                     total_output_volume += data['volume']
 
@@ -395,11 +399,8 @@ class WuaHydricBalance(models.Model):
 
     @api.multi
     def action_reset_to_draft(self):
-        # Eliminar todas las líneas de resultado
         self.ensure_one()
         self.hydric_balance_result_ids.unlink()
-
-        # Cambiar el estado a 'draft'
         self.write({
             'balance_state': '01_draft',
             'total_input_volume': 0,

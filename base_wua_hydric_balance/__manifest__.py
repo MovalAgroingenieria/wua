@@ -22,6 +22,7 @@
         "views/base_wua_hydric_balance_menus.xml",
         "views/wua_hydric_balance_view.xml",
         "reports/wua_hydric_balance_report.xml",
+        "reports/wua_hydric_balance_resume_report.xml",
         "security/ir.model.access.csv"
     ],
     "installable": True,
