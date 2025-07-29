@@ -23,12 +23,7 @@ class WuaIrrigationStretch(models.Model):
     )
 
     length_meters = fields.Float(
-        string='Length',
-        digits=(32, 4),
-    )
-
-    roughness_coefficient = fields.Float(
-        string='Roughness Coefficient',
+        string='Length (m)',
         digits=(32, 4),
     )
 
@@ -40,36 +35,18 @@ class WuaIrrigationStretch(models.Model):
         string='Description',
     )
 
-    material = fields.Char(
+    material = fields.Many2one(
+        comodel_name='wua.infrastructure.material',
         string='Material',
+        index=True,
     )
 
     nominal_diameter = fields.Integer(
         string='Nominal Diameter',
     )
 
-    pipe_specification = fields.Char(
-        string='Pipe Specification',
-    )
-
-    pipe_section = fields.Char(
-        string='Pipe Section',
-    )
-
     manufacturer = fields.Char(
         string='Manufacturer',
-    )
-
-    brand = fields.Char(
-        string='Brand',
-    )
-
-    model = fields.Char(
-        string='Model',
-    )
-
-    technical_sheet = fields.Char(
-        string='Technical Sheet',
     )
 
     installation_date = fields.Date(
@@ -84,16 +61,12 @@ class WuaIrrigationStretch(models.Model):
         string='Notes',
     )
 
-    incident_code = fields.Char(
-        string='Incident Code',
-    )
-
     nominal_pressure = fields.Char(
-        string='Nominal Pressure',
+        string='Nominal Pressure (bar)',
     )
 
     external_diameter = fields.Float(
-        string='External Diameter',
+        string='External Diameter (mm)',
         digits=(32, 4),
     )
 
@@ -110,12 +83,12 @@ class WuaIrrigationStretch(models.Model):
     )
 
     channel_section_width = fields.Float(
-        string='Channel Width',
+        string='Channel Width (m)',
         digits=(32, 4),
     )
 
     channel_section_height = fields.Float(
-        string='Channel Height',
+        string='Channel Height (m)',
         digits=(32, 4),
     )
 
@@ -126,6 +99,19 @@ class WuaIrrigationStretch(models.Model):
 
     with_gis_irrigationstretch = fields.Boolean(
         string='GIS Irrigationstretch',
+    )
+
+    irrigationditch_id = fields.Many2one(
+        comodel_name='wua.irrigationditch',
+        string='Irrigation Ditch',
+        required=True,
+        index=True,
+    )
+
+    waterpipe_id = fields.Many2one(
+        comodel_name='wua.waterpipe',
+        string='Water Pipe',
+        index=True,
     )
 
     gis_viewer_link = fields.Char(

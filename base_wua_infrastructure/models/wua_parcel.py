@@ -1483,17 +1483,21 @@ class WuaParcel(models.Model):
                     IF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
                         UPDATE public.wua_irrigationstretch
                         SET with_gis_irrigationstretch = FALSE,
+                            length_meters = 0
                         WHERE name = OLD.name;
                     END IF;
+
                     IF TG_OP = 'UPDATE' OR TG_OP = 'INSERT' THEN
                         UPDATE public.wua_irrigationstretch
                         SET with_gis_irrigationstretch = TRUE,
+                            length_meters =
+                            postgis.ST_Length(NEW.geom::geography)
                         WHERE name = NEW.name;
                     END IF;
+
                     RETURN NULL;
                 END;
-                $BODY$ LANGUAGE plpgsql SECURITY DEFINER;
-            """)
+                $BODY$ LANGUAGE plpgsql SECURITY DEFINER; """)
             self.env.cr.commit()
 
             self.env.cr.execute("""

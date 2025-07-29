@@ -13,7 +13,7 @@
     "license": "AGPL-3",
     "depends": [
         "base_wua",
-        "hr", ],
+        "hr"],
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
@@ -40,6 +40,7 @@
         "views/wua_zone_view.xml",
         "views/wua_building_view.xml",
         "views/wua_irrigationstretch_view.xml",
+        "views/wua_infrastructure_material_view.xml",
         "reports/wua_partner_infrastructure_report.xml",
         "reports/wua_parcel_report.xml",
         "data/notice_mail.xml",

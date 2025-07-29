@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-18 10:35+0000\n"
-"PO-Revision-Date: 2025-07-18 10:35+0000\n"
+"POT-Creation-Date: 2025-07-29 11:16+0000\n"
+"PO-Revision-Date: 2025-07-29 11:16+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -89,6 +89,12 @@ msgstr ""
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_view_form
 msgid "<span class=\"o_stat_text\">Schedules</span>"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_view_form
+msgid "<span class=\"o_stat_text\">Tertiary</span>\n"
+"                        <span class=\"o_stat_text\">Pipe</span>"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation
@@ -367,6 +373,11 @@ msgid "Closed"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_tertiarypipe_name
+msgid "Code"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation
 #: model:ir.model,name:base_wua_pressurized_irrigation.model_wua_infrastructure_configuration
 msgid "Configuration of base_wua_infrastructure_primary module"
 msgstr ""
@@ -419,7 +430,7 @@ msgstr ""
 #. module: base_wua_pressurized_irrigation
 #: code:addons/base_wua_pressurized_irrigation/models/wua_agriculturalseason.py:39
 #: code:addons/base_wua_pressurized_irrigation/models/wua_presconsumption.py:290
-#: code:addons/base_wua_pressurized_irrigation/models/wua_waterconnection.py:364
+#: code:addons/base_wua_pressurized_irrigation/models/wua_waterconnection.py:373
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation.wua_presconsumption_action
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_agriculturalseason_presconsumption_ids
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_presconsumption_ids
@@ -741,9 +752,16 @@ msgid "GIS Preview"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_tertiarypipe_with_gis_tertiarypipe
+msgid "GIS Tertiary Pipe"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_pressuresensor_gis_viewer_link
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_pressuresensor_html_gisviewer_frame
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_tertiarypipe_gis_viewer_link
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_pressuresensor_view_form
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_tertiarypipe_view_form
 msgid "GIS Viewer"
 msgstr ""
 
@@ -821,7 +839,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_tertiarypipe_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_schedule_id
-#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_shift_id
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_shift_id_15045
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_shift_relation_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_shiftlink_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_state_id
@@ -992,7 +1010,7 @@ msgid "Irrigation Event"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation
-#: code:addons/base_wua_pressurized_irrigation/models/wua_waterconnection.py:464
+#: code:addons/base_wua_pressurized_irrigation/models/wua_waterconnection.py:473
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_ids
 #: model:ir.ui.menu,name:base_wua_pressurized_irrigation.wua_waterconnection_irrigation_event_menu
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_irrigation_config_settings_view_form
@@ -1019,7 +1037,7 @@ msgid "Irrigation Schedule"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation
-#: code:addons/base_wua_pressurized_irrigation/models/wua_waterconnection.py:425
+#: code:addons/base_wua_pressurized_irrigation/models/wua_waterconnection.py:434
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_schedule_ids
 #: model:ir.ui.menu,name:base_wua_pressurized_irrigation.wua_waterconnection_irrigation_schedule_menu
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_view_tree
@@ -1395,7 +1413,6 @@ msgstr ""
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_pressuresensor_name
-#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_tertiarypipe_name
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_shift_name
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_shift_relation_name
 msgid "Name"
@@ -1410,6 +1427,12 @@ msgstr ""
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation.wua_negative_reading_action
 #: model:ir.ui.menu,name:base_wua_pressurized_irrigation.wua_negative_reading_menu
 msgid "Negative Readings"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation
+#: code:addons/base_wua_pressurized_irrigation/models/wua_waterconnection.py:492
+#, python-format
+msgid "No tertiary pipe associated."
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation
@@ -1667,7 +1690,7 @@ msgid "Reading Type: Real Worker"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation
-#: code:addons/base_wua_pressurized_irrigation/models/wua_waterconnection.py:392
+#: code:addons/base_wua_pressurized_irrigation/models/wua_waterconnection.py:401
 #: code:addons/base_wua_pressurized_irrigation/models/wua_watermeter.py:262
 #: code:addons/base_wua_pressurized_irrigation/wizard/wizard_generate_estimated_readings.py:53
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation.wua_reading_action
@@ -1783,8 +1806,11 @@ msgid "Technical Notes"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation
+#: code:addons/base_wua_pressurized_irrigation/models/wua_waterconnection.py:495
 #: model:ir.model,name:base_wua_pressurized_irrigation.model_wua_tertiarypipe
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_tertiarypipe_id
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_tertiarypipe_view_form
+#, python-format
 msgid "Tertiary Pipe"
 msgstr ""
 
@@ -1797,6 +1823,11 @@ msgstr ""
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,help:base_wua_pressurized_irrigation.field_wua_watermeter_watermeter_brand
 msgid "The brand of watermter."
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation
+#: sql_constraint:wua.tertiarypipe:0
+msgid "The code must be unique."
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation
@@ -1824,11 +1855,6 @@ msgstr ""
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,help:base_wua_pressurized_irrigation.field_wua_watermeter_watermeter_model
 msgid "The model of watermter."
-msgstr ""
-
-#. module: base_wua_pressurized_irrigation
-#: sql_constraint:wua.tertiarypipe:0
-msgid "The name must be unique."
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation

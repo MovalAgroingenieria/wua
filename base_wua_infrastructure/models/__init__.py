@@ -21,3 +21,4 @@ from . import wua_drainagevalve
 from . import wua_drainagevalve_type
 from . import wua_building
 from . import wua_irrigationstretch
+from . import wua_infrastructure_material

@@ -6,7 +6,7 @@ import datetime
 import json
 
 from lxml import etree
-from odoo import models, fields, api, tools, _
+from odoo import models, fields, api, tools, _, exceptions
 
 
 class WuaWaterconnection(models.Model):
@@ -44,6 +44,14 @@ class WuaWaterconnection(models.Model):
         digits=(32, 2),
         store=True,
         compute='_compute_average_consumption')
+
+    tertiarypipe_id = fields.Many2one(
+        'wua.tertiarypipe',
+        string='Tertiary Pipe',
+        compute='_compute_tertiarypipe_id',
+        store=True,
+        readonly=True,
+    )
 
     irrigation_shift_ids = fields.One2many(
         string='Irrigation Shifts',
@@ -479,6 +487,36 @@ class WuaWaterconnection(models.Model):
             'context': {'from_shortcut': 1},
             }
         return act_window
+
+    def action_see_tertiary_pipe(self):
+        self.ensure_one()
+        if not self.tertiarypipe_id:
+            raise exceptions.UserError(_('No tertiary pipe associated.'))
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Tertiary Pipe'),
+            'res_model': 'wua.tertiarypipe',
+            'view_mode': 'form',
+            'res_id': self.tertiarypipe_id.id,
+            'target': 'current',
+            'context': {'create': False},
+        }
+
+    def action_open_tertiarypipe(self):
+        self.ensure_one()
+        tertiarypipe = self.env['wua.tertiarypipe'].search([
+            ('waterconnection_id', '=', self.id),
+        ], limit=1)
+        if not tertiarypipe:
+            return False
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Tertiary Pipe',
+            'res_model': 'wua.tertiarypipe',
+            'view_mode': 'form',
+            'res_id': tertiarypipe.id,
+            'target': 'current',
+        }
 
     def get_default_state(self):
         return self.env['wua.waterconnection.state'].search(

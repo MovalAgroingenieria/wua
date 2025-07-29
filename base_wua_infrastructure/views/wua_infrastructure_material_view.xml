@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="wua_infrastructure_material_view_tree" model="ir.ui.view">
+        <field name="name">wua.infrastructure.material.tree</field>
+        <field name="model">wua.infrastructure.material</field>
+        <field name="arch" type="xml">
+            <tree string="Infrastructure Materials">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_infrastructure_material_view_form" model="ir.ui.view">
+        <field name="name">wua.infrastructure.material.form</field>
+        <field name="model">wua.infrastructure.material</field>
+        <field name="arch" type="xml">
+            <form string="Infrastructure Material">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                    <notebook>
+                        <page string="Notes">
+                            <field name="notes" widget="html"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_infrastructure_material_view_search" model="ir.ui.view">
+        <field name="name">wua.infrastructure.material.search</field>
+        <field name="model">wua.infrastructure.material</field>
+        <field name="arch" type="xml">
+            <search string="Infrastructure Material">
+                <field name="name"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_infrastructure_material_action" model="ir.actions.act_window">
+        <field name="name">Infrastructure Materials</field>
+        <field name="res_model">wua.infrastructure.material</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_infrastructure_material_view_tree"/>
+        <field name="search_view_id" ref="wua_infrastructure_material_view_search"/>
+    </record>
+
+    <menuitem id="wua_infrastructure_material_menu"
+            name="Infrastructure Materials"
+            parent="base_wua_infrastructure_configuration_menu"
+            action="wua_infrastructure_material_action"
+            sequence="20"
+            groups="base_wua.group_wua_user"/>
+</odoo>

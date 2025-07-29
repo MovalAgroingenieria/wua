@@ -6,12 +6,6 @@ class WuaTertiaryPipe(models.Model):
     _description = 'Tertiary Pipe'
 
     name = fields.Char(
-        string='Name',
-        required=True,
-        index=True,
-    )
-
-    code = fields.Char(
         string='Code',
         required=True,
         index=True,
@@ -64,12 +58,12 @@ class WuaTertiaryPipe(models.Model):
     )
 
     diameter = fields.Float(
-        string='Diameter',
+        string='Diameter (mm)',
         digits=(32, 2),
     )
 
     nominal_pressure = fields.Float(
-        string='Nominal Pressure',
+        string='Nominal Pressure (bar)',
         digits=(32, 2),
     )
 
@@ -89,11 +83,11 @@ class WuaTertiaryPipe(models.Model):
     )
 
     with_gis_tertiarypipe = fields.Boolean(
-        string='GIS Tertiary Pipe',)
+        string='GIS Tertiary Pipe',
+    )
 
     _sql_constraints = [
-        ('name_unique', 'unique(name)', 'The name must be unique.'),
-        ('code_unique', 'unique(code)', 'The code must be unique.'),
+        ('code_unique', 'unique(name)', 'The code must be unique.'),
     ]
 
     @api.depends('waterconnection_id')
@@ -149,13 +143,18 @@ class WuaTertiaryPipe(models.Model):
                     sep_char = '?'
                     if '?' in url_for_record:
                         sep_char = '&'
-                    url_for_record = "{}{}{}={}".format(url_for_record, sep_char, tertiarypipe_param, record.name)
+                    url_for_record = "{}{}{}={}".format(url_for_record,
+                                                        sep_char,
+                                                        tertiarypipe_param,
+                                                        record.name)
             if url_for_record and username and password:
                 cipher_text = self.env['wua.parcel']._get_viewer_credentials(
                     username, password)
                 if cipher_text:
                     sep_char = '?' if '?' not in url_for_record else '&'
-                    url_for_record = "{}{}arg={}".format(url_for_record, sep_char, cipher_text)
+                    url_for_record = "{}{}arg={}".format(url_for_record,
+                                                         sep_char,
+                                                         cipher_text)
             if not url_for_record:
                 url_for_record = ''
             record.gis_viewer_link = url_for_record

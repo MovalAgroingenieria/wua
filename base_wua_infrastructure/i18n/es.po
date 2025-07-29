@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-23 10:44+0000\n"
-"PO-Revision-Date: 2025-06-23 10:44+0000\n"
+"POT-Creation-Date: 2025-07-29 11:28+0000\n"
+"PO-Revision-Date: 2025-07-29 11:28+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -246,11 +246,6 @@ msgid "Both types"
 msgstr "Ambos tipos"
 
 #. module: base_wua_infrastructure
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationstretch_brand
-msgid "Brand"
-msgstr "Marca"
-
-#. module: base_wua_infrastructure
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_building_view_form
 msgid "Building"
 msgstr "Edificación"
@@ -291,13 +286,13 @@ msgstr "Cancelar"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationstretch_channel_section_height
-msgid "Channel Height"
-msgstr "Alto del canal"
+msgid "Channel Height (m)"
+msgstr "Alto del canal (m)"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationstretch_channel_section_width
-msgid "Channel Width"
-msgstr "Ancho del canal"
+msgid "Channel Width (m)"
+msgstr "Ancho del canal (m)"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_configuration_check_waterconnections_different_hydraulic_sectors
@@ -345,6 +340,7 @@ msgstr "Riego desde el canal de la acequia"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_create_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_hydraulicsector_create_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_configuration_create_uid
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_material_create_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationditch_create_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationgate_create_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed_create_uid
@@ -368,6 +364,7 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_create_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_hydraulicsector_create_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_configuration_create_date
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_material_create_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationditch_create_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationgate_create_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed_create_date
@@ -441,6 +438,7 @@ msgstr "Dialog box to change the parcel name (code), with irrigation infrastruct
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_hydraulicsector_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_configuration_display_name
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_material_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationditch_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationgate_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed_display_name
@@ -519,8 +517,8 @@ msgid "Employee"
 msgstr "Empleado"
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:2655
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:2674
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:2659
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:2678
 #, python-format
 msgid "Empty Irrigation Point."
 msgstr "Punto de suministro en blanco."
@@ -628,8 +626,8 @@ msgstr "La zona ya existe."
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationstretch_external_diameter
-msgid "External Diameter"
-msgstr "Diámetro externo"
+msgid "External Diameter (mm)"
+msgstr "Diámetro externo (mm)"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_final_hydraulic_order
@@ -869,7 +867,7 @@ msgid "Hydraulic Sector"
 msgstr "Sector hidráulico"
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:2240
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:2244
 #: code:addons/base_wua_infrastructure/models/wua_zone.py:81
 #: model:ir.actions.act_window,name:base_wua_infrastructure.wua_hydraulicsector_action
 #: model:ir.ui.menu,name:base_wua_infrastructure.wua_hydraulicsector_menu
@@ -890,13 +888,14 @@ msgstr "Sectores hidráulicos de la zona"
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_res_partner_waterconnection_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_id
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_type_id_10772
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_type_id_15080
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_building_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_id
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_type_id_10840
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_type_id_15145
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_configuration_id
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_material_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationditch_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationgate_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed_id
@@ -904,7 +903,7 @@ msgstr "Sectores hidráulicos de la zona"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpoint_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpointwc_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_id
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_id_10807
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_id_15113
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_mail_wizard_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcellink_id
@@ -960,13 +959,8 @@ msgid "If the active field is set to False, it will allow you to hide the regist
 msgstr "Si el campo activo está como falso, ello le permitirá ocultar el registro sin borrarlo. Para ver los registros archivados, ir a \"Buscar-Filtros\" en la vista árbol"
 
 #. module: base_wua_infrastructure
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationstretch_incident_code
-msgid "Incident Code"
-msgstr "Código de incidente"
-
-#. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:2630
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:2636
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:2634
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:2640
 #, python-format
 msgid "Incompatible irrigation point type."
 msgstr "Tipo de punto de suministro incompatible."
@@ -981,6 +975,21 @@ msgstr "Indica si el segmento de gravedad está cerrado (tubería)"
 #: model:ir.ui.menu,name:base_wua_infrastructure.base_wua_infrastructure_menu
 msgid "Infrastructure"
 msgstr "Infraestructura"
+
+#. module: base_wua_infrastructure
+#: model:ir.model,name:base_wua_infrastructure.model_wua_infrastructure_material
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_material_name
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_infrastructure_material_view_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_infrastructure_material_view_search
+msgid "Infrastructure Material"
+msgstr "Material de Infrastructura"
+
+#. module: base_wua_infrastructure
+#: model:ir.actions.act_window,name:base_wua_infrastructure.wua_infrastructure_material_action
+#: model:ir.ui.menu,name:base_wua_infrastructure.wua_infrastructure_material_menu
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_infrastructure_material_view_tree
+msgid "Infrastructure Materials"
+msgstr "Materiales de Infrastructura"
 
 #. module: base_wua_infrastructure
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_infrastructure_config_settings_view_form
@@ -1025,6 +1034,7 @@ msgstr "Coef. Ponderación"
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_irrigationditch_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationgate_irrigationditch_id
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationstretch_irrigationditch_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationditch_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpoint_irrigationditch_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_subparcel_irrigationditch_id
@@ -1037,7 +1047,7 @@ msgid "Irrigation Ditch"
 msgstr "Acequia"
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:2245
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:2249
 #: model:ir.actions.act_window,name:base_wua_infrastructure.wua_irrigationditch_action
 #: model:ir.ui.menu,name:base_wua_infrastructure.wua_irrigationditch_menu
 #, python-format
@@ -1222,6 +1232,7 @@ msgstr "Es una parada"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_hydraulicsector___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_configuration___last_update
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_material___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationditch___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationgate___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed___last_update
@@ -1246,6 +1257,7 @@ msgstr "Última modificación en"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_hydraulicsector_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_configuration_write_uid
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_material_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationditch_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationgate_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed_write_uid
@@ -1269,6 +1281,7 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_hydraulicsector_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_configuration_write_date
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_material_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationditch_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationgate_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed_write_date
@@ -1290,8 +1303,8 @@ msgstr "Izquierda"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationstretch_length_meters
-msgid "Length"
-msgstr "Logintud"
+msgid "Length (m)"
+msgstr "Longitud (m)"
 
 #. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_wua_waterconnection_subparcellink
@@ -1317,11 +1330,6 @@ msgstr "Fabricante"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationstretch_material
 msgid "Material"
 msgstr "Material"
-
-#. module: base_wua_infrastructure
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationstretch_model
-msgid "Model"
-msgstr "Modelo"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationditch_name
@@ -1379,8 +1387,8 @@ msgstr "Diámetro nominal (mm)"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationstretch_nominal_pressure
-msgid "Nominal Pressure"
-msgstr "Presión nominal"
+msgid "Nominal Pressure (bar)"
+msgstr "Presión nominal (bar)"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,help:base_wua_infrastructure.field_wua_infrastructure_configuration_url_gis_googlemaps
@@ -1395,6 +1403,7 @@ msgstr "Nota: ycval y xcval son parámetros"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_type_notes
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_notes
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_hydraulicsector_notes
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_material_notes
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationditch_notes
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationgate_notes
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed_notes
@@ -1410,6 +1419,7 @@ msgstr "Nota: ycval y xcval son parámetros"
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_drainagevalve_view_form
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_flowdivider_view_form
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_hydraulicsector_view_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_infrastructure_material_view_form
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_irrigationditch_view_form
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_irrigationgate_view_form
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_irrigationshed_view_form
@@ -1632,16 +1642,6 @@ msgid "Photos"
 msgstr "Fotos"
 
 #. module: base_wua_infrastructure
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationstretch_pipe_section
-msgid "Pipe Section"
-msgstr "Sección de tubería"
-
-#. module: base_wua_infrastructure
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationstretch_pipe_specification
-msgid "Pipe Specification"
-msgstr "Especificación de tubería"
-
-#. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpoint_parcel_cadastral_polygon
 msgid "Polygon"
 msgstr "Polígono"
@@ -1707,11 +1707,6 @@ msgid "Right"
 msgstr "Derecha"
 
 #. module: base_wua_infrastructure
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationstretch_roughness_coefficient
-msgid "Roughness Coefficient"
-msgstr "Coeficiente de rugosidad"
-
-#. module: base_wua_infrastructure
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_irrigationstretch_view_search
 msgid "Search Irrigation Stretches"
 msgstr "Buscar tramos de riego"
@@ -1729,12 +1724,12 @@ msgstr "Sectores"
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationstretch_name
 msgid "Segment Identifier"
-msgstr "Identificador de segmento"
+msgstr "Identificador de tramo"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationstretch_type
 msgid "Segment Type"
-msgstr "Tipo de segmento"
+msgstr "Tipo de tramo"
 
 #. module: base_wua_infrastructure
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.view_wua_waterconnection_mail_wizard_form
@@ -1780,7 +1775,7 @@ msgstr "Con alguna parcela con varios pagadores de agua"
 #. module: base_wua_infrastructure
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_valve_view_search
 msgid "State: Closed"
-msgstr "Estado: Cerrado"
+msgstr "Estado: Cerrada"
 
 #. module: base_wua_infrastructure
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_valve_view_search
@@ -1796,7 +1791,7 @@ msgid "Street View"
 msgstr "Street View"
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:1829
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:1833
 #, python-format
 msgid "Subparc. / Irrig. Gates"
 msgstr "Subparc. / Tablachos"
@@ -1850,11 +1845,6 @@ msgid "Technical Characteristics"
 msgstr "Características técnicas"
 
 #. module: base_wua_infrastructure
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationstretch_technical_sheet
-msgid "Technical Sheet"
-msgstr "Ficha Técnica"
-
-#. module: base_wua_infrastructure
 #: model:ir.model.fields,help:base_wua_infrastructure.field_wua_waterconnection_mail_wizard_shared_text
 msgid "Text that will be included in the email for all selected records."
 msgstr "Texto que se incluirá en el correo electrónico para todos los registros seleccionados."
@@ -1888,7 +1878,7 @@ msgid "The hydraulic sector code must be a positive value."
 msgstr "El código de sector hidráulico debe ser un valor positivo."
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:2004
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:2008
 #, python-format
 msgid "The hydraulic sectors are differents."
 msgstr "Los sectores hidráulicos son distintos."
@@ -1917,7 +1907,7 @@ msgid "The irrigation ditch code must be a positive value."
 msgstr "El código de acequia debe ser un valor positivo."
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:2018
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:2022
 #, python-format
 msgid "The irrigation ditches are differents."
 msgstr "Acequias distintas."
@@ -1955,19 +1945,19 @@ msgid "The watering dur. x area ratio must be a value zero or positive."
 msgstr "La dotación de riego no puede ser un valor negativo."
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:2012
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:2016
 #, python-format
 msgid "There are repeated irrigation gates."
 msgstr "Tablachos repetidos."
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:1997
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:2001
 #, python-format
 msgid "There are repeated water connections."
 msgstr "Tomas repetidas."
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:2024
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:2028
 #, python-format
 msgid "There are some irrigation gates in anoter parcel."
 msgstr "Alguno/s de los tablachos indicados ya está en otra parcela."
@@ -2055,6 +2045,11 @@ msgid "Water Connection Id."
 msgstr "Id. Toma"
 
 #. module: base_wua_infrastructure
+#: model:ir.model,name:base_wua_infrastructure.model_wua_waterconnection_subparcel_rel
+msgid "Water Connection Subparcel Relationship"
+msgstr "Relación toma y subparcelas"
+
+#. module: base_wua_infrastructure
 #: model:ir.actions.act_window,name:base_wua_infrastructure.wua_waterconnection_action
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_hydraulicsector_waterconnection_ids
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed_waterconnection_ids
@@ -2091,6 +2086,11 @@ msgstr "Pagadores de agua"
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_waterconnection_view_kanban
 msgid "Water Payers:"
 msgstr "Pagadores de agua:"
+
+#. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationstretch_waterpipe_id
+msgid "Water Pipe"
+msgstr "Ramal"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_gravityfed_irrigation_right

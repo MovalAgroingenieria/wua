@@ -11,6 +11,7 @@
                    position="after">
                 <field name='number_of_irrigation_schedules' invisible="1"/>
                 <field name='number_of_irrigation_events' invisible="1"/>
+                <field name="tertiarypipe_id" invisible="1"/>
                 <button name="action_see_readings"
                         type="object"
                         class="oe_stat_button"
@@ -53,6 +54,16 @@
                         </span><span class="o_stat_text">
                             Events
                         </span></div>
+                </button>
+                <button name="action_see_tertiary_pipe"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-share-alt"
+                        attrs="{'invisible': [('tertiarypipe_id', '=', False)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Tertiary</span>
+                        <span class="o_stat_text">Pipe</span>
+                    </div>
                 </button>
             </xpath>
             <xpath expr="//field[@name='total_affected_area_official']"
