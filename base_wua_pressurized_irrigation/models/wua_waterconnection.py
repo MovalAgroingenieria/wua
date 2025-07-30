@@ -151,6 +151,18 @@ class WuaWaterconnection(models.Model):
          'The estimated monthly consumption must be positive.'),
     ]
 
+    @api.depends('tertiarypipe_ids')
+    def _compute_tertiarypipe_id(self):
+        for rec in self:
+            rec.tertiarypipe_id = rec.tertiarypipe_ids[:1] if \
+                rec.tertiarypipe_ids else False
+
+    tertiarypipe_ids = fields.One2many(
+        'wua.tertiarypipe',
+        'waterconnection_id',
+        string='Tertiary Pipes',
+    )
+
     @api.depends('irrigationshed_id', 'irrigationshed_id.zone_id')
     def _compute_zone_id(self):
         for record in self:
@@ -500,22 +512,6 @@ class WuaWaterconnection(models.Model):
             'res_id': self.tertiarypipe_id.id,
             'target': 'current',
             'context': {'create': False},
-        }
-
-    def action_open_tertiarypipe(self):
-        self.ensure_one()
-        tertiarypipe = self.env['wua.tertiarypipe'].search([
-            ('waterconnection_id', '=', self.id),
-        ], limit=1)
-        if not tertiarypipe:
-            return False
-        return {
-            'type': 'ir.actions.act_window',
-            'name': 'Tertiary Pipe',
-            'res_model': 'wua.tertiarypipe',
-            'view_mode': 'form',
-            'res_id': tertiarypipe.id,
-            'target': 'current',
         }
 
     def get_default_state(self):
