@@ -15,6 +15,13 @@ class WuaMaintenanceEquipmentCategory(models.Model):
         string='Available for inventory',
         help='If checked, this category is available for inventory on GIS '
              'viewer.',
+        default=False,
+    )
+
+    load_geometries_by_default = fields.Boolean(
+        string='Load geometries by default',
+        help='If checked, geometries will be loaded by default when the '
+             'category is selected in GIS viewer.',
         default=True,
     )
 

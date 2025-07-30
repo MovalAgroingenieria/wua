@@ -23,6 +23,11 @@ class MaintenanceEquipment(models.Model):
         sanitize=False,
     )
 
+    available_for_inventory = fields.Boolean(
+        string='Available for Inventory',
+        default=True,
+    )
+
     def _resolve_field_path(self, record, field_path):
         field_names = field_path.split('.')
         target = record

@@ -156,6 +156,8 @@ class InventoryGisController(http.Controller):
         # Only use the equipments that have categories that can be inventoried
         equipments = request.env['maintenance.equipment'].search([
             ('category_id.available_for_inventory', '=', True),
+            ('category_id.load_geometries_by_default', '=', True),
+            ('available_for_inventory', '=', True),
         ])
         default_gis_refresh_interval = request.env['ir.values'].get_default(
             'maintenance.config.settings',
