@@ -45,12 +45,11 @@ class WuaWaterconnection(models.Model):
         store=True,
         compute='_compute_average_consumption')
 
-    tertiarypipe_id = fields.Many2one(
-        'wua.tertiarypipe',
+    tertiarypipe_id = fields.One2many(
+        comodel_name='wua.tertiarypipe',
         string='Tertiary Pipe',
-        compute='_compute_tertiarypipe_id',
-        store=True,
         readonly=True,
+        inverse_name='waterconnection_id',
     )
 
     irrigation_shift_ids = fields.One2many(
@@ -150,18 +149,6 @@ class WuaWaterconnection(models.Model):
          'CHECK(estimated_monthly_consumption >= 0)',
          'The estimated monthly consumption must be positive.'),
     ]
-
-    @api.depends('tertiarypipe_ids')
-    def _compute_tertiarypipe_id(self):
-        for rec in self:
-            rec.tertiarypipe_id = rec.tertiarypipe_ids[:1] if \
-                rec.tertiarypipe_ids else False
-
-    tertiarypipe_ids = fields.One2many(
-        'wua.tertiarypipe',
-        'waterconnection_id',
-        string='Tertiary Pipes',
-    )
 
     @api.depends('irrigationshed_id', 'irrigationshed_id.zone_id')
     def _compute_zone_id(self):
