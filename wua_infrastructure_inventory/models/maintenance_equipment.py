@@ -25,7 +25,7 @@ class MaintenanceEquipment(models.Model):
 
     available_for_inventory = fields.Boolean(
         string='Available for Inventory',
-        default=True,
+        default=False,
     )
 
     def _resolve_field_path(self, record, field_path):

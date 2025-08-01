@@ -275,19 +275,22 @@ class WuaWaterconnection(models.Model):
 
     @api.multi
     def write(self, vals):
+        previous_watermeter_id = None
+        new_watermeter_id = None
         if len(self) == 1 and 'watermeter_id' in vals:
             previous_watermeter_id = self.watermeter_id
             new_watermeter_id = vals['watermeter_id']
         resp = super(WuaWaterconnection, self).write(vals)
         if len(self) == 1 and 'watermeter_id' in vals:
-            if (previous_watermeter_id and previous_watermeter_id.id !=
-                    new_watermeter_id):
-                if previous_watermeter_id:
-                    previous_watermeter_id = previous_watermeter_id.id
-                else:
-                    previous_watermeter_id = 0
-                if not new_watermeter_id:
-                    new_watermeter_id = 0
+            # Convert to IDs for comparison
+            if previous_watermeter_id:
+                previous_watermeter_id = previous_watermeter_id.id
+            else:
+                previous_watermeter_id = 0
+            if not new_watermeter_id:
+                new_watermeter_id = 0
+            # Only proceed if there's actually a change
+            if previous_watermeter_id != new_watermeter_id:
                 # Case 1: from a watermeter to none.
                 if previous_watermeter_id > 0 and new_watermeter_id == 0:
                     self.update_wua_wc_wm(0, previous_watermeter_id)
