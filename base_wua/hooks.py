@@ -9,7 +9,8 @@ def pre_init_hook(cr):
     incompatible_modules = ['base_foa', 'base_pdo', 'base_agf']
     installed_incompatible_modules = env['ir.module.module'].search([
         ('name', 'in', incompatible_modules), ('state', '=', 'installed')])
-    if len(installed_incompatible_modules) > 0:
+    if (installed_incompatible_modules and
+       len(installed_incompatible_modules) > 0):
         raise exceptions.ValidationError(_(
             'Cannot install, incompatible modules are installed: %s.') % (
             ', '.join(installed_incompatible_modules.mapped('name'))))
