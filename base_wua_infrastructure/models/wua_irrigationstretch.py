@@ -104,7 +104,6 @@ class WuaIrrigationStretch(models.Model):
     irrigationditch_id = fields.Many2one(
         comodel_name='wua.irrigationditch',
         string='Irrigation Ditch',
-        required=True,
         index=True,
     )
 

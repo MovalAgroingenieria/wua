@@ -1490,8 +1490,7 @@ class WuaParcel(models.Model):
                     IF TG_OP = 'UPDATE' OR TG_OP = 'INSERT' THEN
                         UPDATE public.wua_irrigationstretch
                         SET with_gis_irrigationstretch = TRUE,
-                            length_meters =
-                            postgis.ST_Length(NEW.geom::geography)
+                            length_meters = postgis.ST_Length(NEW.geom)
                         WHERE name = NEW.name;
                     END IF;
 
@@ -1736,20 +1735,23 @@ class WuaParcel(models.Model):
                 self.env.cr.savepoint()
                 self.env.cr.execute("""
                     UPDATE public.wua_irrigationstretch
-                    SET with_gis_irrigationstretch = FALSE
+                    SET with_gis_irrigationstretch = FALSE,
+                        length_meters = 0
                 """)
                 self.env.cr.execute("""
-                    UPDATE public.wua_irrigationstretch wi1
+                    UPDATE public.wua_irrigationstretch wi
                     SET with_gis_irrigationstretch = TRUE,
-                    FROM public.wua_gis_irrigationstretch wgi1 WHERE
-                        wi1.name = wgi1.name;
+                        length_meters = ST_Length(wgi.geom)
+                    FROM public.wua_gis_irrigationstretch wgi
+                    WHERE wi.name = wgi.name
+                    AND wgi.geom IS NOT NULL
                 """)
                 self.env.cr.commit()
                 self.env.invalidate_all()
             except Exception:
                 self.env.cr.rollback()
-                gis_drainagevalve_ok = False
-        return gis_drainagevalve_ok
+                gis_irrigationstretch_ok = False
+        return gis_irrigationstretch_ok
 
     def set_gis_fields(self):
         gis_parcels_ok = super(WuaParcel, self).set_gis_fields()
