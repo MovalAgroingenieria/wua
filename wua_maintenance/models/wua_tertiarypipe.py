@@ -16,10 +16,14 @@ class WuaTertiaryPipe(models.Model):
             vals['category_id'] = self.env.ref(
                 'wua_maintenance.equipment_category_tertiarypipe',
             ).id
+        if 'active' in item_vals:
+            vals['active'] = item_vals['active']
         return vals
 
     def _get_equipment_vals_for_write(self, item_vals):
         vals = {}
         if 'name' in item_vals:
             vals['name'] = item_vals['name']
+        if 'active' in item_vals:
+            vals['active'] = item_vals['active']
         return vals
