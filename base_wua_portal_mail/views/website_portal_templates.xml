@@ -73,11 +73,16 @@
                                                         </a>
                                                     </td>
                                                 </t>
-                                                <t t-else="">
+                                                <t t-elif="mail.mail_message_id">
                                                     <td>
                                                         <a t-attf-href="/my/mailmessages/#{mail.mail_message_id.id}?#{keep_query()}">
                                                             <t t-esc="mail.name"/>
                                                         </a>
+                                                    </td>
+                                                </t>
+                                                <t t-else="">
+                                                    <td>
+                                                        <span t-esc="mail.name"/>
                                                     </td>
                                                 </t>
                                                 <td>

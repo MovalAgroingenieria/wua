@@ -90,7 +90,8 @@ class website_account(website_account):
         )
         offset = (page - 1) * items_per_page
         fertconsumptions = request.env['wua.fertconsumption'].search(
-            fertconsumptions_domain, limit=items_per_page, offset=offset)
+            fertconsumptions_domain, limit=items_per_page, offset=offset,
+            order="reading_initial_time desc")
         values.update({
             'fertconsumptions': fertconsumptions,
             'waterconnections': waterconnections,
