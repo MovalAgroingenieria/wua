@@ -12,31 +12,31 @@ class WuaTertiaryPipe(models.Model):
     )
 
     waterconnection_id = fields.Many2one(
-        comodel_name='wua.waterconnection',
         string='Water Connection',
+        comodel_name='wua.waterconnection',
         required=True,
         index=True,
     )
 
     irrigationshed_id = fields.Many2one(
-        comodel_name='wua.irrigationshed',
         string='Irrigation Shed',
+        comodel_name='wua.irrigationshed',
         compute='_compute_irrigationshed_id',
         store=True,
         index=True,
     )
 
     watermeter_id = fields.Many2one(
-        comodel_name='wua.watermeter',
         string='Water Meter',
+        comodel_name='wua.watermeter',
         compute='_compute_watermeter_id',
         store=True,
         index=True,
     )
 
     hydraulicsector_id = fields.Many2one(
-        comodel_name='wua.hydraulicsector',
         string='Hydraulic Sector',
+        comodel_name='wua.hydraulicsector',
         compute='_compute_hydraulicsector_id',
         store=True,
         index=True,
@@ -45,6 +45,7 @@ class WuaTertiaryPipe(models.Model):
     technical_notes = fields.Html(
         string='Technical Notes',
     )
+
     general_notes = fields.Html(
         string='General Notes',
     )
@@ -92,26 +93,39 @@ class WuaTertiaryPipe(models.Model):
 
     @api.depends('waterconnection_id')
     def _compute_irrigationshed_id(self):
-        for rec in self:
-            rec.irrigationshed_id = rec.waterconnection_id.irrigationshed_id
+        for record in self:
+            irrigationshed_id = None
+            if record.waterconnection_id:
+                irrigationshed_id = record.waterconnection_id.irrigationshed_id
+            record.irrigationshed_id = irrigationshed_id
 
-    @api.depends('waterconnection_id')
+    @api.depends('waterconnection_id', 'waterconnection_id.watermeter_id')
     def _compute_watermeter_id(self):
-        for rec in self:
-            rec.watermeter_id = rec.waterconnection_id.watermeter_id
+        for record in self:
+            watermeter_id = None
+            if record.waterconnection_id:
+                watermeter_id = record.waterconnection_id.watermeter_id
+            record.watermeter_id = watermeter_id
 
     @api.depends('waterconnection_id')
     def _compute_hydraulicsector_id(self):
-        for rec in self:
-            rec.hydraulicsector_id = rec.waterconnection_id.hydraulicsector_id
+        for record in self:
+            hydraulicsector_id = None
+            if record.waterconnection_id:
+                hydraulicsector_id = \
+                    record.waterconnection_id.hydraulicsector_id
+            record.hydraulicsector_id = hydraulicsector_id
 
-    @api.depends('waterconnection_id')
+    @api.multi
     def _compute_parcel_count(self):
-        for rec in self:
-            rec.parcel_count = self.env['wua.parcel'].search_count([
-                ('irrigationpoint_ids.waterconnection_id.id', '=',
-                 rec.waterconnection_id.id),
-            ])
+        for record in self:
+            parcel_count = 0
+            if record.waterconnection_id:
+                parcel_count = self.env['wua.parcel'].search_count([
+                    ('irrigationpoint_ids.waterconnection_id.id', '=',
+                     record.waterconnection_id.id),
+                ])
+            record.parcel_count = parcel_count
 
     def action_view_supplied_parcels(self):
         self.ensure_one()

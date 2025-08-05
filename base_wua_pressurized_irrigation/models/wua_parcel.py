@@ -216,9 +216,7 @@ class WuaParcel(models.Model):
                         name character varying(254)
                             COLLATE pg_catalog."default",
                         geom postgis.geometry(MultiLineString,25830),
-                        code bigint,
-                        level integer,
-                        UNIQUE(code),
+                        UNIQUE(name),
                         CONSTRAINT wua_gis_tertiarypipe_pkey
                             PRIMARY KEY (gid)
                     );
@@ -249,12 +247,12 @@ class WuaParcel(models.Model):
                 IF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
                     UPDATE public.wua_tertiarypipe SET
                         with_gis_tertiarypipe = False
-                    WHERE tertiarypipe_code = OLD.code;
+                    WHERE name = OLD.name;
                 END IF;
                 IF TG_OP = 'UPDATE' OR TG_OP = 'INSERT' THEN
                     UPDATE public.wua_tertiarypipe SET
                         with_gis_tertiarypipe = True
-                    WHERE tertiarypipe_code = NEW.code;
+                    WHERE name = NEW.name;
                 END IF;
                 RETURN NULL;
                 END;
@@ -274,9 +272,9 @@ class WuaParcel(models.Model):
                     public.wua_gis_tertiarypipe;
 
                 CREATE TRIGGER wua_gis_tertiarypipe_write_trigger
-                AFTER UPDATE OF code ON
+                AFTER UPDATE OF name ON
                 public.wua_gis_tertiarypipe FOR EACH ROW WHEN
-                (OLD.code IS DISTINCT FROM NEW.code)
+                (OLD.name IS DISTINCT FROM NEW.name)
                 EXECUTE PROCEDURE
                     wua_gis_tertiarypipe_update_on_wua_tertiarypipe();
 
@@ -296,9 +294,9 @@ class WuaParcel(models.Model):
                 $BODY$
                 BEGIN
                     UPDATE wua_tertiarypipe SET with_gis_tertiarypipe =
-                    (SELECT NEW.tertiarypipe_code IN
-                        (SELECT code FROM wua_gis_tertiarypipe))
-                    WHERE tertiarypipe_code = NEW.tertiarypipe_code;
+                    (SELECT NEW.name IN
+                        (SELECT name FROM wua_gis_tertiarypipe))
+                    WHERE name = NEW.name;
                 RETURN NULL;
                 END;
                 $BODY$
@@ -313,15 +311,13 @@ class WuaParcel(models.Model):
                     public.wua_tertiarypipe;
                 DROP TRIGGER IF EXISTS wua_tertiarypipe_create_trigger ON
                     public.wua_tertiarypipe;
-
                 CREATE TRIGGER wua_tertiarypipe_write_trigger
-                AFTER UPDATE OF tertiarypipe_code ON
+                AFTER UPDATE OF name ON
                 public.wua_tertiarypipe FOR EACH ROW WHEN
-                (OLD.tertiarypipe_code IS DISTINCT FROM
-                    NEW.tertiarypipe_code)
+                (OLD.name IS DISTINCT FROM
+                    NEW.name)
                 EXECUTE PROCEDURE
                     wua_tertiarypipe_update_on_wua_tertiarypipe();
-
                 CREATE TRIGGER wua_tertiarypipe_create_trigger
                 AFTER INSERT ON
                 public.wua_tertiarypipe FOR EACH ROW
@@ -343,7 +339,7 @@ class WuaParcel(models.Model):
                     UPDATE public.wua_tertiarypipe ww1
                     SET with_gis_tertiarypipe = TRUE
                     FROM public.wua_gis_tertiarypipe wgw1 WHERE
-                    ww1.tertiarypipe_code = wgw1.code;
+                    ww1.name = wgw1.name;
                 """)
                 self.env.cr.commit()
                 self.env.invalidate_all()
