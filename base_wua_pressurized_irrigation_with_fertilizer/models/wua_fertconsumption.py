@@ -9,8 +9,14 @@ from odoo import models, fields, api, _, exceptions
 class WuaFertconsumption(models.Model):
     _name = 'wua.fertconsumption'
     _description = 'Entity (fertilizer consumption)'
+    _order = 'reading_end_time desc, name'
 
     MAX_SIZE_NAME = 52
+
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+    )
 
     waterconnection_id = fields.Many2one(
         string='Water Connection',

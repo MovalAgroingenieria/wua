@@ -7,6 +7,18 @@
         <field name="arch" type="xml">
             <form duplicate="false">
                 <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <button name="toggle_active"
+                                type="object"
+                                class="oe_stat_button"
+                                confirm="Are you sure you want to toggle visibility?"
+                                icon="fa-archive"
+                                groups="base_wua.group_wua_user">
+                            <field name="active"
+                                   widget="boolean_button"
+                                   options='{"terminology": "archive"}'/>
+                        </button>
+                    </div>
                     <group name="master_data">
                         <group name="master_data_left">
                             <field name="reading_initial_time" attrs="{'readonly':[('presconsumption_id','>',0)]}"/>
@@ -55,6 +67,10 @@
                 <field name="irrigationshed_id"/>
                 <field name="hydraulicsector_id"/>
                 <field name="agriculturalseason_id"/>
+                <filter string="Active Campaign"
+                    name="active_agriculturalseason"
+                    domain="[('agriculturalseason_id.active_agriculturalseason','=',True)]"/>
+                <separator/>
                 <filter string="Associated to a consumption: Yes" name="presconsumptionyes"
                  domain="[('with_presconsumption','=',True)]"/>
                 <filter string="Associated to a consumption: No" name="presconsumptionno"
@@ -150,7 +166,7 @@
         <field name="view_mode">tree,form,graph,pivot</field>
         <field name="view_id" ref="wua_fertconsumption_view_tree"/>
         <field name="search_view_id" ref="wua_fertconsumption_view_search"/>
-        <field name="context">{'search_default_hydraulicsector': 0, 'search_default_readingendtime': 0}</field>
+        <field name="context">{'search_default_active_agriculturalseason': 1, 'search_default_hydraulicsector': 0, 'search_default_readingendtime': 0}</field>
     </record>
 
     <record id="wua_technical_assign_agriculturalseason_to_fertconsumptions_action"
@@ -158,6 +174,42 @@
         <field name="name">Assign agricultural seasons to fertilizer consumptions</field>
         <field name="model_id" ref="base_wua_pressurized_irrigation_with_fertilizer.model_wua_fertconsumption"/>
         <field name="code">action = env["wua.fertconsumption"].action_assign_agriculturalseason_to_fertconsumptions()</field>
+    </record>
+
+    <record id="wua_archive_fertconsumptions" model="ir.actions.server">
+        <field name="name">Archive Fertconsumption</field>
+        <field name="model_id" ref="base_wua_pressurized_irrigation_with_fertilizer.model_wua_fertconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+if context.get('active_ids'):
+    env['wua.fertconsumption'].browse(context['active_ids']).write({'active': False})
+        </field>
+    </record>
+
+    <record id="wua_action_archive_fertconsumptions" model="ir.values">
+        <field name="name">Archive Fertconsumption</field>
+        <field name="model">wua.fertconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_archive_fertconsumptions'))"/>
+    </record>
+
+    <record id="wua_unarchive_fertconsumptions" model="ir.actions.server">
+        <field name="name">Unarchive Fertconsumption</field>
+        <field name="model_id" ref="base_wua_pressurized_irrigation_with_fertilizer.model_wua_fertconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+if context.get('active_ids'):
+    env['wua.fertconsumption'].browse(context['active_ids']).write({'active': True})
+        </field>
+    </record>
+
+    <record id="wua_action_unarchive_fertconsumptions" model="ir.values">
+        <field name="name">Unarchive Fertconsumption</field>
+        <field name="model">wua.fertconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_unarchive_fertconsumptions'))"/>
     </record>
 
 </odoo>
