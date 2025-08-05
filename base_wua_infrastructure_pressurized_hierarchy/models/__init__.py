@@ -10,3 +10,4 @@ from . import wua_airvalve
 from . import wua_drainagevalve
 from . import wua_valve
 from . import wua_presconsumption
+from . import wua_irrigationstretch

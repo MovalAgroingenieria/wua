@@ -1534,6 +1534,12 @@ class WuaParcel(models.Model):
                             SELECT NEW.name IN (
                                 SELECT name FROM wua_gis_irrigationstretch
                             )),
+                        length_meters = (
+                            SELECT postgis.ST_Length(geom)::NUMERIC
+                            FROM wua_gis_irrigationstretch
+                            WHERE name = NEW.name
+                            LIMIT 1
+                        )
                     WHERE name = NEW.name;
                     RETURN NEW;
                 END;
@@ -1741,7 +1747,7 @@ class WuaParcel(models.Model):
                 self.env.cr.execute("""
                     UPDATE public.wua_irrigationstretch wi
                     SET with_gis_irrigationstretch = TRUE,
-                        length_meters = ST_Length(wgi.geom)
+                        length_meters = postgis.ST_Length(wgi.geom)
                     FROM public.wua_gis_irrigationstretch wgi
                     WHERE wi.name = wgi.name
                     AND wgi.geom IS NOT NULL

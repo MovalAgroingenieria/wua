@@ -20,6 +20,7 @@
         "views/resources.xml",
         "views/wua_infrastructure_config_settings_view.xml",
         "views/wua_waterpipe_view.xml",
+        "views/wua_irrigationstretch_view.xml",
         "views/wua_hydraulicsector_view.xml",
         "views/wua_airvalve_view.xml",
         "views/wua_drainagevalve_view.xml",

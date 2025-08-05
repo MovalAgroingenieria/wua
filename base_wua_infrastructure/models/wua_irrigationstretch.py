@@ -10,10 +10,12 @@ class WuaIrrigationStretch(models.Model):
     _description = 'Irrigation Stretch'
     _order = 'name'
 
-    type = fields.Selection([
-        ('pressure', 'Pressure'),
-        ('gravity', 'Gravity'),
-        ], string='Segment Type',
+    type = fields.Selection(
+        string='Segment Type',
+        selection=[
+            ('pressure', 'Pressure'),
+            ('gravity', 'Gravity'),
+        ],
         required=True,
     )
 
@@ -36,8 +38,8 @@ class WuaIrrigationStretch(models.Model):
     )
 
     material = fields.Many2one(
-        comodel_name='wua.infrastructure.material',
         string='Material',
+        comodel_name='wua.infrastructure.material',
         index=True,
     )
 
@@ -102,20 +104,15 @@ class WuaIrrigationStretch(models.Model):
     )
 
     irrigationditch_id = fields.Many2one(
-        comodel_name='wua.irrigationditch',
         string='Irrigation Ditch',
-        index=True,
-    )
-
-    waterpipe_id = fields.Many2one(
-        comodel_name='wua.waterpipe',
-        string='Water Pipe',
+        comodel_name='wua.irrigationditch',
         index=True,
     )
 
     gis_viewer_link = fields.Char(
         string='GIS Viewer',
-        compute='_compute_gis_viewer_link')
+        compute='_compute_gis_viewer_link',
+    )
 
     _sql_constraints = [
         ('name_unique', 'UNIQUE(name)', 'The name must be unique.'),
