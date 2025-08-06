@@ -140,7 +140,6 @@ class ProductTemplate(models.Model):
     show_all_registers_on_invoiceset = fields.Boolean(
         string='Show All Registers on Invoiceset',
         default=False,
-        store=True,
     )
 
     productcategory_code = fields.Integer(

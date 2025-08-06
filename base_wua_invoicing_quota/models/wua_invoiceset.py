@@ -189,26 +189,11 @@ class WuaInvoicesetLine(models.Model):
 
     @api.multi
     def action_select_linked_items(self):
-        self.ensure_one()
-        if not self.configured_line:
-            self.populate_items_select()
-        data_items_select = self.get_data_items_select(self.product_id.name)
-        if data_items_select:
-            if ('name' in data_items_select and
-               'res_model' in data_items_select):
-                if (data_items_select['name'] != '' and
-                   data_items_select['res_model'] != ''):
-                    act_window = {
-                        'type': 'ir.actions.act_window',
-                        'name': data_items_select['name'],
-                        'res_model': data_items_select['res_model'],
-                        'view_type': 'form',
-                        'view_mode': 'tree',
-                        'domain': [["invoicesetline_id", "=", self.id]],
-                        'context': {"search_default_invoicedno": 1},
-                        'limit': 10000000,
-                        }
-                    return act_window
+        action = super(WuaInvoicesetLine, self).action_select_linked_items()
+        if action:
+            action.setdefault("context", {})
+            action["context"].update({"search_default_invoicedno": 1})
+        return action
 
     def get_data_items_select(self, desc):
         if self.linkable_unit_type == 'quota':

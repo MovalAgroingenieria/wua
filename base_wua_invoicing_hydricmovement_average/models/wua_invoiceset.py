@@ -197,28 +197,6 @@ class WuaInvoicesetLine(models.Model):
                 record.configured_line = \
                     len(record.line_hydricmovement_average_ids) > 0
 
-    @api.multi
-    def action_select_linked_items(self):
-        self.ensure_one()
-        if not self.configured_line:
-            self.populate_items_select()
-        data_items_select = self.get_data_items_select(self.product_id.name)
-        if data_items_select:
-            if ('name' in data_items_select and
-               'res_model' in data_items_select):
-                if (data_items_select['name'] != '' and
-                   data_items_select['res_model'] != ''):
-                    act_window = {
-                        'type': 'ir.actions.act_window',
-                        'name': data_items_select['name'],
-                        'res_model': data_items_select['res_model'],
-                        'view_type': 'form',
-                        'view_mode': 'tree',
-                        'domain': [['invoicesetline_id', '=', self.id]],
-                        'limit': 10000000,
-                        }
-                    return act_window
-
     def get_data_items_select(self, desc):
         if self.linkable_unit_type == 'hydricmovement_average':
             name = _('Hydricmovement Average')
