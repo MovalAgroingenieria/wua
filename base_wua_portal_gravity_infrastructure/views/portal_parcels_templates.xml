@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="portal_my_parcels_followup" name="Portal layout : parcel entries" inherit_id="base_wua_portal.parcels_followup" priority="925">
+            <xpath expr="//div[@name='left_column']" position="inside">
+                <div><strong>Irrigationditch:</strong> <span t-field="parcel.irrigationditch_id.name"/></div>
+                <br/>
+            </xpath>
+            <xpath expr="//div[@name='middle_column']" position="inside">
+                <br/>
+                <div><strong>Drainageditch:</strong> <span t-field="parcel.drainageditch_id.name"/></div>
+                <br/>
+            </xpath>
+        </template>
+    </data>
+</odoo>

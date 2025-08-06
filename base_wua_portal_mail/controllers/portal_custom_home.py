@@ -43,11 +43,18 @@ class website_account(website_account):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
         mails_model = request.env['mail.tracking.email']
-        domain = ['&',
-                  '|', ('partner_id', 'in', [partner.id]),
-                  ('recipient', 'ilike', partner.email),
-                  ('sender', 'not ilike', 'Administrator')]
-        domain.append(('state', 'in', ['opened', 'sent']))
+        domain = [
+            '&',
+            '|',
+            ('partner_id', 'in', [partner.id]),
+            ('recipient', 'ilike', partner.email),
+            ('sender', 'not ilike', 'Administrator'),
+            ('state', 'in', ['opened', 'sent']),
+            '|', '|',
+            ('mail_id', '!=', False),
+            ('mail_message_id', '!=', False),
+            ('mass_mailing_id', '!=', False)
+        ]
         if search and search_field:
             field_map = {
                 'date': 'date',
