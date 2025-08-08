@@ -1,7 +1,10 @@
 <odoo>
     <data>
-        <template id="portal_my_quotas" name="My Readings">
+        <template id="portal_my_quotas" name="My Quotas">
             <t t-call="website.layout">
+            <t t-set="title">
+                <t t-translate="My Quotas">My Quotas</t>
+            </t>
                 <div class="container mt16">
                     <div class="navbar navbar-default">
                         <div class="navbar-header">
@@ -100,8 +103,11 @@
                 </div>
             </t>
         </template>
-        <template id="portal_my_hydricmovements" name="My Presconsumptions">
+        <template id="portal_my_hydricmovements" name="My Hydricmovements">
             <t t-call="website.layout">
+            <t t-set="title">
+                <t t-translate="My Hydricmovements">My Hydricmovements</t>
+            </t>
             <div class="container mt16">
                 <div class="navbar navbar-default">
                 <div class="navbar-header">
@@ -139,9 +145,9 @@
                         <div class="row">
                         <div class="col-md-2">
                             <select id="search_field" name="search_field" class="form-control">
-                                <option value="waterconnection" t-att-selected="'waterconnection' == search_field">Water Connection</option>
-                                <option value="watermeter" t-att-selected="'watermeter' == search_field">Water Meter</option>
                                 <option value="event_time" t-att-selected="'event_time' == search_field">Date</option>
+                                <option value="water_type" t-att-selected="'water_type' == search_field">Water type</option>
+                                <option value="description" t-att-selected="'description' == search_field">Description</option>
                             </select>
                         </div>
                         <div class="col-md-8">

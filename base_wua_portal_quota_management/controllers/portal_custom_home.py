@@ -92,52 +92,6 @@ class website_account(website_account):
             "base_wua_portal_quota_management.portal_my_quotas",
             values)
 
-    @http.route(['/my/quotaaggregates', '/my/quotaaggregates/page/<int:page>'],
-                type='http', auth="user", website=True)
-    def portal_my_quotaaggregates(self, page=1, search=None,
-                                  search_field=None, selected_columns=None,
-                                  **kw):
-        values = self._prepare_portal_layout_values()
-        partner = request.env.user.partner_id
-        quotaaggregates_model = \
-            request.env['wua.quota.aggregatevalue']
-        domain = [
-            ('partner_id', '=', partner.id)
-        ]
-        if search and search_field:
-            field_map = {
-            }
-            if search_field in field_map:
-                domain.append((field_map[search_field], 'ilike', search))
-        quotaaggregates = \
-            quotaaggregates_model.search(domain)
-        quotaaggregates_count = \
-            request.env['wua.quota.aggregatevalue'].search_count(domain)
-        items_per_page = self._items_per_page
-        pager = request.website.pager(
-            url="/my/quotaaggregates",
-            total=quotaaggregates_count,
-            page=page,
-            step=items_per_page,
-            url_args={
-                'search': search,
-                'search_field': search_field,
-            },
-        )
-        offset = (page - 1) * items_per_page
-        quotaaggregates = request.env['wua.quota.aggregatevalue'].search(
-            domain, limit=items_per_page, offset=offset)
-        values.update({
-            'quotaaggregates': quotaaggregates,
-            'pager': pager,
-            'search_query': search,
-            'search_field': search_field,
-            'default_url': '/my/quotaaggregates'
-        })
-        return request.render(
-            "base_wua_portal_quota_management.portal_my_quotaaggregates",
-            values)
-
     @http.route(['/my/hydricmovements',
                  '/my/hydricmovements/page/<int:page>'],
                 type='http', auth="user", website=True)
@@ -159,9 +113,9 @@ class website_account(website_account):
         ]
         if search and search_field:
             field_map = {
-                'quota': 'quota_id.name',
-                'reading_id': 'reading_id.name',
                 'event_time': 'event_time',
+                'water_type': 'superproduct_id.name',
+                'description': 'description',
             }
             if search_field in field_map:
                 hydricmovements_domain.append(

@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import http
-from odoo.http import request, Response
+from odoo.http import request
 from odoo.addons.website_portal.controllers.main import website_account
 
 
@@ -25,29 +25,49 @@ class website_account(website_account):
         })
         return response
 
-    @http.route('/my/quotareport', type='http', auth="user", website=True)
-    def portal_wua_partner_report(self, **kw):
-        """Generates the Partner quotareport and serves it as a PDF"""
+    @http.route(['/my/quotaaggregates', '/my/quotaaggregates/page/<int:page>'],
+                type='http', auth="user", website=True)
+    def portal_my_quotaaggregates(self, page=1, search=None,
+                                  search_field=None, selected_columns=None,
+                                  **kw):
+        values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
-        partner_model = request.env['res.partner'].sudo()
-        model_report = request.env['report'].sudo()
-        partner = partner_model.search([('id', '=', partner.id)], limit=1)
-        if not partner:
-            return Response(
-                "No partner found",
-                status=404)
-        report_ref = \
-            'base_wua_quota_management.wua_partner_quota_report_document'
-        partner_report = model_report.with_context(
-            {'lang': partner.lang}).get_pdf(
-                [partner.id], report_ref)
-
-        response = request.make_response(
-            partner_report,
-            headers=[
-                ('Content-Type', 'application/pdf'),
-                ('Content-Disposition',
-                 'attachment; filename="wua_partner_quota_report.pdf"')
-            ]
+        quotaaggregates_model = \
+            request.env['wua.quota.aggregatevalue']
+        domain = [
+            ('partner_id', '=', partner.id)
+        ]
+        if search and search_field:
+            field_map = {
+            }
+            if search_field in field_map:
+                domain.append((field_map[search_field], 'ilike', search))
+        quotaaggregates = \
+            quotaaggregates_model.search(domain)
+        quotaaggregates_count = \
+            request.env['wua.quota.aggregatevalue'].search_count(domain)
+        items_per_page = self._items_per_page
+        pager = request.website.pager(
+            url="/my/quotaaggregates",
+            total=quotaaggregates_count,
+            page=page,
+            step=items_per_page,
+            url_args={
+                'search': search,
+                'search_field': search_field,
+            },
         )
-        return response
+        offset = (page - 1) * items_per_page
+        quotaaggregates = request.env['wua.quota.aggregatevalue'].search(
+            domain, limit=items_per_page, offset=offset)
+        values.update({
+            'quotaaggregates': quotaaggregates,
+            'pager': pager,
+            'search_query': search,
+            'search_field': search_field,
+            'default_url': '/my/quotaaggregates'
+        })
+        return request.render(
+            "base_wua_portal_quota_management.portal_my_quotaaggregates",
+            values)
+
