@@ -53,6 +53,7 @@ class WuaParcel(models.Model):
                 wua_gis_reservoir_idx ON public.wua_gis_reservoir USING
                 gist (geom);
             """)
+            self.grant_gis_privileges('wua_gis_reservoir')
             self.env.cr.commit()
 
     def create_reservoir_triggers(self):

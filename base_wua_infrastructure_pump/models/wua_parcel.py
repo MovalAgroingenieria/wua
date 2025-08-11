@@ -56,6 +56,7 @@ class WuaParcel(models.Model):
                 wua_gis_pumpgroup_idx ON public.wua_gis_pumpgroup
                     USING gist (geom);
             """)
+            self.grant_gis_privileges('wua_gis_pumpgroup')
             self.env.cr.commit()
 
     def create_pumpgroup_triggers(self):
@@ -205,6 +206,7 @@ class WuaParcel(models.Model):
                 wua_gis_photovoltaicplant_idx ON
                 public.wua_gis_photovoltaicplant USING gist (geom);
             """)
+            self.grant_gis_privileges('wua_gis_photovoltaicplant')
             self.env.cr.commit()
 
     def create_photovoltaicplant_triggers(self):

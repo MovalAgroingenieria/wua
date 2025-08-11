@@ -55,6 +55,7 @@ class WuaParcel(models.Model):
                     public.law_gis_measuring_device USING
                 gist (geom);
             """)
+            self.grant_gis_privileges('law_gis_measuring_device')
             self.env.cr.commit()
 
     def create_measuring_device_triggers(self):

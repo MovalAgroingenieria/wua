@@ -49,6 +49,7 @@ class WuaParcel(models.Model):
                     public.mdm_gis_measurement_device
                     USING gist (geom);
             """)
+            self.grant_gis_privileges('mdm_gis_measurement_device')
             self.env.cr.commit()
 
     def create_measurement_device_triggers(self):

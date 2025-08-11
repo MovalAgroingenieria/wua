@@ -636,6 +636,7 @@ class WuaParcel(models.Model):
                 wua_gis_waterpipe_idx ON public.wua_gis_waterpipe
                     USING gist (geom);
             """)
+            self.grant_gis_privileges('wua_gis_waterpipe')
             self.env.cr.commit()
 
     def create_waterpipe_triggers(self):

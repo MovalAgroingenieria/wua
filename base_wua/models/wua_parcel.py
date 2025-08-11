@@ -2095,6 +2095,61 @@ class WuaParcel(models.Model):
             resp = True
         return resp
 
+    def grant_gis_privileges(self, gis_table_name):
+        try:
+            db_name = self.env.cr.dbname
+            reader_user = 'reader_{}'.format(db_name)
+            writer_user = 'writer_{}'.format(db_name)
+            self.env.cr.execute("""
+                SELECT EXISTS(
+                    SELECT 1 FROM information_schema.tables
+                    WHERE table_name = %s
+                )
+            """, (gis_table_name,))
+            table_exists = self.env.cr.fetchone()[0]
+            if not table_exists:
+                return False
+            for user in [reader_user, writer_user]:
+                self.env.cr.execute("""
+                    SELECT EXISTS(
+                        SELECT 1 FROM pg_roles
+                        WHERE rolname = %s
+                    )
+                """, (user,))
+                if not self.env.cr.fetchone()[0]:
+                    continue
+                if user == reader_user:
+                    # Grant SELECT privileges to reader
+                    grant_sql = 'GRANT SELECT ON {} TO {}'.format(
+                        gis_table_name, user)
+                    self.env.cr.execute(grant_sql)
+                elif user == writer_user:
+                    # Grant INSERT, UPDATE, DELETE privileges to writer
+                    grant_sql = ('GRANT INSERT, UPDATE, DELETE ON {} TO '
+                                 '{}').format(gis_table_name, user)
+                    self.env.cr.execute(grant_sql)
+                    # Check if sequence exists and grant USAGE
+                    sequence_name = '{}_gid_seq'.format(gis_table_name)
+                    self.env.cr.execute("""
+                        SELECT EXISTS(
+                            SELECT 1 FROM information_schema.sequences
+                            WHERE sequence_name = %s
+                        )
+                    """, (sequence_name,))
+                    if self.env.cr.fetchone()[0]:
+                        sequence_sql = 'GRANT USAGE ON {} TO {}'.format(
+                            sequence_name, user)
+                        self.env.cr.execute(sequence_sql)
+            return True
+        except Exception as e:
+            import logging
+            _logger = logging.getLogger(__name__)
+            _logger.warning(
+                'Failed to grant privileges on table %s: %s',
+                gis_table_name, str(e),
+            )
+            return False
+
     def create_wua_gis_parcel_table(self):
         # Check if wua gis table already exists
         gis_parcel_table_created = self.check_gis_parcel_created()
@@ -2128,6 +2183,7 @@ class WuaParcel(models.Model):
                 CREATE INDEX IF NOT EXISTS
                 wua_gis_parcel_idx ON public.wua_gis_parcel USING gist (geom);
             """)
+            self.grant_gis_privileges('wua_gis_parcel')
             self.env.cr.commit()
 
     def create_parcel_triggers(self):

@@ -375,6 +375,7 @@ class WuaParcel(models.Model):
                 wua_gis_irrigationshed_idx ON public.wua_gis_irrigationshed
                     USING gist (geom);
             """)
+            self.grant_gis_privileges('wua_gis_irrigationshed')
             self.env.cr.commit()
 
     def create_irrigationshed_triggers(self):
@@ -485,6 +486,7 @@ class WuaParcel(models.Model):
                 EXECUTE PROCEDURE
                     wua_irrigationshed_update_on_wua_irrigationshed();
             """)
+            self.grant_gis_privileges('wua_gis_irrigationshed')
             self.env.cr.commit()
 
     def check_gis_irrigationgate_created(self):
@@ -534,6 +536,8 @@ class WuaParcel(models.Model):
                 wua_gis_irrigationgate_idx ON public.wua_gis_irrigationgate
                     USING gist (geom);
             """)
+
+            self.grant_gis_privileges('wua_gis_irrigationgate')
             self.env.cr.commit()
 
     def create_irrigationgate_triggers(self):
@@ -644,6 +648,7 @@ class WuaParcel(models.Model):
                 EXECUTE PROCEDURE
                     wua_irrigationgate_update_on_wua_irrigationgate();
             """)
+            self.grant_gis_privileges('wua_gis_irrigationgate')
             self.env.cr.commit()
 
     def check_gis_flowdivider_created(self):
@@ -693,6 +698,8 @@ class WuaParcel(models.Model):
                 wua_gis_flowdivider_idx ON public.wua_gis_flowdivider
                     USING gist (geom);
             """)
+
+            self.grant_gis_privileges('wua_gis_flowdivider')
             self.env.cr.commit()
 
     def create_flowdivider_triggers(self):
@@ -803,6 +810,7 @@ class WuaParcel(models.Model):
                 EXECUTE PROCEDURE
                     wua_flowdivider_update_on_wua_flowdivider();
             """)
+            self.grant_gis_privileges('wua_gis_flowdivider')
             self.env.cr.commit()
 
     def check_gis_irrigationditch_created(self):
@@ -854,6 +862,7 @@ class WuaParcel(models.Model):
                 wua_gis_irrigationditch_idx ON public.wua_gis_irrigationditch
                     USING gist (geom);
             """)
+            self.grant_gis_privileges('wua_gis_irrigationditch')
             self.env.cr.commit()
 
     def create_irrigationditch_triggers(self):
@@ -1004,6 +1013,7 @@ class WuaParcel(models.Model):
                 wua_gis_airvalve_idx ON public.wua_gis_airvalve
                     USING gist (geom);
             """)
+            self.grant_gis_privileges('wua_gis_airvalve')
             self.env.cr.commit()
 
     def create_airvalve_triggers(self):
@@ -1164,6 +1174,7 @@ class WuaParcel(models.Model):
                 wua_gis_valve_idx ON public.wua_gis_valve
                     USING gist (geom);
             """)
+            self.grant_gis_privileges('wua_gis_valve')
             self.env.cr.commit()
 
     def create_valve_triggers(self):
@@ -1324,6 +1335,7 @@ class WuaParcel(models.Model):
                 wua_gis_drainagevalve_idx ON public.wua_gis_drainagevalve
                     USING gist (geom);
             """)
+            self.grant_gis_privileges('wua_gis_drainagevalve')
             self.env.cr.commit()
 
     def create_drainagevalve_triggers(self):
@@ -1469,6 +1481,7 @@ class WuaParcel(models.Model):
                 CREATE INDEX IF NOT EXISTS wua_gis_irrigationstretch_idx
                 ON public.wua_gis_irrigationstretch USING gist (geom);
             """)
+            self.grant_gis_privileges('wua_gis_irrigationstretch')
             self.env.cr.commit()
 
     def create_irrigationstretch_triggers(self):
@@ -2324,6 +2337,7 @@ class WuaParcel(models.Model):
                 wua_gis_building_idx ON
                 public.wua_gis_building USING gist (geom);
             """)
+            self.grant_gis_privileges('wua_gis_building')
             self.env.cr.commit()
 
     def create_building_triggers(self):

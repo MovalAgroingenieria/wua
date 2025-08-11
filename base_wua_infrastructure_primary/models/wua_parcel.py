@@ -62,6 +62,7 @@ class WuaParcel(models.Model):
                 wua_gis_flowmeter_idx ON public.wua_gis_flowmeter
                     USING gist (geom);
             """)
+            self.grant_gis_privileges('wua_gis_flowmeter')
             self.env.cr.commit()
 
     def create_flowmeter_triggers(self):
@@ -234,6 +235,7 @@ class WuaParcel(models.Model):
                 wua_gis_intake_idx ON public.wua_gis_intake
                     USING gist (geom);
             """)
+            self.grant_gis_privileges('wua_gis_intake')
             self.env.cr.commit()
 
     def create_intake_triggers(self):
@@ -405,6 +407,7 @@ class WuaParcel(models.Model):
                 wua_gis_filteringstation_idx ON public.wua_gis_filteringstation
                     USING gist (geom);
             """)
+            self.grant_gis_privileges('wua_gis_filteringstation')
             self.env.cr.commit()
 
     def create_filteringstation_triggers(self):
