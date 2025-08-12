@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-29 11:38+0000\n"
-"PO-Revision-Date: 2025-07-29 11:38+0000\n"
+"POT-Creation-Date: 2025-08-12 13:06+0000\n"
+"PO-Revision-Date: 2025-08-12 13:06+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -220,6 +220,16 @@ msgstr "Agente"
 #, python-format
 msgid "Airvalve"
 msgstr "Ventosa"
+
+#. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_kind_multiple_after_images
+msgid "Allow Multiple After Images"
+msgstr "Permitir múltiples imágenes del después"
+
+#. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_kind_multiple_before_images
+msgid "Allow Multiple Before Images"
+msgstr "Permitir múltiples imágenes del antes"
 
 #. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_category_view_form
@@ -583,6 +593,7 @@ msgstr "Elemento (contador)"
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_waterconnection_equipment_id
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_watermeter_equipment_id
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_waterpipe_equipment_id
+#: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_request_view_search
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_plan_view_search
 #, python-format
 msgid "Equipment"
@@ -636,7 +647,7 @@ msgid "Error resolving template: {}"
 msgstr "Error al resolver la plantilla: {}"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance_kind.py:64
+#: code:addons/wua_maintenance/models/maintenance_kind.py:79
 #, python-format
 msgid "Error updating field %s: %s"
 msgstr "Error actualizando campo %s: %s"
@@ -922,7 +933,7 @@ msgid "Invalid"
 msgstr "Inválido"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance_kind.py:57
+#: code:addons/wua_maintenance/models/maintenance_kind.py:72
 #, python-format
 msgid "Invalid field path: %s"
 msgstr "Ruta a campo inválida: %s"
@@ -1147,6 +1158,11 @@ msgstr "Equipo"
 #: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_maintenance_type
 msgid "Maintenance type"
 msgstr "Tipos de mantenimiento"
+
+#. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_kind_mandatory_comment
+msgid "Mandatory Comment"
+msgstr "Comentario obligatorio"
 
 #. module: wua_maintenance
 #: selection:maintenance.kind.dynamic.field,field_type:0
@@ -1634,7 +1650,7 @@ msgid "Unchecked"
 msgstr "No comprobado"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance_kind.py:62
+#: code:addons/wua_maintenance/models/maintenance_kind.py:77
 #, python-format
 msgid "Updated field %s with value %s"
 msgstr "Actualizado campo %s con valor %s"
@@ -1761,7 +1777,7 @@ msgid "Without Infrastructure GIS"
 msgstr "Sin Infrastructura GIS"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/controllers/maintenance_gis_controller.py:267
+#: code:addons/wua_maintenance/controllers/maintenance_gis_controller.py:273
 #, python-format
 msgid "Without team"
 msgstr "Sin Equipo"
@@ -2010,3 +2026,4 @@ msgstr "wizard.massive.maintenance.requests"
 #: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_category_view_form
 msgid "{{ equipment.name }}"
 msgstr "{{ equipment.name }}"
+

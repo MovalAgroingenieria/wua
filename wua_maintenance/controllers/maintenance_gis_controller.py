@@ -262,6 +262,12 @@ class MaintenanceGisController(http.Controller):
                 maintenance.maintenance_kind_id.image_before_required,
             'image_after_required':
                 maintenance.maintenance_kind_id.image_after_required,
+            'image_before_multiple':
+                maintenance.maintenance_kind_id.multiple_before_images,
+            'image_after_multiple':
+                maintenance.maintenance_kind_id.multiple_after_images,
+            'mandatory_comment':
+                maintenance.maintenance_kind_id.mandatory_comment,
             'maintenance_team':
             maintenance.maintenance_team_id.name if
             maintenance.maintenance_team_id else _('Without team'),

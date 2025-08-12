@@ -34,7 +34,7 @@ class MaintenanceRequest(models.Model):
     field_resolved = fields.Boolean(
         string='Field resolved',
         default=False,
-        readonly=True,
+        readonly=False,
     )
 
     resolution_time = fields.Datetime(
@@ -133,7 +133,10 @@ class MaintenanceRequest(models.Model):
         search='_search_with_infrastructure_gis',
     )
 
-    active = fields.Boolean(default=True)
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+    )
 
     @api.depends('equipment_id')
     def _compute_hydraulicsector_id(self):

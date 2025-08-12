@@ -42,6 +42,21 @@ class MaintenanceKind(models.Model):
         default=True,
     )
 
+    mandatory_comment = fields.Boolean(
+        string='Mandatory Comment',
+        default=True,
+    )
+
+    multiple_before_images = fields.Boolean(
+        string='Allow Multiple Before Images',
+        default=False,
+    )
+
+    multiple_after_images = fields.Boolean(
+        string='Allow Multiple After Images',
+        default=False,
+    )
+
     @api.model
     def update_dynamic_fields(self, record, values):
         for field in self.dynamic_field_ids:
