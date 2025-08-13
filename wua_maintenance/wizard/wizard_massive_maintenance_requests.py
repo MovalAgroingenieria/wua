@@ -10,12 +10,28 @@ class WizardMassiveMaintenanceReequests(models.TransientModel):
 
     def _default_maintenance_equipment_ids(self):
         active_ids = self.env.context.get('active_ids')
-        return [(6, 0, active_ids)] if active_ids else []
+        if active_ids:
+            # Validate categories before opening the wizard
+            equipments = self.env['maintenance.equipment'].browse(active_ids)
+            categories = equipments.mapped('category_id')
+            # Filter out empty categories
+            categories = categories.filtered(lambda c: c)
+            if len(categories) > 1:
+                raise models.ValidationError(_(
+                    "Error: You have selected equipment from different "
+                    "categories. Please select equipment from the same "
+                    "category."))
+            return [(6, 0, active_ids)]
+        return []
+
+    def _get_default_team_id(self):
+        return self.env['maintenance.team'].search(
+            [('default_team', '=', True)], limit=1)
 
     maintenance_equipment_ids = fields.Many2many(
         string="Maintenance equipments",
         comodel_name='maintenance.equipment',
-        default=_default_maintenance_equipment_ids,
+        default=lambda self: self._default_maintenance_equipment_ids(),
     )
 
     maintenance_subject = fields.Char(
@@ -36,15 +52,24 @@ class WizardMassiveMaintenanceReequests(models.TransientModel):
         default='corrective',
     )
 
+    maintenance_category_id = fields.Many2one(
+        string='Maintenance category',
+        comodel_name='maintenance.equipment.category',
+        compute='_compute_maintenance_category_id',
+        store=True,
+    )
+
     maintenance_kind_id = fields.Many2one(
         string='Action type',
         comodel_name='maintenance.kind',
+
     )
 
     maintenance_team_id = fields.Many2one(
         string='Maintenance team',
         comodel_name='maintenance.team',
         required=True,
+        default=lambda self: self._get_default_team_id(),
     )
 
     technician_user_id = fields.Many2one(
@@ -88,6 +113,31 @@ class WizardMassiveMaintenanceReequests(models.TransientModel):
                 self.maintenance_team_id.partner_ids[0].user_ids):
             self.technician_user_id = self.maintenance_team_id.\
                 partner_ids[0].user_ids[0]
+
+    @api.onchange('maintenance_category_id')
+    def onchange_maintenance_category_id(self):
+        result = {}
+        if self.maintenance_category_id:
+            result['domain'] = {
+                'maintenance_kind_id': [
+                    ('category_id', '=', self.maintenance_category_id.id),
+                ],
+            }
+        else:
+            result['domain'] = {'maintenance_kind_id': []}
+        return result
+
+    @api.onchange('maintenance_equipment_ids')
+    @api.depends('maintenance_equipment_ids')
+    def _compute_maintenance_category_id(self):
+        for record in self:
+            maintenance_category_id = None
+            if record.maintenance_equipment_ids:
+                categories = record.maintenance_equipment_ids.mapped(
+                    'category_id')
+                if categories:
+                    maintenance_category_id = categories[0]
+            record.maintenance_category_id = maintenance_category_id
 
     def create_requests(self):
         self.ensure_one()

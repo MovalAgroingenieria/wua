@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-12 13:05+0000\n"
-"PO-Revision-Date: 2025-08-12 13:05+0000\n"
+"POT-Creation-Date: 2025-08-13 09:37+0000\n"
+"PO-Revision-Date: 2025-08-13 09:37+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -413,6 +413,11 @@ msgid "Default stage for viewer creation"
 msgstr "Default stage for viewer creation"
 
 #. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_team_default_team
+msgid "Default team"
+msgstr "Equip predeterminat"
+
+#. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_team_default_team_for_viewer_creation
 msgid "Default team for viewer creation"
 msgstr "Equip predeterminat per a la creació de visor"
@@ -651,6 +656,12 @@ msgstr "Error en resoldre la plantilla: {}"
 #, python-format
 msgid "Error updating field %s: %s"
 msgstr "Error updating field %s: %s"
+
+#. module: wua_maintenance
+#: code:addons/wua_maintenance/wizard/wizard_massive_maintenance_requests.py:20
+#, python-format
+msgid "Error: You have selected equipment from different categories. Please select equipment from the same category."
+msgstr "Error: Heu seleccionat equipament de diferents categories. Seleccioneu equipament de la mateixa categoria."
 
 #. module: wua_maintenance
 #: model:ir.model.fields,help:wua_maintenance.field_maintenance_kind_dynamic_field_field_path
@@ -1087,7 +1098,7 @@ msgid "Maintenance Request Report"
 msgstr "Informe de sol·licitud de manteniment"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/wizard/wizard_massive_maintenance_requests.py:115
+#: code:addons/wua_maintenance/wizard/wizard_massive_maintenance_requests.py:165
 #: model:ir.model,name:wua_maintenance.model_maintenance_request
 #, python-format
 msgid "Maintenance Requests"
@@ -1116,6 +1127,7 @@ msgstr "Equips de manteniment"
 #. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_kind_category_id
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_team_category_id
+#: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_maintenance_category_id
 msgid "Maintenance category"
 msgstr "Categoria de manteniment"
 
@@ -1233,7 +1245,13 @@ msgid "Only one stage can be the default stage for viewer creation"
 msgstr "Only one stage can be the default stage for viewer creation"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/models/maintenance_team.py:43
+#: code:addons/wua_maintenance/models/maintenance_team.py:60
+#, python-format
+msgid "Only one team can be the default team "
+msgstr "Només un equip pot ser l'equip per defecte"
+
+#. module: wua_maintenance
+#: code:addons/wua_maintenance/models/maintenance_team.py:48
 #, python-format
 msgid "Only one team can be the default team for viewer creation"
 msgstr "Només un equip pot ser l'equip predeterminat per a la creació de visor."

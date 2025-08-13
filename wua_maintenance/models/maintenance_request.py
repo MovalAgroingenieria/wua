@@ -10,6 +10,14 @@ from odoo import models, fields, api
 class MaintenanceRequest(models.Model):
     _inherit = 'maintenance.request'
 
+    def _get_default_team_id(self):
+        return self.env['maintenance.team'].search(
+            [('default_team', '=', True)], limit=1)
+
+    maintenance_team_id = fields.Many2one(
+        default=lambda self: self._get_default_team_id(),
+    )
+
     hydraulicsector_id = fields.Many2one(
         string='Hydraulic Sector',
         comodel_name='wua.hydraulicsector',
@@ -196,6 +204,19 @@ class MaintenanceRequest(models.Model):
                     'equipment_id': [],
                 },
             }
+
+    @api.onchange('equipment_id')
+    def onchange_equipment_id(self):
+        result = super(MaintenanceRequest, self).onchange_equipment_id() or {}
+        if self.equipment_id and self.equipment_id.category_id:
+            result['domain'] = {
+                'maintenance_kind_id': [
+                    ('category_id', '=', self.equipment_id.category_id.id),
+                ],
+            }
+        else:
+            result['domain'] = {'maintenance_kind_id': []}
+        return result
 
     @api.multi
     def _compute_with_infrastructure_gis(self):

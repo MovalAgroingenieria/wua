@@ -33,6 +33,11 @@ class MaintenanceTeam(models.Model):
         default=False,
     )
 
+    default_team = fields.Boolean(
+        string='Default team',
+        default=False,
+    )
+
     @api.constrains('default_team_for_viewer_creation')
     def _check_default_team_for_viewer_creation(self):
         for record in self:
@@ -43,4 +48,15 @@ class MaintenanceTeam(models.Model):
                     raise exceptions.ValidationError(_(
                         'Only one team can be the default team '
                         'for viewer creation',
+                    ))
+
+    @api.constrains('default_team')
+    def _check_default_team(self):
+        for record in self:
+            if record.default_team:
+                if self.search_count([
+                    ('default_team', '=', True),
+                ]) > 1:
+                    raise exceptions.ValidationError(_(
+                        'Only one team can be the default team ',
                     ))
