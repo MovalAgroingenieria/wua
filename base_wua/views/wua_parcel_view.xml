@@ -971,6 +971,22 @@
         <field name="value" eval="'ir.actions.server,' + str(ref('wua_see_gis_viewer_multiple'))"/>
     </record>
 
+    <record id="wua_action_delete_gis_geometry" model="ir.actions.server">
+        <field name="name">Delete GIS Geometry</field>
+        <field name="model_id" ref="base_wua.model_wua_parcel"/>
+        <field name="code">
+            action =  env['wua.parcel'].browse(context['active_ids']).action_delete_gis_geometry()
+        </field>
+    </record>
+
+    <record id="wua_action_action_delete_gis_geometry" model="ir.values">
+        <field name="name">Get GIS Data from Cadastre</field>
+        <field name="model">wua.parcel</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_action_delete_gis_geometry'))"/>
+    </record>
+
     <menuitem id="base_wua_technical_menu"
               name="Technical"
               parent="base_wua_census_menu"

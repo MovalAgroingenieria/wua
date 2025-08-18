@@ -2341,6 +2341,85 @@ class WuaParcel(models.Model):
             gis_parcels_ok = False
         return gis_parcels_ok
 
+    @api.multi
+    def action_delete_gis_geometry(self):
+        errors = []
+        deleted = []
+        skipped = []
+        # Delete geometry from database
+        sql = """DELETE FROM wua_gis_parcel WHERE name = %s"""
+        for record in self:
+            if record.with_gis_parcel:
+                try:
+                    self.env.cr.execute(sql, (record.name,))
+                    self.env.cr.commit()
+                    self.env.invalidate_all()
+                    deleted.append(record.name)
+                except Exception as e:
+                    errors.append(
+                        _("<b>%s</b>: Unexpected error occurred in: %s") %
+                        (record.name, str(e)))
+                    self.env.cr.rollback()
+            else:
+                skipped.append(record.name)
+        # Build HTML message
+        message_parts = []
+        if deleted:
+            deleted_list = ''.join([
+                '<li style="color:green;font-weight:bold;">%s</li>' % name
+                for name in deleted
+            ])
+            message_parts.append(
+                '<h4 style="margin-top:15px;">%s</h4><ul>%s</ul>' % (
+                    _('Geometries successfully deleted'), deleted_list),
+            )
+        if errors:
+            error_list = ''.join([
+                '<li style="color:red;font-weight:bold;">%s</li>' % msg
+                for msg in errors
+            ])
+            message_parts.append(
+                '<h4 style="margin-top:15px;">%s</h4><ul>%s</ul>' % (
+                    _('Parcels with errors'), error_list),
+            )
+        if skipped:
+            skipped_list = ''.join([
+                '<li style="color:orange;">%s</li>' % name
+                for name in skipped
+            ])
+            message_parts.append(
+                '<h4 style="margin-top:15px;">%s</h4><ul>%s</ul>' % (
+                    _('Parcels skipped (no geometry)'),
+                    skipped_list),
+            )
+        message = (
+            '<div style="font-family:sans-serif">'
+            '<p style="font-size:16px;margin-bottom:10px;">'
+            '<b style="font-size:18px;color:#2c3e50;">%s</b>'
+            '</p>%s</div>'
+        ) % (
+            _('Delete Parcel Geometry Summary'),
+            ''.join(message_parts),
+        )
+        return {
+            'type': 'ir.actions.act_window.message',
+            'title': _('Delete Parcel Geometry Result'),
+            'message': message,
+            'is_html_message': True,
+            'close_button_title': False,
+            'buttons': [
+                {
+                    'type': 'ir.actions.act_window_close',
+                    'name': _('Close'),
+                },
+                {
+                    'type': 'ir.actions.client',
+                    'tag': 'reload',
+                    'name': _('Refresh Page'),
+                },
+            ],
+        }
+
     def do_process_slave_data_for_write(self, vals):
         self.populate_subparcelcode_pos(self.name, vals)
         area_official = -1
