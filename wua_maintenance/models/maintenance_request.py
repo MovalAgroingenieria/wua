@@ -5,6 +5,7 @@
 from jinja2 import Template, TemplateError
 from datetime import datetime
 from odoo import models, fields, api
+from bs4 import BeautifulSoup
 
 
 class MaintenanceRequest(models.Model):
@@ -43,6 +44,13 @@ class MaintenanceRequest(models.Model):
         string='Field resolved',
         default=False,
         readonly=False,
+    )
+
+    dynamic_fields_data = fields.Html(
+        string='Dynamic Fields Data',
+        default='',
+        track_visibility='onchange',
+        sanitize=False,
     )
 
     resolution_time = fields.Datetime(
@@ -342,45 +350,151 @@ class MaintenanceRequest(models.Model):
                 return None, None, None
         return target, field_names[-1], parent_target
 
+    def _get_field_html_markup(self, field_name, value):
+        return '<b>%s: </b><span name-value="%s">%s</span>' % (
+            field_name, field_name, value)
+
+    def _update_html_field(self, record, html_fields, is_request_field=True):
+        if not html_fields:
+            return False, []
+        html_content = record.dynamic_fields_data or ''
+        if html_content:
+            soup = BeautifulSoup(html_content, 'html.parser')
+            for field_html in html_fields:
+                field_name = field_html.split('name-value="')[1].split('"')[0]
+                existing_span = soup.find(
+                    'span', attrs={'name-value': field_name})
+                if existing_span:
+                    prev_el = existing_span.previous_sibling
+                    if prev_el and prev_el.name == 'b':
+                        prev_el.decompose()
+                    existing_span.decompose()
+            if str(soup):
+                html_content = str(soup) + '<br/>' + '<br/>'.join(html_fields)
+            else:
+                html_content = '<div>' + '<br/>'.join(html_fields) + '</div>'
+        else:
+            html_content = '<div>' + '<br/>'.join(html_fields) + '</div>'
+        record.sudo().write({'dynamic_fields_data': html_content})
+        return True, ['dynamic_fields_data']
+
+    def _clean_fields_with_path_from_html(self, record, fields_with_paths):
+        if not fields_with_paths:
+            return False
+        html_content = record.dynamic_fields_data or ''
+        if not html_content:
+            return False
+        soup = BeautifulSoup(html_content, 'html.parser')
+        changes_made = False
+        for field_name in fields_with_paths:
+            field_span = soup.find('span', attrs={'name-value': field_name})
+            if field_span:
+                changes_made = True
+                prev_el = field_span.previous_sibling
+                if prev_el and prev_el.name == 'b':
+                    prev_el.decompose()
+                field_span.decompose()
+        if changes_made:
+            record.sudo().write({'dynamic_fields_data': str(soup)})
+        return changes_made
+
+    def _get_dynamic_field_config(self, maintenance):
+        configs = {}
+        fields_with_paths = set()
+        path_to_name = {}
+        if (maintenance.maintenance_kind_id and
+                maintenance.maintenance_kind_id.dynamic_field_ids):
+            for field in maintenance.maintenance_kind_id.dynamic_field_ids:
+                configs[field.name] = {
+                    'field_path': field.field_path,
+                    'is_request_field': field.is_request_field,
+                }
+                if field.field_path:
+                    fields_with_paths.add(field.name)
+                    path_to_name[field.field_path] = field.name
+        return configs, fields_with_paths, path_to_name
+
     @api.model
     def update_dynamic_fields(self, maintenance_id, dynamic_fields):
         response = {'success': False, 'errors': [], 'updated_fields': []}
         maintenance = self.browse(maintenance_id)
         if not maintenance or not maintenance.equipment_id:
             response['errors'].append('Maintenance request not found')
-        else:
-            equipment = maintenance.equipment_id
-            target_record = equipment
-            if (equipment.category_id.model_id):
-                model_name = equipment.category_id.model_id.model
-                target_record = self.env[model_name].search(
-                    [('equipment_id', '=', equipment.id)], limit=1)
-            updates_by_target = {}
-            updated_dynamic_fields = []
-            for field_path, value in dynamic_fields.items():
+            return response
+        equipment = maintenance.equipment_id
+        target_record = equipment
+        if equipment.category_id.model_id:
+            model_name = equipment.category_id.model_id.model
+            target_record = self.env[model_name].search(
+                [('equipment_id', '=', equipment.id)], limit=1)
+        configs = self._get_dynamic_field_config(maintenance)
+        field_configs = configs[0]
+        fields_with_paths = configs[1]
+        path_to_name = configs[2]
+        updates_by_target = {}
+        updated_dynamic_fields = []
+        request_fields_html = []
+        equipment_fields_html = []
+        for field_key, value in dynamic_fields.items():
+            field_config = field_configs.get(field_key, {})
+            if not field_config and field_key in path_to_name:
+                field_name = path_to_name[field_key]
+                field_config = field_configs.get(field_name, {})
+                field_key = field_name
+            field_path = field_config.get('field_path', '')
+            is_request_field = field_config.get('is_request_field', True)
+            # Check if looks like a valid field path (has dots, no spaces)
+            if not field_config and '.' in field_key and ' ' not in field_key:
+                # Additional validation to confirm it's likely a field path
+                parts = field_key.split('.')
+                if all(part and part[0].isalpha() for part in parts):
+                    field_path = field_key
+            if field_path:
                 target, last_field, parent_target = self._resolve_field_path(
                     target_record, field_path)
                 if target is None:
                     response['errors'].append(
                         'Invalid field path: %s' % field_path)
                     continue
-                record_to_update = parent_target if parent_target else \
-                    target_record
+                if parent_target:
+                    record_to_update = parent_target
+                else:
+                    record_to_update = target_record
                 if record_to_update not in updates_by_target:
                     updates_by_target[record_to_update] = {}
                 updates_by_target[record_to_update][last_field] = value
                 updated_dynamic_fields.append('%s: %s' % (field_path, value))
-            for record, updates in updates_by_target.items():
-                try:
-                    record.sudo().write(updates)
-                    response['updated_fields'].extend(updates.keys())
-                except Exception as e:
-                    response['errors'].append(
-                        'Error writing to %s: %s' % (record, e))
-            if updated_dynamic_fields:
-                maintenance.resolution_dynamic_fields = ';\n '.join(
-                    updated_dynamic_fields)
-            response['success'] = not response['errors']
+            elif field_key not in fields_with_paths:
+                html_field = self._get_field_html_markup(field_key, value)
+                if is_request_field:
+                    request_fields_html.append(html_field)
+                else:
+                    equipment_fields_html.append(html_field)
+                updated_dynamic_fields.append('%s: %s' % (field_key, value))
+        if request_fields_html:
+            updated, fields = self._update_html_field(
+                maintenance, request_fields_html, True)
+            if updated:
+                response['updated_fields'].extend(fields)
+        if equipment_fields_html:
+            updated, fields = self._update_html_field(
+                equipment, equipment_fields_html, False)
+            if updated:
+                response['updated_fields'].append(
+                    'equipment_dynamic_fields_data')
+        self._clean_fields_with_path_from_html(maintenance, fields_with_paths)
+        self._clean_fields_with_path_from_html(equipment, fields_with_paths)
+        for record, updates in updates_by_target.items():
+            try:
+                record.sudo().write(updates)
+                response['updated_fields'].extend(updates.keys())
+            except Exception as e:
+                response['errors'].append(
+                    'Error writing to %s: %s' % (record, e))
+        if updated_dynamic_fields:
+            maintenance.resolution_dynamic_fields = ';\n '.join(
+                updated_dynamic_fields)
+        response['success'] = not response['errors']
         return response
 
 

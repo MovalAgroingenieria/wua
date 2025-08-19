@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html)
 
 import logging
-from odoo import models, fields, api, _
+from odoo import models, fields, api
 
 _logger = logging.getLogger(__name__)
 
@@ -57,28 +57,10 @@ class MaintenanceKind(models.Model):
         default=False,
     )
 
-    @api.model
-    def update_dynamic_fields(self, record, values):
-        for field in self.dynamic_field_ids:
-            path = field.field_path
-            value = values.get(path)
-            if value is not None:
-                try:
-                    field_names = path.split('.')
-                    target = record
-                    for field_name in field_names[:-1]:
-                        target = getattr(target, field_name, None)
-                        if not target:
-                            _logger.warning(_('Invalid field path: %s'), path)
-                            break
-                    if target:
-                        target.write({field_names[-1]: value})
-                        _logger.info(
-                            _('Updated field %s with value %s'), path, value)
-                except Exception as e:
-                    _logger.error(_('Error updating field %s: %s'), path, e)
-
     def _resolve_field_path_preview(self, model_obj, field_path):
+        # If field_path is empty, it's a custom dynamic field stored in HTML
+        if not field_path:
+            return True
         field_names = field_path.split('.')
         target_model = model_obj
         for field_name in field_names:
@@ -105,8 +87,12 @@ class MaintenanceKind(models.Model):
         model = self.env[self.category_id.model_id.model]
         for field in self.dynamic_field_ids:
             try:
-                self._resolve_field_path_preview(model, field.field_path)
-                field.write({'validation_status': 'valid'})
+                # If the field has no path, custom field so it's ok
+                if not field.field_path:
+                    field.write({'validation_status': 'valid'})
+                else:
+                    self._resolve_field_path_preview(model, field.field_path)
+                    field.write({'validation_status': 'valid'})
             except Exception:
                 field.write({'validation_status': 'invalid'})
         return True
@@ -139,9 +125,9 @@ class MaintenanceKindDynamicField(models.Model):
 
     field_path = fields.Char(
         string='Field Path',
-        required=True,
+        required=False,
         default='',
-        help='Example: \'partner_id.name\'',
+        help='Example: \'partner_id.name\'. Leave empty for custom fields.',
     )
 
     maintenance_kind_id = fields.Many2one(
@@ -160,6 +146,13 @@ class MaintenanceKindDynamicField(models.Model):
     required = fields.Boolean(
         string='Required',
         default=False,
+    )
+
+    is_request_field = fields.Boolean(
+        string='Is Request Field',
+        default=False,
+        help='If checked, this field belongs to the request. '
+             'If not checked, it belongs to the equipment.',
     )
 
     validation_status = fields.Selection([

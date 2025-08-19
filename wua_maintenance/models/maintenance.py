@@ -409,6 +409,13 @@ class MaintenanceEquipment(models.Model):
         compute='_compute_building_id',
     )
 
+    dynamic_fields_data = fields.Html(
+        string='Dynamic Fields Data',
+        default='',
+        track_visibility='onchange',
+        sanitize=False,
+    )
+
     @api.model_cr
     def init(self):
         try:
@@ -689,7 +696,8 @@ class MaintenanceEquipment(models.Model):
                 'intermediate_field': False,
                 'intermediate_gis_field': False,
             },
-            env.ref('wua_maintenance.equipment_category_irrigationstretch').id: {
+            env.ref(
+                'wua_maintenance.equipment_category_irrigationstretch').id: {
                 'base_table': 'wua_irrigationstretch',
                 'base_field': 'name',
                 'gis_table': 'wua_gis_irrigationstretch',

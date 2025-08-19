@@ -5,6 +5,7 @@
 from odoo import http, _
 from odoo.http import request
 import json
+from bs4 import BeautifulSoup
 
 
 class MaintenanceGisController(http.Controller):
@@ -163,12 +164,26 @@ class MaintenanceGisController(http.Controller):
         attachments = message.attachment_ids
         return attachments
 
-    def _get_field_value(self, equipment, field_path):
+    def _get_field_value(
+            self, record, field_path, field_name=None, is_request_field=True):
+        # If field_path is empty, it's a custom dynamic field stored in HTML
+        if not field_path and field_name:
+            value = ''
+            # Determine which HTML field to use based on is_request_field
+            html_field = 'dynamic_fields_data'
+            if hasattr(record, html_field) and record[html_field]:
+                soup = BeautifulSoup(record[html_field], 'html.parser')
+                span_tag = soup.find('span', attrs={'name-value': field_name})
+                if span_tag:
+                    value = span_tag.get_text(strip=True)
+                return value
+            return None
+        # Handle regular field path
         field_names = field_path.split('.')
-        target = equipment
-        if (equipment.category_id and equipment.category_id.model_id):
-            target = request.env[equipment.category_id.model_id.model].search(
-                [('equipment_id', '=', equipment.id)], limit=1)
+        target = record
+        if (record.category_id and record.category_id.model_id):
+            target = request.env[record.category_id.model_id.model].search(
+                [('equipment_id', '=', record.id)], limit=1)
         for field_name in field_names:
             if not target:
                 return None
@@ -197,14 +212,29 @@ class MaintenanceGisController(http.Controller):
         ])
         dynamic_fields = []
         if maintenance.maintenance_kind_id:
+            fields_with_paths = set()
             for field in maintenance.maintenance_kind_id.dynamic_field_ids:
+                if field.field_path:
+                    fields_with_paths.add(field.name)
+            for field in maintenance.maintenance_kind_id.dynamic_field_ids:
+                if not field.field_path and field.name in fields_with_paths:
+                    continue
+                if field.field_path:
+                    value = self._get_field_value(
+                        maintenance.equipment_id, field.field_path)
+                else:
+                    target_record = maintenance if field.is_request_field \
+                        else maintenance.equipment_id
+                    value = self._get_field_value(
+                        target_record, None, field.name,
+                        field.is_request_field)
                 field_data = {
                     'name': field.name,
                     'field_type': field.field_type,
                     'required': field.required,
                     'field_path': field.field_path,
-                    'value': self._get_field_value(
-                        maintenance.equipment_id, field.field_path),
+                    'is_request_field': field.is_request_field,
+                    'value': value,
                 }
                 if field.field_type == 'fixed':
                     field_data['fixed_options'] = [
