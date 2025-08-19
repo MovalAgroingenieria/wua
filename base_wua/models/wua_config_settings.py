@@ -214,8 +214,13 @@ class WuaConfiguration(models.TransientModel):
         help='If checked the partner notes of the partner will be advised',
     )
 
-    show_get_cadastre_gis_button = fields.Boolean(
-        string='Show Get Cadastre GIS Button',
+    show_get_cadastre_gis_action = fields.Boolean(
+        string='Show Action Get Cadastre GIS',
+        default=False,
+    )
+
+    show_delete_gis_geometry_action = fields.Boolean(
+        string='Show Action Delete GIS Geometry',
         default=False,
     )
 
@@ -314,8 +319,11 @@ class WuaConfiguration(models.TransientModel):
                            self.intersection_perimeter_table)
         values.set_default('wua.configuration', 'show_partner_notes',
                            self.show_partner_notes)
-        values.set_default('wua.configuration', 'show_get_cadastre_gis_button',
-                           self.show_get_cadastre_gis_button)
+        values.set_default('wua.configuration', 'show_get_cadastre_gis_action',
+                           self.show_get_cadastre_gis_action)
+        values.set_default('wua.configuration',
+                           'show_delete_gis_geometry_action',
+                           self.show_delete_gis_geometry_action)
         # If is gonna be calculated, then check postgis and table selected
         # exists
         if (self.is_area_intersected_calculated and

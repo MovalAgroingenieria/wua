@@ -1199,8 +1199,10 @@ class WuaParcel(models.Model):
             view_id=view_id, view_type=view_type, toolbar=toolbar,
             submenu=submenu)
         config_model = self.env['ir.values']
-        show_get_cadastre_gis_button = config_model.get_default(
-            'wua.configuration', 'show_get_cadastre_gis_button')
+        show_get_cadastre_gis_action = config_model.get_default(
+            'wua.configuration', 'show_get_cadastre_gis_action')
+        show_delete_gis_geometry_action = config_model.get_default(
+            'wua.configuration', 'show_delete_gis_geometry_action')
         if view_type in ['form', 'tree']:
             doc = etree.XML(res['arch'])
             area_measurement_type = config_model.get_default(
@@ -1217,12 +1219,6 @@ class WuaParcel(models.Model):
                         node.set('invisible', '1')
                         node.set('modifiers', '{"tree_invisible": true}')
             if view_type == 'form':
-                if not show_get_cadastre_gis_button:
-                    for node in doc.xpath(
-                            "//button[@name="
-                            "'action_get_gis_data_from_cadastre']"):
-                        # Remove invisible attribute
-                        node.set('invisible', '1')
                 if area_measurement_type == 1:
                     measurement_label = area_measurement_name.lower()
                 else:
@@ -1264,11 +1260,16 @@ class WuaParcel(models.Model):
                             original_label = original_label[:posBracket]
                         node.set('string', "%s (%s)" % (
                             original_label, area_measurement_name.lower()))
+            actions_to_remove = []
             # Remove the generate cadastre action if not enabled
-            if not show_get_cadastre_gis_button:
-                actions_to_remove = [
-                    'base_wua.wua_get_gis_data_from_cadastre',
-                ]
+            if not show_get_cadastre_gis_action:
+                actions_to_remove.append(
+                    'base_wua.wua_get_gis_data_from_cadastre')
+            # Remove the Delete GIS Geometry action if not enabled
+            if not show_delete_gis_geometry_action:
+                actions_to_remove.append(
+                    'base_wua.wua_delete_gis_geometry')
+            if len(actions_to_remove) > 0:
                 actions_menu = res.get('toolbar', {}).get('action', [])
                 actions_to_show = []
                 for action_menu in actions_menu:
