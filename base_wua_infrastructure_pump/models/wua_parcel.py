@@ -56,8 +56,8 @@ class WuaParcel(models.Model):
                 wua_gis_pumpgroup_idx ON public.wua_gis_pumpgroup
                     USING gist (geom);
             """)
-            self.grant_gis_privileges('wua_gis_pumpgroup')
             self.env.cr.commit()
+        self.grant_gis_privileges('wua_gis_pumpgroup')
 
     def create_pumpgroup_triggers(self):
         gis_pumpgroup_table_created = \

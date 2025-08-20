@@ -20,7 +20,6 @@ class WuaParcel(models.Model):
     def create_mdm_gis_measurement_device_table(self):
         gis_table_created = self.check_gis_measurement_device_table_created()
         postgis_ready = self.check_extension_and_schema_postgis_created()
-
         if not gis_table_created and postgis_ready:
             self.env.cr.execute("""
                 CREATE SEQUENCE IF NOT EXISTS
@@ -49,8 +48,8 @@ class WuaParcel(models.Model):
                     public.mdm_gis_measurement_device
                     USING gist (geom);
             """)
-            self.grant_gis_privileges('mdm_gis_measurement_device')
             self.env.cr.commit()
+        self.grant_gis_privileges('mdm_gis_measurement_device')
 
     def create_measurement_device_triggers(self):
         gis_table_created = self.check_gis_measurement_device_table_created()

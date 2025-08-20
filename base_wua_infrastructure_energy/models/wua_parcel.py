@@ -51,8 +51,8 @@ class WuaParcel(models.Model):
                     wua_gis_powerline_idx ON public.wua_gis_powerline
                     USING gist (geom);
             """)
-            self.grant_gis_privileges('wua_gis_powerline')
             self.env.cr.commit()
+        self.grant_gis_privileges('wua_gis_powerline')
 
     def create_powerline_triggers(self):
         gis_table_created = self.check_gis_powerline_table_created()
@@ -213,8 +213,8 @@ class WuaParcel(models.Model):
                     public.wua_gis_powerlinesupport
                     USING gist (geom);
             """)
-            self.grant_gis_privileges('wua_gis_powerlinesupport')
             self.env.cr.commit()
+        self.grant_gis_privileges('wua_gis_powerlinesupport')
 
     def create_powerlinesupport_triggers(self):
         gis_table_created = self.check_gis_powerlinesupport_table_created()
@@ -372,8 +372,8 @@ class WuaParcel(models.Model):
                     public.wua_gis_processingcentre
                     USING gist (geom);
             """)
-            self.grant_gis_privileges('wua_gis_processingcentre')
             self.env.cr.commit()
+        self.grant_gis_privileges('wua_gis_processingcentre')
 
     def create_processingcentre_triggers(self):
         gis_table_created = self.check_gis_processingcentre_table_created()

@@ -12,8 +12,13 @@ class MaintenanceRequest(models.Model):
     _inherit = 'maintenance.request'
 
     def _get_default_team_id(self):
-        return self.env['maintenance.team'].search(
+        default_team = self.env['maintenance.team'].search(
             [('default_team', '=', True)], limit=1)
+        # Always at least one team
+        if not default_team:
+            default_team = self.env['maintenance.team'].search(
+                [()], limit=1)
+        return default_team
 
     maintenance_team_id = fields.Many2one(
         default=lambda self: self._get_default_team_id(),

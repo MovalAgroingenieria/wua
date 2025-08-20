@@ -2097,6 +2097,7 @@ class WuaParcel(models.Model):
         return resp
 
     def grant_gis_privileges(self, gis_table_name):
+        _logger = logging.getLogger(__name__)
         try:
             db_name = self.env.cr.dbname
             reader_user = 'reader_{}'.format(db_name)
@@ -2141,11 +2142,9 @@ class WuaParcel(models.Model):
                         sequence_sql = 'GRANT USAGE ON {} TO {}'.format(
                             sequence_name, user)
                         self.env.cr.execute(sequence_sql)
-            return True
+            self.env.cr.commit()
         except Exception as e:
-            import logging
-            _logger = logging.getLogger(__name__)
-            _logger.warning(
+            _logger.error(
                 'Failed to grant privileges on table %s: %s',
                 gis_table_name, str(e),
             )
@@ -2184,8 +2183,8 @@ class WuaParcel(models.Model):
                 CREATE INDEX IF NOT EXISTS
                 wua_gis_parcel_idx ON public.wua_gis_parcel USING gist (geom);
             """)
-            self.grant_gis_privileges('wua_gis_parcel')
             self.env.cr.commit()
+        self.grant_gis_privileges('wua_gis_parcel')
 
     def create_parcel_triggers(self):
         gis_parcel_table_created = self.check_gis_parcel_created()
