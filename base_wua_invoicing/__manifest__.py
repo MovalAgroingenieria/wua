@@ -13,6 +13,7 @@
     'installable': True,
     'post_init_hook': 'post_init_hook',
     'depends': [
+        'base_wua',
         'base_ter_invoicing',
     ],
 }
