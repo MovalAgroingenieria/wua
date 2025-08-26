@@ -167,19 +167,30 @@ class WuaInvoiceset(models.Model):
             report_initial_time = utcTz.localize(report_initial_time).\
                 astimezone(userTz)
             if (data_in_hours):
-                report_initial_time = report_initial_time.strftime('%x') + \
-                    ' ' + report_initial_time.strftime('%H:%M')
+                localized_initial_date = \
+                    self.env['wua.parcel'].transform_date_to_locale(
+                        report_initial_time.strftime('%Y-%m-%d'))
+                localized_initial_time = report_initial_time.strftime('%H:%M')
+                report_initial_time = \
+                    localized_initial_date + ' ' + localized_initial_time
             else:
-                report_initial_time = report_initial_time.strftime('%x')
+                report_initial_time = \
+                    self.env['wua.parcel'].transform_date_to_locale(
+                        report_initial_time.strftime('%Y-%m-%d'))
             report_end_time = datetime.datetime.strptime(
                 irrigationreport.report_end_time, '%Y-%m-%d %H:%M:%S')
             report_end_time = utcTz.localize(report_end_time).\
                 astimezone(userTz)
             if (data_in_hours):
-                report_end_time = report_end_time.strftime('%x') + ' ' + \
-                    report_end_time.strftime('%H:%M')
+                localized_end_date = \
+                    self.env['wua.parcel'].transform_date_to_locale(
+                        report_end_time.strftime('%Y-%m-%d'))
+                localized_end_time = report_end_time.strftime('%H:%M')
+                report_end_time = localized_end_date + ' ' + localized_end_time
             else:
-                report_end_time = report_end_time.strftime('%x')
+                report_end_time = \
+                    self.env['wua.parcel'].transform_date_to_locale(
+                        report_end_time.strftime('%Y-%m-%d'))
             date_str = '. '
             reading_details = ''
             time_duration = ''
