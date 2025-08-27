@@ -162,14 +162,14 @@ class WuaInvoiceset(models.Model):
     def get_hydricmovement_description(self, hydricmovement):
         description = ""
         if hydricmovement:
-            event_time = datetime.datetime.strptime(
-                hydricmovement.event_time, '%Y-%m-%d %H:%M:%S')
-            event_time = event_time.strftime('%x')
+            event_time = self.env['wua.parcel'].transform_datetime_to_locale(
+                hydricmovement.event_time)
+            event_date = event_time[:10]
             language = hydricmovement.partner_id.lang
             hydricmovement_description = hydricmovement.description
             superproduct = hydricmovement.with_context(
                 {'lang': language}).superproduct_id.name
-            description = event_time + ', ' + superproduct + ', ' + \
+            description = event_date + ', ' + superproduct + ', ' + \
                 hydricmovement_description
         return description
 

@@ -49,9 +49,10 @@ class WuaWaterconnection(models.Model):
                     if last_volume_real != 0:
                         last_volume_real_str = '{:.2f}'.\
                             format(last_volume_real)
-                    last_invoiced_presconsumption = datetime.datetime.strptime(
-                        date_str, '%Y-%m-%d').strftime('%x') + ' ' + \
-                        hour_str + ', ' + last_volume_real_str + ' m³'
+                    date_str_localized = self.env['wua.parcel'].\
+                        transform_date_to_locale(date_str)
+                    last_invoiced_presconsumption = date_str_localized + \
+                        ' ' + hour_str + ', ' + last_volume_real_str + ' m³'
                 else:
                     last_volume_real = \
                         query_results[0].get('volume_real')
@@ -67,8 +68,9 @@ class WuaWaterconnection(models.Model):
                     if last_volume_real != 0:
                         last_volume_real_str = '{:.2f}'.format(
                             last_volume_real)
-                    last_invoiced_presconsumption = datetime.datetime.strptime(
-                        date_str, '%Y-%m-%d').strftime('%x') + ' ' + \
-                        hour_str + ', ' + last_volume_real_str + ' m³'
+                    date_str_localized = self.env['wua.parcel'].\
+                        transform_date_to_locale(date_str)
+                    last_invoiced_presconsumption = date_str_localized + \
+                        ' ' + hour_str + ', ' + last_volume_real_str + ' m³'
             record.last_invoiced_presconsumption = \
                 last_invoiced_presconsumption
