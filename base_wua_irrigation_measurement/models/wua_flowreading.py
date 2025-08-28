@@ -145,9 +145,9 @@ class WuaFlowreading(models.Model):
             reading_time_str = str(reading_time)
             date_str = reading_time_str[:10]
             hour_str = reading_time_str[-8:]
-            name = flowmeter_name + ' - ' + \
-                datetime.datetime.strptime(
-                    date_str, '%Y-%m-%d').strftime('%x') + ' ' + hour_str
+            date_str_localized = self.env['wua.parcel'].\
+                transform_date_to_locale(date_str)
+            name = flowmeter_name + ' - ' + date_str_localized + ' ' + hour_str
             result.append((record.id, name))
         return result
 
