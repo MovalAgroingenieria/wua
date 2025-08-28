@@ -2,7 +2,6 @@
 # 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-import datetime
 import pytz
 from odoo import models, fields, api
 
@@ -116,8 +115,9 @@ class WuaNegativeReading(models.Model):
             reading_time_str = str(reading_time)
             date_str = reading_time_str[:10]
             hour_str = reading_time_str[-8:]
-            name = watermeter_name + ' - ' + \
-                datetime.datetime.strptime(
-                    date_str, '%Y-%m-%d').strftime('%x') + ' ' + hour_str
+            date_str_localized = self.env['wua.parcel'].\
+                transform_date_to_locale(date_str)
+            name = watermeter_name + ' - ' + date_str_localized + \
+                ' ' + hour_str
             result.append((record.id, name))
         return result
