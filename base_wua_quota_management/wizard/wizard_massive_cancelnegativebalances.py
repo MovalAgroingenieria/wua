@@ -81,10 +81,10 @@ class WizardMassiveCancelnegativebalances(models.TransientModel):
     def _get_current_quotaperiod_data(self):
         quotaperiod = self.env['wua.quotaperiod'].browse(
             self.env.context['active_id'])
-        initial_date_str = datetime.datetime.strptime(
-            quotaperiod.initial_date, '%Y-%m-%d').strftime('%x')
-        end_date_str = datetime.datetime.strptime(
-            quotaperiod.end_date, '%Y-%m-%d').strftime('%x')
+        initial_date_str = self.env['wua.parcel'].\
+            transform_date_to_locale(quotaperiod.initial_date)
+        end_date_str = self.env['wua.parcel'].\
+            transform_date_to_locale(quotaperiod.end_date)
         if quotaperiod.description:
             quotaperiod_name = initial_date_str + ' - ' + \
                 end_date_str + ' ' + \

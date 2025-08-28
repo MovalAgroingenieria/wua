@@ -28,12 +28,11 @@ class WizardRecalculateQuoas(models.TransientModel):
                 [('active_agriculturalseason', '=', True)])
         if filtered_agriculturalseasons:
             default_agriculturalseason = filtered_agriculturalseasons[0]
-            initial_date_str = datetime.datetime.strptime(
-                default_agriculturalseason.initial_date, '%Y-%m-%d').strftime(
-                    '%x')
-            end_date_str = datetime.datetime.strptime(
-                default_agriculturalseason.end_date, '%Y-%m-%d').strftime(
-                    '%x')
+            initial_date_str = self.env['wua.parcel'].\
+                transform_date_to_locale(
+                    default_agriculturalseason.initial_date)
+            end_date_str = self.env['wua.parcel'].\
+                transform_date_to_locale(default_agriculturalseason.end_date)
             if default_agriculturalseason.description:
                 default_agriculturalseason_name = initial_date_str + ' - ' + \
                     end_date_str + ' ' + \

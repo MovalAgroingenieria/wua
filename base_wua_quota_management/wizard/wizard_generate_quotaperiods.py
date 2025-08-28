@@ -111,10 +111,10 @@ class WizardGenerateQuotaperiods(models.TransientModel):
     def _get_current_agriculturalseason_data(self):
         agriculturalseason = self.env['wua.agriculturalseason'].browse(
             self.env.context['active_id'])
-        initial_date_str = datetime.datetime.strptime(
-            agriculturalseason.initial_date, '%Y-%m-%d').strftime('%x')
-        end_date_str = datetime.datetime.strptime(
-            agriculturalseason.end_date, '%Y-%m-%d').strftime('%x')
+        initial_date_str = self.env['wua.parcel'].\
+            transform_date_to_locale(agriculturalseason.initial_date)
+        end_date_str = self.env['wua.parcel'].\
+            transform_date_to_locale(agriculturalseason.end_date)
         if agriculturalseason.description:
             agriculturalseason_name = initial_date_str + ' - ' + \
                 end_date_str + ' ' + \
