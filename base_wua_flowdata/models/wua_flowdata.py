@@ -2,7 +2,6 @@
 # 2022 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-import datetime
 import pytz
 from odoo import models, fields, api
 
@@ -53,8 +52,8 @@ class WuaFlowData(models.Model):
             time_str = str(time)
             date_str = time_str[:10]
             hour_str = time_str[-8:]
-            name = flowmeter_name + ' - ' + \
-                datetime.datetime.strptime(
-                    date_str, '%Y-%m-%d').strftime('%x') + ' ' + hour_str
+            date_str_lolized = self.env['wua.parcel'].transform_date_to_locale(
+                date_str)
+            name = flowmeter_name + ' - ' + date_str_lolized + ' ' + hour_str
             result.append((record.id, name))
         return result

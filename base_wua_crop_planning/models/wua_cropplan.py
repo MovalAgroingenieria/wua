@@ -192,12 +192,12 @@ class WuaCropplan(models.Model):
             name = str(record.partner_id.partner_code)
             if (not self.env.context.get(
                'reduced_name_get_for_cropplan', False)):
-                initial_date_str = datetime.datetime.strptime(
-                    record.agriculturalseason_id.initial_date,
-                    '%Y-%m-%d').strftime('%x')
-                end_date_str = datetime.datetime.strptime(
-                    record.agriculturalseason_id.end_date,
-                    '%Y-%m-%d').strftime('%x')
+                initial_date_str = self.env['wua.parcel'].\
+                    transform_date_to_locale(
+                        record.agriculturalseason_id.initial_date)
+                end_date_str = self.env['wua.parcel'].\
+                    transform_date_to_locale(
+                        record.agriculturalseason_id.end_date)
                 name = initial_date_str + ' - ' + end_date_str + ' ' + \
                     '[' + name + ']'
             result.append((record.id, name))
@@ -1006,12 +1006,12 @@ class WuaEnrolledsubparcel(models.Model):
     def name_get(self):
         result = []
         for record in self:
-            initial_date_str = datetime.datetime.strptime(
-                record.agriculturalseason_id.initial_date,
-                '%Y-%m-%d').strftime('%x')
-            end_date_str = datetime.datetime.strptime(
-                record.agriculturalseason_id.end_date,
-                '%Y-%m-%d').strftime('%x')
+            initial_date_str = self.env['wua.parcel'].\
+                transform_date_to_locale(
+                    record.agriculturalseason_id.initial_date)
+            end_date_str = self.env['wua.parcel'].\
+                transform_date_to_locale(
+                    record.agriculturalseason_id.end_date)
             name = initial_date_str + ' - ' + end_date_str + ' ' + \
                 '[' + record.subparcel_code + ']'
             result.append((record.id, name))

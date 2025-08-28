@@ -90,10 +90,10 @@ class WuaAgriculturalseason(models.Model):
     def name_get(self):
         result = []
         for record in self:
-            initial_date_str = datetime.datetime.strptime(
-                record.initial_date, '%Y-%m-%d').strftime('%x')
-            end_date_str = datetime.datetime.strptime(
-                record.end_date, '%Y-%m-%d').strftime('%x')
+            initial_date_str = self.env['wua.parcel'].transform_date_to_locale(
+                record.initial_date)
+            end_date_str = self.env['wua.parcel'].transform_date_to_locale(
+                record.end_date)
             if (record.description != '' and not self.env.context.get(
                'reduced_name_get_for_agriculturalseason', False)):
                 name = initial_date_str + ' - ' + end_date_str + ' ' + \
