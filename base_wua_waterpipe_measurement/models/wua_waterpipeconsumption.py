@@ -2,7 +2,6 @@
 # 2021 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-import datetime
 import pytz
 from odoo import models, fields, api, _
 
@@ -190,9 +189,9 @@ class WuaWaterpipeconsumption(models.Model):
             reading_end_time_str = str(reading_end_time)
             date_str = reading_end_time_str[:10]
             hour_str = reading_end_time_str[-8:]
-            name = waterpipe_name + ' - ' + \
-                datetime.datetime.strptime(
-                    date_str, '%Y-%m-%d').strftime('%x') + ' ' + hour_str
+            date_str_localized = self.env['wua.parcel'].\
+                transform_date_to_locale(date_str)
+            name = waterpipe_name + ' - ' + date_str_localized + ' ' + hour_str
             result.append((record.id, name))
         return result
 
