@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Account config setting SIT GTT options -->
+    <record id="account_config_settings_sit_gtt_view" model="ir.ui.view">
+        <field name="name">sit_gtt.account_config_settings.view.form</field>
+        <field name="model">account.config.settings</field>
+        <field name="inherit_id" ref="account.view_account_config_settings"/>
+        <field name="arch" type="xml">
+            <xpath expr="//separator[@name='analytic_account']" position="before">
+                <group name="sit_gtt" string="Tax management system (SIT GTT)">
+                    <field name="entity_code" widget="selection"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Add banking debit SIT GTT fields to account payment order form -->
+    <record id="account_payment_order_form_suma" model="ir.ui.view">
+        <field name="name">account.payment.order.form.sit_gtt</field>
+        <field name="model">account.payment.order</field>
+        <field name="inherit_id" ref="account_payment_order.account_payment_order_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Lock date_prefered field  -->
+            <xpath expr="//field[@name='date_prefered']" position="attributes">
+                <attribute name="attrs" add="{'readonly':[('payment_mode_name','=', 'SIT GTT')]}"/>
+            </xpath>
+
+            <!-- Set description as required field -->
+            <xpath expr="//field[@name='description']" position="attributes">
+                <attribute name="attrs" add="{'required':[('payment_mode_name','=', 'SIT GTT')]}"/>
+            </xpath>
+
+            <!-- SIT GTT options -->
+            <xpath expr="//group[@name='head']" position="after">
+                <group string="SIT GTT options" name="sit_gtt" col="2" attrs="{'invisible':[('payment_mode_name', '!=', 'SIT GTT')]}">
+                    <group name="sit_gtt-left">
+                        <field name="payment_mode_name" invisible="1"/>
+                        <field name="entity" attrs="{'required':[('payment_mode_name','=', 'SIT GTT')]}"/>
+                        <field name="error_mode" attrs="{'required':[('payment_mode_name','=', 'SIT GTT')]}"/>
+                        <field name="charge_type" widget="selection" attrs="{'required':[('payment_mode_name','=', 'SIT GTT')]}"/>
+                        <field name="charge_year" attrs="{'required':[('payment_mode_name','=', 'SIT GTT')]}" widget="selection"/>
+                    </group>
+                    <group name="sit_gtt-right">
+                        <field name="concept" attrs="{'required':[('payment_mode_name','=', 'SIT GTT')]}" widget="selection"/>
+                        <field name="period" attrs="{'required':[('payment_mode_name','=', 'SIT GTT')]}" widget="selection"/>
+                        <field name="issue_number" attrs="{'required':[('payment_mode_name','=', 'SIT GTT')]}" widget="selection"/>
+                        <field name="approval_decree_date" attrs="{'required':[('payment_mode_name','=', 'SIT GTT')]}"/>
+                        <field name="approval_decree_number" attrs="{'required':[('payment_mode_name','=', 'SIT GTT')]}"/>
+                    </group>
+                </group>
+            </xpath>
+
+            <!-- Add errors tap -->
+            <xpath expr="//page[@name='bank-payment-lines']" position="after">
+                <page name="errors" string="Errors"
+                      attrs="{'invisible':['|',('payment_mode_name', '!=', 'SIT GTT'), ('error_mode', '!=', 'permissive')]}">
+                    <field name="errors_found" nolabel="1"/>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>
