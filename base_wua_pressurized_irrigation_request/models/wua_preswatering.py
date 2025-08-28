@@ -2,7 +2,6 @@
 # 2025 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-import datetime
 from datetime import timedelta
 from odoo import models, fields, api, exceptions, _
 from odoo.tools.safe_eval import safe_eval
@@ -382,9 +381,9 @@ class WuaPreswatering(models.Model):
     def name_get(self):
         result = []
         for record in self:
-            initial_date_str = datetime.datetime.strptime(
-                record.preswateringperiod_id.initial_date, '%Y-%m-%d').\
-                strftime('%x')
+            initial_date_str = self.env['wua.parcel'].\
+                transform_date_to_locale(
+                    record.preswateringperiod_id.initial_date)
             number_str = str(record.number)
             name = initial_date_str + ' - ' + number_str
             result.append((record.id, name))
