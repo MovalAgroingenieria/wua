@@ -279,8 +279,8 @@ class WuaIrrigationsrequest(models.Model):
         for record in self:
             name = ''
             if record.request_date and record.partner_id and record.parcel_id:
-                request_date_str = datetime.datetime.strptime(
-                    record.request_date, '%Y-%m-%d').strftime('%x')
+                request_date_str = self.env['wua.parcel'].\
+                    transform_date_to_locale(record.request_date)
                 partner_name = record.partner_id.name + ' ' + \
                     '[' + str(record.partner_id.partner_code) + ']'
                 name = partner_name + ' - ' + record.parcel_id.name + ' - ' + \
