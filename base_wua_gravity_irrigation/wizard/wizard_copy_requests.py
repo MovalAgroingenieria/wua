@@ -96,10 +96,10 @@ class WizardCopyRequests(models.TransientModel):
                          self.env.context['active_ids'])
 
     def get_name_from_wateringperiod(self, wateringperiod):
-        initial_date_str = datetime.datetime.strptime(
-            wateringperiod.initial_date, '%Y-%m-%d').strftime('%x')
-        end_date_str = datetime.datetime.strptime(
-            wateringperiod.end_date, '%Y-%m-%d').strftime('%x')
+        initial_date_str = self.env['wua.parcel'].transform_date_to_locale(
+            wateringperiod.initial_date)
+        end_date_str = self.env['wua.parcel'].transform_date_to_locale(
+            wateringperiod.end_date)
         if wateringperiod.agriculturalseason_id.description != '':
             name = initial_date_str + ' - ' + end_date_str + ' ' + \
                 '(' + wateringperiod.agriculturalseason_id.description + ')'

@@ -611,9 +611,8 @@ class WuaWatering(models.Model):
     def name_get(self):
         result = []
         for record in self:
-            initial_date_str = datetime.datetime.strptime(
-                record.wateringperiod_id.initial_date, '%Y-%m-%d').\
-                strftime('%x')
+            initial_date_str = self.env['wua.parcel'].transform_date_to_locale(
+                record.wateringperiod_id.initial_date)
             irrigationditch_name = record.irrigationditch_id.name + ' [' + \
                 str(record.irrigationditch_id.irrigationditch_code) + ']'
             number_str = str(record.number)

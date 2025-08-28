@@ -89,12 +89,10 @@ class WuaGravconsumption(models.Model):
     def name_get(self):
         result = []
         for record in self:
-            initial_date_str = datetime.datetime.strptime(
-                record.wateringperiod_id.initial_date, '%Y-%m-%d').\
-                strftime('%x')
-            end_date_str = datetime.datetime.strptime(
-                record.wateringperiod_id.end_date, '%Y-%m-%d').\
-                strftime('%x')
+            initial_date_str = self.env['wua.parcel'].transform_date_to_locale(
+                record.wateringperiod_id.initial_date)
+            end_date_str = self.env['wua.parcel'].transform_date_to_locale(
+                record.wateringperiod_id.end_date)
             subparcel_code = record.subparcel_id.subparcel_code
             name = initial_date_str + ' - ' + end_date_str + ' - ' + \
                 subparcel_code
