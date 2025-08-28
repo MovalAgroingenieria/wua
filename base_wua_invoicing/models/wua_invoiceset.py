@@ -397,6 +397,23 @@ class WuaInvoiceset(models.Model):
         self.ensure_one()
         self.is_being_computed = False
 
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
+                        submenu=False):
+        res = super(WuaInvoiceset, self).fields_view_get(
+            view_id=view_id, view_type=view_type, toolbar=toolbar,
+            submenu=submenu)
+        compute_management = self.env['ir.values'].get_default(
+            'base_wua_invoicing', 'compute_management')
+        if view_type == 'form':
+            doc = etree.XML(res['arch'])
+            if not compute_management:
+                for node in doc.xpath(
+                        "//button[@name='action_set_as_not_being_computed']"):
+                    node.set('invisible', '1')
+                res['arch'] = etree.tostring(doc)
+        return res
+
     # This method receives the invoiceset to calculate, then it loops
     # from their lines to get the linked items. The method gets a list of
     # dictionaries, a dictionary for each product. A dictionary contains:
@@ -1793,22 +1810,6 @@ class WuaInvoicesetLine(models.Model):
                         'limit': limit,
                         }
                     return act_window
-
-    def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
-                        submenu=False):
-        res = super(WuaInvoicesetLine, self).fields_view_get(
-            view_id=view_id, view_type=view_type, toolbar=toolbar,
-            submenu=submenu)
-        compute_management = self.env['ir.values'].get_default(
-            'base_wua_invoicing', 'compute_management')
-        if view_type == 'form':
-            doc = etree.XML(res['arch'])
-            if not compute_management:
-                for node in doc.xpath(
-                        "//button[@name='action_set_as_not_being_computed']"):
-                    node.set('invisible', 1)
-                res['arch'] = etree.tostring(doc)
-        return res
 
     def populate_items_select(self):
         # Add more types
