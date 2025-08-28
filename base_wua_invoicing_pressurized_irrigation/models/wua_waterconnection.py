@@ -2,7 +2,6 @@
 # Copyright 2018 Eduardo Iniesta - <einiesta@moval.es>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-import datetime
 import pytz
 from odoo import models, fields
 
