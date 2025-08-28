@@ -133,8 +133,10 @@ class WuaPhotovoltaicmeasurement(models.Model):
                 measurement_time_str = str(measurement_time)
                 date_str = measurement_time_str[:10]
                 hour_str = measurement_time_str[-8:]
-                measurement_time_formatted = datetime.datetime.strptime(
-                    date_str, '%Y-%m-%d').strftime('%x') + ' ' + hour_str
+                date_str_localized = self.env['wua.parcel'].\
+                    transform_date_to_locale(date_str)
+                measurement_time_formatted = \
+                    date_str_localized + ' ' + hour_str
                 name = record.photovoltaicplant_id.name + ' ' + \
                     '[' + str(record.photovoltaicplant_id.
                               photovoltaicplant_code) + '] - ' + \
