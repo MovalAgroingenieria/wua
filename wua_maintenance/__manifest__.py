@@ -39,6 +39,7 @@
         "data/maintenance_request_notify_rule.xml",
         "wizard/wizard_massive_maintenance_requests.xml",
         "wizard/wizard_image_preview.xml",
+        "wizard/wizard_massive_maintenance_plans.xml",
         "views/maintenance_equipment_view.xml",
         "views/maintenance_views.xml",
         "views/maintenance_plan_view.xml",

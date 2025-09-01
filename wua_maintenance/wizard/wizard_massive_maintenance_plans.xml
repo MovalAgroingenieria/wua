@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wizard_massive_maintenance_plans_view_form" model="ir.ui.view">
+        <field name="name">Wizard Massive Maintenance Plans</field>
+        <field name="model">wizard.massive.maintenance.plans</field>
+        <field name="arch" type="xml">
+            <form>
+                <group colspan="6" col="4">
+                    <field name="maintenance_kind_id"/>
+                    <field name="period"/>
+                    <field name="maintenance_category_id"/>
+                    <field name="first_execution_date"/>
+                    <newline/>
+                    <field name="maintenance_equipment_ids" widget="many2many_tags" invisible="1"/>
+                    <field name="days_to_create_new_maintenance"/>
+                    <field name="maintenance_equipment_ids" widget="many2many_tags" invisible="1"/>
+                    <field name="duration"/>
+                </group>
+                <footer>
+                    <button
+                        name="create_plans"
+                        type="object"
+                        class="oe_highlight"
+                        string="Create Maintenance Plans"/>
+                    <button string="Cancel" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window id="action_create_massive_plans"
+        name="Create Maintenance Plans"
+        res_model="wizard.massive.maintenance.plans"
+        src_model="maintenance.equipment"
+        key2="client_action_multi"
+        view_mode="form"
+        target="new"/>
+</odoo>

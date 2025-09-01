@@ -3,3 +3,4 @@
 
 from . import wizard_massive_maintenance_requests
 from . import wizard_image_preview
+from . import wizard_massive_maintenance_plans
