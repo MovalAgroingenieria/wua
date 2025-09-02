@@ -42,7 +42,8 @@ class WuaQuota(models.Model):
                 if quota:
                     quota = quota[0]
                     available_quota = \
-                        self._get_available_quota_with_extra_consumptions_for_wr(
+                        self.\
+                        _get_available_quota_with_extra_consumptions_for_wr(
                             quota)
                     event_time = datetime.datetime.strptime(
                         wateringperiod.initial_date, '%Y-%m-%d')
@@ -55,6 +56,9 @@ class WuaQuota(models.Model):
                         'volume': volume_of_hydric_consumption,
                         'gravconsumption_id': gravconsumption.id,
                         })
+                    # idk why is needed but is not refreshing unless is
+                    # explicit
+                    quota.refresh_quota(quota)
                     ignore_limits = self._context.get('ignore_limits')
                     if (volume_of_hydric_consumption > available_quota and
                        (not ignore_limits)):

@@ -101,6 +101,9 @@ class WuaReading(models.Model):
                         '\n', '<br/>'))
                     mail_template.send_mail(self.id, force_send=True)
             except Exception as e:
+                _logger = logging.getLogger(self.__class__.__name__)
+                _logger.error("Error getting readings: %s", str(e))
+                # This does not seem as working
                 with self.pool.cursor() as new_cr:
                     new_env = api.Environment(
                         new_cr, self.env.uid, self.env.context)
