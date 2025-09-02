@@ -262,7 +262,8 @@ class WuaIrrigationReport(models.Model):
             'sended': True,
             'notes':  irrigationreport.notes,
             'irrigationreport_img': irrigationreport_img,
-            'credit_overdue': irrigationreport.partner_id.credit_overdue,
+            'credit_overdue': float(
+                irrigationreport.partner_id.credit_overdue),
         }
 
     @api.model
