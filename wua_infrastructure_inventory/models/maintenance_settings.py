@@ -16,6 +16,7 @@ class MaintenanceSettings(models.TransientModel):
 
     @api.multi
     def set_default_values(self):
+        super(MaintenanceSettings, self).set_default_values()
         values = self.env['ir.values'].sudo()
         values.set_default('maintenance.config.settings',
                            'default_gis_inventory_refresh_interval',

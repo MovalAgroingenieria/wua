@@ -115,6 +115,11 @@ class MaintenanceEquipmentCategoryDynamicField(models.Model):
         required=True,
     )
 
+    field_domain = fields.Char(
+        string='Field Domain',
+        default='[]',
+    )
+
     field_path = fields.Char(
         string='Field Path',
         default='',

@@ -7,6 +7,7 @@ from odoo.http import request
 from odoo.addons.wua_maintenance.controllers.maintenance_gis_controller \
     import MaintenanceGisController
 from bs4 import BeautifulSoup
+import ast
 import re
 import unicodedata
 import json
@@ -65,6 +66,12 @@ class InventoryGisController(http.Controller):
             # get the model from the field path
             # and get the field from there
             if field.field_type == 'many2one':
+                domain = []
+                if field.field_domain:
+                    try:
+                        domain = ast.literal_eval(field.field_domain)
+                    except Exception:
+                        domain = []
                 current_model = request.env[model_name]
                 path_parts = field.field_path.split('.')
                 for part in path_parts:
@@ -78,7 +85,7 @@ class InventoryGisController(http.Controller):
                         current_model = None
                         break
                 if current_model is not None:
-                    fixed_options = current_model.search([])
+                    fixed_options = current_model.search(domain)
                     field_data['fixed_options'] = [
                         {'label': rec['name'], 'value': rec['id']} for rec in
                         fixed_options
