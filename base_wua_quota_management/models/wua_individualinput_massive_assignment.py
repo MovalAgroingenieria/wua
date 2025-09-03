@@ -4,7 +4,6 @@
 
 import datetime
 import pytz
-import locale
 from odoo import models, fields, api, exceptions, _
 
 
@@ -355,22 +354,13 @@ class WuaIndividualinputMassiveAssignment(models.Model):
     @api.multi
     def name_get(self):
         result = []
-        default_locale = locale.setlocale(locale.LC_TIME)
-        if (self.env.context and 'lang' in self.env.context):
-            is_english = self.env.context['lang'] == 'en_US'
-        else:
-            is_english = False
         for record in self:
             superproduct_name = record.superproduct_id.name
             reason = record.reason
-            try:
-                if is_english:
-                    locale.setlocale(locale.LC_TIME, 'en_US.utf8')
-                initial_date_str = datetime.datetime.strptime(
-                    record.event_time,
-                    '%Y-%m-%d %H:%M:%S').strftime('%x')
-            finally:
-                locale.setlocale(locale.LC_TIME, default_locale)
+            initial_datetime = \
+                self.env['wua.parcel'].transform_datetime_to_locale(
+                    record.event_time)
+            initial_date_str = initial_datetime[:10]
             name = initial_date_str + ' - ' + superproduct_name + ' - ' + \
                 reason
             result.append((record.id, name))

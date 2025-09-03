@@ -4,7 +4,6 @@
 
 import datetime
 import pytz
-import locale
 from lxml import etree
 from odoo import models, fields, api, exceptions, _
 
@@ -705,22 +704,14 @@ class WuaCession(models.Model):
     @api.multi
     def name_get(self):
         result = []
-        default_locale = locale.setlocale(locale.LC_TIME)
-        is_english = self.env.context['lang'] == 'en_US'
         for record in self:
-            try:
-                if is_english:
-                    locale.setlocale(locale.LC_TIME, 'en_US.utf8')
-                initial_date_str = datetime.datetime.strptime(
-                    record.quotaperiod_id.initial_date,
-                    '%Y-%m-%d').strftime('%x')
-                end_date_str = datetime.datetime.strptime(
-                    record.quotaperiod_id.end_date,
-                    '%Y-%m-%d').strftime('%x')
-                event_time_day_str = datetime.datetime.strptime(
-                    record.event_time, '%Y-%m-%d %H:%M:%S').strftime('%x')
-            finally:
-                locale.setlocale(locale.LC_TIME, default_locale)
+            initial_date_str = self.env['wua.parcel'].transform_date_to_locale(
+                record.quotaperiod_id.initial_date)
+            end_date_str = self.env['wua.parcel'].transform_date_to_locale(
+                record.quotaperiod_id.end_date)
+            event_time_day_str = \
+                self.env['wua.parcel'].transform_datetime_to_locale(
+                    record.event_time)
             superproduct_name = record.superproduct_id.name
             partner_name = record.partner_id.name + \
                 ' [' + str(record.partner_id.partner_code) + ']'
