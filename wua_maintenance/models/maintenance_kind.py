@@ -130,6 +130,11 @@ class MaintenanceKindDynamicField(models.Model):
         help='Example: \'partner_id.name\'. Leave empty for custom fields.',
     )
 
+    field_domain = fields.Char(
+        string='Field Domain',
+        default='[]',
+    )
+
     maintenance_kind_id = fields.Many2one(
         comodel_name='maintenance.kind',
         string='Maintenance Kind',

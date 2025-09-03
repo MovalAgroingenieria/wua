@@ -4,6 +4,7 @@
 
 from odoo import http, _
 from odoo.http import request
+import ast
 import json
 from bs4 import BeautifulSoup
 
@@ -133,7 +134,8 @@ class MaintenanceGisController(http.Controller):
                     ]).mapped(
                         lambda attachment: {
                             'name': attachment.name,
-                            'datas': attachment.datas,
+                            'datas': 1,
+                            'url': '/web/content/%s' % attachment.id,
                             'mimetype': attachment.mimetype,
                         }),
                     'maintenance_ids': equipment.maintenance_ids.filtered(
@@ -256,10 +258,15 @@ class MaintenanceGisController(http.Controller):
                         _get_selection_options(model, field.field_path)
                 if field.field_type == 'many2one':
                     value = field_data['value']
+                    domain = []
+                    try:
+                        domain = ast.literal_eval(field.field_domain)
+                    except Exception:
+                        domain = []
                     field_data['label'] = value.name if value else ''
                     field_data['fixed_options'] = [
                         {'label': rec.name, 'value': rec.id}
-                        for rec in request.env[value._name].search([])
+                        for rec in request.env[value._name].search(domain)
                     ]
                     # Only send the selected id, not all the data
                     field_data['value'] = field_data['value'].id
@@ -321,14 +328,16 @@ class MaintenanceGisController(http.Controller):
                         message).mapped(
                         lambda attachment: {
                             'name': attachment.name,
-                            'datas': attachment.datas,
+                            'datas': 1,
+                            'url': '/web/content/%s' % attachment.id,
                             'mimetype': attachment.mimetype,
                         }),
                 }),
             'attachments': maintenance_attachments.mapped(
                 lambda attachment: {
                     'name': attachment.name,
-                    'datas': attachment.datas,
+                    'datas': 1,
+                    'url': '/web/content/%s' % attachment.id,
                     'mimetype': attachment.mimetype,
                 }),
             'image': maintenance.equipment_id.image,
