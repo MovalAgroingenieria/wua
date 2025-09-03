@@ -3,7 +3,6 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
-import locale
 from jinja2 import Template, TemplateError
 from babel import dates
 from odoo import models, fields, api, exceptions, _
@@ -909,8 +908,7 @@ class WuaAssembly(models.Model):
                     assembly_day=dates.format_date(date_of_assembly,
                                                    'd', locale=lang),
                     assembly_month=dates.format_date(date_of_assembly,
-                                                     'LLLL', locale=lang,
-                    ),
+                                                     'LLLL', locale=lang,),
                     partner=partner,
                 )
         except TemplateError as e:

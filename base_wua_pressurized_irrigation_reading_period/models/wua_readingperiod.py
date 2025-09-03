@@ -123,7 +123,7 @@ class WuaReadingperiod(models.Model):
                 i = 0
                 while (i < len(agriculturalseasons) and not
                         agriculturalseason):
-                    if(((record.initial_date >=
+                    if (((record.initial_date >=
                         agriculturalseasons[i].initial_date) and
                             (record.end_date <=
                              agriculturalseasons[i].end_date))):
