@@ -3,7 +3,6 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
-import locale
 from odoo import models, fields, api, exceptions, _
 
 
@@ -318,33 +317,20 @@ class WuaControlhydricmovement(models.Model):
     @api.multi
     def name_get(self):
         result = []
-        default_locale = locale.setlocale(locale.LC_TIME)
-        if (self.env.context and 'lang' in self.env.context):
-            is_english = self.env.context['lang'] == 'en_US'
-        else:
-            is_english = True
         for record in self:
-            try:
-                if is_english:
-                    locale.setlocale(locale.LC_TIME, 'en_US.utf8')
-                initial_date_str = datetime.datetime.strptime(
-                    record.quotaperiod_id.initial_date,
-                    '%Y-%m-%d').strftime('%x')
-                end_date_str = datetime.datetime.strptime(
-                    record.quotaperiod_id.end_date,
-                    '%Y-%m-%d').strftime('%x')
-                event_time_day_and_hour = datetime.datetime.strptime(
-                    record.event_time, '%Y-%m-%d %H:%M:%S')
-                event_time_day_str = event_time_day_and_hour.strftime('%x')
-                event_time_hour_str = event_time_day_and_hour.strftime('%X')
-            finally:
-                locale.setlocale(locale.LC_TIME, default_locale)
+            initial_date_str = self.env['wua.parcel'].transform_date_to_locale(
+                record.quotaperiod_id.initial_date)
+            end_date_str = self.env['wua.parcel'].transform_date_to_locale(
+                record.quotaperiod_id.end_date)
+            event_time_day_and_hour = \
+                self.env['wua.parcel'].transform_datetime_to_locale(
+                    record.event_time)
             superproduct_name = record.superproduct_id.name
             partner_name = record.partner_id.name + \
                 ' [' + str(record.partner_id.partner_code) + ']'
             name = initial_date_str + ' - ' + end_date_str + \
                 ' (' + superproduct_name.lower() + '), ' + partner_name + \
-                ' / ' + event_time_day_str + ' ' + event_time_hour_str
+                ' / ' + event_time_day_and_hour
             result.append((record.id, name))
         return result
 
@@ -411,7 +397,7 @@ class WuaControlhydricmovement(models.Model):
         if (controlhydricmovement.type in self.OUTPUT_TYPES or
            controlhydricmovement.type in self.INPUT_TYPES):
             resp = not ((controlhydricmovement.type == 'pres_consumption' and
-                         (not controlhydricmovement.controlpresconsumption_id)))
+                        (not controlhydricmovement.controlpresconsumption_id)))
         else:
             resp = self._test_reference_id_for_new_types(controlhydricmovement)
         return resp
