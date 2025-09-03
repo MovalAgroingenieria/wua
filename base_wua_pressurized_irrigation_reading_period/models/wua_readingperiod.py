@@ -2,8 +2,6 @@
 # 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-import datetime
-import locale
 from odoo import models, fields, api, exceptions, _
 
 
@@ -347,24 +345,12 @@ class WuaReadingperiod(models.Model):
     @api.multi
     def name_get(self):
         result = []
-        default_locale = locale.setlocale(locale.LC_TIME)
-        if (self.env.context and 'lang' in self.env.context):
-            is_english = self.env.context['lang'] == 'en_US'
-        else:
-            is_english = True
         for record in self:
-            try:
-                if is_english:
-                    locale.setlocale(locale.LC_TIME, 'en_US.utf8')
-                initial_date_str = datetime.datetime.strptime(
-                    record.initial_date,
-                    '%Y-%m-%d').strftime('%x')
-                end_date_str = datetime.datetime.strptime(
-                    record.end_date,
-                    '%Y-%m-%d').strftime('%x')
-            finally:
-                locale.setlocale(locale.LC_TIME, default_locale)
-                name = name = initial_date_str + ' - ' + end_date_str
+            initial_date_str = self.env['wua.parcel'].transform_date_to_locale(
+                record.initial_date)
+            end_date_str = self.env['wua.parcel'].transform_date_to_locale(
+                record.end_date)
+            name = initial_date_str + ' - ' + end_date_str
             result.append((record.id, name))
         return result
 
