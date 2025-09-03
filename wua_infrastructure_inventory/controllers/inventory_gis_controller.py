@@ -129,7 +129,7 @@ class InventoryGisController(http.Controller):
                         {'label': option.name, 'value': option.value}
                         for option in field.fixed_option_ids
                     ]
-                if field.field_type == 'selection':
+                elif field.field_type == 'selection':
                     # Get the selection options from the related field
                     # selection, check if category has a model associated
                     # and get the selection options from the model
@@ -139,7 +139,7 @@ class InventoryGisController(http.Controller):
                         model = equipment.category_id.model_id.model
                     field_data['fixed_options'] = self.\
                         _get_selection_options(model, field.field_path)
-                if field.field_type == 'many2one':
+                elif field.field_type == 'many2one':
                     value = field_data['value']
                     field_data['label'] = value.name if value else ''
                     field_data['fixed_options'] = [
@@ -148,6 +148,8 @@ class InventoryGisController(http.Controller):
                     ]
                     # Only send the selected id, not all the data
                     field_data['value'] = field_data['value'].id
+                elif field.field_type == 'binary' and field_data['value']:
+                    field_data['value'] = 1
                 dynamic_fields.append(field_data)
         return {
             'id': equipment.id,

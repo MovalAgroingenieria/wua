@@ -243,7 +243,7 @@ class MaintenanceGisController(http.Controller):
                         {'label': option.name, 'value': option.value}
                         for option in field.fixed_option_ids
                     ]
-                if field.field_type == 'selection':
+                elif field.field_type == 'selection':
                     # Get the selection options from the related field
                     # selection, check if category has a model associated
                     # and get the selection options from the model
@@ -256,7 +256,7 @@ class MaintenanceGisController(http.Controller):
                             maintenance.equipment_id.category_id.model_id.model
                     field_data['fixed_options'] = self.\
                         _get_selection_options(model, field.field_path)
-                if field.field_type == 'many2one':
+                elif field.field_type == 'many2one':
                     value = field_data['value']
                     domain = []
                     try:
