@@ -458,20 +458,12 @@ class WuaAgendaitem(models.Model):
                 result.append((record.id,
                                _('Item') + ' ' + str(record.number)))
         else:
-            default_locale = locale.setlocale(locale.LC_TIME)
-            is_english = ('lang' in self.env.context and
-                          self.env.context['lang'] == 'en_US')
             for record in self:
                 name = ''
                 if record.assembly_id and record.number:
-                    try:
-                        if is_english:
-                            locale.setlocale(locale.LC_TIME, 'en_US.utf8')
-                        assembly_date_str = datetime.datetime.strptime(
-                            record.assembly_id.assembly_date,
-                            '%Y-%m-%d').strftime('%x')
-                    finally:
-                        locale.setlocale(locale.LC_TIME, default_locale)
+                    assembly_date_str = \
+                        self.env['wua.parcel'].transform_date_to_locale(
+                            record.assembly_id.assembly_date)
                     name = assembly_date_str + ' (' + \
                         record.assembly_id.issue + '), ' + \
                         _('item') + ' ' + str(record.number)

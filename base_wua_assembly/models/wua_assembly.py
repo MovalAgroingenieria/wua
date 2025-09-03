@@ -119,7 +119,7 @@ class WuaAssembly(models.Model):
             Area:</p><p>Partner Code:</p>
         ''')
         return resp
-    
+
     def _default_attendee_text_on_ballot_nominative(self):
         resp = _('''
             <p>Mr./Mrs.:&nbsp; {{ partner.participant_name }} &nbsp;&nbsp;&nbsp;
@@ -410,12 +410,12 @@ class WuaAssembly(models.Model):
         string='Public Notes',
         default=_default_attendee_text_on_ballot,
     )
-    
+
     attendee_text_on_ballot_nominative = fields.Html(
         string='Public Notes Nominative',
         default=_default_attendee_text_on_ballot_nominative,
     )
-    
+
     rendered_attendee_text_on_ballot_nominative = fields.Html(
         string='Public Notes Nominative Rendered',
     )
@@ -1084,20 +1084,10 @@ class WuaAssembly(models.Model):
     @api.multi
     def name_get(self):
         result = []
-        default_locale = locale.setlocale(locale.LC_TIME)
-        if (self.env.context and 'lang' in self.env.context):
-            is_english = self.env.context['lang'] == 'en_US'
-        else:
-            is_english = True
         for record in self:
-            try:
-                if is_english:
-                    locale.setlocale(locale.LC_TIME, 'en_US.utf8')
-                assembly_date_str = datetime.datetime.strptime(
-                    record.assembly_date,
-                    '%Y-%m-%d').strftime('%x')
-            finally:
-                locale.setlocale(locale.LC_TIME, default_locale)
+            assembly_date_str = \
+                self.env['wua.parcel'].transform_date_to_locale(
+                    record.assembly_date)
             name = assembly_date_str + ' (' + record.issue + ')'
             result.append((record.id, name))
         return result
