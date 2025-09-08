@@ -81,6 +81,13 @@ class WuaProcessingCentre(models.Model):
         readonly=True,
     )
 
+    electricitypoint_id = fields.Many2one(
+        comodel_name='wua.electricitypoint',
+        string='Electricity Point',
+        ondelete='restrict',
+        index=True,
+    )
+
     _sql_constraints = [
         (
             "positive_capacity_check",

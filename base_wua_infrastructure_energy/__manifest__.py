@@ -14,6 +14,7 @@
     "depends": [
         "base_wua_infrastructure",
         "base_wua_infrastructure_primary",
+        "base_wua_infrastructure_pump",
     ],
     "data": [
         "data/wua_infrastructure_energy_config_settings_data.xml",
@@ -23,6 +24,7 @@
         "views/wua_powerlinesupport_view.xml",
         "views/base_wua_infrastructure_energy_menus.xml",
         "views/wua_infrastructure_config_settings_view.xml",
+        "views/wua_electricitypoint_view.xml",
         ],
     "installable": True,
     "application": True,

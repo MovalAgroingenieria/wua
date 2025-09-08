@@ -129,6 +129,13 @@ class WuaPowerLineSupport(models.Model):
         readonly=True,
     )
 
+    electricitypoint_id = fields.Many2one(
+        comodel_name='wua.electricitypoint',
+        string='Electricity Point',
+        ondelete='restrict',
+        index=True,
+    )
+
     _sql_constraints = [
         (
             "positive_construction_year_check",

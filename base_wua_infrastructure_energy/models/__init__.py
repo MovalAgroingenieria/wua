@@ -7,3 +7,4 @@ from . import wua_processingcentre
 from . import wua_powerline
 from . import wua_powerlinesupport
 from . import wua_infrastructure_config_settings
+from . import wua_electricitypoint

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_wua_electricitypoint" model="ir.actions.act_window">
+        <field name="name">Electricity Points</field>
+        <field name="res_model">wua.electricitypoint</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_wua_electricitypoint_root" name="Electricity Points"
+              parent="base_wua_infrastructure.base_wua_infrastructure_configuration_menu"
+              action="action_wua_electricitypoint" sequence="40"/>
+
+    <record id="wua_electricitypoint_view_tree" model="ir.ui.view">
+        <field name="name">wua.electricitypoint.tree</field>
+        <field name="model">wua.electricitypoint</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="cups"/>
+                <field name="age"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_electricitypoint_view_form" model="ir.ui.view">
+        <field name="name">wua.electricitypoint.form</field>
+        <field name="model">wua.electricitypoint</field>
+        <field name="arch" type="xml">
+            <form string="Electricity Point">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_show_powerlines" type="object"
+                                class="oe_stat_button" icon="fa-plug">
+                            <field name="number_of_powerlines" widget="statinfo"
+                                string="Power Lines"/>
+                        </button>
+                        <button name="action_show_powerlinesupports" type="object"
+                                class="oe_stat_button" icon="fa-bolt">
+                            <field name="number_of_powerlinesupports" widget="statinfo"
+                                string="Line Supports"/>
+                        </button>
+                        <button name="action_show_processingcentres" type="object"
+                                class="oe_stat_button" icon="fa-industry">
+                            <field name="number_of_processingcentres" widget="statinfo"
+                                string="Trans. Centers"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="name"/>
+                            <field name="cups"/>
+                        </group>
+                        <group>
+                            <field name="implementation_year"/>
+                            <field name="age" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+
+    <record id="wua_electricitypoint_view_search" model="ir.ui.view">
+        <field name="name">wua.electricitypoint.search</field>
+        <field name="model">wua.electricitypoint</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="cups"/>
+                <filter name="this_year" string="Implemented this year"
+                        domain="[('implementation_year', '=', datetime.datetime.now().year)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="grp_year" string="Implementation Year" context="{'group_by': 'implementation_year'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+</odoo>
