@@ -127,11 +127,13 @@ class MaintenanceEquipment(models.Model):
             equipment_rec = infra_rec.equipment_id
             if equipment_rec:
                 equipment_rec.created_from_field = True
+                equipment_rec.available_for_inventory = True
             relation_id = infra_rec.id
         else:
             direct_vals.update({
                 'category_id': category.id,
                 'created_from_field': True,
+                'available_for_inventory': True,
             })
             equipment_rec = self.env['maintenance.equipment'].create(
                 direct_vals)

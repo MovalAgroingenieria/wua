@@ -2,11 +2,12 @@
 # 2025 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import http
+from odoo import http, fields
 from odoo.http import request
 from odoo.addons.wua_maintenance.controllers.maintenance_gis_controller \
     import MaintenanceGisController
 from bs4 import BeautifulSoup
+from datetime import timedelta
 import ast
 import re
 import unicodedata
@@ -162,23 +163,13 @@ class InventoryGisController(http.Controller):
         }
 
     def _get_config_for_inventory_workmode(self):
-        # Only use the equipments that have categories that can be inventoried
-        equipments = request.env['maintenance.equipment'].search([
-            ('category_id.available_for_inventory', '=', True),
-            ('category_id.load_geometries_by_default', '=', True),
-            ('available_for_inventory', '=', True),
-        ])
         default_gis_refresh_interval = request.env['ir.values'].get_default(
             'maintenance.config.settings',
             'default_gis_inventory_refresh_interval') or \
             60
         config = {
-            'equipments': [],
             'default_interval': default_gis_refresh_interval * 1000,
         }
-        for equipment in equipments:
-            config['equipments'].append(self._get_equipment_formatted_value(
-                equipment))
         return config
 
     @http.route("/inventory_equipments", auth='user', type='json',
@@ -205,6 +196,31 @@ class InventoryGisController(http.Controller):
             ('available_for_inventory', '=', True)],
             order='name asc')
         for category in categories:
+            # Count equipments for this category to show in the UI
+            equipment_count = request.env[
+                'maintenance.equipment'].search_count([
+                    ('category_id', '=', category.id),
+                    ('available_for_inventory', '=', True),
+                ])
+            # Get latest update date for this category
+            latest_write = request.env['maintenance.equipment'].search([
+                ('category_id', '=', category.id),
+                ('available_for_inventory', '=', True),
+            ], limit=1, order='write_date desc')
+            latest_create = request.env['maintenance.equipment'].search([
+                ('category_id', '=', category.id),
+                ('available_for_inventory', '=', True),
+            ], limit=1, order='create_date desc')
+            latest_update = False
+            if latest_write and latest_create:
+                # Compare dates to get the most recent one
+                latest_update = latest_write.write_date
+                if latest_create.create_date > latest_write.write_date:
+                    latest_update = latest_create.create_date
+            elif latest_write:
+                latest_update = latest_write.write_date
+            elif latest_create:
+                latest_update = latest_create.create_date
             categories_output[self.to_valid_variable_name(category.name)] = {
                 'id': category.id,
                 'name': category.name,
@@ -213,22 +229,108 @@ class InventoryGisController(http.Controller):
                     '\n', '').strip(),
                 'legend_symbology': category.legend_symbology.replace(
                     '\n', '').strip(),
+                'equipment_count': equipment_count,
+                'latest_update': latest_update,
+                'load_by_default': category.load_geometries_by_default,
                 'dynamic_fields': self._get_dynamic_fields(
                     category),
             }
         output = {
+            'config': self._get_config_for_inventory_workmode(),
             'categories': categories_output,
+        }
+        return json.dumps(output, ensure_ascii=False)
+
+    @http.route("/inventory_category_equipments", auth='user', type='json',
+                methods=['POST'], csrf=False)
+    def get_inventory_category_equipments(self, *args, **kwargs):
+        jsonrequest = request.jsonrequest
+        category_id = jsonrequest.get('category_id', False)
+        last_update = jsonrequest.get('last_update', False)
+        limit = jsonrequest.get('limit', 100)
+        offset = jsonrequest.get('offset', 0)
+        if not category_id:
+            return json.dumps(
+                {'error': 'No category_id provided'}, ensure_ascii=False)
+        domain = [
+            ('category_id', '=', category_id),
+            ('available_for_inventory', '=', True),
+        ]
+        # Add date filter if last_update is provided
+        if last_update:
+            last_update_obj = fields.Datetime.from_string(last_update)
+            # Add one second to avoid errors on boundary conditions
+            last_update_obj += timedelta(seconds=1)
+            last_update = fields.Datetime.to_string(last_update_obj)
+            # Use OR condition to include both created and modified records
+            domain = ['&'] + domain + [
+                '|',
+                ('write_date', '>', last_update),
+                ('create_date', '>', last_update),
+            ]
+        # Get total count for pagination
+        total_count = request.env['maintenance.equipment'].search_count(domain)
+        query = request.env['maintenance.equipment']._where_calc(domain)
+        tables, where_clause, where_params = query.get_sql()
+        order_by = "ORDER BY GREATEST(maintenance_equipment.write_date, "\
+            "maintenance_equipment.create_date) DESC"
+        sql = """
+            SELECT maintenance_equipment.id
+            FROM {}
+            WHERE {}
+            {}
+            LIMIT %s OFFSET %s
+        """.format(tables, where_clause, order_by)
+        params = where_params + [limit, offset]
+        request.env.cr.execute(sql, params)
+        equipment_ids = [r[0] for r in request.env.cr.fetchall()]
+        equipments = request.env['maintenance.equipment'].browse(equipment_ids)
+        equipments_output = []
+        for equipment in equipments:
+            equipments_output.append(
+                self._get_equipment_formatted_value(equipment))
+        output = {
+            'equipments': equipments_output,
+            'total_count': total_count,
+            'has_more': total_count > (offset + limit),
+            'category_id': category_id,
         }
         return json.dumps(output, ensure_ascii=False)
 
     @http.route("/inventory_init_config", auth='user', type='json',
                 methods=['POST'], csrf=False)
     def get_inventory_init_config(self, *args, **kwargs):
+        # Get only categories info without equipment data
         categories_output = {}
         categories = request.env['maintenance.equipment.category'].search([
             ('available_for_inventory', '=', True)],
             order='name asc')
         for category in categories:
+            # Count equipments for this category
+            equipment_count = request.env[
+                'maintenance.equipment'].search_count([
+                    ('category_id', '=', category.id),
+                    ('available_for_inventory', '=', True),
+                ])
+            # Get latest update date for this category
+            latest_write = request.env['maintenance.equipment'].search([
+                ('category_id', '=', category.id),
+                ('available_for_inventory', '=', True),
+            ], limit=1, order='write_date desc')
+            latest_create = request.env['maintenance.equipment'].search([
+                ('category_id', '=', category.id),
+                ('available_for_inventory', '=', True),
+            ], limit=1, order='create_date desc')
+            latest_update = False
+            if latest_write and latest_create:
+                # Compare dates to get the most recent one
+                latest_update = latest_write.write_date
+                if latest_create.create_date > latest_write.write_date:
+                    latest_update = latest_create.create_date
+            elif latest_write:
+                latest_update = latest_write.write_date
+            elif latest_create:
+                latest_update = latest_create.create_date
             categories_output[self.to_valid_variable_name(category.name)] = {
                 'id': category.id,
                 'name': category.name,
@@ -237,8 +339,10 @@ class InventoryGisController(http.Controller):
                     '\n', '').strip(),
                 'legend_symbology': category.legend_symbology.replace(
                     '\n', '').strip(),
-                'dynamic_fields': self._get_dynamic_fields(
-                    category),
+                'equipment_count': equipment_count,
+                'latest_update': latest_update,
+                'load_by_default': category.load_geometries_by_default,
+                'dynamic_fields': self._get_dynamic_fields(category),
             }
         output = {
             'config': self._get_config_for_inventory_workmode(),
