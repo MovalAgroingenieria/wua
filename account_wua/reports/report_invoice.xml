@@ -349,8 +349,8 @@
                                     <td name="description"><span t-esc="l['name']"/></td>
                                     <td name="src_document" class="hidden"><span t-esc="l['origin']"/></td>
                                     <td name="quantity" class="text-right">
-                                        <t t-set="dp" t-value="o.env['decimal.precision'].search([('name', '=', 'Product Price')], limit=1)"/>
-                                        <t t-set="digits" t-value="dp.digits if dp else 3"/>
+                                        <!-- <t t-set="dp" t-value="o.env['decimal.precision'].search([('name', '=', 'Product Price')], limit=1)"/>-->
+                                        <t t-set="digits" t-value="4"/>
                                         <t t-set="formatted_quantity"
                                            t-value="o.env['wua.parcel'].transform_float_to_locale(l['quantity'], digits)"/>
                                         <span t-esc="formatted_quantity"/>
