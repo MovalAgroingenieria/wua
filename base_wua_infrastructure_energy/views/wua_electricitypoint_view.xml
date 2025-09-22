@@ -18,7 +18,6 @@
                 <field name="code"/>
                 <field name="name"/>
                 <field name="cups"/>
-                <field name="age"/>
             </tree>
         </field>
     </record>
@@ -52,10 +51,6 @@
                             <field name="name"/>
                             <field name="cups"/>
                         </group>
-                        <group>
-                            <field name="implementation_year"/>
-                            <field name="age" readonly="1"/>
-                        </group>
                     </group>
                 </sheet>
             </form>
@@ -72,11 +67,6 @@
                 <field name="name"/>
                 <field name="code"/>
                 <field name="cups"/>
-                <filter name="this_year" string="Implemented this year"
-                        domain="[('implementation_year', '=', datetime.datetime.now().year)]"/>
-                <group expand="0" string="Group By">
-                    <filter name="grp_year" string="Implementation Year" context="{'group_by': 'implementation_year'}"/>
-                </group>
             </search>
         </field>
     </record>

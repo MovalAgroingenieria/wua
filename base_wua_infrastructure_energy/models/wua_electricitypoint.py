@@ -12,10 +12,6 @@ class WuaElectricitypoint(models.Model):
     _order = 'code'
     _rec_name = 'name'
 
-    def _default_implementation_year(self):
-        resp = datetime.datetime.now().year
-        return resp
-
     code = fields.Integer(
         string='Code',
         required=True,
@@ -34,17 +30,6 @@ class WuaElectricitypoint(models.Model):
         size=30,
         required=True,
         index=True,
-    )
-
-    implementation_year = fields.Integer(
-        string='Implementation Year',
-        required=True,
-        default=_default_implementation_year,
-    )
-
-    age = fields.Integer(
-        string='Age',
-        compute='_compute_age',
     )
 
     powerline_ids = fields.One2many(
@@ -107,12 +92,6 @@ class WuaElectricitypoint(models.Model):
             record.number_of_powerlinesupports = len(
                 record.powerlinesupport_ids)
 
-    @api.depends('implementation_year')
-    def _compute_age(self):
-        date_now = datetime.datetime.now().year
-        for record in self:
-            age = date_now - record.implementation_year
-            record.age = age
 
     def action_show_powerlines(self):
         self.ensure_one()
