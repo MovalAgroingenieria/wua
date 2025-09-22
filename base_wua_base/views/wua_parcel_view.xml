@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_parcel_view_form" model="ir.ui.view">
+        <field name="name">Parcels (form view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id" ref="base_wua.wua_parcel_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='leased_to']" position="after">
+                <field name="mapped" colspan="4" />
+                <field name="last_update" colspan="4" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_parcel_view_search" model="ir.ui.view" >
+        <field name="name">Parcels (search view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id" ref="base_wua.wua_parcel_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='inactive']" position="before">
+                <filter string="Mapped: Yes" name="mappedyes" domain="[('mapped','=',True)]"/>
+                <filter string="Mapped: No" name="mappedno" domain="[('mapped','=',False)]"/>
+                <separator/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
