@@ -90,6 +90,8 @@ class WuaReading(models.Model):
         if not url_remotecontrol_application:
             raise exceptions.UserError(_('There is not a URL for the '
                                          'remote control application.'))
+        if not url_remotecontrol_application.endswith('/'):
+            url_remotecontrol_application += '/'
         return {
             'type': 'ir.actions.act_url',
             'url': url_remotecontrol_application,
