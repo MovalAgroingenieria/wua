@@ -312,6 +312,8 @@ class ResPartner(models.Model):
         pending_inv = 'NO'
         if data['with_credit_overdue']:
             pending_inv = 'SI'
+        if url_remotecontrol_rest.endswith('/'):
+            url_remotecontrol_rest = url_remotecontrol_rest[:-1]
         url_open_session = url_remotecontrol_rest + '/sesiones'
         auth_data = {
             'usuario': url_remotecontrol_rest_username,
