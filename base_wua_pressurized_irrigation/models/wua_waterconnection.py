@@ -247,7 +247,7 @@ class WuaWaterconnection(models.Model):
     @api.model
     def create(self, vals):
         waterconnection = super(WuaWaterconnection, self).create(vals)
-        if vals['watermeter_id']:
+        if 'watermeter_id' in vals and vals['watermeter_id']:
             self.update_wua_wc_wm(waterconnection.id, vals['watermeter_id'])
         return waterconnection
 
