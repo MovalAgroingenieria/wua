@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <record id="action_server_reset_field_data" model="ir.actions.server">
+        <field name="name">Reset Field Resolution Data</field>
+        <field name="model_id" ref="maintenance.model_maintenance_request"/>
+        <field name="state">code</field>
+        <field name="code">
+            action =  env['maintenance.request'].browse(context['active_ids']).action_reset_field_data()
+        </field>
+    </record>
+
+    <record id="ir_values_reset_field_data" model="ir.values">
+        <field name="name">Reset Field Resolution Data</field>
+        <field name="model">maintenance.request</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('action_server_reset_field_data'))"/>
+    </record>
+
     <record id="hr_equipment_request_view_kanban" model="ir.ui.view">
         <field name="name">equipment.request.kanban</field>
         <field name="model">maintenance.request</field>

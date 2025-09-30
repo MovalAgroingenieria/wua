@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-03 11:24+0000\n"
-"PO-Revision-Date: 2025-09-03 11:24+0000\n"
+"POT-Creation-Date: 2025-09-30 10:23+0000\n"
+"PO-Revision-Date: 2025-09-30 10:23+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -733,6 +733,12 @@ msgstr "Field Resolved"
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_kind_dynamic_field_field_type
 msgid "Field Type"
 msgstr "Camp de Tipus"
+
+#. module: wua_maintenance
+#: code:addons/wua_maintenance/models/maintenance_request.py:461
+#, python-format
+msgid "Field resolution data has been reset by %s"
+msgstr "Les dades de resolució de camp han estat reiniciades per %s"
 
 #. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_field_resolved
@@ -1511,6 +1517,11 @@ msgid "Reservoirs"
 msgstr "Embassaments"
 
 #. module: wua_maintenance
+#: model:ir.actions.server,name:wua_maintenance.action_server_reset_field_data
+msgid "Reset Field Resolution Data"
+msgstr "Restableix les dades de resolució de camp"
+
+#. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_resolution_image_after
 msgid "Resolution After Image"
 msgstr "Resolution After Image"
@@ -1798,7 +1809,7 @@ msgid "Without Infrastructure GIS"
 msgstr "Sense SIG d'infraestructura"
 
 #. module: wua_maintenance
-#: code:addons/wua_maintenance/controllers/maintenance_gis_controller.py:310
+#: code:addons/wua_maintenance/controllers/maintenance_gis_controller.py:314
 #, python-format
 msgid "Without team"
 msgstr "Sense equip"

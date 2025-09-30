@@ -4,7 +4,7 @@
 
 from jinja2 import Template, TemplateError
 from datetime import datetime
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 from bs4 import BeautifulSoup
 
 
@@ -37,18 +37,21 @@ class MaintenanceRequest(models.Model):
 
     related_element_extradata = fields.Text(
         string='Related element extradata',
+        copy=False,
     )
 
     days_since_creation = fields.Integer(
         string='Days since creation',
         default=0,
         readonly=True,
+        copy=False,
     )
 
     field_resolved = fields.Boolean(
         string='Field resolved',
         default=False,
-        readonly=False,
+        readonly=True,
+        copy=False,
     )
 
     dynamic_fields_data = fields.Html(
@@ -56,39 +59,46 @@ class MaintenanceRequest(models.Model):
         default='',
         track_visibility='onchange',
         sanitize=False,
+        copy=False,
     )
 
     resolution_time = fields.Datetime(
         string='Resolution Time',
         readonly=True,
+        copy=False,
     )
 
     resolved_by = fields.Many2one(
         comodel_name='res.users',
         string='Resolved by',
         readonly=True,
+        copy=False,
     )
 
     resolution_image_before = fields.Binary(
         string='Resolution Before Image',
         attachment=True,
+        copy=False,
     )
 
     resolution_image_before_filename = fields.Char(
         string='Resolution Before Image Filename',
         attachment=True,
         readonly=True,
+        copy=False,
     )
 
     resolution_image_after = fields.Binary(
         string='Resolution After Image',
         attachment=True,
+        copy=False,
     )
 
     resolution_image_after_filename = fields.Char(
         string='Resolution After Image Filename',
         attachment=True,
         readonly=True,
+        copy=False,
     )
 
     resolution_images_before = fields.One2many(
@@ -96,6 +106,7 @@ class MaintenanceRequest(models.Model):
         comodel_name='maintenance.request.attachment',
         inverse_name='maintenance_id',
         domain=[('image_type', '=', 'before')],
+        copy=False,
     )
 
     resolution_images_after = fields.One2many(
@@ -103,23 +114,27 @@ class MaintenanceRequest(models.Model):
         comodel_name='maintenance.request.attachment',
         inverse_name='maintenance_id',
         domain=[('image_type', '=', 'after')],
+        copy=False,
     )
 
     resolution_description = fields.Html(
         string='Resolution Description',
         readonly=True,
+        copy=False,
     )
 
     created_on_field = fields.Boolean(
         string='Created on field',
         default=False,
         readonly=True,
+        copy=False,
     )
 
     field_image = fields.Binary(
         string='Image from Field',
         attachment=True,
         readonly=True,
+        copy=False,
     )
 
     field_images = fields.One2many(
@@ -127,21 +142,25 @@ class MaintenanceRequest(models.Model):
         comodel_name='maintenance.request.attachment',
         inverse_name='maintenance_id',
         domain=[('image_type', '=', 'field')],
+        copy=False,
     )
 
     field_latitude = fields.Float(
         string='Field Latitude',
         readonly=True,
+        copy=False,
     )
 
     field_longitude = fields.Float(
         string='Field Longitude',
         readonly=True,
+        copy=False,
     )
 
     resolution_dynamic_fields = fields.Text(
         string='Updated info',
         readonly=True,
+        copy=False,
     )
 
     description = fields.Html(
@@ -418,6 +437,32 @@ class MaintenanceRequest(models.Model):
                     fields_with_paths.add(field.name)
                     path_to_name[field.field_path] = field.name
         return configs, fields_with_paths, path_to_name
+
+    @api.multi
+    def action_reset_field_data(self):
+        for record in self:
+            record.resolution_images_before.unlink()
+            record.resolution_images_after.unlink()
+            # Reset all field resolution data
+            record.write({
+                'field_resolved': False,
+                'dynamic_fields_data': '',
+                'resolution_time': False,
+                'resolved_by': False,
+                'resolution_image_before': False,
+                'resolution_image_before_filename': False,
+                'resolution_image_after': False,
+                'resolution_image_after_filename': False,
+                'resolution_description': '',
+                'resolution_dynamic_fields': False,
+            })
+            # Add message to chatter
+            record.message_post(
+                body=_("Field resolution data has been reset by %s") % (
+                    self.env.user.name),
+                message_type='notification',
+                subtype='mail.mt_note',
+            )
 
     @api.model
     def update_dynamic_fields(self, maintenance_id, dynamic_fields):
