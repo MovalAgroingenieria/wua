@@ -28,3 +28,10 @@ class MaintenanceSettings(models.TransientModel):
         values.set_default('maintenance.config.settings',
                            'default_gis_refresh_interval',
                            self.default_gis_refresh_interval)
+
+        # Call parent's set_default_values if it exists
+        parent_method = getattr(
+            super(MaintenanceSettings, self), 'set_default_values', None
+        )
+        if parent_method:
+            parent_method()
