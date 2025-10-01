@@ -7,7 +7,8 @@
         <field name="arch" type="xml">
             <form>
                 <group colspan="6" col="4">
-                    <field name="maintenance_kind_id"/>
+                    <field name="maintenance_kind_id"
+                           domain="[('category_id', '=', maintenance_category_id)]"/>
                     <field name="period"/>
                     <field name="maintenance_category_id"/>
                     <field name="first_execution_date"/>
