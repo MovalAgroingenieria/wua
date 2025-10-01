@@ -547,6 +547,44 @@ class MaintenanceRequest(models.Model):
         response['success'] = not response['errors']
         return response
 
+    @api.multi
+    def get_served_parcels_and_payer(self):
+        self.ensure_one()
+        data = {
+            'parcels': [],
+            'payer': False,
+        }
+        equipment = self.equipment_id
+        if not equipment:
+            return data
+        category = equipment.category_id
+        if not category:
+            return data
+
+        if category == self.env.ref('wua_maintenance.equipment_category_waterconnection'):
+            wc = equipment.waterconnection_id
+        elif category == self.env.ref('wua_maintenance.equipment_category_watermeter'):
+            act = equipment.action_get_wua_infrastructure_item()
+            res_model = act.get('res_model')
+            res_id = act.get('res_id')
+            infra_rec = self.env[res_model].browse(res_id) if res_model and res_id else False
+            wc = infra_rec.waterconnection_id if infra_rec else False
+        else:
+            wc = False
+
+        if wc:
+            for ip in wc.irrigationpoint_ids:
+                parcel = ip.parcel_id
+                data['parcels'].append({
+                    'code': parcel.name,
+                    'polygon': parcel.cadastral_polygon,
+                    'parcel': parcel.cadastral_parcel,
+                    'area': parcel.area_official,
+                    'hydraulic_sector': equipment.hydraulicsector_id.name or '',
+                })
+            data['payer'] = wc.partner_id
+
+        return data
 
 class MaintenanceRequestAttachment(models.Model):
     _name = 'maintenance.request.attachment'

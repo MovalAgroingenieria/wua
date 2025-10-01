@@ -175,7 +175,67 @@
                                 </div>
                             </div>
                         </div>
-
+                        <t t-set="extra_data" t-value="o.get_served_parcels_and_payer()"/>
+                            <t t-if="extra_data['parcels']">
+                                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-map"/></div>
+                                        <div style="float: left; display: inline;">
+                                            <strong>Parcels Served</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                <table class="table table-condensed" style="margin-top: 4px; width: 100%; table-layout: fixed;">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:20%; text-align:center;">Code</th>
+                                            <th style="width:20%; text-align:center;">Hydraulic Sector</th>
+                                            <th style="width:20%; text-align:center;">Polygon</th>
+                                            <th style="width:20%; text-align:center;">Parcel</th>
+                                            <th style="width:20%; text-align:center;">Declared Area</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="extra_data['parcels']" t-as="p">
+                                            <tr>
+                                                <td style="text-align:center;"><span t-esc="p['code']"/></td>
+                                                <td style="text-align:center;"><span t-esc="p['hydraulic_sector']"/></td>
+                                                <td style="text-align:center;"><span t-esc="p['polygon']"/></td>
+                                                <td style="text-align:center;"><span t-esc="p['parcel']"/></td>
+                                                <td style="text-align:center;">
+                                                    <span t-esc="p['area']"/> ha
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                                <t t-if="extra_data['payer']">
+                                    <div class="row h4 mt28 mb4" style="padding-bottom: 4px; margin-top:12px;">
+                                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                            <div style="float: left; width: 32px;"><span class="fa fa-user"/></div>
+                                            <div style="float: left; display: inline;">
+                                                <strong>Payer Information</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <table class="table table-condensed" style="margin-top: 4px; width: 100%; table-layout: fixed;">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:33%; text-align:center;">Name</th>
+                                                <th style="width:33%; text-align:center;">Phone</th>
+                                                <th style="width:34%; text-align:center;">Email</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td style="text-align:center;"><span t-esc="extra_data['payer'].name"/></td>
+                                                <td style="text-align:center;"><span t-esc="extra_data['payer'].mobile or ''"/></td>
+                                                <td style="text-align:center;"><span t-esc="extra_data['payer'].email or ''"/></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </t>
+                            </t>
                         <!-- Notes / Description -->
                         <t t-if="o.description">
                             <div name="notes_data">
