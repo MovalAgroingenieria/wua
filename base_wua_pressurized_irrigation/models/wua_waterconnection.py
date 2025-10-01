@@ -505,6 +505,17 @@ class WuaWaterconnection(models.Model):
         return self.env['wua.waterconnection.state'].search(
             [('default_state', '=', True)], limit=1)
 
+    def action_open_wizard_init_reading(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'wizard.init.reading',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_waterconnection_id': self.id,
+            },
+        }
 
 class WuaWaterconnectionIrrigationShiftlink(models.Model):
     _name = 'wua.waterconnection.irrigation.shiftlink'

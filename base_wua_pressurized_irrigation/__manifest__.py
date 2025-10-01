@@ -49,6 +49,7 @@
         "reports/wua_waterconnection_readings_report.xml",
         "views/wua_waterconnection_state_view.xml",
         "data/wua_waterconnection_state_data.xml",
+        "wizard/wizard_init_reading.xml",
     ],
     "installable": True,
     "application": True,
