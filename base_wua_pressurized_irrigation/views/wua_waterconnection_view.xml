@@ -65,15 +65,6 @@
                         <span class="o_stat_text">Pipe</span>
                     </div>
                 </button>
-                <button name="action_open_wizard_init_reading"
-                        type="object"
-                        class="oe_stat_button"
-                        icon="fa-tint">
-                    <div class="o_form_field o_stat_info">
-                        <span class="o_stat_text">Init</span>
-                        <span class="o_stat_text">Reading</span>
-                    </div>
-                </button>
             </xpath>
             <xpath expr="//field[@name='total_affected_area_official']"
              position="after">
@@ -277,4 +268,14 @@
               name="Irrigation Shifts Technical" sequence="10"
               action="wua_waterconnection_irrigation_shift_rel_action"
               parent="base_wua_infrastructure.base_wua_infrastructure_technical_menu"/>
+
+    <act_window id="action_generate_init_readings"
+                name="Generate Init Readings"
+                res_model="wizard.init.reading"
+                src_model="wua.waterconnection"
+                view_mode="form"
+                target="new"
+                key2="client_action_multi"
+                groups="base_wua.group_wua_manager"
+                context="{'default_waterconnection_id': active_id}"/>
 </odoo>
