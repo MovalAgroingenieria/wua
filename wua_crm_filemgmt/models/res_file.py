@@ -398,6 +398,14 @@ class ResFilePartnerlink(models.Model):
     is_denounced = fields.Boolean(
         string='Denounced')
 
+    leased_from = fields.Date(
+        string="Leased from",
+        related='file_id.leased_from')
+
+    leased_to = fields.Date(
+        string="Leased to",
+        related='file_id.leased_to')
+
     @api.onchange('is_main', 'is_lessor', 'is_tenant')
     def _onchange_lessor_tenant(self):
         for record in self:
