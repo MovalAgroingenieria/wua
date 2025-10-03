@@ -8,4 +8,3 @@ from . import wua_cession
 from . import wua_particularpresconsumption
 from . import wua_reading
 from . import wua_individualinput
-from . import res_partner

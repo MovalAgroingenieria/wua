@@ -16,8 +16,6 @@
         "base_wua_quota_management",
     ],
     "data": [
-        "data/server_action_recalc_hydric_extras.xml",
-        "data/recalculate_hydric_movements_extra_cron.xml",
         "security/ir.model.access.csv",
         "views/resources.xml",
         "views/wua_cession_view.xml",
