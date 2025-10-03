@@ -16,6 +16,7 @@
     ],
     "data": [
         "reports/report_notification.xml",
+        "reports/report_instance.xml"
     ],
     "installable": True,
     "application": False,

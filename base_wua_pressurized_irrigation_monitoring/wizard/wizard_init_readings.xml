@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="wizard_init_reading_form_view_inherit" model="ir.ui.view">
+        <field name="name">wizard.init.reading.form.inherit</field>
+        <field name="model">wizard.init.reading</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation.wizard_init_reading_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='initial_reading']" position="after">
+                <field name="create_control_readings"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -4,3 +4,4 @@
 
 from . import wizard_generate_controlperiods
 from . import wizard_remove_controlreadings
+from . import wizard_init_readings

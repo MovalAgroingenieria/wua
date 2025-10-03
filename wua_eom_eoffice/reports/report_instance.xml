@@ -1,0 +1,117 @@
+<odoo>
+  <template id="report_electronic_file_form_document_inherit"
+            inherit_id="eom_eoffice.report_electronic_file_form_document"
+            priority="20">
+    <xpath expr="." position="replace">
+      <div class="row" style="margin-top:8px;">
+        <div class="col-2 text-left">
+          <strong>Electronic File: </strong>
+          <strong><span t-esc="o.name"/></strong>
+        </div>
+      </div>
+      <hr/>
+      <t t-if="o.digitalregister_id">
+        <table style="width:100%; margin-top:12px; border-collapse:collapse;">
+          <tr>
+            <td style="width:50%; padding-right:20px; border-right:1px solid #000; vertical-align:top;">
+              <p>
+                <strong>Partner:</strong>
+                <span t-field="o.partner_id"/>
+              </p>
+              <p>
+                <strong>Digital Register:</strong>
+                <span t-esc="o.digitalregister_id.name"/>
+              </p>
+            </td>
+            <td style="width:50%; padding-left:20px; vertical-align:top;">
+              <p>
+                <strong>Type:</strong>
+                <span t-field="o.type"/>
+              </p>
+              <p>
+                <strong>Deadline:</strong>
+                <span t-field="o.deadline_date"/>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </t>
+      <t t-else="">
+        <strong><span class="text-danger">Digital register not found.</span></strong>
+      </t>
+
+      <div style="margin-top:8px;">
+        <t t-if="o.type == '01_generic_instance'">
+          <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+            <t t-if="report_style == 'light'">
+              <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                <div style="float: left; width: 32px;"><span class="fa fa-info-circle"/></div>
+                <div style="float: left; display: inline;"><strong>E X P O S I T I O N</strong></div>
+              </div>
+            </t>
+            <t t-else="">
+              <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                <div style="float: left; width: 32px;"><span class="fa fa-info-circle"/></div>
+                <div style="float: left; display: inline;"><strong>E X P O S I T I O N</strong></div>
+              </div>
+            </t>
+          </div>
+          <p><span t-esc="o.exposition"/></p>
+
+          <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+            <t t-if="report_style == 'light'">
+              <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                <div style="float: left; width: 32px;"><span class="fa fa-hand-paper-o"/></div>
+                <div style="float: left; display: inline;"><strong>R E Q U E S T</strong></div>
+              </div>
+            </t>
+            <t t-else="">
+              <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                <div style="float: left; width: 32px;"><span class="fa fa-hand-paper-o"/></div>
+                <div style="float: left; display: inline;"><strong>R E Q U E S T</strong></div>
+              </div>
+            </t>
+          </div>
+          <p><span t-esc="o.request"/></p>
+        </t>
+        <t t-else="">
+          <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+            <t t-if="report_style == 'light'">
+              <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                <div style="float: left; width: 32px;"><span class="fa fa-lightbulb-o"/></div>
+                <div style="float: left; display: inline;"><strong>S U G G E S T I O N</strong></div>
+              </div>
+            </t>
+            <t t-else="">
+              <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                <div style="float: left; width: 32px;"><span class="fa fa-lightbulb-o"/></div>
+                <div style="float: left; display: inline;"><strong>S U G G E S T I O N</strong></div>
+              </div>
+            </t>
+          </div>
+          <p><span t-esc="o.suggestion"/></p>
+        </t>
+
+        <t t-if="o.resolution">
+          <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+            <t t-if="report_style == 'light'">
+              <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                <div style="float: left; width: 32px;"><span class="fa fa-gavel"/></div>
+                <div style="float: left; display: inline;"><strong>R E S O L U T I O N</strong></div>
+              </div>
+            </t>
+            <t t-else="">
+              <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                <div style="float: left; width: 32px;"><span class="fa fa-gavel"/></div>
+                <div style="float: left; display: inline;"><strong>R E S O L U T I O N</strong></div>
+              </div>
+            </t>
+          </div>
+          <div style="margin-top:8px;">
+            <p><span t-esc="o.resolution"/></p>
+          </div>
+        </t>
+      </div>
+    </xpath>
+  </template>
+</odoo>

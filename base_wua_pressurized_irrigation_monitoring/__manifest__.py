@@ -57,6 +57,7 @@
         "reports/partner_presconsumption_global_monitoring_report.xml",
         "reports/partner_presconsumption_estimated_report.xml",
         "data/mail_template_data.xml",
+        "wizard/wizard_init_readings.xml",
         ],
     'qweb': ['static/src/xml/button_import_controlreadings.xml'],
     "installable": True,
