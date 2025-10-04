@@ -60,5 +60,7 @@ class WuaIrrigationdose(models.Model):
                  'age_category')
     def _compute_name(self):
         for record in self:
-            record.name = str(record.cultivation_id.name) + ' - ' + \
-                str(record.soiltype_id.name) + ' - ' + record.age_category
+            record.name = (str(record.with_context(
+                lang='en_US').cultivation_id.name) + ' - ' +
+                str(record.with_context(
+                    lang='en_US').soiltype_id.name) + ' - ' + record.age_category)

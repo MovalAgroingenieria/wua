@@ -48,7 +48,9 @@ class WuaComparativePartnerPresconsumptionGlobal(models.Model):
     def get_consumptions_by_waterconnection(self):
         data = {}
         subparcels = self.get_partner_subparcels_global()
-        for subparcel in subparcels:
+        for subparcel in (subparcels or []):
+            if not subparcel.subparcel_id.parcel_id.irrigationpointwc_ids:
+                continue
             waterconnection_id = subparcel.subparcel_id.parcel_id.\
                 irrigationpointwc_ids[0].waterconnection_id
             if waterconnection_id not in data:

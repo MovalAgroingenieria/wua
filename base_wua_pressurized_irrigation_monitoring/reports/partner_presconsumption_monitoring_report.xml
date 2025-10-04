@@ -342,8 +342,13 @@
                                                 t-value="total_real_consumption_subparcels + s.real_consumption"/>
                                             <td class="text-center"><span t-field="s.subparcel_id"/></td>
                                             <td class="text-center">
-                                                <t t-set="waterconnection" t-value="s.subparcel_id.parcel_id.irrigationpointwc_ids[0]"/>
-                                                <span t-esc="waterconnection.waterconnection_id.name"/>
+                                                <t t-if="s.subparcel_id.parcel_id.irrigationpointwc_ids">
+                                                    <t t-set="waterconnection" t-value="s.subparcel_id.parcel_id.irrigationpointwc_ids[0]"/>
+                                                    <span t-esc="waterconnection.waterconnection_id.name"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span/>
+                                                </t>
                                             </td>
                                             <td><span t-field="s.cultivation_id"/></td>
                                             <td><span t-field="s.cultivationvariety_id"/></td>
@@ -636,8 +641,13 @@
                                             </td>
                                             <td class="text-right"><span t-field="s.drippers_number"/></td>
                                             <td class="text-center">
-                                                <t t-set="waterconnection" t-value="s.subparcel_id.parcel_id.irrigationpointwc_ids[0]"/>
-                                                <span t-esc="waterconnection.waterconnection_id.name"/>
+                                                <t t-if="s.subparcel_id.parcel_id.irrigationpointwc_ids">
+                                                    <t t-set="waterconnection" t-value="s.subparcel_id.parcel_id.irrigationpointwc_ids[0]"/>
+                                                    <span t-esc="waterconnection.waterconnection_id.name"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span/>
+                                                </t>
                                             </td>
                                         </tr>
                                     </t>
