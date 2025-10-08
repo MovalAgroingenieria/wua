@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-13 08:35+0000\n"
-"PO-Revision-Date: 2025-03-13 08:35+0000\n"
+"POT-Creation-Date: 2025-10-08 08:51+0000\n"
+"PO-Revision-Date: 2025-10-08 08:51+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -114,9 +114,14 @@ msgid "Entity (WUA Product Template)"
 msgstr "Elemento (plantilla producto)"
 
 #. module: base_wua_invoicing_surcharges
+#: model:ir.model,name:base_wua_invoicing_surcharges.model_product_product
+msgid "Entity (WUA Product)"
+msgstr "Elemento (Producto)"
+
+#. module: base_wua_invoicing_surcharges
 #: model:ir.model,name:base_wua_invoicing_surcharges.model_wua_invoiceset
 msgid "Entity (invoice set)"
-msgstr "Elemento (lote facturas)"
+msgstr "Elemento (lote)"
 
 #. module: base_wua_invoicing_surcharges
 #: model:ir.model,name:base_wua_invoicing_surcharges.model_wua_invoiceset_line
@@ -124,15 +129,15 @@ msgid "Entity (line of a WUA invoice set)"
 msgstr "Elemento (línea de lote de facturas)"
 
 #. module: base_wua_invoicing_surcharges
-#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:471
-#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:511
-#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:550
+#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:475
+#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:519
+#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:562
 #, python-format
 msgid "Error when updating records."
 msgstr "Error al actualizar los registros."
 
 #. module: base_wua_invoicing_surcharges
-#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:564
+#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:576
 #: model:product.template,name:base_wua_invoicing_surcharges.product_17
 #, python-format
 msgid "Fixed Surcharge"
@@ -215,6 +220,12 @@ msgstr "Líneas de factura con recargo variable"
 #: model:ir.model.fields,field_description:base_wua_invoicing_surcharges.field_account_invoice_invoiceline_total_variable_surcharge_ids
 msgid "Invoice Lines Variable Surcharges (Total amount)"
 msgstr "Líneas de factura con recargo variable (Sobre total factura)"
+
+#. module: base_wua_invoicing_surcharges
+#: model:ir.model.fields,field_description:base_wua_invoicing_surcharges.field_product_product_invoice_selected_by_default
+#: model:ir.model.fields,field_description:base_wua_invoicing_surcharges.field_product_template_invoice_selected_by_default
+msgid "Invoice Selected by Default"
+msgstr "Facturas seleccionadas por defecto"
 
 #. module: base_wua_invoicing_surcharges
 #: model:ir.model,name:base_wua_invoicing_surcharges.model_wua_invoiceset_line_invoice_surcharge_fixed
@@ -378,7 +389,7 @@ msgid "Total amount"
 msgstr "Total"
 
 #. module: base_wua_invoicing_surcharges
-#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:554
+#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:566
 #: model:product.template,name:base_wua_invoicing_surcharges.product_16
 #, python-format
 msgid "Variable Surcharge"
@@ -390,7 +401,7 @@ msgid "Variable Surcharge (Total amount)"
 msgstr "Recargo variable sobre total factura"
 
 #. module: base_wua_invoicing_surcharges
-#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:574
+#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:586
 #, python-format
 msgid "Variable Surcharge (Total)"
 msgstr "Recargo variable sobre total factura"
@@ -406,12 +417,12 @@ msgid "Variable Surcharge for account invoices (Total amount)"
 msgstr "Recargo variable sobre el total para facturas"
 
 #. module: base_wua_invoicing_surcharges
-#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:672
-#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:683
-#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:776
-#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:787
-#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:880
-#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:891
+#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:684
+#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:695
+#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:788
+#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:799
+#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:892
+#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:903
 #, python-format
 msgid "You cannot add or remove because the invoice set state is 'generated'."
 msgstr "No puedes añadir o eliminar porque el lote de facturas está en estado 'generado'."

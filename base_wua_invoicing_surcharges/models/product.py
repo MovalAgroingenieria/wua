@@ -2,7 +2,7 @@
 # 2022 Moval Agroingenieria
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields
+from odoo import models, fields, api
 
 
 class ProductCategory(models.Model):
@@ -41,3 +41,28 @@ class ProductTemplate(models.Model):
         default=False,
         help='If checked, only open invoices will be considered for this '
              'product.')
+
+    invoice_selected_by_default = fields.Boolean(
+        string='Invoice Selected by Default',
+        default=False,
+        store=True,
+    )
+
+
+class ProductProduct(models.Model):
+    _inherit = 'product.product'
+    _description = 'Entity (WUA Product)'
+
+    invoice_selected_by_default = fields.Boolean(
+        string='Invoice Selected by Default',
+        compute='_compute_invoice_selected_by_default',
+        store=True,
+    )
+
+    @api.depends('product_tmpl_id.invoice_selected_by_default')
+    def _compute_invoice_selected_by_default(self):
+        for record in self:
+            record.invoice_selected_by_default = False
+            if record.product_tmpl_id:
+                record.invoice_selected_by_default = \
+                    record.product_tmpl_id.invoice_selected_by_default

@@ -442,6 +442,10 @@ class WuaInvoicesetLine(models.Model):
             state_domain = 'AND state != \'draft\''
             if (product.only_open_invoices):
                 state_domain = 'AND state = \'open\''
+            if product.invoice_selected_by_default:
+                selected = 'TRUE'
+            else:
+                selected = 'FALSE'
             try:
                 self.env.cr.savepoint()
                 self.env.cr.execute("""
@@ -454,7 +458,7 @@ class WuaInvoicesetLine(models.Model):
                     SELECT
                     nextval(
                     'wua_invoiceset_line_invoice_surcharge_variable_id_seq'),
-                    %s, %s, now(), now(), %s, TRUE, id, number, partner_id,
+                    %s, %s, now(), now(), %s, """ + selected + """, id, number, partner_id,
                     residual, date_due, date_invoice, invoiceset_id,
                     number_of_variable_surcharges
                     FROM account_invoice
@@ -480,6 +484,10 @@ class WuaInvoicesetLine(models.Model):
             invoicesetline_id = self.id
             product = self.env['product.product'].browse(product_id)
             state_domain = 'AND state != \'draft\''
+            if product.invoice_selected_by_default:
+                selected = 'TRUE'
+            else:
+                selected = 'FALSE'
             if (product.only_open_invoices):
                 state_domain = 'AND state = \'open\''
             try:
@@ -495,7 +503,7 @@ class WuaInvoicesetLine(models.Model):
                     SELECT
                     nextval(
                     'wua_invoiceset_line_invoice_surcharge_fixed_id_seq'),
-                    %s, %s, now(), now(), %s, TRUE, id, number, partner_id,
+                    %s, %s, now(), now(), %s, """ + selected + """, id, number, partner_id,
                     residual, date_due, date_invoice, invoiceset_id,
                     number_of_fixed_surcharges
                     FROM account_invoice
@@ -519,6 +527,10 @@ class WuaInvoicesetLine(models.Model):
             invoicesetline_id = self.id
             product = self.env['product.product'].browse(product_id)
             state_domain = 'AND state != \'draft\''
+            if product.invoice_selected_by_default:
+                selected = 'TRUE'
+            else:
+                selected = 'FALSE'
             if (product.only_open_invoices):
                 state_domain = 'AND state = \'open\''
             try:
@@ -533,7 +545,7 @@ class WuaInvoicesetLine(models.Model):
                     SELECT
                     nextval(
                     'wua_invoiceset_line_invoice_surcharge_variable_id_seq'),
-                    %s, %s, now(), now(), %s, TRUE, id, number, partner_id,
+                    %s, %s, now(), now(), %s, """ + selected + """, id, number, partner_id,
                     amount_total, date_due, date_invoice, invoiceset_id,
                     number_of_total_variable_surcharges
                     FROM account_invoice
