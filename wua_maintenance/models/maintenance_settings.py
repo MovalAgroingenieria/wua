@@ -31,7 +31,7 @@ class MaintenanceSettings(models.TransientModel):
 
         # Call parent's set_default_values if it exists
         parent_method = getattr(
-            super(MaintenanceSettings, self), 'set_default_values', None
+            super(MaintenanceSettings, self), 'set_default_values', None,
         )
         if parent_method:
             parent_method()

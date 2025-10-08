@@ -23,9 +23,17 @@ class WuaReportrequest(models.Model):
         return resp
 
     def _default_agriculturalseason_id(self):
-        active_agricultural_season = self.env['wua.agriculturalseason'].search(
-            [('active_agriculturalseason', '=', True)])
-        return active_agricultural_season
+        today = fields.Date.context_today(self)
+        request_date = self.request_date or today
+        agricultural_season = self.env['wua.agriculturalseason'].search([
+            ('initial_date', '<=', request_date),
+            ('end_date', '>=', request_date),
+        ], limit=1)
+        if not agricultural_season:
+            agricultural_season = self.env['wua.agriculturalseason'].search([
+                ('active_agriculturalseason', '=', True),
+            ], limit=1)
+        return agricultural_season
 
     def _default_is_portal_user(self):
         resp = None
@@ -50,7 +58,7 @@ class WuaReportrequest(models.Model):
 
     agriculturalseason_id = fields.Many2one(
         string="Agricultural Season",
-        readonly=True,
+        readonly=False,
         index=True,
         required=True,
         default=_default_agriculturalseason_id,
@@ -153,12 +161,22 @@ class WuaReportrequest(models.Model):
 
     calendar_display_name = fields.Char(
         string="Calendar Display Name",
-        compute="_compute_calendar_display_name"
+        compute="_compute_calendar_display_name",
     )
 
     _sql_constraints = [
-        ('unique_name', 'UNIQUE (name)', 'Existing report request name.')
+        ('unique_name', 'UNIQUE (name)', 'Existing report request name.'),
         ]
+
+    @api.onchange('request_date')
+    def _onchange_request_date(self):
+        if self.request_date:
+            agricultural_season = self.env['wua.agriculturalseason'].search([
+                ('initial_date', '<=', self.request_date),
+                ('end_date', '>=', self.request_date),
+            ], limit=1)
+            if agricultural_season:
+                self.agriculturalseason_id = agricultural_season
 
     @api.depends('agriculturalseason_id',
                  'agriculturalseason_id.active_agriculturalseason')
@@ -205,8 +223,6 @@ class WuaReportrequest(models.Model):
     def _compute_calendar_display_name(self):
         data_in_hours = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'data_in_hours')
-        hours_sexagesimal = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'hours_sexagesimal')
         for record in self:
             fields_to_concatenate = []
             if (record.partner_id):
@@ -366,7 +382,7 @@ class WuaReportrequest(models.Model):
             if ('request_date' in vals and self.state == 'validated' and
                     self.request_date != vals['request_date']):
                 raise exceptions.UserError(_(
-                    'Cannot change request date of a validated report request '
+                    'Cannot change request date of a validated report request',
                 ))
         return super(WuaReportrequest, self).write(vals)
 

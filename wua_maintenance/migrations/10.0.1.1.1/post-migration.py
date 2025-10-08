@@ -38,7 +38,8 @@ def migrate(cr, version):
         'equipment_category_irrigationditch':
             'base_wua_infrastructure.model_wua_irrigationditch',
         'equipment_category_drainageditch':
-            'base_wua_infrastructure_gravity_hierarchy.model_wua_drainageditch',
+            'base_wua_infrastructure_gravity_hierarchy.'
+            'model_wua_drainageditch',
         'equipment_category_flowdivider':
             'base_wua_infrastructure.model_wua_flowdivider',
         'equipment_category_irrigationgate':
