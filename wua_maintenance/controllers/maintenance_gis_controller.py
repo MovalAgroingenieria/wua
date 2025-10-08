@@ -116,6 +116,15 @@ class MaintenanceGisController(http.Controller):
         }
         maintenance_teams = request.env['maintenance.team'].search([]).mapped(
             lambda team: team.name)
+        maintenance_kinds = request.env['maintenance.kind'].search([]).mapped(
+            lambda kind: kind.name)
+        maintenance_types = {}
+        maintenance_request = request.env['maintenance.request']
+        maintenance_type_field = maintenance_request._fields[
+            'maintenance_type']
+        for value, label in maintenance_type_field.selection:
+            maintenance_types[value] = maintenance_type_field.\
+                convert_to_export(value, maintenance_request)
         default_gis_refresh_interval = request.env['ir.values'].get_default(
             'maintenance.config.settings', 'default_gis_refresh_interval') or \
             10
@@ -157,6 +166,8 @@ class MaintenanceGisController(http.Controller):
                 }),
             'priority_labels': priority_labels,
             'maintenance_teams': maintenance_teams,
+            'maintenance_kinds': maintenance_kinds,
+            'maintenance_types': maintenance_types,
             'default_interval': default_gis_refresh_interval * 1000,
             'default_maintenance_for_creation':
                 default_maintenance_for_creation,
