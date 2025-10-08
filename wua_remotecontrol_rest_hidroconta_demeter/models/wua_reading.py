@@ -4,6 +4,7 @@
 
 import requests
 import json
+import traceback
 from odoo import models, exceptions, api, _
 
 
@@ -103,41 +104,49 @@ class WuaReading(models.Model):
                 hydrants = self.get_hydrants_from_hidroconta(
                     url_remotecontrol_rest, jsessionid)
                 for hydrant in hydrants:
-                    installationId = int(hydrant['installationId'])
+                    installationId = int(hydrant.get('installationId', 0))
                     if installationId == installation_identifier:
-                        watermeter = \
-                            hydrant['counter']['code'].encode(
-                                'utf-8', 'ignore')
-                        volume = \
-                            hydrant['counter']['counterGlobalValue'] / 1000
-                        readings.append({
-                            'watermeter': watermeter,
-                            'volume': volume,
-                        })
+                        counter = hydrant.get('counter') or {}
+                        watermeter_code = counter.get('code')
+                        counter_value = counter.get('counterGlobalValue')
+                        if watermeter_code and counter_value is not None:
+                            watermeter = \
+                                watermeter_code.encode('utf-8', 'ignore')
+                            volume = counter_value / 1000
+                            readings.append({
+                                'watermeter': watermeter,
+                                'volume': volume,
+                            })
                 iris = self.get_iris_from_hidroconta(
                     url_remotecontrol_rest, jsessionid)
                 for counter in iris:
-                    installationId = int(counter['installationId'])
+                    installationId = int(counter.get('installationId', 0))
                     if installationId == installation_identifier:
-                        watermeter = \
-                            counter['code'].encode('utf-8', 'ignore')
-                        volume = counter['counterGlobalValue'] / 1000
-                        readings.append({
-                            'watermeter': watermeter,
-                            'volume': volume,
-                        })
+                        watermeter_code = counter.get('code')
+                        counter_value = counter.get('counterGlobalValue')
+                        if watermeter_code and counter_value is not None:
+                            watermeter = \
+                                watermeter_code.encode('utf-8', 'ignore')
+                            volume = counter_value / 1000
+                            readings.append({
+                                'watermeter': watermeter,
+                                'volume': volume,
+                            })
                 counters = self.get_counters_from_hidroconta(
                     url_remotecontrol_rest, jsessionid)
                 for counter in counters:
-                    installationId = int(counter['installationId'])
+                    installationId = int(counter.get('installationId', 0))
                     if installationId == installation_identifier:
-                        watermeter = \
-                            counter['code'].encode('utf-8', 'ignore')
-                        volume = counter['counterGlobalValue'] / 1000
-                        readings.append({
-                            'watermeter': watermeter,
-                            'volume': volume,
-                        })
+                        watermeter_code = counter.get('code')
+                        counter_value = counter.get('counterGlobalValue')
+                        if watermeter_code and counter_value is not None:
+                            watermeter = \
+                                watermeter_code.encode('utf-8', 'ignore')
+                            volume = counter_value / 1000
+                            readings.append({
+                                'watermeter': watermeter,
+                                'volume': volume,
+                            })
             else:
                 error_message = _(
                     ' It is not possible to get installation identifier. ')
@@ -187,8 +196,11 @@ class WuaReading(models.Model):
                         # Merge Strings
                         others_readings_info[2] += error_watermeters
             except Exception as e:
+                error_details = traceback.format_exc()
                 others_readings_info[1] += \
-                    ' - ' + 'Hidroconta error:\n\n' + str(e) + '\n\n'
+                    ' - Hidroconta error:\n' + \
+                    'Exception: ' + str(e) + '\n' + \
+                    'Stack trace:\n' + error_details + '\n'
         return others_readings_info
 
     def open_connection_hidroconta(
