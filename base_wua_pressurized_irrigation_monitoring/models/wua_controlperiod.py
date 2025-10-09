@@ -537,9 +537,9 @@ class WuaControlperiod(models.Model):
                index_col_pe >= 0):
                 raw_final_date = str(worksheet.cell(worksheet.nrows - 2,
                                                     index_col_date).value)
-                raw_et0 = str(worksheet.cell(worksheet.nrows - 2,
+                raw_et0 = str(worksheet.cell(worksheet.nrows - 1,
                                              index_col_et0).value)
-                raw_pe = str(worksheet.cell(worksheet.nrows - 2,
+                raw_pe = str(worksheet.cell(worksheet.nrows - 1,
                                             index_col_pe).value)
                 final_date = raw_final_date
                 if len(raw_final_date) == 10:
