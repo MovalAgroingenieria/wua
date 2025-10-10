@@ -26,7 +26,8 @@ class WuaReading(models.Model):
         return {
             'type': 'ir.actions.act_url',
             'url': url_remotecontrol_application,
-            'target': 'new', }
+            'target': 'new',
+        }
 
     # Implemented hook
     def populate_data_for_import_readings_hidroconta(
@@ -39,14 +40,14 @@ class WuaReading(models.Model):
         hydrants = []
         request_headers = {
             'Content-Type': 'application/json',
-            'Cookie': 'JSESSIONID=' + jsessionid
+            'Cookie': 'JSESSIONID=' + jsessionid,
         }
         hydrants_req = requests.request(
             'POST', url_remotecontrol_rest + '/search',
             headers=request_headers,
             data=json.dumps({
                 'type': ['hydrants'],
-                'status': 'enabled'
+                'status': 'enabled',
                 }))
         if hydrants_req.status_code == 200:
             hydrants = json.loads(hydrants_req.text)
@@ -56,14 +57,14 @@ class WuaReading(models.Model):
         iris = []
         request_headers = {
             'Content-Type': 'application/json',
-            'Cookie': 'JSESSIONID=' + jsessionid
+            'Cookie': 'JSESSIONID=' + jsessionid,
         }
         iris_req = requests.request(
             'POST', url_remotecontrol_rest + '/search',
             headers=request_headers,
             data=json.dumps({
                 'type': ['iris'],
-                'status': 'enabled'
+                'status': 'enabled',
                 }))
         if iris_req.status_code == 200:
             iris = json.loads(iris_req.text)
@@ -73,14 +74,14 @@ class WuaReading(models.Model):
         counters = []
         request_headers = {
             'Content-Type': 'application/json',
-            'Cookie': 'JSESSIONID=' + jsessionid
+            'Cookie': 'JSESSIONID=' + jsessionid,
         }
         counters_req = requests.request(
             'POST', url_remotecontrol_rest + '/search',
             headers=request_headers,
             data=json.dumps({
                 'type': ['counters'],
-                'status': 'enabled'
+                'status': 'enabled',
                 }))
         if counters_req.status_code == 200:
             counters = json.loads(counters_req.text)
@@ -210,11 +211,11 @@ class WuaReading(models.Model):
         resprest = requests.request(
             'POST', url_remotecontrol_rest + '/login',
             headers={
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
                 },
             data=json.dumps({
                 'username': url_remotecontrol_rest_username,
-                'password': url_remotecontrol_rest_password
+                'password': url_remotecontrol_rest_password,
                 }))
         if resprest.status_code == 200:
             headers = str(resprest.headers)
@@ -231,6 +232,6 @@ class WuaReading(models.Model):
             requests.request(
                 'POST', url_remotecontrol_rest + '/logout',
                 headers={
-                    'Cookie': 'JSESSIONID=' + jsessionid
+                    'Cookie': 'JSESSIONID=' + jsessionid,
                     },
                 data={})

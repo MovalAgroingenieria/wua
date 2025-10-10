@@ -24,18 +24,20 @@ class WuaInvoiceset(models.Model):
                 for line in record.line_ids:
                     if line.categ_id.productcategory_code == 16:
                         for l_invoice_variable in \
-                                line.line_invoice_with_variable_surcharge_ids:
+                                line.line_invoice_with_variable_surcharge_ids.\
+                                filtered(lambda x: x.selected):
                             invoice_variable_ids.append(
                                 l_invoice_variable.invoice_id.id)
                     elif line.categ_id.productcategory_code == 17:
                         for l_invoice_fixed in \
-                                line.line_invoice_with_fixed_surcharge_ids:
+                                line.line_invoice_with_fixed_surcharge_ids.\
+                                filtered(lambda x: x.selected):
                             invoice_fixed_ids.append(
                                 l_invoice_fixed.invoice_id.id)
                     elif line.categ_id.productcategory_code == 18:
                         for l_invoice_total_variable in \
-                                line.\
-                                line_invoice_with_total_variable_surcharge_ids:
+                                line.line_invoice_with_total_variable_surcharge_ids.\
+                                filtered(lambda x: x.selected):
                             invoice_total_variable_ids.append(
                                 l_invoice_total_variable.invoice_id.id)
         res = super(WuaInvoiceset, self).unlink()
@@ -304,16 +306,19 @@ class WuaInvoiceset(models.Model):
         for line in invoiceset.line_ids:
             if line.categ_id.productcategory_code == 16:
                 for l_invoice_variable in \
-                        line.line_invoice_with_variable_surcharge_ids:
+                        line.line_invoice_with_variable_surcharge_ids.filtered(
+                            lambda x: x.selected):
                     invoice_variable_ids.append(
                         l_invoice_variable.invoice_id.id)
             elif line.categ_id.productcategory_code == 17:
                 for l_invoice_fixed in \
-                        line.line_invoice_with_fixed_surcharge_ids:
+                        line.line_invoice_with_fixed_surcharge_ids.filtered(
+                            lambda x: x.selected):
                     invoice_fixed_ids.append(l_invoice_fixed.invoice_id.id)
             elif line.categ_id.productcategory_code == 18:
                 for l_invoice_total_variable in \
-                        line.line_invoice_with_total_variable_surcharge_ids:
+                        line.line_invoice_with_total_variable_surcharge_ids.\
+                        filtered(lambda x: x.selected):
                     invoice_total_variable_ids.append(
                         l_invoice_total_variable.invoice_id.id)
         if invoice_variable_ids:
@@ -344,16 +349,19 @@ class WuaInvoiceset(models.Model):
         for line in invoiceset.line_ids:
             if line.categ_id.productcategory_code == 16:
                 for l_invoice_variable in \
-                        line.line_invoice_with_variable_surcharge_ids:
+                        line.line_invoice_with_variable_surcharge_ids.filtered(
+                            lambda x: x.selected):
                     invoice_variable_ids.append(
                         l_invoice_variable.invoice_id.id)
             elif line.categ_id.productcategory_code == 17:
                 for l_invoice_fixed in \
-                        line.line_invoice_with_fixed_surcharge_ids:
+                        line.line_invoice_with_fixed_surcharge_ids.filtered(
+                            lambda x: x.selected):
                     invoice_fixed_ids.append(l_invoice_fixed.invoice_id.id)
             elif line.categ_id.productcategory_code == 18:
                 for l_invoice_total_variable in \
-                        line.line_invoice_with_total_variable_surcharge_ids:
+                        line.line_invoice_with_total_variable_surcharge_ids.\
+                        filtered(lambda x: x.selected):
                     invoice_total_variable_ids.append(
                         l_invoice_total_variable.invoice_id.id)
         if invoice_variable_ids:
@@ -458,7 +466,8 @@ class WuaInvoicesetLine(models.Model):
                     SELECT
                     nextval(
                     'wua_invoiceset_line_invoice_surcharge_variable_id_seq'),
-                    %s, %s, now(), now(), %s, """ + selected + """, id, number, partner_id,
+                    %s, %s, now(), now(), %s, """ + selected + """, id,
+                    number, partner_id,
                     residual, date_due, date_invoice, invoiceset_id,
                     number_of_variable_surcharges
                     FROM account_invoice
@@ -503,7 +512,8 @@ class WuaInvoicesetLine(models.Model):
                     SELECT
                     nextval(
                     'wua_invoiceset_line_invoice_surcharge_fixed_id_seq'),
-                    %s, %s, now(), now(), %s, """ + selected + """, id, number, partner_id,
+                    %s, %s, now(), now(), %s, """ + selected + """, id,
+                    number, partner_id,
                     residual, date_due, date_invoice, invoiceset_id,
                     number_of_fixed_surcharges
                     FROM account_invoice
@@ -545,7 +555,8 @@ class WuaInvoicesetLine(models.Model):
                     SELECT
                     nextval(
                     'wua_invoiceset_line_invoice_surcharge_variable_id_seq'),
-                    %s, %s, now(), now(), %s, """ + selected + """, id, number, partner_id,
+                    %s, %s, now(), now(), %s, """ + selected + """, id,
+                    number, partner_id,
                     amount_total, date_due, date_invoice, invoiceset_id,
                     number_of_total_variable_surcharges
                     FROM account_invoice
@@ -606,12 +617,14 @@ class WuaInvoicesetLineInvoiceSurchargeVariable(models.Model):
         comodel_name='wua.invoiceset.line',
         required=True,
         ondelete='cascade',
+        index=True,
     )
 
     invoiceset_id = fields.Many2one(
         string='Invoiceset',
         comodel_name='wua.invoiceset',
         ondelete='cascade',
+        index=True,
     )
 
     selected = fields.Boolean(
@@ -710,12 +723,14 @@ class WuaInvoicesetLineInvoiceSurchargeFixed(models.Model):
         comodel_name='wua.invoiceset.line',
         required=True,
         ondelete='cascade',
+        index=True,
     )
 
     invoiceset_id = fields.Many2one(
         string='Invoiceset',
         comodel_name='wua.invoiceset',
         ondelete='cascade',
+        index=True,
     )
 
     selected = fields.Boolean(
@@ -815,12 +830,14 @@ class WuaInvoicesetLineInvoiceTotalSurchargeVariable(models.Model):
         comodel_name='wua.invoiceset.line',
         required=True,
         ondelete='cascade',
+        index=True,
     )
 
     invoiceset_id = fields.Many2one(
         string='Invoiceset',
         comodel_name='wua.invoiceset',
         ondelete='cascade',
+        index=True,
     )
 
     selected = fields.Boolean(
