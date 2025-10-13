@@ -317,12 +317,12 @@ class WuaPreswateringrequest(models.Model):
                 wc_name = presresconsumption.waterconnection_id.name
                 nominal_flow = presresconsumption.nominal_flow_ls if \
                     use_flow_ls else presresconsumption.nominal_flow
-                nominal_flow_unit = "l/s" if use_flow_ls else "m³/h"
+                nominal_flow_unit = u"l/s" if use_flow_ls else u"m³/h"
                 watering_duration = presresconsumption.watering_duration or 0
                 watering_volume = presresconsumption.watering_volume or 0
                 description = _(
-                    'Waterconnection: %s, Flow: %s %s, '
-                    'Duration: %s min, Volumen: %s m³') % \
+                    u'Waterconnection: %s, Flow: %s %s, '
+                    u'Duration: %s h, Volumen: %s m³') % \
                     (wc_name, nominal_flow, nominal_flow_unit,
                         watering_duration, watering_volume)
                 track_presresconsumption_ids.append(description)
