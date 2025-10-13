@@ -349,9 +349,10 @@ class WuaParcel(models.Model):
         parcels = self.env['wua.parcel'].search([])
         for parcel in (parcels or []):
             parcel_ids.append(parcel.id)
-        if parcel_ids:
-            parcel_ids.sort()
-            self.get_ndvi_values(parcel_ids, show_dialog=False)
+        # Process the parcels one by one to avoid timeouts.
+        for parcel_id in parcel_ids:
+            self.get_ndvi_values([parcel_id], show_dialog=False)
+            self.env.cr.commit()
 
     def _get_ndvi_data_of_prev_agriculturalseason(
             self, parcel, current_agriculturalseason):
