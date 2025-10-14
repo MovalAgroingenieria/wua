@@ -62,6 +62,8 @@ class WauSMSWizard(models.Model):
             context_filter = "[('type', '=', 'parcel')]"
         elif context.get('mode') == 'waterconnection':
             context_filter = "[('type', '=', 'waterconnection')]"
+        elif context.get('mode') == 'test':
+            context_filter = "[('type', '=', 'test')]"
         elif quota_module_installed:
             if context.get("mode") == 'quota':
                 context_filter = "[('type', '=', 'quota')]"
