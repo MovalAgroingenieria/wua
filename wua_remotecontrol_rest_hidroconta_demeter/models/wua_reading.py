@@ -50,7 +50,9 @@ class WuaReading(models.Model):
                 'status': 'enabled',
                 }))
         if hydrants_req.status_code == 200:
-            hydrants = json.loads(hydrants_req.text)
+            try:
+                hydrants = json.loads(hydrants_req.text)
+            except Exception:
         return hydrants
 
     def get_iris_from_hidroconta(self, url_remotecontrol_rest, jsessionid):
@@ -67,7 +69,9 @@ class WuaReading(models.Model):
                 'status': 'enabled',
                 }))
         if iris_req.status_code == 200:
-            iris = json.loads(iris_req.text)
+            try:
+                iris = json.loads(iris_req.text)
+            except Exception:
         return iris
 
     def get_counters_from_hidroconta(self, url_remotecontrol_rest, jsessionid):
@@ -84,7 +88,9 @@ class WuaReading(models.Model):
                 'status': 'enabled',
                 }))
         if counters_req.status_code == 200:
-            counters = json.loads(counters_req.text)
+            try:
+                counters = json.loads(counters_req.text)
+            except Exception:
         return counters
 
     # Implemented hook
