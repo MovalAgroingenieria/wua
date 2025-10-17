@@ -21,12 +21,17 @@ class ResPartner(models.Model):
                 ('quota_id', 'in', quotas.ids),
                 ('type', '=', 'pres_consumption')
             ], order='event_time desc', limit=1)
-
             if not last_move:
-                continue
+                quotaperiod = quotas.mapped('quotaperiod_id')
+                if quotaperiod and quotaperiod[0].initial_date:
+                    reference_date = quotaperiod[0].initial_date
+                else:
+                    continue
+            else:
+                reference_date = last_move.event_time
             try:
                 initial_time = datetime.datetime.strptime(
-                    last_move.event_time, '%Y-%m-%d %H:%M:%S'
+                    str(reference_date), '%Y-%m-%d %H:%M:%S'
                 ) + datetime.timedelta(seconds=1)
             except Exception:
                 continue
