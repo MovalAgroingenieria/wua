@@ -53,6 +53,7 @@ class WuaReading(models.Model):
             try:
                 hydrants = json.loads(hydrants_req.text)
             except Exception:
+                pass
         return hydrants
 
     def get_iris_from_hidroconta(self, url_remotecontrol_rest, jsessionid):
@@ -72,6 +73,7 @@ class WuaReading(models.Model):
             try:
                 iris = json.loads(iris_req.text)
             except Exception:
+                pass
         return iris
 
     def get_counters_from_hidroconta(self, url_remotecontrol_rest, jsessionid):
@@ -91,6 +93,7 @@ class WuaReading(models.Model):
             try:
                 counters = json.loads(counters_req.text)
             except Exception:
+                pass
         return counters
 
     # Implemented hook
