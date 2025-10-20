@@ -1245,7 +1245,6 @@ class WuaQuotaAggregatevalue(models.Model):
                     FROM wua_parcel_partnerlink
                     GROUP BY partner_id
                 ) wpp1 ON q.partner_id = wpp1.partner_id
-                WHERE q.of_active_agriculturalseason
                 GROUP BY q.quotaperiod_id, q.partner_id, wpp1.total_area)
                 """)
             self.env.cr.execute("""
