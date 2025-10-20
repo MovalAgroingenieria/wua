@@ -10,7 +10,7 @@ from odoo import models, fields, api, _
 class WuaParcel(models.Model):
     _inherit = "wua.parcel"
 
-    mapped = fields.Boolean(
+    mapped_to_general = fields.Boolean(
         string="Mapped",
         default=False,
         readonly=True,
@@ -76,9 +76,10 @@ class WuaParcel(models.Model):
 
         # Set others parcels as not mapped (refresh)
         other_parcels = self.env["wua.parcel"].search(
-            [("name", "not in", list_of_parcels), ("mapped", "=", True)])
+            [("name", "not in", list_of_parcels),
+             ("mapped_to_general", "=", True)])
         for other_parcel in other_parcels:
-            other_parcel.mapped = False
+            other_parcel.mapped_to_general = False
             other_parcel.last_update = False
 
         # Set parcels
