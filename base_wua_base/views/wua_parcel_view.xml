@@ -19,8 +19,8 @@
         <field name="inherit_id" ref="base_wua.wua_parcel_view_search"/>
         <field name="arch" type="xml">
             <xpath expr="//filter[@name='inactive']" position="before">
-                <filter string="Mapped: Yes" name="mappedyes" domain="[('mapped','=',True)]"/>
-                <filter string="Mapped: No" name="mappedno" domain="[('mapped','=',False)]"/>
+                <filter string="Mapped: Yes" name="mappedyes" domain="[('mapped_to_general','=',True)]"/>
+                <filter string="Mapped: No" name="mappedno" domain="[('mapped_to_general','=',False)]"/>
                 <separator/>
             </xpath>
         </field>
