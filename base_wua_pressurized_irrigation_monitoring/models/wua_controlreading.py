@@ -35,7 +35,8 @@ class WuaControlreading(models.Model):
         string='Value (m3)',
         digits=(32, 4),
         default=0,
-        required=True)
+        required=True,
+    )
 
     name = fields.Char(
         string='Reading',
@@ -111,7 +112,8 @@ class WuaControlreading(models.Model):
 
     active = fields.Boolean(
         string='Active',
-        default=True, )
+        default=True,
+    )
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
@@ -253,7 +255,8 @@ class WuaControlreading(models.Model):
         if watermeter:
             vals_watermeter = {
                 'last_controlreading_time': reading_end_time,
-                'last_controlreading_value': end_volume, }
+                'last_controlreading_value': end_volume,
+            }
             watermeter.write(vals_watermeter)
         # Creation of reading.
         new_reading = super(WuaControlreading, self).create(vals)
@@ -275,6 +278,9 @@ class WuaControlreading(models.Model):
                         self.controlpresconsumption_id.\
                             add_prorrated_value_to_subparcels()
                 self.watermeter_id.last_controlreading_value = vals['volume']
+            if 'reading_time' in vals and self.is_last_reading:
+                self.watermeter_id.last_controlreading_time = vals[
+                    'reading_time']
         return resp
 
     @api.multi
@@ -407,7 +413,8 @@ class WuaControlreading(models.Model):
         return {
             'type': 'ir.actions.act_url',
             'url': url_remotecontrol_application,
-            'target': 'new', }
+            'target': 'new',
+        }
 
     @api.model
     def do_import_controlreadings(self, save_data=True, show_message=True):
