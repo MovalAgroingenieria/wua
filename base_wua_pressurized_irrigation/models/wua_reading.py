@@ -367,6 +367,8 @@ class WuaReading(models.Model):
                     })
                     self.presconsumption_id.update_volume_perunitareas()
                 self.watermeter_id.last_reading_value = vals['volume']
+                if self.watermeter_id.last_reading_time == self.reading_time:
+                    self.watermeter_id.last_reading_type = self.reading_type
             if 'last_reading_consumption' in vals:
                 self.watermeter_id.last_reading_consumption = \
                     vals['last_reading_consumption']
@@ -468,6 +470,7 @@ class WuaReading(models.Model):
         # Update the "last-reading" and "last-volume" of the water meter from
         # the new "last-reading".
         new_last_reading_time = None
+        new_last_reading_type = None
         new_last_reading_value = 0
         new_last_reading_consumption = 0
         if new_last_reading:
@@ -475,10 +478,13 @@ class WuaReading(models.Model):
             new_last_reading_value = new_last_reading.volume
             new_last_reading_consumption = \
                 new_last_reading.presconsumption_volume_real
+            new_last_reading_type = new_last_reading.reading_type
         vals_watermeter = {
             'last_reading_time': new_last_reading_time,
             'last_reading_value': new_last_reading_value,
-            'last_reading_consumption': new_last_reading_consumption}
+            'last_reading_consumption': new_last_reading_consumption,
+            'last_reading_type': new_last_reading_type,
+        }
         watermeter.write(vals_watermeter)
         return resp
 
