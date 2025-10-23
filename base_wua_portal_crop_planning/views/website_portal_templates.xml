@@ -3,12 +3,12 @@
         <template id="portal_my_home_wua" inherit_id="base_wua_portal.portal_my_home_wua" name="Hide Quotes and Orders">
             <xpath expr="//div[contains(@class,'o_my_home_content')]" position="inside">
                 <h3 class="page-header" style="order: 16;">
-                    <a href="/my/enrolledsubparcels">
+                    <a href="/my/cropplans">
                         <i class="fa fa-fw fa-comments"></i>
-                        Your inscriptions
+                        Your cropplans
                         <small class="ml8">
-                            <t t-if="enrolledsubparcels_count">
-                                <span class='badge pull-right'><t t-esc="enrolledsubparcels_count"/></span>
+                            <t t-if="cropplans_count">
+                                <span class='badge pull-right'><t t-esc="cropplans_count"/></span>
                             </t>
                         </small>
                     </a>
@@ -49,13 +49,12 @@
                                             <select id="search_field" name="search_field" class="form-control">
                                                 <option value="parcel_id" t-att-selected="'parcel_id' == search_field">Parcel</option>
                                                 <option value="subparcel_code" t-att-selected="'subparcel_code' == search_field">Subparcel Code</option>
-                                                <option value="cropplan_id" t-att-selected="'cropplan_id' == search_field">Crop Plan</option>
+                                                <option value="agriculturalseason_id" t-att-selected="'agriculturalseason_id' == search_field">Agricultural Season</option>
                                                 <option value="subparceltype_id" t-att-selected="'subparceltype_id' == search_field">Subparcel Type</option>
                                                 <option value="area_official" t-att-selected="'area_official' == search_field">Official Area</option>
                                                 <option value="cultivation_id" t-att-selected="'cultivation_id' == search_field">Cultivation</option>
                                                 <option value="cultivationvariety_id" t-att-selected="'cultivationvariety_id' == search_field">Cultivation Variety</option>
                                                 <option value="irrigationsystem_id" t-att-selected="'irrigationsystem_id' == search_field">Irrigation System</option>
-                                                <option value="productionmethod_id" t-att-selected="'productionmethod_id' == search_field">Production Method</option>
                                                 <option value="profile" t-att-selected="'profile' == search_field">Profile</option>
                                             </select>
                                         </div>
@@ -72,28 +71,30 @@
                                         <tr class="active">
                                             <th>Parcel</th>
                                             <th>Subparcel Code</th>
-                                            <th>Crop Plan</th>
+                                            <th>Agricultural Season</th>
                                             <th>Subparcel Type</th>
                                             <th>Official Area</th>
                                             <th>Cultivation</th>
                                             <th>Cultivation Variety</th>
                                             <th>Irrigation System</th>
-                                            <th>Production Method</th>
                                             <th>Profile</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <t t-foreach="enrolledsubparcels" t-as="enrolledsubparcel">
                                             <tr>
-                                                <td><span t-field="enrolledsubparcel.parcel_id"/></td>
+                                                <td>
+                                                    <a t-att-href="'/my/enrolledsubparcels/' + str(enrolledsubparcel.cropplan_id.id) + '/report'">
+                                                    <span t-field="enrolledsubparcel.parcel_id"/>
+                                                    </a>
+                                                </td>
                                                 <td><span t-field="enrolledsubparcel.subparcel_code"/></td>
-                                                <td><span t-field="enrolledsubparcel.cropplan_id"/></td>
+                                                <td><span t-field="enrolledsubparcel.agriculturalseason_id.description"/></td>
                                                 <td><span t-field="enrolledsubparcel.subparceltype_id"/></td>
                                                 <td><span t-field="enrolledsubparcel.area_official"/></td>
                                                 <td><span t-field="enrolledsubparcel.cultivation_id"/></td>
                                                 <td><span t-field="enrolledsubparcel.cultivationvariety_id"/></td>
                                                 <td><span t-field="enrolledsubparcel.irrigationsystem_id"/></td>
-                                                <td><span t-field="enrolledsubparcel.productionmethod_id"/></td>
                                                 <td><span t-field="enrolledsubparcel.profile"/></td>
                                             </tr>
                                         </t>
@@ -103,6 +104,211 @@
                                     <t t-call="website.pager"/>
                                 </div>
                             </t>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+        <template id="portal_my_cropplans" name="My cropplan">
+            <t t-call="website.layout">
+                <div class="container mt16">
+                    <div class="navbar navbar-default">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#oe-help-navbar-collapse">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a class="navbar-brand" href="/my/home">
+                                My Account
+                            </a>
+                        </div>
+                        <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
+                            <ul class="nav navbar-nav o_portal_submenu">
+                                <li>
+                                    <a href="/my/invoices">Facturas</a>
+                                </li>
+                                <li>
+                                    <a href="/my/parcels">Parcelas</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="wrap">
+                    <div class="container mb64">
+                        <div class="col-md-12">
+                            <h3 class="page-header">Cropplans</h3>
+                            <form action="/my/cropplans" method="get" class="mb-3">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <select id="search_field" name="search_field" class="form-control">
+                                            <option value="agriculturalseason_id" t-att-selected="'agriculturalseason_id' == search_field">Agricultural Season</option>
+                                            <option value="request_date" t-att-selected="'request_date' == search_field">Request Date</option>
+                                            <option value="order_number" t-att-selected="'order_number' == search_field">Order Number</option>
+                                            <option value="state" t-att-selected="'state' == search_field">Status</option>
+                                            </select>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" name="search" class="form-control" placeholder="Search cropplans..."
+                                            t-att-value="search_query or ''"/>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="submit" class="btn btn-primary btn-block">Search</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <t t-if="not cropplans">
+                                <p>There are currently no cropplan for your account.</p>
+                            </t>
+                            <t t-if="cropplans">
+                                <table class="table table-hover o_my_status_table">
+                                    <thead>
+                                        <tr class="active">
+                                            <th>Cropplan</th>
+                                            <th>Agricultural Season</th>
+                                            <th>Request Date</th>
+                                            <th>Portal User</th>
+                                            <th>Out of Time</th>
+                                            <th># Enrolled Subparcels</th>
+                                            <th>Official Area</th>
+                                            <th>Order Number</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <t t-foreach="cropplans" t-as="cropplan">
+                                        <tr>
+                                            <td>
+                                                <a t-attf-href="/my/cropplans/#{cropplan.id}?ids={{ cropplan_id_list }}&amp;#{keep_query()}">
+                                                    <t t-esc="cropplan.name"/>
+                                                </a>
+                                            </td>
+                                            <td><t t-esc="cropplan.agriculturalseason_id.description"/></td>
+                                            <td><t t-esc="cropplan.request_date"/></td>
+                                            <td><t t-esc="cropplan.is_portal_user"/></td>
+                                            <td><t t-esc="cropplan.out_of_time"/></td>
+                                            <td><t t-esc="cropplan.number_of_enrolledsubparcels"/></td>
+                                            <td><t t-esc="cropplan.area_official"/></td>
+                                            <td><t t-esc="cropplan.order_number"/></td>
+                                            <td><t t-esc="cropplan.state"/></td>
+                                        </tr>
+                                    </t>
+                                </table>
+                                <div t-if="pager" class="o_portal_pager text-center">
+                                    <t t-call="website.pager"/>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+        <template id="cropplans_followup" name="Cropplan Details">
+            <t t-call="website.layout">
+                <div id="wrap">
+                    <div class="container">
+                        <div class="oe_structure">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <ol class="breadcrumb mt8">
+                                        <li><a href="/my/home"><i class="fa fa-home"/></a></li>
+                                        <li>
+                                            <a t-attf-href="/my/cropplans">
+                                                <t>My Cropplans</t>
+                                            </a>
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                            <div id="optional_placeholder"></div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <div class="row">
+                                        <div class="col-md-10">
+                                            <h4>
+                                                <t>Cropplan</t>
+                                                <a t-att-href="'/my/enrolledsubparcels/' + str(cropplan.id) + '/report'">
+                                                    <span t-esc="cropplan.name"/>
+                                                </a>
+                                                <a t-att-href="'/my/enrolledsubparcels/' + str(cropplan.id) + '/report'" class="ml8" title="Print">
+                                                    <i class="fa fa-print"/>
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div class="col-md-2 text-right">
+                                            <t t-if="cropplan_total">
+                                                <span><t t-esc="cropplan_index"/> / <t t-esc="cropplan_total"/></span>
+                                            </t>
+                                            <t t-if="prev_cropplan_id">
+                                                <a t-attf-href="/my/cropplans/{{ prev_cropplan_id }}?ids={{ ids }}" class="btn btn-secondary">
+                                                    <i class="fa fa-chevron-left"></i>
+                                                </a>
+                                            </t>
+                                            <t t-if="next_cropplan_id">
+                                                <a t-attf-href="/my/cropplans/{{ next_cropplan_id }}?ids={{ ids }}" class="btn btn-secondary">
+                                                    <i class="fa fa-chevron-right"></i>
+                                                </a>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div name="left_column" class="col-md-4 d-flex flex-column justify-content-between">
+                                        Number of enrolledsubparcels: <span t-esc="cropplan.number_of_enrolledsubparcels"/><br/>
+                                        Official Area: <span t-esc="cropplan.area_official"/><br/>
+                                        Agricultural Season: <span t-esc="cropplan.agriculturalseason_id.description"/><br/>
+                                        </div>
+                                        <div name="middle_column" class="col-md-4 d-flex flex-column justify-content-between">
+                                        Request Date: <span t-esc="cropplan.request_date"/><br/>
+                                        Portal User: <span t-esc="cropplan.is_portal_user"/><br/>
+                                        State: <span t-esc="cropplan.state"/><br/>
+                                        </div>
+                                        <div name="right_column" class="col-md-4 text-center">
+                                        </div>
+                                    </div>
+                                    <div name="pages">
+                                        <ul name="tabs_titles" class="nav nav-tabs" role="tablist">
+                                            <li class="active"><a href="#enrolledsubparcels" role="tab" data-toggle="tab">Enrolled Subparcels</a></li>
+                                        </ul>
+                                        <div name="tabs_content" class="tab-content">
+                                            <div class="tab-pane active" id="enrolledsubparcels">
+                                                <h4>Enrolled Subparcels</h4>
+                                                <table class="table table-hover o_my_status_table">
+                                                    <thead>
+                                                        <tr class="active">
+                                                            <th>Parcel</th>
+                                                            <th>Subparcel Code</th>
+                                                            <th>Agricultural Season</th>
+                                                            <th>Subparcel Type</th>
+                                                            <th>Official Area</th>
+                                                            <th>Cultivation</th>
+                                                            <th>Cultivation Variety</th>
+                                                            <th>Irrigation System</th>
+                                                            <th>Profile</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <t t-foreach="cropplan.enrolledsubparcel_ids" t-as="enrolledsubparcel">
+                                                            <tr>
+                                                                <td><span t-field="enrolledsubparcel.parcel_id"/></td>
+                                                                <td><span t-field="enrolledsubparcel.subparcel_code"/></td>
+                                                                <td><span t-field="enrolledsubparcel.agriculturalseason_id.description"/></td>
+                                                                <td><span t-field="enrolledsubparcel.subparceltype_id"/></td>
+                                                                <td><span t-field="enrolledsubparcel.area_official"/></td>
+                                                                <td><span t-field="enrolledsubparcel.cultivation_id"/></td>
+                                                                <td><span t-field="enrolledsubparcel.cultivationvariety_id"/></td>
+                                                                <td><span t-field="enrolledsubparcel.irrigationsystem_id"/></td>
+                                                                <td><span t-field="enrolledsubparcel.profile"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
