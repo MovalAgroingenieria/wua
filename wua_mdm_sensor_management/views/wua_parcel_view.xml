@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_parcel_from_device_view_tree" model="ir.ui.view">
+        <field name="name">wua.parcel.from.device.view.tree</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id" ref="base_wua.wua_parcel_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="mapped_to_specific_device"
+                       string="Mapped"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_assign_device" model="ir.actions.server">
+        <field name="name">Assign Device</field>
+        <field name="model_id" ref="base_wua.model_wua_parcel"/>
+        <field name="code">
+            action = env['wua.parcel'].browse(context['active_ids']).assign_device()
+        </field>
+    </record>
+
+    <record id="wua_action_assign_device" model="ir.values">
+        <field name="name">Assign Device</field>
+        <field name="model">wua.parcel</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_assign_device'))"/>
+    </record>
+
+    <record id="wua_unassign_device" model="ir.actions.server">
+        <field name="name">Unassign Device</field>
+        <field name="model_id" ref="base_wua.model_wua_parcel"/>
+        <field name="code">
+            action = env['wua.parcel'].browse(context['active_ids']).unassign_device()
+        </field>
+    </record>
+
+    <record id="wua_action_unassign_device" model="ir.values">
+        <field name="name">Unassign Device</field>
+        <field name="model">wua.parcel</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_unassign_device'))"/>
+    </record>
+
+</odoo>

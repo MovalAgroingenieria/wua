@@ -16,7 +16,9 @@
         "mdm_sensor_management",
     ],
     "data": [
+        "security/ir.model.access.csv",
         "views/measurement_device_views.xml",
+        "views/wua_parcel_view.xml",
     ],
     "installable": True,
     "application": False,

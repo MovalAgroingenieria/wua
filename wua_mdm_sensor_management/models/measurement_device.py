@@ -2,7 +2,7 @@
 # 2025 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 
 
 class MeasurementDevice(models.Model):
@@ -42,6 +42,18 @@ class MeasurementDevice(models.Model):
     with_gis_measurement_device = fields.Boolean(
         string='With GIS Measurement Device',
         readonly=True,
+    )
+
+    # Modified EIS
+    deviceparcellink_ids = fields.One2many(
+        string='Parcel Links',
+        comodel_name='mdm.device.parcellink',
+        inverse_name='device_id')
+
+    # Modified EIS
+    linked_all_parcels = fields.Boolean(
+        string='Device linked to all parcels (y/n)',
+        default=False,
     )
 
     @api.depends('subparcel_id', 'subparcel_id.partner_id')
@@ -104,3 +116,75 @@ class MeasurementDevice(models.Model):
             parcel_model.create_measurement_device_triggers()
         except Exception:
             pass
+
+    # Modified EIS
+    @api.multi
+    def action_view_parcels(self):
+        self.ensure_one()
+        current_device = self
+        id_tree_view = self.env.ref(
+            'wua_mdm_sensor_management.wua_parcel_from_device_view_tree').id
+        search_view = self.env.ref(
+            'base_wua.wua_parcel_view_search')
+        mapped_device_id = 0
+        if not current_device.linked_all_parcels:
+            mapped_device_id = current_device.id
+        custom_context = {'mapped_device_id': mapped_device_id, }
+        self.env['wua.parcel'].__class__._my_mapped_device_id = mapped_device_id
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Parcels'),
+            'res_model': 'wua.parcel',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'views': [(id_tree_view, 'tree')],
+            'search_view_id': [search_view.id],
+            'target': 'current',
+            'context': custom_context,
+            }
+        return act_window
+
+
+# Modified EIS
+class MeasurementDeviceParcellink(models.Model):
+    _name = 'mdm.device.parcellink'
+    _description = 'Parcel link of a device'
+    _order = 'name'
+
+    device_id = fields.Many2one(
+        string='Device',
+        comodel_name='mdm.measurement.device',
+        required=True,
+        index=True,
+        ondelete='cascade',
+    )
+
+    parcel_id = fields.Many2one(
+        string='Parcel',
+        comodel_name='wua.parcel',
+        required=True,
+        index=True,
+        ondelete='cascade',
+    )
+
+    name = fields.Char(
+        string='Code',
+        store=True,
+        index=True,
+        compute='_compute_name',
+    )
+
+    _sql_constraints = [
+        ('unique_name',
+         'UNIQUE (name)',
+         'Existing device-parcel line.'),
+        ]
+
+    @api.depends('device_id', 'parcel_id', 'device_id.name', 'parcel_id.name')
+    def _compute_name(self):
+        for record in self:
+            name = ''
+            if (record.device_id and record.parcel_id and
+               record.device_id.name and record.parcel_id.name):
+                name = record.parcel_id.name + ' - ' + record.device_id.name
+            record.name = name

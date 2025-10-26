@@ -2,11 +2,65 @@
 # 2025 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models
+from odoo import models, fields, api
 
 
 class WuaParcel(models.Model):
     _inherit = 'wua.parcel'
+
+    # Modified EIS
+    _my_mapped_device_id = 0
+
+    # Modified EIS
+    mapped_to_specific_device = fields.Boolean(
+        'Associated with a specific device (y/n)',
+        compute='_compute_mapped_to_specific_device',
+        search='_search_mapped_to_specific_device',
+    )
+
+    @api.multi
+    def _compute_mapped_to_specific_device(self):
+        mapped_device_id = 0
+        if ('mapped_device_id' in self.env.context and
+           self.env.context['mapped_device_id']):
+            mapped_device_id = self.env.context['mapped_device_id']
+        for record in self:
+            mapped_to_specific_device = (mapped_device_id == 0)
+            if not mapped_to_specific_device:
+                sql_statement = ('select id from mdm_device_parcellink '
+                                 'where device_id = %s and parcel_id = %s' %
+                                 (mapped_device_id, record.id))
+                self.env.cr.execute(sql_statement)
+                sql_resp = self.env.cr.fetchall()
+                if sql_resp:
+                    mapped_to_specific_device = True
+            record.mapped_to_specific_device = mapped_to_specific_device
+
+    @api.model
+    def _search_mapped_to_specific_device(self, operator, value):
+        mapped_device_id = 0
+        if ('mapped_device_id' in self.env.context and
+           self.env.context['mapped_device_id']):
+            mapped_device_id = self.env.context['mapped_device_id']
+        parcel_ids = []
+        operator_of_filter = 'in'
+        if operator == '!=':
+            operator_of_filter = 'not in'
+        if mapped_device_id:
+            sql_statement = ('select id from wua_parcel p '
+                             'inner join mdm_device_parcellink pl '
+                             'on p.id = pl.parcel_id '
+                             'where pl.device_id = %s' % mapped_device_id)
+            self.env.cr.execute(sql_statement)
+            sql_resp = self.env.cr.fetchall()
+            if sql_resp:
+                for item in sql_resp:
+                    parcel_ids.append(item[0])
+        else:
+            parcels = self.search([])
+            if parcels:
+                parcel_ids = parcels.ids
+        return [('id', operator_of_filter, parcel_ids)]
 
     def check_gis_measurement_device_table_created(self):
         self.env.cr.execute("""
@@ -165,7 +219,7 @@ class WuaParcel(models.Model):
 
     def set_gis_fields_measurement_device(self):
         gis_measurement_device_ok = self.check_gis_drainagevalve_created()
-        if (gis_measurement_device_ok):
+        if gis_measurement_device_ok:
             try:
                 self.env.cr.savepoint()
                 self.env.cr.execute("""
@@ -190,3 +244,29 @@ class WuaParcel(models.Model):
         gis_parcels_ok = super(WuaParcel, self).set_gis_fields()
         gis_measurement_device_ok = self.set_gis_fields_measurement_device()
         return gis_parcels_ok and gis_measurement_device_ok
+
+    # Modified EIS
+    @api.multi
+    def assign_device(self, limit=0):
+        device_id = self._my_mapped_device_id
+        if device_id:
+            model_mdm_device_parcellink = self.env['mdm.device.parcellink']
+            for record in self:
+                parcel_id = record.id
+                if not model_mdm_device_parcellink.search(
+                        [('device_id', '=', device_id),
+                         ('parcel_id', '=', parcel_id)]):
+                    model_mdm_device_parcellink.create({
+                        'device_id': device_id,
+                        'parcel_id': parcel_id,
+                    })
+
+    def unassign_device(self, limit=0):
+        device_id = self._my_mapped_device_id
+        if device_id:
+            model_mdm_device_parcellink = self.env['mdm.device.parcellink']
+            for record in self:
+                parcel_id = record.id
+                model_mdm_device_parcellink.search(
+                    [('device_id', '=', device_id),
+                     ('parcel_id', '=', parcel_id)]).unlink()
