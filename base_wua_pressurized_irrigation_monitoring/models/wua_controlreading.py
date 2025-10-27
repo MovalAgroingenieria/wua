@@ -395,7 +395,8 @@ class WuaControlreading(models.Model):
             new_last_reading_value = new_last_reading.volume
         vals_watermeter = {
             'last_controlreading_time': new_last_reading_time,
-            'last_controlreading_value': new_last_reading_value, }
+            'last_controlreading_value': new_last_reading_value,
+        }
         watermeter.write(vals_watermeter)
         return resp
 

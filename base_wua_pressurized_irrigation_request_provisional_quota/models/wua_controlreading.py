@@ -70,7 +70,8 @@ class WuaControlreading(models.Model):
                 previous_reading = self.env['wua.controlreading'].search_count(
                     [('watermeter_id', '=', reading['watermeter_id']),
                      ('presresconsumption_id', '=', False),
-                     ('reading_time', '<=', reading_time), ])
+                     ('reading_time', '<=', reading_time),
+                     ])
                 if not previous_reading:
                     self.create({
                         'watermeter_id': reading['watermeter_id'],
