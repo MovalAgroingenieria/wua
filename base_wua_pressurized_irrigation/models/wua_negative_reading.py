@@ -8,6 +8,7 @@ from odoo import models, fields, api
 
 class WuaNegativeReading(models.Model):
     _name = 'wua.negative.reading'
+    _inherit = ['mail.thread']
     _description = 'Entity (negative reading)'
     _order = 'reading_time desc, name'
 
@@ -17,17 +18,20 @@ class WuaNegativeReading(models.Model):
         string='Water Meter',
         comodel_name='wua.watermeter',
         required=True,
-        ondelete='restrict')
+        ondelete='restrict',
+        track_visibility='onchange')
 
     reading_time = fields.Datetime(
         string='Time',
-        required=True)
+        required=True,
+        track_visibility='onchange')
 
     volume = fields.Float(
         string='Value (m³)',
         digits=(32, 4),
         default=0,
-        required=True)
+        required=True,
+        track_visibility='onchange')
 
     name = fields.Char(
         string='Reading',
@@ -69,9 +73,12 @@ class WuaNegativeReading(models.Model):
     presconsumption_volume = fields.Float(
         string='Value (m³)',
         digits=(32, 4),
-        default=0)
+        default=0,
+        track_visibility='onchange')
 
-    notes = fields.Html(string='Notes')
+    notes = fields.Html(
+        string='Notes',
+        track_visibility='onchange')
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',

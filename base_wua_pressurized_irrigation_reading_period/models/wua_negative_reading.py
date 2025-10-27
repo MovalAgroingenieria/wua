@@ -35,7 +35,7 @@ class WuaNegativeReading(models.Model):
 
     reading_img = fields.Binary(
         string="Reading Image",
-        readonly=True,
+        readonly=False,
         attachment=True)
 
     @api.depends('readingperiod_id')

@@ -13,6 +13,7 @@
     "license": "AGPL-3",
     "depends": [
         "base_action_rule",
+        "mail",
         "wua_structure_irrigation",
     ],
     "data": [
