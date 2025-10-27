@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="report_credit_control_summary_document_liquidation"
+              inherit_id="base_wua_invoicing.report_credit_control_summary_document">
+
+        <xpath expr="//table[@id='summary_table']//thead/tr/th[1]" position="replace">
+            <th>
+                <t t-if="doc.credit_control_line_ids and doc.credit_control_line_ids[0].invoice_id and doc.credit_control_line_ids[0].invoice_id.journal_id.expenses_diary">Liquidation number</t>
+                <t t-else="">Invoice number</t>
+            </th>
+        </xpath>
+
+        <xpath expr="//table[@id='summary_table']//thead/tr/th[3]" position="replace">
+            <th>
+                <t t-if="doc.credit_control_line_ids and doc.credit_control_line_ids[0].invoice_id and doc.credit_control_line_ids[0].invoice_id.journal_id.expenses_diary">Liquidation date</t>
+                <t t-else="">Invoice date</t>
+            </th>
+        </xpath>
+
+        <xpath expr="//table[@id='summary_table']//thead/tr/th[4]" position="replace">
+            <th>
+                <t t-if="doc.credit_control_line_ids and doc.credit_control_line_ids[0].invoice_id and doc.credit_control_line_ids[0].invoice_id.journal_id.expenses_diary">Payment due date</t>
+                <t t-else="">Date due</t>
+            </th>
+        </xpath>
+
+        <xpath expr="//table[@id='summary_table']//thead/tr/th[5]" position="replace">
+            <th class="text-right">
+                <t t-if="doc.credit_control_line_ids and doc.credit_control_line_ids[0].invoice_id and doc.credit_control_line_ids[0].invoice_id.journal_id.expenses_diary">Liquidated amount</t>
+                <t t-else="">Invoiced amount</t>
+            </th>
+        </xpath>
+
+
+        <xpath expr="//table[@id='summary_table']//thead/tr/th[last()]" position="replace">
+            <th class="text-right">
+                <t t-if="doc.credit_control_line_ids and doc.credit_control_line_ids[0].invoice_id and doc.credit_control_line_ids[0].invoice_id.journal_id.expenses_diary">Unpaid amount</t>
+                <t t-else="">Open amount</t>
+            </th>
+        </xpath>
+
+        <xpath expr="//p[@name='p_invoicing_address_title']" position="replace">
+            <p name="p_invoicing_address_title" style="margin-bottom: 0px">
+                <i>
+                    <t t-if="doc.credit_control_line_ids and doc.credit_control_line_ids[0].invoice_id and doc.credit_control_line_ids[0].invoice_id.journal_id.expenses_diary">Liquidation address</t>
+                    <t t-else="">Invoicing address</t>
+                </i>
+            </p>
+        </xpath>
+
+        <xpath expr="//div[@class='row']//table[@class='table table-condensed']/tr[1]/td[1]/strong" position="replace">
+            <strong>
+                <t t-if="doc.credit_control_line_ids and doc.credit_control_line_ids[0].invoice_id and doc.credit_control_line_ids[0].invoice_id.journal_id.expenses_diary">Total Liquidated</t>
+                <t t-else="">Total Invoiced</t>
+            </strong>
+        </xpath>
+
+        <xpath expr="//div[@class='row']//table[@class='table table-condensed']/tr[2]/td[1]/strong" position="replace">
+            <strong>
+                <t t-if="doc.credit_control_line_ids and doc.credit_control_line_ids[0].invoice_id and doc.credit_control_line_ids[0].invoice_id.journal_id.expenses_diary">Total to Pay</t>
+                <t t-else="">Total Due</t>
+            </strong>
+        </xpath>
+
+    </template>
+</odoo>

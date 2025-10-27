@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="wua_report_invoice_document_liquidation_switch"
+              inherit_id="account.report_invoice_document">
+
+        <xpath expr="//span[@name='invoice_type_light_span_invoice']" position="replace">
+            <span name="invoice_type_light_span_invoice"
+                  t-if="o.type == 'out_invoice' and (o.state == 'open' or o.state == 'paid')">
+                <t t-if="o.journal_id.expenses_diary">Liquidation</t>
+                <t t-else="">Invoice</t>
+            </span>
+        </xpath>
+
+        <xpath expr="//span[@name='invoice_type_no_light_span_invoice']" position="replace">
+            <span name="invoice_type_no_light_span_invoice"
+                  t-if="o.type == 'out_invoice' and (o.state == 'open' or o.state == 'paid')">
+                <t t-if="o.journal_id.expenses_diary">Liquidation</t>
+                <t t-else="">Invoice</t>
+            </span>
+        </xpath>
+
+        <xpath expr="//strong[@name='invoice_type_light']/span[@t-if=&quot;o.type == 'out_invoice' and o.state == 'draft'&quot;]" position="replace">
+            <span t-if="o.type == 'out_invoice' and o.state == 'draft'">
+                <t t-if="o.journal_id.expenses_diary">Draft&amp;nbsp;Liquidation</t>
+                <t t-else="">Draft&amp;nbsp;Invoice</t>
+            </span>
+        </xpath>
+
+        <xpath expr="//strong[@name='invoice_type_no_light']/span[@t-if=&quot;o.type == 'out_invoice' and o.state == 'draft'&quot;]" position="replace">
+            <span t-if="o.type == 'out_invoice' and o.state == 'draft'">
+                <t t-if="o.journal_id.expenses_diary">Draft&amp;nbsp;Liquidation</t>
+                <t t-else="">Draft&amp;nbsp;Invoice</t>
+            </span>
+        </xpath>
+
+        <xpath expr="//strong[@name='invoice_type_light']/span[@t-if=&quot;o.type == 'out_invoice' and o.state == 'cancel'&quot;]" position="replace">
+            <span t-if="o.type == 'out_invoice' and o.state == 'cancel'">
+                <t t-if="o.journal_id.expenses_diary">Cancelled&amp;nbsp;Liquidation</t>
+                <t t-else="">Cancelled&amp;nbsp;Invoice</t>
+            </span>
+        </xpath>
+
+        <xpath expr="//strong[@name='invoice_type_no_light']/span[@t-if=&quot;o.type == 'out_invoice' and o.state == 'cancel'&quot;]" position="replace">
+            <span t-if="o.type == 'out_invoice' and o.state == 'cancel'">
+                <t t-if="o.journal_id.expenses_diary">Cancelled&amp;nbsp;Liquidation</t>
+                <t t-else="">Cancelled&amp;nbsp;Invoice</t>
+            </span>
+        </xpath>
+
+        <xpath expr="//tr[@name='tr_date_invoice']/td/strong/span" position="replace">
+            <span>
+                <t t-if="o.journal_id.expenses_diary">Liquidation Date:</t>
+                <t t-else="">Invoice Date:</t>
+            </span>
+        </xpath>
+
+        <xpath expr="//th[@name='amount']" position="replace">
+            <th name="amount" class="text-right">
+                <t t-if="o.journal_id.expenses_diary">Liquidated Amount</t>
+                <t t-else="">Amount</t>
+            </th>
+        </xpath>
+
+        <xpath expr="//p[@name='invoicing_address_title']" position="replace">
+            <p name="invoicing_address_title" style="margin-bottom: 0px">
+                <i>
+                    <t t-if="o.journal_id.expenses_diary">Liquidation address</t>
+                    <t t-else="">Invoicing address</t>
+                </i>
+            </p>
+        </xpath>
+
+    </template>
+
+</odoo>
