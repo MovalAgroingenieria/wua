@@ -84,21 +84,21 @@ class AccountInvoiceLine(models.Model):
     _inherit = 'account.invoice.line'
 
     invoice_with_fixed_surcharge_id = fields.Many2one(
-        string='Invoice',
+        string='Invoice (Fixed Surcharge)',
         comodel_name='account.invoice',
         index=True,
         ondelete='restrict',
     )
 
     invoice_with_variable_surcharge_id = fields.Many2one(
-        string='Invoice',
+        string='Invoice (Variable Surcharge)',
         comodel_name='account.invoice',
         index=True,
         ondelete='restrict',
     )
 
     invoice_with_total_variable_surcharge_id = fields.Many2one(
-        string='Invoice',
+        string='Invoice (Total Variable Surcharge)',
         comodel_name='account.invoice',
         index=True,
         ondelete='restrict',
