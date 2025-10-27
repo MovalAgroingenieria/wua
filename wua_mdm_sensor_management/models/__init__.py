@@ -4,3 +4,5 @@
 
 from . import wua_parcel
 from . import measurement_device
+from . import measurement_device_sensor
+from . import measurement_device_sensor_type

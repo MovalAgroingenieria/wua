@@ -1,0 +1,87 @@
+<odoo>
+    <record id="wua_mdm_device_parcellink_view_tree" model="ir.ui.view">
+        <field name="name">wua.mdm.device.parcellink.view.tree</field>
+        <field name="model">mdm.device.parcellink</field>
+        <field name="arch" type="xml">
+            <tree string="Device-Parcel Links" default_order="device_id, parcel_id">
+                <field name="device_id"/>
+                <field name="parcel_id"/>
+            </tree>
+        </field>
+    </record>
+
+
+      <!-- Form view for mdm.device.parcellink -->
+    <record id="mdm_device_parcellink_view_form" model="ir.ui.view">
+        <field name="name">mdm.device.parcellink.view.form</field>
+        <field name="model">mdm.device.parcellink</field>
+        <field name="arch" type="xml">
+            <form string="Device-Parcel Link">
+                <sheet>
+                    <group>
+                        <group name="device_info" string="Device Information">
+                            <field name="device_id" required="1"/>
+                        </group>
+                        <group name="parcel_info" string="Parcel Information">
+                            <field name="parcel_id" required="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="mdm_device_parcellink_view_search" model="ir.ui.view">
+        <field name="name">mdm.device.parcellink.view.search</field>
+        <field name="model">mdm.device.parcellink</field>
+        <field name="arch" type="xml">
+            <search string="Search Device-Parcel Links">
+                <field name="device_id"/>
+                <field name="parcel_id"/>
+                <filter string="With Device" domain="[('device_id','!=',False)]"/>
+                <filter string="With Parcel" domain="[('parcel_id','!=',False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Device" context="{'group_by':'device_id'}"/>
+                    <filter string="Parcel" context="{'group_by':'parcel_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_mdm_device_parcellink_from_parcel_view_tree" model="ir.ui.view">
+        <field name="name">wua.mdm.device.parcellink.from.parcel.view.tree</field>
+        <field name="model">mdm.device.parcellink</field>
+        <field name="arch" type="xml">
+            <tree string="Device Links">
+                <field name="device_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_mdm_device_parcellink_from_parcel" model="ir.actions.act_window">
+        <field name="name">Devices</field>
+        <field name="res_model">mdm.device.parcellink</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="wua_mdm_device_parcellink_from_parcel_view_tree"/>
+        <field name="domain">[('parcel_id', '=', active_id)]</field>
+        <field name="context">{}</field>
+    </record>
+
+
+    <record id="wua_mdm_device_parcellink_action" model="ir.actions.act_window">
+        <field name="name">Device-Parcel Links</field>
+        <field name="res_model">mdm.device.parcellink</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="wua_mdm_device_parcellink_view_tree"/>
+    </record>
+
+    <menuitem
+        id="wua_menu_device_parcellink"
+        name="Device-Parcel Links"
+        parent="base_wua.base_wua_technical_menu"
+        action="wua_mdm_device_parcellink_action"
+        sequence="2"
+    />
+</odoo>

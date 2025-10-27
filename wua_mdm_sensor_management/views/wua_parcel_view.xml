@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Shortcut button in parcel form to view linked devices -->
+    <record id="wua_parcel_view_form_inherit_device_shortcut" model="ir.ui.view">
+        <field name="name">wua.parcel.form.inherit.device.shortcut</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id" ref="base_wua.wua_parcel_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@class='oe_button_box']" position="inside">
+                <button name="%(wua_mdm_sensor_management.action_mdm_device_parcellink_from_parcel)d"
+                        type="action"
+                        class="oe_stat_button"
+                        icon="fa-plug"
+                        string="Devices"
+                        attrs="{'invisible': [('id', '=', False)]}"/>
+            </xpath>
+        </field>
+    </record>
 
     <record id="wua_parcel_from_device_view_tree" model="ir.ui.view">
         <field name="name">wua.parcel.from.device.view.tree</field>
@@ -9,6 +25,26 @@
             <xpath expr="//field[@name='name']" position="after">
                 <field name="mapped_to_specific_device"
                        string="Mapped"/>
+            </xpath>
+        </field>
+    </record>
+
+      <!-- Specialized search view: ONLY for shortcut from device -->
+    <record id="wua_parcel_from_device_view_search" model="ir.ui.view">
+        <field name="name">wua.parcel.from.device.view.search</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id" ref="base_wua.wua_parcel_view_search"/>
+        <field name="mode">extension</field>
+        <field name="arch" type="xml">
+            <!-- Add filters for specific device (ONLY from device context) -->
+            <xpath expr="//search/filter[1]" position="before">
+                <filter name="mapped_to_device_yes"
+                        string="Linked to device: Yes"
+                        domain="[('mapped_to_specific_device', '=', True)]"/>
+                <filter name="mapped_to_device_no"
+                        string="Linked to device: No"
+                        domain="[('mapped_to_specific_device', '!=', True)]"/>
+                <separator/>
             </xpath>
         </field>
     </record>

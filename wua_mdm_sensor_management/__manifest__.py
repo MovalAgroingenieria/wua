@@ -18,6 +18,8 @@
     "data": [
         "security/ir.model.access.csv",
         "views/measurement_device_views.xml",
+        "views/measurement_device_sensor_type_views.xml",
+        "views/measurement_device_parcellink_views.xml",
         "views/wua_parcel_view.xml",
     ],
     "installable": True,

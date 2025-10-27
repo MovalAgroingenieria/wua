@@ -8,68 +8,102 @@ from odoo import models, fields, api
 class WuaParcel(models.Model):
     _inherit = 'wua.parcel'
 
-    # Modified EIS
     _my_mapped_device_id = 0
 
-    # Modified EIS
     mapped_to_specific_device = fields.Boolean(
         'Associated with a specific device (y/n)',
         compute='_compute_mapped_to_specific_device',
         search='_search_mapped_to_specific_device',
     )
 
+    device_parcellink_ids = fields.One2many(
+        string='Device Parcel Links',
+        comodel_name='mdm.device.parcellink',
+        inverse_name='parcel_id',
+    )
+
     @api.multi
     def _compute_mapped_to_specific_device(self):
-        mapped_device_id = 0
-        if ('mapped_device_id' in self.env.context and
-           self.env.context['mapped_device_id']):
-            mapped_device_id = self.env.context['mapped_device_id']
+        mapped_device_id = self.env.context.get('mapped_device_id', None)
+        parcel_ids = tuple(self.ids)
+        if len(parcel_ids) == 1:
+            parcel_ids = parcel_ids + (0,)
+
+        # Case 1: mapped_device_id == 0 → all parcels are mapped
+        if mapped_device_id == 0:
+            for record in self:
+                record.mapped_to_specific_device = True
+            return
+
+        # Case 2: No context → check if the parcel is linked to *specific* device
+        if mapped_device_id is None:
+            self.env.cr.execute("""
+                SELECT DISTINCT parcel_id
+                FROM mdm_device_parcellink
+                WHERE parcel_id IN %s
+            """, (parcel_ids,))
+            linked_parcel_ids = {row[0] for row in self.env.cr.fetchall()}
+            for record in self:
+                record.mapped_to_specific_device = record.id in linked_parcel_ids
+            return
+
+        # Case 3: Specific device ID in context
+        self.env.cr.execute("""
+            SELECT parcel_id
+            FROM mdm_device_parcellink
+            WHERE device_id = %s
+            AND parcel_id IN %s
+        """, (mapped_device_id, parcel_ids))
+        linked_parcel_ids = {row[0] for row in self.env.cr.fetchall()}
+
         for record in self:
-            mapped_to_specific_device = (mapped_device_id == 0)
-            if not mapped_to_specific_device:
-                sql_statement = ('select id from mdm_device_parcellink '
-                                 'where device_id = %s and parcel_id = %s' %
-                                 (mapped_device_id, record.id))
-                self.env.cr.execute(sql_statement)
-                sql_resp = self.env.cr.fetchall()
-                if sql_resp:
-                    mapped_to_specific_device = True
-            record.mapped_to_specific_device = mapped_to_specific_device
+            record.mapped_to_specific_device = record.id in linked_parcel_ids
 
     @api.model
     def _search_mapped_to_specific_device(self, operator, value):
-        mapped_device_id = 0
-        if ('mapped_device_id' in self.env.context and
-           self.env.context['mapped_device_id']):
-            mapped_device_id = self.env.context['mapped_device_id']
-        parcel_ids = []
-        operator_of_filter = 'in'
-        if operator == '!=':
-            operator_of_filter = 'not in'
-        if mapped_device_id:
-            sql_statement = ('select id from wua_parcel p '
-                             'inner join mdm_device_parcellink pl '
-                             'on p.id = pl.parcel_id '
-                             'where pl.device_id = %s' % mapped_device_id)
-            self.env.cr.execute(sql_statement)
-            sql_resp = self.env.cr.fetchall()
-            if sql_resp:
-                for item in sql_resp:
-                    parcel_ids.append(item[0])
-        else:
-            parcels = self.search([])
-            if parcels:
-                parcel_ids = parcels.ids
-        return [('id', operator_of_filter, parcel_ids)]
+        mapped_device_id = self.env.context.get('mapped_device_id', None)
 
-    def check_gis_measurement_device_table_created(self):
+        # Case 1: mapped_device_id == 0 → all parcels are linked
+        # (device with linked_all_parcels=True)
+        if mapped_device_id == 0:
+            searching_for_linked = (operator == '=' and value) or (operator == '!=' and not value)
+            if searching_for_linked:
+                # Return all parcels
+                return []
+            else:
+                # Return no parcels
+                return [('id', '=', False)]
+        # Case 2: No context → check if parcel is linked to any specific device
+        if mapped_device_id is None:
+            self.env.cr.execute("""
+                SELECT DISTINCT parcel_id
+                FROM mdm_device_parcellink
+            """)
+            linked_parcel_ids = [row[0] for row in self.env.cr.fetchall()]
+
+            searching_for_linked = (operator == '=' and value) or (operator == '!=' and not value)
+            if searching_for_linked:
+                return [('id', 'in', linked_parcel_ids)] if linked_parcel_ids else [('id', '=', False)]
+            else:
+                return [('id', 'not in', linked_parcel_ids)] if linked_parcel_ids else []
+
+        # Case 3: Specific device ID in context
         self.env.cr.execute("""
-            SELECT EXISTS (
-                SELECT * FROM information_schema.tables
-                WHERE table_name = 'mdm_gis_measurement_device'
-            )
-        """)
-        return self.env.cr.fetchone()[0]
+            SELECT p.id
+            FROM wua_parcel p
+            INNER JOIN mdm_device_parcellink pl
+                ON p.id = pl.parcel_id
+            WHERE pl.device_id = %s
+        """, (mapped_device_id,))
+
+        linked_parcel_ids = [row[0] for row in self.env.cr.fetchall()]
+
+        searching_for_linked = (operator == '=' and value) or (operator == '!=' and not value)
+        if searching_for_linked:
+            return [('id', 'in', linked_parcel_ids)] if linked_parcel_ids else [('id', '=', False)]
+        else:
+            return [('id', 'not in', linked_parcel_ids)] if linked_parcel_ids else []
+
 
     def create_mdm_gis_measurement_device_table(self):
         gis_table_created = self.check_gis_measurement_device_table_created()
@@ -245,7 +279,6 @@ class WuaParcel(models.Model):
         gis_measurement_device_ok = self.set_gis_fields_measurement_device()
         return gis_parcels_ok and gis_measurement_device_ok
 
-    # Modified EIS
     @api.multi
     def assign_device(self, limit=0):
         device_id = self._my_mapped_device_id
@@ -270,3 +303,42 @@ class WuaParcel(models.Model):
                 model_mdm_device_parcellink.search(
                     [('device_id', '=', device_id),
                      ('parcel_id', '=', parcel_id)]).unlink()
+
+    @api.model
+    def create(self, vals):
+        new_parcel = super(WuaParcel, self).create(vals)
+        devices_linked_all_parcels = self.env['mdm.measurement.device'].search(
+            [('linked_all_parcels', '=', True)]
+        )
+        deviceparcellinks = []
+        for device in (devices_linked_all_parcels or []):
+            deviceparcellinks.append((0, 0, {
+                'device_id': device.id,
+                'parcel_id': new_parcel.id,
+            }))
+        if deviceparcellinks:
+            new_parcel.write({'device_parcellink_ids': deviceparcellinks})
+        return new_parcel
+
+    @api.constrains('device_parcellink_ids')
+    def _check_device_parcellink_ids(self):
+        for record in self:
+            if record.device_parcellink_ids:
+                devices = []
+                for device_parcellink in record.device_parcellink_ids:
+                    devices.append(device_parcellink.device_id)
+                sensor_ids = []
+                for device in devices:
+                    sensor_ids.extend(device.sensor_ids.ids or [])
+                if sensor_ids:
+                    sensors = self.env['mdm.measurement.device.sensor'].browse(sensor_ids)
+                    types_with_exclusivity = []
+                    for sensor in (sensors or []):
+                        if sensor.requires_exclusivity:
+                            if sensor.type_id.id in types_with_exclusivity:
+                                raise exceptions.ValidationError(
+                                _('The sensor %s requires '
+                                'exclusivity.') % sensor.name)
+                            else:
+                                types_with_exclusivity.append(
+                                sensor.type_id.id)

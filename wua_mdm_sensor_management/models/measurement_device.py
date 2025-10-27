@@ -44,13 +44,11 @@ class MeasurementDevice(models.Model):
         readonly=True,
     )
 
-    # Modified EIS
-    deviceparcellink_ids = fields.One2many(
+    device_parcellink_ids = fields.One2many(
         string='Parcel Links',
         comodel_name='mdm.device.parcellink',
         inverse_name='device_id')
 
-    # Modified EIS
     linked_all_parcels = fields.Boolean(
         string='Device linked to all parcels (y/n)',
         default=False,
@@ -117,7 +115,6 @@ class MeasurementDevice(models.Model):
         except Exception:
             pass
 
-    # Modified EIS
     @api.multi
     def action_view_parcels(self):
         self.ensure_one()
@@ -125,7 +122,7 @@ class MeasurementDevice(models.Model):
         id_tree_view = self.env.ref(
             'wua_mdm_sensor_management.wua_parcel_from_device_view_tree').id
         search_view = self.env.ref(
-            'base_wua.wua_parcel_view_search')
+            'wua_mdm_sensor_management.wua_parcel_from_device_view_search')
         mapped_device_id = 0
         if not current_device.linked_all_parcels:
             mapped_device_id = current_device.id
@@ -144,8 +141,72 @@ class MeasurementDevice(models.Model):
             }
         return act_window
 
+    @api.model
+    def create(self, vals):
+        new_device = super(MeasurementDevice, self).create(vals)
+        # a) If linked_all_parcels is True, link all parcels via SQL
+        if new_device.linked_all_parcels:
+            new_device._link_all_parcels_sql()
 
-# Modified EIS
+        return new_device
+
+    def write(self, vals):
+        res = super(MeasurementDevice, self).write(vals)
+        # Only process if linked_all_parcels field is being modified
+        if 'linked_all_parcels' in vals:
+            for record in self:
+                if vals['linked_all_parcels']:
+                    # c) If setting to True: DELETE + INSERT-SELECT (refresh)
+                    record._unlink_all_parcels_sql()
+                    record._link_all_parcels_sql()
+                else:
+                    # b) If setting to False: DELETE all parcel links
+                    record._unlink_all_parcels_sql()
+
+        return res
+
+    def _link_all_parcels_sql(self):
+        self.ensure_one()
+        # Use direct SQL INSERT-SELECT for performance with thousands of parcels
+        query = """
+            INSERT INTO mdm_device_parcellink
+                (device_id, parcel_id, create_uid, create_date, write_uid, write_date)
+            SELECT
+                %s as device_id,
+                wp.id as parcel_id,
+                %s as create_uid,
+                NOW() as create_date,
+                %s as write_uid,
+                NOW() as write_date
+            FROM wua_parcel wp
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM mdm_device_parcellink dpl
+                WHERE dpl.device_id = %s
+                AND dpl.parcel_id = wp.id
+            )
+        """
+        self.env.cr.execute(query, (
+            self.id,
+            self.env.uid,
+            self.env.uid,
+            self.id,
+        ))
+        # Invalidate cache to ensure ORM sees the new records
+        self.invalidate_cache(['device_parcellink_ids'])
+
+    def _unlink_all_parcels_sql(self):
+        self.ensure_one()
+        # Use direct SQL DELETE for performance
+        query = """
+            DELETE FROM mdm_device_parcellink
+            WHERE device_id = %s
+        """
+        self.env.cr.execute(query, (self.id,))
+        # Invalidate cache to ensure ORM sees the changes
+        self.invalidate_cache(['device_parcellink_ids'])
+
+
 class MeasurementDeviceParcellink(models.Model):
     _name = 'mdm.device.parcellink'
     _description = 'Parcel link of a device'

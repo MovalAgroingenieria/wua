@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_mdm_sensor_type_view_form" model="ir.ui.view">
+        <field name="name">wua.mdm.sensor.type.view.form</field>
+        <field name="model">mdm.measurement.device.sensor.type</field>
+        <field name="inherit_id" ref="mdm_sensor_management.mdm_sensor_type_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='uom_id']" position="after">
+                <field name="requires_exclusivity"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_mdm_sensor_type_view_tree" model="ir.ui.view">
+        <field name="name">wua.mdm.sensor.type.view.tree</field>
+        <field name="model">mdm.measurement.device.sensor.type</field>
+        <field name="inherit_id" ref="mdm_sensor_management.mdm_sensor_type_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='description']" position="after">
+                <field name="requires_exclusivity"/>
+            </xpath>
+        </field>
+    </record>
+
+     <record id="wua_mdm_sensor_type_view_search" model="ir.ui.view">
+        <field name="name">wua.mdm.sensor.type.view.search</field>
+        <field name="model">mdm.measurement.device.sensor.type</field>
+        <field name="inherit_id" ref="mdm_sensor_management.mdm_sensor_type_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search/group" position="before">
+                <filter name="requires_exclusivity_true"
+                        string="Requires exclusivity"
+                        domain="[('requires_exclusivity','=',True)]"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
