@@ -2,8 +2,7 @@
 # 2025 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api
-
+from odoo import models, fields, api, _, exceptions
 
 class WuaParcel(models.Model):
     _inherit = 'wua.parcel'
@@ -319,26 +318,3 @@ class WuaParcel(models.Model):
         if deviceparcellinks:
             new_parcel.write({'device_parcellink_ids': deviceparcellinks})
         return new_parcel
-
-    @api.constrains('device_parcellink_ids')
-    def _check_device_parcellink_ids(self):
-        for record in self:
-            if record.device_parcellink_ids:
-                devices = []
-                for device_parcellink in record.device_parcellink_ids:
-                    devices.append(device_parcellink.device_id)
-                sensor_ids = []
-                for device in devices:
-                    sensor_ids.extend(device.sensor_ids.ids or [])
-                if sensor_ids:
-                    sensors = self.env['mdm.measurement.device.sensor'].browse(sensor_ids)
-                    types_with_exclusivity = []
-                    for sensor in (sensors or []):
-                        if sensor.requires_exclusivity:
-                            if sensor.type_id.id in types_with_exclusivity:
-                                raise exceptions.ValidationError(
-                                _('The sensor %s requires '
-                                'exclusivity.') % sensor.name)
-                            else:
-                                types_with_exclusivity.append(
-                                sensor.type_id.id)

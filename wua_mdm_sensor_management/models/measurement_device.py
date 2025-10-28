@@ -2,7 +2,7 @@
 # 2025 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, _
+from odoo import models, fields, api, exceptions, _
 
 
 class MeasurementDevice(models.Model):
@@ -141,6 +141,51 @@ class MeasurementDevice(models.Model):
             }
         return act_window
 
+    @api.constrains('linked_all_parcels', 'sensor_ids')
+    def _check_linked_all_parcels_exclusivity(self):
+        for record in self:
+            if not record.linked_all_parcels:
+                continue
+            # Get exclusive sensors of the current device
+            exclusive_sensors = record.sensor_ids.filtered(
+                lambda s: s.requires_exclusivity)
+            if not exclusive_sensors:
+                continue
+            # Get exclusive types of the current device
+            exclusive_types = exclusive_sensors.mapped('type_id.id')
+            # Search for all links from other devices
+            conflicting_links = self.env['mdm.device.parcellink'].search([
+                ('device_id', '!=', record.id)
+            ])
+            if not conflicting_links:
+                continue
+            # Gather all sensors from other devices
+            other_devices = conflicting_links.mapped('device_id')
+            for other_device in other_devices:
+                conflicting_sensors = other_device.sensor_ids.filtered(
+                    lambda s: s.requires_exclusivity and
+                    s.type_id.id in exclusive_types
+                )
+                if conflicting_sensors:
+                    # Get affected parcels
+                    affected_parcels = conflicting_links.filtered(
+                        lambda l: l.device_id == other_device
+                    ).mapped('parcel_id')
+                    raise exceptions.ValidationError(_(
+                        'Cannot link device "%s" to all parcels because '
+                        'sensor "%s" (type: %s) requires exclusivity and '
+                        'device "%s" with the same sensor type is already '
+                        'linked to %d parcel(s): %s.'
+                    ) % (
+                        record.name,
+                        conflicting_sensors[0].name,
+                        conflicting_sensors[0].type_id.name,
+                        other_device.name,
+                        len(affected_parcels),
+                        ', '.join(affected_parcels.mapped('name')[:5]) +
+                        ('...' if len(affected_parcels) > 5 else '')
+                    ))
+
     @api.model
     def create(self, vals):
         new_device = super(MeasurementDevice, self).create(vals)
@@ -249,3 +294,39 @@ class MeasurementDeviceParcellink(models.Model):
                record.device_id.name and record.parcel_id.name):
                 name = record.parcel_id.name + ' - ' + record.device_id.name
             record.name = name
+
+    @api.constrains('device_id', 'parcel_id')
+    def _check_sensor_exclusivity(self):
+        for record in self:
+            device = record.device_id
+            if not device:
+                continue
+            exclusive_sensors = device.sensor_ids.filtered(lambda s: s.requires_exclusivity)
+            if not exclusive_sensors:
+                continue
+            exclusive_types = exclusive_sensors.mapped('type_id.id')
+            if device.linked_all_parcels:
+                conflicting_links = self.search([
+                    ('device_id', '!=', device.id)
+                ])
+            else:
+                if not record.parcel_id:
+                    continue
+                conflicting_links = self.search([
+                    ('parcel_id', '=', record.parcel_id.id),
+                    ('device_id', '!=', device.id)
+                ])
+            other_sensors = conflicting_links.mapped('device_id.sensor_ids')
+            for sensor in other_sensors:
+                if sensor.requires_exclusivity and sensor.type_id.id in exclusive_types:
+                    raise exceptions.ValidationError(_(
+                        'Cannot link device "%s" (%s) because sensor "%s" (type: %s) '
+                        'requires exclusivity and there is already another device '
+                        'with a sensor of the same type linked %s.'
+                    ) % (
+                        device.name,
+                        'linked to all parcels' if device.linked_all_parcels else record.parcel_id.name,
+                        sensor.name,
+                        sensor.type_id.name,
+                        'in the system' if device.linked_all_parcels else 'to this parcel'
+                    ))
