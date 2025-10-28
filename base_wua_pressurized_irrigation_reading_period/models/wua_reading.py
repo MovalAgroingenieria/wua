@@ -2,7 +2,11 @@
 # 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import logging
+
 from odoo import models, fields, api, exceptions, _
+
+_logger = logging.getLogger(__name__)
 
 
 class WuaReading(models.Model):
@@ -64,6 +68,28 @@ class WuaReading(models.Model):
                 'This User don\'t belongs to watermeter reader group.'))
 
     @api.model
+    def _prepare_field_reading_values(self, watermeter_id, volume, readingperiod_id,
+                                      watermeter_reader_id, product_id, notes='',
+                                      picture=''):
+        vals = {}
+        reading_img = None
+        if picture:
+            reading_img = picture
+        vals.update({
+            'watermeter_id': watermeter_id,
+            'volume': volume,
+            'watermeter_reader_id': watermeter_reader_id,
+            'notes': notes,
+            'reading_time': fields.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'validated': False,
+            'initialization_reading': False,
+            'reading_img': reading_img,
+        })
+        if product_id > 0:
+            vals['product_id'] = product_id
+        return vals
+
+    @api.model
     def create_field_reading(self, watermeter_id, volume, readingperiod_id,
                              watermeter_reader_id, product_id, notes='',
                              picture=''):
@@ -71,22 +97,10 @@ class WuaReading(models.Model):
         if (not rp):
             raise exceptions.UserError(_(
                 'There is no open readingperiod.'))
-        vals = {}
-        reading_img = None
-        if (picture):
-            reading_img = picture
-        vals['watermeter_id'] = watermeter_id
-        vals['volume'] = volume
+        vals = self._prepare_field_reading_values(
+            watermeter_id, volume, readingperiod_id,
+            watermeter_reader_id, product_id, notes, picture)
         vals['readingperiod_id'] = rp.id
-        vals['watermeter_reader_id'] = watermeter_reader_id
-        vals['notes'] = notes
-        vals['reading_time'] = fields.datetime.now().strftime(
-            '%Y-%m-%d %H:%M:%S')
-        vals['validated'] = False
-        vals['initialization_reading'] = False
-        vals['reading_img'] = reading_img
-        if (product_id > 0):
-            vals['product_id'] = product_id
         # Removed others readings or negative reading when creating
         # new one
         old_readings = self.sudo().env['wua.reading'].search(
