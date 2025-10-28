@@ -54,9 +54,14 @@ class WizardPrintInvoiceLines(models.TransientModel):
                     raise exceptions.UserError(
                         _('''Incorrect dates,
                             the initial date is after the end date.'''))
+                initial_dt = fields.Datetime.context_timestamp(self, fields.Datetime.from_string(record.initial_date))
+                end_dt = fields.Datetime.context_timestamp(self, fields.Datetime.from_string(record.end_date))
+
+                initial_date = fields.Date.to_string(initial_dt.date())
+                end_date = fields.Date.to_string(end_dt.date())
                 invoice_lines = self.env['account.invoice.line'].search([
-                    ('invoice_id.date_invoice', '>=', record.initial_date),
-                    ('invoice_id.date_invoice', '<=', record.end_date),
+                    ('invoice_id.date_invoice', '>=', initial_date),
+                    ('invoice_id.date_invoice', '<=', end_date),
                     ('waterconnection_id',
                         'in', record.waterconnection_ids.ids)
                 ])
