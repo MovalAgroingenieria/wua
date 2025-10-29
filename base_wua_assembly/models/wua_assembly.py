@@ -908,7 +908,7 @@ class WuaAssembly(models.Model):
                     assembly_day=dates.format_date(date_of_assembly,
                                                    'd', locale=lang),
                     assembly_month=dates.format_date(date_of_assembly,
-                                                     'LLLL', locale=lang,),
+                                                     'LLLL', locale=lang),
                     partner=partner,
                 )
         except TemplateError as e:

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_flowmeter_view_form" model="ir.ui.view">
+        <field name="name">Flowmeters (form view)</field>
+        <field name="model">wua.flowmeter</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_primary.wua_flowmeter_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='notes_page']" position="after">
+                <page name="sensors_page" string="Sensors" groups="mdm_sensor_management.group_mdm_user">
+                    <field readonly="1" name="sensor_ids" groups="mdm_sensor_management.group_mdm_user">
+                        <tree>
+                            <field name="device_id"/>
+                            <field name="name" string="Sensor"/>
+                            <field name="type_id"/>
+                            <field name="uom_id"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

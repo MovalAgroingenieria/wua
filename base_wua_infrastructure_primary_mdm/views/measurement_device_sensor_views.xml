@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="mdm_sensor_view_form" model="ir.ui.view">
+        <field name="name">Device Sensor Form</field>
+        <field name="model">mdm.measurement.device.sensor</field>
+        <field name="inherit_id" ref="mdm_sensor_management.mdm_sensor_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='type_id']" position="after">
+                <field name="flowmeter_id" groups="base_wua.group_wua_user"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="mdm_sensor_view_tree" model="ir.ui.view">
+        <field name="name">Device Sensor Tree</field>
+        <field name="model">mdm.measurement.device.sensor</field>
+        <field name="inherit_id" ref="mdm_sensor_management.mdm_sensor_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='device_id']" position="after">
+                <field name="flowmeter_id" invisible="1" groups="base_wua.group_wua_user"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
