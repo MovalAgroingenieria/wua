@@ -2,12 +2,12 @@
 # 2025 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+from lxml import etree
 from odoo import models, fields, api, _, exceptions
+
 
 class WuaParcel(models.Model):
     _inherit = 'wua.parcel'
-
-    _my_mapped_device_id = 0
 
     mapped_to_specific_device = fields.Boolean(
         'Associated with a specific device (y/n)',
@@ -15,7 +15,18 @@ class WuaParcel(models.Model):
         search='_search_mapped_to_specific_device',
     )
 
-    device_parcellink_ids = fields.One2many(
+    mapped_to_any_device = fields.Boolean(
+        'Associated with any device (y/n)',
+        compute='_compute_mapped_to_any_device',
+        search='_search_mapped_to_any_device',
+    )
+
+    mapped_to_specific_device_as_symbol = fields.Char(
+        'Associated with a specific device (y/n) -as symbol-',
+        compute='_compute_mapped_to_specific_device_as_symbol',
+    )
+
+    deviceparcellink_ids = fields.One2many(
         string='Device Parcel Links',
         comodel_name='mdm.device.parcellink',
         inverse_name='parcel_id',
@@ -23,86 +34,83 @@ class WuaParcel(models.Model):
 
     @api.multi
     def _compute_mapped_to_specific_device(self):
-        mapped_device_id = self.env.context.get('mapped_device_id', None)
-        parcel_ids = tuple(self.ids)
-        if len(parcel_ids) == 1:
-            parcel_ids = parcel_ids + (0,)
-
-        # Case 1: mapped_device_id == 0 → all parcels are mapped
-        if mapped_device_id == 0:
-            for record in self:
-                record.mapped_to_specific_device = True
-            return
-
-        # Case 2: No context → check if the parcel is linked to *specific* device
-        if mapped_device_id is None:
-            self.env.cr.execute("""
-                SELECT DISTINCT parcel_id
-                FROM mdm_device_parcellink
-                WHERE parcel_id IN %s
-            """, (parcel_ids,))
-            linked_parcel_ids = {row[0] for row in self.env.cr.fetchall()}
-            for record in self:
-                record.mapped_to_specific_device = record.id in linked_parcel_ids
-            return
-
-        # Case 3: Specific device ID in context
-        self.env.cr.execute("""
-            SELECT parcel_id
-            FROM mdm_device_parcellink
-            WHERE device_id = %s
-            AND parcel_id IN %s
-        """, (mapped_device_id, parcel_ids))
-        linked_parcel_ids = {row[0] for row in self.env.cr.fetchall()}
-
+        mapped_device_id = 0
+        if ('mapped_device_id' in self.env.context and
+           self.env.context['mapped_device_id']):
+            mapped_device_id = self.env.context['mapped_device_id']
         for record in self:
-            record.mapped_to_specific_device = record.id in linked_parcel_ids
+            mapped_to_specific_device = (mapped_device_id == 0)
+            if not mapped_to_specific_device:
+                sql_statement = ('select id from mdm_device_parcellink '
+                                 'where device_id = %s and parcel_id = %s' %
+                                 (mapped_device_id, record.id))
+                self.env.cr.execute(sql_statement)
+                sql_resp = self.env.cr.fetchall()
+                if sql_resp:
+                    mapped_to_specific_device = True
+            record.mapped_to_specific_device = mapped_to_specific_device
 
     @api.model
     def _search_mapped_to_specific_device(self, operator, value):
-        mapped_device_id = self.env.context.get('mapped_device_id', None)
-
-        # Case 1: mapped_device_id == 0 → all parcels are linked
-        # (device with linked_all_parcels=True)
-        if mapped_device_id == 0:
-            searching_for_linked = (operator == '=' and value) or (operator == '!=' and not value)
-            if searching_for_linked:
-                # Return all parcels
-                return []
-            else:
-                # Return no parcels
-                return [('id', '=', False)]
-        # Case 2: No context → check if parcel is linked to any specific device
-        if mapped_device_id is None:
-            self.env.cr.execute("""
-                SELECT DISTINCT parcel_id
-                FROM mdm_device_parcellink
-            """)
-            linked_parcel_ids = [row[0] for row in self.env.cr.fetchall()]
-
-            searching_for_linked = (operator == '=' and value) or (operator == '!=' and not value)
-            if searching_for_linked:
-                return [('id', 'in', linked_parcel_ids)] if linked_parcel_ids else [('id', '=', False)]
-            else:
-                return [('id', 'not in', linked_parcel_ids)] if linked_parcel_ids else []
-
-        # Case 3: Specific device ID in context
-        self.env.cr.execute("""
-            SELECT p.id
-            FROM wua_parcel p
-            INNER JOIN mdm_device_parcellink pl
-                ON p.id = pl.parcel_id
-            WHERE pl.device_id = %s
-        """, (mapped_device_id,))
-
-        linked_parcel_ids = [row[0] for row in self.env.cr.fetchall()]
-
-        searching_for_linked = (operator == '=' and value) or (operator == '!=' and not value)
-        if searching_for_linked:
-            return [('id', 'in', linked_parcel_ids)] if linked_parcel_ids else [('id', '=', False)]
+        mapped_device_id = 0
+        if ('mapped_device_id' in self.env.context and
+           self.env.context['mapped_device_id']):
+            mapped_device_id = self.env.context['mapped_device_id']
+        parcel_ids = []
+        operator_of_filter = 'in'
+        if operator == '!=':
+            operator_of_filter = 'not in'
+        if mapped_device_id:
+            sql_statement = ('select p.id from wua_parcel p '
+                             'inner join mdm_device_parcellink pl '
+                             'on p.id = pl.parcel_id '
+                             'where pl.device_id = %s' % mapped_device_id)
+            self.env.cr.execute(sql_statement)
+            sql_resp = self.env.cr.fetchall()
+            if sql_resp:
+                for item in sql_resp:
+                    parcel_ids.append(item[0])
         else:
-            return [('id', 'not in', linked_parcel_ids)] if linked_parcel_ids else []
+            parcels = self.search([])
+            if parcels:
+                parcel_ids = parcels.ids
+        return [('id', operator_of_filter, parcel_ids)]
 
+    @api.multi
+    def _compute_mapped_to_any_device(self):
+        for record in self:
+            mapped_to_any_device = False
+            sql_statement = ('select id from mdm_device_parcellink '
+                             'where parcel_id = %s' % record.id)
+            self.env.cr.execute(sql_statement)
+            sql_resp = self.env.cr.fetchall()
+            if sql_resp:
+                mapped_to_any_device = True
+            record.mapped_to_any_device = mapped_to_any_device
+
+    @api.model
+    def _search_mapped_to_any_device(self, operator, value):
+        parcel_ids = []
+        operator_of_filter = 'in'
+        if operator == '!=':
+            operator_of_filter = 'not in'
+        sql_statement = ('select distinct parcel_id from '
+                         'mdm_device_parcellink')
+        self.env.cr.execute(sql_statement)
+        sql_resp = self.env.cr.fetchall()
+        if sql_resp:
+            for item in sql_resp:
+                parcel_ids.append(item[0])
+        return [('id', operator_of_filter, parcel_ids)]
+
+    @api.multi
+    def _compute_mapped_to_specific_device_as_symbol(self):
+        for record in self:
+            mapped_to_specific_device_as_symbol = ''
+            if record.mapped_to_specific_device:
+                mapped_to_specific_device_as_symbol = '🔗'
+            record.mapped_to_specific_device_as_symbol = \
+                mapped_to_specific_device_as_symbol
 
     def create_mdm_gis_measurement_device_table(self):
         gis_table_created = self.check_gis_measurement_device_table_created()
@@ -278,30 +286,35 @@ class WuaParcel(models.Model):
         gis_measurement_device_ok = self.set_gis_fields_measurement_device()
         return gis_parcels_ok and gis_measurement_device_ok
 
-    @api.multi
-    def assign_device(self, limit=0):
-        device_id = self._my_mapped_device_id
-        if device_id:
-            model_mdm_device_parcellink = self.env['mdm.device.parcellink']
-            for record in self:
-                parcel_id = record.id
-                if not model_mdm_device_parcellink.search(
-                        [('device_id', '=', device_id),
-                         ('parcel_id', '=', parcel_id)]):
-                    model_mdm_device_parcellink.create({
-                        'device_id': device_id,
-                        'parcel_id': parcel_id,
-                    })
+    @api.model
+    def assign_device_to_parcels(self, parcel_ids=None, device_id=0):
+        if parcel_ids and device_id:
+            parcels = self.browse(parcel_ids)
+            device = self.env['mdm.measurement.device'].browse(device_id)
+            if parcels and device:
+                model_mdm_device_parcellink = self.env['mdm.device.parcellink']
+                for parcel in parcels:
+                    parcel_id = parcel.id
+                    if not model_mdm_device_parcellink.search(
+                            [('device_id', '=', device_id),
+                             ('parcel_id', '=', parcel_id)]):
+                        model_mdm_device_parcellink.create({
+                            'device_id': device_id,
+                            'parcel_id': parcel_id,
+                        })
 
-    def unassign_device(self, limit=0):
-        device_id = self._my_mapped_device_id
-        if device_id:
-            model_mdm_device_parcellink = self.env['mdm.device.parcellink']
-            for record in self:
-                parcel_id = record.id
-                model_mdm_device_parcellink.search(
-                    [('device_id', '=', device_id),
-                     ('parcel_id', '=', parcel_id)]).unlink()
+    @api.model
+    def unassign_device_to_parcels(self, parcel_ids=None, device_id=0):
+        if parcel_ids and device_id:
+            parcels = self.browse(parcel_ids)
+            device = self.env['mdm.measurement.device'].browse(device_id)
+            if parcels and device:
+                model_mdm_device_parcellink = self.env['mdm.device.parcellink']
+                for parcel in parcels:
+                    parcel_id = parcel.id
+                    model_mdm_device_parcellink.search(
+                        [('device_id', '=', device_id),
+                         ('parcel_id', '=', parcel_id)]).unlink()
 
     @api.model
     def create(self, vals):
@@ -316,5 +329,35 @@ class WuaParcel(models.Model):
                 'parcel_id': new_parcel.id,
             }))
         if deviceparcellinks:
-            new_parcel.write({'device_parcellink_ids': deviceparcellinks})
+            new_parcel.write({'deviceparcellink_ids': deviceparcellinks})
         return new_parcel
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
+                        submenu=False):
+        res = super(WuaParcel, self).fields_view_get(
+            view_id=view_id, view_type=view_type, toolbar=toolbar,
+            submenu=submenu)
+        if view_id:
+            view = self.env['ir.ui.view'].browse(view_id)
+            if view and view.name == 'Parcels (tree view)':
+                doc = etree.XML(res['arch'])
+                for node in doc.xpath("//field[@name='mapped_to_specific_device_as_symbol']"):
+                    node.set('modifiers', '{"invisible": true}')
+                    node.set('modifiers', '{"tree_invisible": true}')
+                res['arch'] = etree.tostring(doc)
+            if view and view.name == 'wua.parcel.from.device.view.search':
+                doc = etree.XML(res['arch'])
+                for node in doc.xpath("//filter[@name='mapped_to_any_device_yes']"):
+                    node.set('modifiers', '{"invisible": true}')
+                for node in doc.xpath("//filter[@name='mapped_to_any_device_no']"):
+                    node.set('modifiers', '{"invisible": true}')
+                res['arch'] = etree.tostring(doc)
+            if view and view.name == 'Parcels (search view)':
+                doc = etree.XML(res['arch'])
+                for node in doc.xpath("//filter[@name='mapped_to_specific_device_yes']"):
+                    node.set('modifiers', '{"invisible": true}')
+                for node in doc.xpath("//filter[@name='mapped_to_specific_device_no']"):
+                    node.set('modifiers', '{"invisible": true}')
+                res['arch'] = etree.tostring(doc)
+        return res

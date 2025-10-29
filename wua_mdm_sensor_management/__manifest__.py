@@ -23,6 +23,10 @@
         "views/measurement_device_parcellink_views.xml",
         "views/wua_parcel_view.xml",
     ],
+    'qweb': [
+        'static/src/xml/button_unassign_device.xml',
+        'static/src/xml/button_assign_device.xml',
+    ],
     "installable": True,
     "application": False,
 }

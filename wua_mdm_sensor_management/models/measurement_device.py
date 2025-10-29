@@ -44,7 +44,7 @@ class MeasurementDevice(models.Model):
         readonly=True,
     )
 
-    device_parcellink_ids = fields.One2many(
+    deviceparcellink_ids = fields.One2many(
         string='Parcel Links',
         comodel_name='mdm.device.parcellink',
         inverse_name='device_id')
@@ -52,6 +52,12 @@ class MeasurementDevice(models.Model):
     linked_all_parcels = fields.Boolean(
         string='Device linked to all parcels (y/n)',
         default=False,
+    )
+
+    requires_exclusivity = fields.Boolean(
+        string='Requires exclusivity (y/n)',
+        store=True,
+        compute='_compute_requires_exclusivity',
     )
 
     @api.depends('subparcel_id', 'subparcel_id.partner_id')
@@ -78,7 +84,7 @@ class MeasurementDevice(models.Model):
             'wua.configuration', 'url_gis_viewer_username')
         password = self.env['ir.values'].get_default(
             'wua.configuration', 'url_gis_viewer_password')
-        param = "measurementdeviceid"
+        param = 'measurementdeviceid'
         for record in self:
             final_url = url
             if final_url:
@@ -95,6 +101,16 @@ class MeasurementDevice(models.Model):
                     sep = '?' if '?' not in final_url else '&'
                     final_url += sep + '&'.join(query_params)
             record.gis_viewer_link = final_url or ''
+
+    @api.depends('sensor_ids', 'sensor_ids.requires_exclusivity')
+    def _compute_requires_exclusivity(self):
+        for record in self:
+            requires_exclusivity = False
+            if record.sensor_ids:
+                requires_exclusivity = \
+                    any(sensor.requires_exclusivity
+                        for sensor in record.sensor_ids)
+            record.requires_exclusivity = requires_exclusivity
 
     @api.multi
     def action_see_gis_viewer(self):
@@ -121,70 +137,50 @@ class MeasurementDevice(models.Model):
         current_device = self
         id_tree_view = self.env.ref(
             'wua_mdm_sensor_management.wua_parcel_from_device_view_tree').id
+        id_form_view = self.env.ref(
+            'base_wua.wua_parcel_view_form').id
         search_view = self.env.ref(
             'wua_mdm_sensor_management.wua_parcel_from_device_view_search')
         mapped_device_id = 0
         if not current_device.linked_all_parcels:
             mapped_device_id = current_device.id
         custom_context = {'mapped_device_id': mapped_device_id, }
-        self.env['wua.parcel'].__class__._my_mapped_device_id = mapped_device_id
         act_window = {
             'type': 'ir.actions.act_window',
             'name': _('Parcels'),
             'res_model': 'wua.parcel',
             'view_type': 'form',
-            'view_mode': 'tree',
-            'views': [(id_tree_view, 'tree')],
+            'view_mode': 'tree,form',
+            'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
             'search_view_id': [search_view.id],
             'target': 'current',
             'context': custom_context,
             }
         return act_window
 
-    @api.constrains('linked_all_parcels', 'sensor_ids')
-    def _check_linked_all_parcels_exclusivity(self):
+    @api.constrains('requires_exclusivity')
+    def _check_requires_exclusivity(self):
         for record in self:
-            if not record.linked_all_parcels:
-                continue
-            # Get exclusive sensors of the current device
-            exclusive_sensors = record.sensor_ids.filtered(
-                lambda s: s.requires_exclusivity)
-            if not exclusive_sensors:
-                continue
-            # Get exclusive types of the current device
-            exclusive_types = exclusive_sensors.mapped('type_id.id')
-            # Search for all links from other devices
-            conflicting_links = self.env['mdm.device.parcellink'].search([
-                ('device_id', '!=', record.id)
-            ])
-            if not conflicting_links:
-                continue
-            # Gather all sensors from other devices
-            other_devices = conflicting_links.mapped('device_id')
-            for other_device in other_devices:
-                conflicting_sensors = other_device.sensor_ids.filtered(
-                    lambda s: s.requires_exclusivity and
-                    s.type_id.id in exclusive_types
-                )
-                if conflicting_sensors:
-                    # Get affected parcels
-                    affected_parcels = conflicting_links.filtered(
-                        lambda l: l.device_id == other_device
-                    ).mapped('parcel_id')
-                    raise exceptions.ValidationError(_(
-                        'Cannot link device "%s" to all parcels because '
-                        'sensor "%s" (type: %s) requires exclusivity and '
-                        'device "%s" with the same sensor type is already '
-                        'linked to %d parcel(s): %s.'
-                    ) % (
-                        record.name,
-                        conflicting_sensors[0].name,
-                        conflicting_sensors[0].type_id.name,
-                        other_device.name,
-                        len(affected_parcels),
-                        ', '.join(affected_parcels.mapped('name')[:5]) +
-                        ('...' if len(affected_parcels) > 5 else '')
-                    ))
+            device = record
+            types_with_exclusivity = []
+            for sensor in (device.sensor_ids or []):
+                if sensor.requires_exclusivity:
+                    if sensor.type_id.id in types_with_exclusivity:
+                        raise exceptions.ValidationError(
+                            _('The sensor %s requires '
+                              'exclusivity.') % sensor.name)
+                    else:
+                        types_with_exclusivity.append(sensor.type_id.id)
+
+    @api.constrains('requires_exclusivity')
+    def _check_sensor_exclusivity_in_parcellinks(self):
+        for record in self:
+            if record.requires_exclusivity:
+                # Force the "_check_sensor_exclusivity" of the parcellinks
+                deviceparcellinks_to_check = \
+                    self.env['mdm.device.parcellink'].search([
+                        ('device_id', '=', record.id)])
+                deviceparcellinks_to_check._check_sensor_exclusivity()
 
     @api.model
     def create(self, vals):
@@ -192,7 +188,6 @@ class MeasurementDevice(models.Model):
         # a) If linked_all_parcels is True, link all parcels via SQL
         if new_device.linked_all_parcels:
             new_device._link_all_parcels_sql()
-
         return new_device
 
     def write(self, vals):
@@ -207,7 +202,6 @@ class MeasurementDevice(models.Model):
                 else:
                     # b) If setting to False: DELETE all parcel links
                     record._unlink_all_parcels_sql()
-
         return res
 
     def _link_all_parcels_sql(self):
@@ -215,10 +209,11 @@ class MeasurementDevice(models.Model):
         # Use direct SQL INSERT-SELECT for performance with thousands of parcels
         query = """
             INSERT INTO mdm_device_parcellink
-                (device_id, parcel_id, create_uid, create_date, write_uid, write_date)
+                (device_id, parcel_id, name, create_uid, create_date, write_uid, write_date)
             SELECT
                 %s as device_id,
                 wp.id as parcel_id,
+                wp.name || ' - ' || %s as name,
                 %s as create_uid,
                 NOW() as create_date,
                 %s as write_uid,
@@ -233,12 +228,15 @@ class MeasurementDevice(models.Model):
         """
         self.env.cr.execute(query, (
             self.id,
+            self.name,
             self.env.uid,
             self.env.uid,
             self.id,
         ))
-        # Invalidate cache to ensure ORM sees the new records
-        self.invalidate_cache(['device_parcellink_ids'])
+        # Force the "_check_sensor_exclusivity" of the parcellinks
+        new_deviceparcellinks = self.env['mdm.device.parcellink'].search(
+            [('device_id', '=', self.id)])
+        new_deviceparcellinks._check_sensor_exclusivity()
 
     def _unlink_all_parcels_sql(self):
         self.ensure_one()
@@ -248,8 +246,6 @@ class MeasurementDevice(models.Model):
             WHERE device_id = %s
         """
         self.env.cr.execute(query, (self.id,))
-        # Invalidate cache to ensure ORM sees the changes
-        self.invalidate_cache(['device_parcellink_ids'])
 
 
 class MeasurementDeviceParcellink(models.Model):
@@ -298,35 +294,25 @@ class MeasurementDeviceParcellink(models.Model):
     @api.constrains('device_id', 'parcel_id')
     def _check_sensor_exclusivity(self):
         for record in self:
-            device = record.device_id
-            if not device:
-                continue
-            exclusive_sensors = device.sensor_ids.filtered(lambda s: s.requires_exclusivity)
-            if not exclusive_sensors:
-                continue
-            exclusive_types = exclusive_sensors.mapped('type_id.id')
-            if device.linked_all_parcels:
-                conflicting_links = self.search([
-                    ('device_id', '!=', device.id)
-                ])
-            else:
-                if not record.parcel_id:
-                    continue
-                conflicting_links = self.search([
-                    ('parcel_id', '=', record.parcel_id.id),
-                    ('device_id', '!=', device.id)
-                ])
-            other_sensors = conflicting_links.mapped('device_id.sensor_ids')
-            for sensor in other_sensors:
-                if sensor.requires_exclusivity and sensor.type_id.id in exclusive_types:
-                    raise exceptions.ValidationError(_(
-                        'Cannot link device "%s" (%s) because sensor "%s" (type: %s) '
-                        'requires exclusivity and there is already another device '
-                        'with a sensor of the same type linked %s.'
-                    ) % (
-                        device.name,
-                        'linked to all parcels' if device.linked_all_parcels else record.parcel_id.name,
-                        sensor.name,
-                        sensor.type_id.name,
-                        'in the system' if device.linked_all_parcels else 'to this parcel'
-                    ))
+            sql_statement = \
+                ('select s.type_id, count(*) ' 
+                 'from mdm_measurement_device_sensor s '
+                 'inner join mdm_measurement_device_sensor_type st '
+                 'on st.id = s.type_id '
+                 'where s.device_id in '
+                 '(select device_id from mdm_device_parcellink '
+                 'where parcel_id = %s) '
+                 'group by s.type_id, st.requires_exclusivity '
+                 'having st.requires_exclusivity = true' % record.parcel_id.id)
+            self.env.cr.execute(sql_statement)
+            sql_resp = self.env.cr.fetchall()
+            if sql_resp:
+                for item in sql_resp:
+                    count_sensors_of_parcel_with_exclusivity = item[1]
+                    if count_sensors_of_parcel_with_exclusivity > 1:
+                        raise exceptions.ValidationError(_(
+                            'The device "%s" cannot be linked to parcel "%s" '
+                            'because that device provides sensors that are '
+                            'already present in the parcel and require '
+                            'exclusivity.'
+                            % (record.device_id.name, record.parcel_id.name)))

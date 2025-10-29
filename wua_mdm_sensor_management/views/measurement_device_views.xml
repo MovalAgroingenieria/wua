@@ -18,32 +18,22 @@
                     'invisible': ['|', ('gis_viewer_link','=',False), ('with_gis_measurement_device','=',False)
                   ]
                 }"/>
-                <!-- Modified EIS -->
                 <button name="action_view_parcels"
-                                type="object"
-                                class="oe_stat_button"
-                                string="Parcels"
-                                icon="fa-hand-o-right"/>
+                        type="object"
+                        class="oe_stat_button"
+                        string="Parcels"
+                        icon="fa-hand-o-right"
+                        attrs="{'invisible': [('id', '=', False)]}"
+                        groups="mdm_sensor_management.group_mdm_manager"/>
             </xpath>
             <xpath expr="//field[@name='location']" position="after">
                 <field name="subparcel_id"/>
                 <field name="parcel_id"/>
                 <field name="partner_id"/>
             </xpath>
-            <!-- Modified EIS -->
             <xpath expr="//field[@name='installation_date']" position="after">
                 <field name="linked_all_parcels"
                        string="Linked to all parcels (y/n)"/>
-            </xpath>
-            <!-- Modified EIS -->
-            <xpath expr="//page[@name='page_photos']" position="after">
-                <page name="parcels" string="Parcels (prov)">
-                    <field name="device_parcellink_ids">
-                        <tree editable="bottom">
-                            <field name="parcel_id"/>
-                        </tree>
-                    </field>
-                </page>
             </xpath>
         </field>
     </record>

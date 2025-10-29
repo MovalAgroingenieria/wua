@@ -23,7 +23,7 @@
         <field name="inherit_id" ref="base_wua.wua_parcel_view_tree"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='name']" position="after">
-                <field name="mapped_to_specific_device"
+                <field name="mapped_to_specific_device_as_symbol"
                        string="Mapped"/>
             </xpath>
         </field>
@@ -38,47 +38,21 @@
         <field name="arch" type="xml">
             <!-- Add filters for specific device (ONLY from device context) -->
             <xpath expr="//search/filter[1]" position="before">
-                <filter name="mapped_to_device_yes"
+                <filter name="mapped_to_specific_device_yes"
                         string="Linked to device: Yes"
                         domain="[('mapped_to_specific_device', '=', True)]"/>
-                <filter name="mapped_to_device_no"
+                <filter name="mapped_to_specific_device_no"
                         string="Linked to device: No"
                         domain="[('mapped_to_specific_device', '!=', True)]"/>
+                <filter name="mapped_to_any_device_yes"
+                        string="Linked to some device: Yes"
+                        domain="[('mapped_to_any_device', '=', True)]"/>
+                <filter name="mapped_to_any_device_no"
+                        string="Linked to some device: No"
+                        domain="[('mapped_to_any_device', '!=', True)]"/>
                 <separator/>
             </xpath>
         </field>
-    </record>
-
-    <record id="wua_assign_device" model="ir.actions.server">
-        <field name="name">Assign Device</field>
-        <field name="model_id" ref="base_wua.model_wua_parcel"/>
-        <field name="code">
-            action = env['wua.parcel'].browse(context['active_ids']).assign_device()
-        </field>
-    </record>
-
-    <record id="wua_action_assign_device" model="ir.values">
-        <field name="name">Assign Device</field>
-        <field name="model">wua.parcel</field>
-        <field name="key">action</field>
-        <field name="key2">client_action_multi</field>
-        <field name="value" eval="'ir.actions.server,' + str(ref('wua_assign_device'))"/>
-    </record>
-
-    <record id="wua_unassign_device" model="ir.actions.server">
-        <field name="name">Unassign Device</field>
-        <field name="model_id" ref="base_wua.model_wua_parcel"/>
-        <field name="code">
-            action = env['wua.parcel'].browse(context['active_ids']).unassign_device()
-        </field>
-    </record>
-
-    <record id="wua_action_unassign_device" model="ir.values">
-        <field name="name">Unassign Device</field>
-        <field name="model">wua.parcel</field>
-        <field name="key">action</field>
-        <field name="key2">client_action_multi</field>
-        <field name="value" eval="'ir.actions.server,' + str(ref('wua_unassign_device'))"/>
     </record>
 
 </odoo>

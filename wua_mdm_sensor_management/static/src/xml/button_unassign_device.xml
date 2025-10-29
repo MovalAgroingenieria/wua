@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates id="template" xml:space="preserve">
+
+    <t t-extend="ListView.buttons">
+        <t t-jquery="button.o_list_button_save" t-operation="after">
+            <t t-if="widget.model == 'wua.parcel' and widget.dataset.context.mapped_device_id">
+                <button class="btn btn-sm btn-primary button_unassign_device" type="button"><span><i class="fa fa-chain-broken fa-lg fa-rotate-90" aria-hidden="true"></i><![CDATA[&nbsp;&nbsp;]]></span>Unassign device</button>
+            </t>
+        </t>
+    </t>
+
+</templates>
