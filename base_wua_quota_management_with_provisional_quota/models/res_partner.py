@@ -2,7 +2,7 @@
 # Copyright 2025 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models
+from odoo import models, _
 from odoo.exceptions import UserError
 import datetime
 
@@ -41,9 +41,9 @@ class ResPartner(models.Model):
             for wc in wc_ids:
                 partners = wc.irrigationpoint_ids.mapped('partner_id')
                 if len(partners) > 1:
-                    raise UserError_(
+                    raise UserError(_(
                         "The waterconnection has multiple partners and cannot be recalculated automatically."
-                    )
+                    ))
             readings = self.env['wua.controlreading'].search([
                 ('waterconnection_id', 'in', wc_ids.ids),
                 ('reading_time', '>=', initial_time.strftime('%Y-%m-%d %H:%M:%S'))
