@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="portal_my_controlconsumptions" name="My Control Consumptions">
+            <t t-call="website.layout">
+                <div class="container mt16">
+                    <div class="navbar navbar-default">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#oe-help-navbar-collapse">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a class="navbar-brand" href="/my/home">
+                                My Account
+                            </a>
+                        </div>
+                        <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
+                            <ul class="nav navbar-nav o_portal_submenu">
+                                <li><a href="/my/invoices">Facturas</a></li>
+                                <li><a href="/my/parcels">Parcelas</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <t t-if="not controlpresconsumptions">
+                    <div class="alert alert-info" role="alert">
+                        There are no control consumptions for the selected period.
+                    </div>
+                </t>
+                <t t-if="controlpresconsumptions">
+                    <div id="wrap">
+                        <div class="container-fluid mb64" style="max-width: 98%; margin: 0 auto;">
+                            <div class="col-md-12">
+                                <h3 class="page-header">Control Consumptions</h3>
+                                <div class="row" style="margin-bottom:6px;">
+                                    <div class="col-md-4">
+                                        <form method="GET" class="form-inline" style="margin:0;">
+                                            <div class="form-group">
+                                                <label for="controlperiod_filter_cc" class="mr8">Control Period:</label>
+                                                <select name="controlperiod_id" id="controlperiod_filter_cc" class="form-control" onchange="this.form.submit()">
+                                                    <option value="">All Periods</option>
+                                                    <t t-foreach="controlperiods" t-as="period">
+                                                        <option t-att-value="period.id" t-att-selected="'selected' if selected_controlperiod_id == period.id else None">
+                                                            <t t-esc="period.name"/>
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <form method="GET" style="width:100%;">
+                                            <input type="hidden" name="controlperiod_id" t-att-value="selected_controlperiod_id or ''"/>
+                                            <div style="display:flex; align-items:center;">
+                                                <div class="form-group mr8">
+                                                    <select name="search_field" class="form-control">
+                                                        <option value="">Search by...</option>
+                                                        <option value="waterconnection" t-att-selected="'selected' if search_field == 'waterconnection' else None">Water Connection</option>
+                                                        <option value="watermeter" t-att-selected="'selected' if search_field == 'watermeter' else None">Water Meter</option>
+                                                        <option value="reading_initial_time" t-att-selected="'selected' if search_field == 'reading_initial_time' else None">Reading Start Time</option>
+                                                        <option value="reading_end_time" t-att-selected="'selected' if search_field == 'reading_end_time' else None">Reading End Time</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group mr8" style="flex:1;">
+                                                    <input type="text" name="search" class="form-control" placeholder="Search..." t-att-value="search_query or ''" style="width:100%; box-sizing:border-box;"/>
+                                                </div>
+                                                <div class="form-group">
+                                                    <button type="submit" class="btn btn-primary">Search</button>
+                                                    <a href="/my/controlconsumptions" class="btn btn-default ml8">Clear</a>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table id="controlconsumptions-table" class="table table-hover o_my_status_table" style="width: 100%; min-width: 1000px;">
+                                    <thead>
+                                        <tr class="active">
+                                            <th style="width:12%;">Water Connection</th>
+                                            <th style="width:11%;">Water Meter</th>
+                                            <th class="text-center" style="width:16%; white-space:nowrap; text-align:center !important;">Reading Start</th>
+                                            <th class="text-center" style="width:16%; white-space:nowrap; text-align:center !important;">Reading End</th>
+                                            <th class="text-right" style="width:9%;">Initial (m3)</th>
+                                            <th class="text-right" style="width:9%;">Final (m3)</th>
+                                            <th class="text-right" style="width:9%;">Gross (m3)</th>
+                                            <th class="text-right" style="width:9%;">Adj. (m3)</th>
+                                            <th class="text-right" style="width:9%;">Real (m3)</th>
+                                            <th class="text-center" style="width:10%; white-space:nowrap;">Validated</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="controlpresconsumptions" t-as="cp">
+                                            <tr>
+                                                <td style="width:12%; overflow:hidden; text-overflow:ellipsis;">
+                                                    <t t-set="partnerlink_id" t-value="partner.waterconnectionlink_ids.filtered(lambda l: l.waterconnection_id == cp.waterconnection_id).id"/>
+                                                    <t t-if="partnerlink_id">
+                                                        <a t-attf-href="/my/waterconnections/#{partnerlink_id}" t-att-title="cp.waterconnection_id.name"><t t-esc="cp.waterconnection_id.name"/></a>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <span t-att-title="cp.waterconnection_id.name"><t t-esc="cp.waterconnection_id.name"/></span>
+                                                    </t>
+                                                </td>
+                                                <td style="width:11%; overflow:hidden; text-overflow:ellipsis;" t-att-title="cp.watermeter_id.name"><t t-esc="cp.watermeter_id.name"/></td>
+                                                <td class="text-center" style="width:16%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-align:center !important;" t-att-title="cp.reading_initial_time or ''"><t t-esc="cp.reading_initial_time or ''"/></td>
+                                                <td class="text-center" style="width:16%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-align:center !important;" t-att-title="cp.reading_end_time or ''"><t t-esc="cp.reading_end_time or ''"/></td>
+                                                <td class="text-right" style="width:9%;"><t t-esc="'%.4f' % (cp.initial_volume or 0)"/></td>
+                                                <td class="text-right" style="width:9%;"><t t-esc="'%.4f' % (cp.end_volume or 0)"/></td>
+                                                <td class="text-right" style="width:9%;"><t t-esc="'%.4f' % (cp.volume or 0)"/></td>
+                                                <td class="text-right" style="width:9%;"><t t-esc="'%.4f' % (cp.adjustement_volume or 0)"/></td>
+                                                <td class="text-right" style="width:9%;"><t t-esc="'%.4f' % (cp.volume_real or 0)"/></td>
+                                                <td class="text-center" style="width:10%; white-space:nowrap;">
+                                                    <t t-if="cp.validated">
+                                                        <i class="fa fa-check text-success" aria-hidden="true" title="Validated"/>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <i class="fa fa-times text-muted" aria-hidden="true" title="Not validated"/>
+                                                    </t>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                    </table>
+                                </div>
+
+                                <t t-if="pager">
+                                    <div class="o_portal_pager text-center">
+                                        <t t-call="website.pager">
+                                            <t t-set="classname">pagination</t>
+                                        </t>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+
+        <template id="portal_my_quota_management_with_provisional" inherit_id="base_wua_portal_quota_management.portal_my_irrigationmanagement" name="Add Control Consumptions Menu">
+            <xpath expr="//div[@name='irrigation_menu']" position="inside">
+                <h3 class="page-header" style="order: 7;">
+                    <a href="/my/controlconsumptions">
+                        <i class="fa fa-fw fa-tint"/>
+                        Control Consumptions
+                        <small class="ml8">
+                            <t t-if="controlpresconsumptions_count">
+                                <span class='badge pull-right'><t t-esc="controlpresconsumptions_count"/></span>
+                            </t>
+                        </small>
+                    </a>
+                </h3>
+            </xpath>
+        </template>
+
+    </data>
+</odoo>
