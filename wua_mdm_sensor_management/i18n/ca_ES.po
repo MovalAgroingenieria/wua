@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-27 13:57+0000\n"
-"PO-Revision-Date: 2025-10-27 15:16+0100\n"
+"POT-Creation-Date: 2025-10-29 14:52+0000\n"
+"PO-Revision-Date: 2025-10-29 16:14+0100\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "Language: ca_ES\n"
@@ -18,20 +18,34 @@ msgstr ""
 "X-Generator: Poedit 3.7\n"
 
 #. module: wua_mdm_sensor_management
-#: code:addons/wua_mdm_sensor_management/models/measurement_device_sensor.py:28
+#. openerp-web
+#: code:addons/wua_mdm_sensor_management/static/src/xml/button_assign_device.xml:8
+#: code:addons/wua_mdm_sensor_management/static/src/xml/button_unassign_device.xml:8
 #, python-format
-msgid "A sensor of type \"%s\" already exists in device \"%s\", and only one is allowed."
-msgstr "Ja existeix un sensor del tipus \"%s\" al dispositiu \"%s\" i només se'n permet un."
+msgid "&nbsp;&nbsp;"
+msgstr "&nbsp;&nbsp;"
 
 #. module: wua_mdm_sensor_management
-#: model:ir.actions.server,name:wua_mdm_sensor_management.wua_assign_device
-msgid "Assign Device"
-msgstr "Assign Device"
+#. openerp-web
+#: code:addons/wua_mdm_sensor_management/static/src/xml/button_assign_device.xml:8
+#, python-format
+msgid "Assign device"
+msgstr "Assignar dispositiu"
 
 #. module: wua_mdm_sensor_management
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_wua_parcel_mapped_to_specific_device
 msgid "Associated with a specific device (y/n)"
 msgstr "Associat amb un dispositiu específic (s/n)"
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_wua_parcel_mapped_to_specific_device_as_symbol
+msgid "Associated with a specific device (y/n) -as symbol-"
+msgstr "Associat amb un dispositiu específic (s/n) -com a símbol-"
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_wua_parcel_mapped_to_any_device
+msgid "Associated with any device (y/n)"
+msgstr "Associat amb qualsevol dispositiu (s/n)"
 
 #. module: wua_mdm_sensor_management
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_device_parcellink_name
@@ -70,7 +84,7 @@ msgid "Device Links"
 msgstr "Enllaços de dispositius"
 
 #. module: wua_mdm_sensor_management
-#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_wua_parcel_device_parcellink_ids
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_wua_parcel_deviceparcellink_ids
 msgid "Device Parcel Links"
 msgstr "Enllaç dispositiu/parcel·la"
 
@@ -82,7 +96,7 @@ msgstr "Dispositiu vinculat a tots els parcel.la (s/n)"
 #. module: wua_mdm_sensor_management
 #: model:ir.ui.view,arch_db:wua_mdm_sensor_management.mdm_device_parcellink_view_form
 msgid "Device-Parcel Link"
-msgstr "Enllaç dispositiu/parcel·la"
+msgstr "Enllaç dispositiu-parcela"
 
 #. module: wua_mdm_sensor_management
 #: model:ir.actions.act_window,name:wua_mdm_sensor_management.wua_mdm_device_parcellink_action
@@ -108,6 +122,11 @@ msgid "Entity (parcel)"
 msgstr "Entitat (parcel·la)"
 
 #. module: wua_mdm_sensor_management
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_mdm_sensor_type_view_tree
+msgid "Exclusivity"
+msgstr "Exclusivitat"
+
+#. module: wua_mdm_sensor_management
 #: sql_constraint:mdm.device.parcellink:0
 msgid "Existing device-parcel line."
 msgstr "Línia de dispositiu-parcela existent."
@@ -116,12 +135,12 @@ msgstr "Línia de dispositiu-parcela existent."
 #: model:ir.ui.view,arch_db:wua_mdm_sensor_management.mdm_device_view_form
 #: model:ir.ui.view,arch_db:wua_mdm_sensor_management.mdm_device_view_tree
 msgid "GIS Viewer"
-msgstr "Visor GIS"
+msgstr "Visualitzador GIS"
 
 #. module: wua_mdm_sensor_management
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_gis_viewer_link
 msgid "GIS Viewer Link"
-msgstr "Enllaç del visor GIS"
+msgstr "GIS Viewer Link"
 
 #. module: wua_mdm_sensor_management
 #: model:ir.ui.view,arch_db:wua_mdm_sensor_management.mdm_device_parcellink_view_search
@@ -169,6 +188,16 @@ msgid "Linked to device: Yes"
 msgstr "Enllaçat al dispositiu: Sí"
 
 #. module: wua_mdm_sensor_management
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_parcel_from_device_view_search
+msgid "Linked to some device: No"
+msgstr "Enllaçat a algun dispositiu: No"
+
+#. module: wua_mdm_sensor_management
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_parcel_from_device_view_search
+msgid "Linked to some device: Yes"
+msgstr "Enllaçat a algun dispositiu: Sí"
+
+#. module: wua_mdm_sensor_management
 #: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_parcel_from_device_view_tree
 msgid "Mapped"
 msgstr "Vinculat"
@@ -176,7 +205,12 @@ msgstr "Vinculat"
 #. module: wua_mdm_sensor_management
 #: model:ir.model,name:wua_mdm_sensor_management.model_mdm_measurement_device
 msgid "Measurement Device"
-msgstr "DISPOSITIU DE MESURA"
+msgstr "dispositiu de mesura"
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model,name:wua_mdm_sensor_management.model_mdm_measurement_device_sensor
+msgid "Measurement Device Sensor"
+msgstr "Sensor del dispositiu de mesura"
 
 #. module: wua_mdm_sensor_management
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_device_parcellink_parcel_id
@@ -191,7 +225,7 @@ msgid "Parcel Information"
 msgstr "Informació del Parcel·la"
 
 #. module: wua_mdm_sensor_management
-#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_device_parcellink_ids
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_deviceparcellink_ids
 msgid "Parcel Links"
 msgstr "Enllaç parcel·la"
 
@@ -201,16 +235,11 @@ msgid "Parcel link of a device"
 msgstr "Enllaç de paquet d'un dispositiu"
 
 #. module: wua_mdm_sensor_management
-#: code:addons/wua_mdm_sensor_management/models/measurement_device.py:133
+#: code:addons/wua_mdm_sensor_management/models/measurement_device.py:150
 #: model:ir.ui.view,arch_db:wua_mdm_sensor_management.mdm_device_view_form
 #, python-format
 msgid "Parcels"
 msgstr "Parcel·la"
-
-#. module: wua_mdm_sensor_management
-#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.mdm_device_view_form
-msgid "Parcels (prov)"
-msgstr "Parcel·la(prov)"
 
 #. module: wua_mdm_sensor_management
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_partner_id
@@ -219,10 +248,11 @@ msgstr "Soci"
 
 #. module: wua_mdm_sensor_management
 #: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_mdm_sensor_type_view_search
-msgid "Requires exclusivity"
+msgid "Requires Exclusivity"
 msgstr "Requereix exclusivitat"
 
 #. module: wua_mdm_sensor_management
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_requires_exclusivity
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_requires_exclusivity
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_type_requires_exclusivity
 msgid "Requires exclusivity (y/n)"
@@ -244,27 +274,25 @@ msgid "Subparcel"
 msgstr "Subparcel·la"
 
 #. module: wua_mdm_sensor_management
-#: code:addons/wua_mdm_sensor_management/models/wua_parcel.py:340
+#: code:addons/wua_mdm_sensor_management/models/measurement_device.py:318
+#, python-format
+msgid "The device \"%s\" cannot be linked to parcel \"%s\" because that device provides sensors that are already present in the parcel and require exclusivity."
+msgstr "El dispositiu \"%s\" no es pot vincular a la parcel·la \"%s\" perquè aquest dispositiu proporciona sensors que ja són presents a la parcel·la i requereixen exclusivitat."
+
+#. module: wua_mdm_sensor_management
+#: code:addons/wua_mdm_sensor_management/models/measurement_device.py:170
 #, python-format
 msgid "The sensor %s requires exclusivity."
 msgstr "El sensor %s requereix exclusivitat."
 
 #. module: wua_mdm_sensor_management
-#: model:ir.actions.server,name:wua_mdm_sensor_management.wua_unassign_device
-msgid "Unassign Device"
+#. openerp-web
+#: code:addons/wua_mdm_sensor_management/static/src/xml/button_unassign_device.xml:8
+#, python-format
+msgid "Unassign device"
 msgstr "Desassigna el dispositiu"
-
-#. module: wua_mdm_sensor_management
-#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.mdm_device_parcellink_view_search
-msgid "With Device"
-msgstr "Amb dispositiu"
 
 #. module: wua_mdm_sensor_management
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_with_gis_measurement_device
 msgid "With GIS Measurement Device"
-msgstr "Amb dispositiu de mesura GIS"
-
-#. module: wua_mdm_sensor_management
-#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.mdm_device_parcellink_view_search
-msgid "With Parcel"
-msgstr "Parcel·la"
+msgstr "Amb dispositiu de mesurament GIS"

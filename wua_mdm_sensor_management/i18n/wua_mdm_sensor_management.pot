@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-27 13:53+0000\n"
-"PO-Revision-Date: 2025-10-27 13:53+0000\n"
+"POT-Creation-Date: 2025-10-29 14:48+0000\n"
+"PO-Revision-Date: 2025-10-29 14:48+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,19 +16,33 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: wua_mdm_sensor_management
-#: code:addons/wua_mdm_sensor_management/models/measurement_device_sensor.py:28
+#. openerp-web
+#: code:addons/wua_mdm_sensor_management/static/src/xml/button_assign_device.xml:8
+#: code:addons/wua_mdm_sensor_management/static/src/xml/button_unassign_device.xml:8
 #, python-format
-msgid "A sensor of type \"%s\" already exists in device \"%s\", and only one is allowed."
+msgid "&nbsp;&nbsp;"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
-#: model:ir.actions.server,name:wua_mdm_sensor_management.wua_assign_device
-msgid "Assign Device"
+#. openerp-web
+#: code:addons/wua_mdm_sensor_management/static/src/xml/button_assign_device.xml:8
+#, python-format
+msgid "Assign device"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_wua_parcel_mapped_to_specific_device
 msgid "Associated with a specific device (y/n)"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_wua_parcel_mapped_to_specific_device_as_symbol
+msgid "Associated with a specific device (y/n) -as symbol-"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_wua_parcel_mapped_to_any_device
+msgid "Associated with any device (y/n)"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
@@ -68,7 +82,7 @@ msgid "Device Links"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
-#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_wua_parcel_device_parcellink_ids
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_wua_parcel_deviceparcellink_ids
 msgid "Device Parcel Links"
 msgstr ""
 
@@ -103,6 +117,11 @@ msgstr ""
 #. module: wua_mdm_sensor_management
 #: model:ir.model,name:wua_mdm_sensor_management.model_wua_parcel
 msgid "Entity (parcel)"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_mdm_sensor_type_view_tree
+msgid "Exclusivity"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
@@ -167,6 +186,16 @@ msgid "Linked to device: Yes"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_parcel_from_device_view_search
+msgid "Linked to some device: No"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_parcel_from_device_view_search
+msgid "Linked to some device: Yes"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
 #: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_parcel_from_device_view_tree
 msgid "Mapped"
 msgstr ""
@@ -194,7 +223,7 @@ msgid "Parcel Information"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
-#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_device_parcellink_ids
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_deviceparcellink_ids
 msgid "Parcel Links"
 msgstr ""
 
@@ -204,15 +233,10 @@ msgid "Parcel link of a device"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
-#: code:addons/wua_mdm_sensor_management/models/measurement_device.py:133
+#: code:addons/wua_mdm_sensor_management/models/measurement_device.py:150
 #: model:ir.ui.view,arch_db:wua_mdm_sensor_management.mdm_device_view_form
 #, python-format
 msgid "Parcels"
-msgstr ""
-
-#. module: wua_mdm_sensor_management
-#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.mdm_device_view_form
-msgid "Parcels (prov)"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
@@ -222,10 +246,11 @@ msgstr ""
 
 #. module: wua_mdm_sensor_management
 #: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_mdm_sensor_type_view_search
-msgid "Requires exclusivity"
+msgid "Requires Exclusivity"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_requires_exclusivity
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_requires_exclusivity
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_type_requires_exclusivity
 msgid "Requires exclusivity (y/n)"
@@ -247,28 +272,26 @@ msgid "Subparcel"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
-#: code:addons/wua_mdm_sensor_management/models/wua_parcel.py:340
+#: code:addons/wua_mdm_sensor_management/models/measurement_device.py:318
+#, python-format
+msgid "The device \"%s\" cannot be linked to parcel \"%s\" because that device provides sensors that are already present in the parcel and require exclusivity."
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: code:addons/wua_mdm_sensor_management/models/measurement_device.py:170
 #, python-format
 msgid "The sensor %s requires exclusivity."
 msgstr ""
 
 #. module: wua_mdm_sensor_management
-#: model:ir.actions.server,name:wua_mdm_sensor_management.wua_unassign_device
-msgid "Unassign Device"
-msgstr ""
-
-#. module: wua_mdm_sensor_management
-#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.mdm_device_parcellink_view_search
-msgid "With Device"
+#. openerp-web
+#: code:addons/wua_mdm_sensor_management/static/src/xml/button_unassign_device.xml:8
+#, python-format
+msgid "Unassign device"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_with_gis_measurement_device
 msgid "With GIS Measurement Device"
-msgstr ""
-
-#. module: wua_mdm_sensor_management
-#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.mdm_device_parcellink_view_search
-msgid "With Parcel"
 msgstr ""
 
