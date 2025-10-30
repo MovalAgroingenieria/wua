@@ -310,9 +310,6 @@ class MeasurementDeviceParcellink(models.Model):
                 for item in sql_resp:
                     count_sensors_of_parcel_with_exclusivity = item[1]
                     if count_sensors_of_parcel_with_exclusivity > 1:
-                        raise exceptions.ValidationError(_(
-                            'The device "%s" cannot be linked to parcel "%s" '
-                            'because that device provides sensors that are '
-                            'already present in the parcel and require '
-                            'exclusivity.'
-                            % (record.device_id.name, record.parcel_id.name)))
+                        raise exceptions.ValidationError(
+                            _('Problem with the parcel %s: duplicated '
+                              'sensor.') % record.parcel_id.name)

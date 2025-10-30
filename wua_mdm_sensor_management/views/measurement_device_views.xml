@@ -39,7 +39,7 @@
     </record>
 
     <record id="mdm_device_view_tree" model="ir.ui.view">
-        <field name="name">mdm.measurement.device.form.gis</field>
+        <field name="name">mdm.measurement.device.tree.gis</field>
         <field name="model">mdm.measurement.device</field>
         <field name="inherit_id" ref="mdm_sensor_management.mdm_device_view_tree"/>
         <field name="arch" type="xml">
@@ -57,6 +57,26 @@
                   'invisible': ['|', ('gis_viewer_link','=',False), ('with_gis_measurement_device','=',False)
                   ]
                 }"/>
+            </xpath>
+            <xpath expr="//field[@name='installation_date']" position="after">
+                <field name="linked_all_parcels"
+                       string="In all parcels"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="mdm_device_view_search" model="ir.ui.view">
+        <field name="name">mdm.measurement.device.search.gis</field>
+        <field name="model">mdm.measurement.device</field>
+        <field name="inherit_id" ref="mdm_sensor_management.mdm_device_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='location']" position="after">
+                <filter name="linked_all_parcels_yes"
+                        string="In all parcels: Yes"
+                        domain="[('linked_all_parcels', '=', True)]"/>
+                <filter name="linked_all_parcels_no"
+                        string="In all parcels: No"
+                        domain="[('linked_all_parcels', '!=', True)]"/>
             </xpath>
         </field>
     </record>

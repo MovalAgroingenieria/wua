@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-29 14:48+0000\n"
-"PO-Revision-Date: 2025-10-29 14:48+0000\n"
+"POT-Creation-Date: 2025-10-30 12:02+0000\n"
+"PO-Revision-Date: 2025-10-30 12:02+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -17,15 +17,15 @@ msgstr ""
 
 #. module: wua_mdm_sensor_management
 #. openerp-web
-#: code:addons/wua_mdm_sensor_management/static/src/xml/button_assign_device.xml:8
-#: code:addons/wua_mdm_sensor_management/static/src/xml/button_unassign_device.xml:8
+#: code:addons/wua_mdm_sensor_management/static/src/xml/buttons_assign_device.xml:8
+#: code:addons/wua_mdm_sensor_management/static/src/xml/buttons_assign_device.xml:9
 #, python-format
 msgid "&nbsp;&nbsp;"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
 #. openerp-web
-#: code:addons/wua_mdm_sensor_management/static/src/xml/button_assign_device.xml:8
+#: code:addons/wua_mdm_sensor_management/static/src/xml/buttons_assign_device.xml:8
 #, python-format
 msgid "Assign device"
 msgstr ""
@@ -156,6 +156,21 @@ msgid "If enabled, only one sensor of this type may coexist in the same parcel."
 msgstr ""
 
 #. module: wua_mdm_sensor_management
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.mdm_device_view_tree
+msgid "In all parcels"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.mdm_device_view_search
+msgid "In all parcels: No"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.mdm_device_view_search
+msgid "In all parcels: Yes"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_device_parcellink___last_update
 msgid "Last Modified on"
 msgstr ""
@@ -245,6 +260,12 @@ msgid "Partner"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
+#: code:addons/wua_mdm_sensor_management/models/measurement_device.py:314
+#, python-format
+msgid "Problem with the parcel %s: duplicated sensor."
+msgstr ""
+
+#. module: wua_mdm_sensor_management
 #: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_mdm_sensor_type_view_search
 msgid "Requires Exclusivity"
 msgstr ""
@@ -272,12 +293,6 @@ msgid "Subparcel"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
-#: code:addons/wua_mdm_sensor_management/models/measurement_device.py:318
-#, python-format
-msgid "The device \"%s\" cannot be linked to parcel \"%s\" because that device provides sensors that are already present in the parcel and require exclusivity."
-msgstr ""
-
-#. module: wua_mdm_sensor_management
 #: code:addons/wua_mdm_sensor_management/models/measurement_device.py:170
 #, python-format
 msgid "The sensor %s requires exclusivity."
@@ -285,7 +300,7 @@ msgstr ""
 
 #. module: wua_mdm_sensor_management
 #. openerp-web
-#: code:addons/wua_mdm_sensor_management/static/src/xml/button_unassign_device.xml:8
+#: code:addons/wua_mdm_sensor_management/static/src/xml/buttons_assign_device.xml:9
 #, python-format
 msgid "Unassign device"
 msgstr ""

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-29 14:50+0000\n"
-"PO-Revision-Date: 2025-10-29 14:50+0000\n"
+"POT-Creation-Date: 2025-10-30 12:04+0000\n"
+"PO-Revision-Date: 2025-10-30 12:04+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -17,18 +17,18 @@ msgstr ""
 
 #. module: wua_mdm_sensor_management
 #. openerp-web
-#: code:addons/wua_mdm_sensor_management/static/src/xml/button_assign_device.xml:8
-#: code:addons/wua_mdm_sensor_management/static/src/xml/button_unassign_device.xml:8
+#: code:addons/wua_mdm_sensor_management/static/src/xml/buttons_assign_device.xml:8
+#: code:addons/wua_mdm_sensor_management/static/src/xml/buttons_assign_device.xml:9
 #, python-format
 msgid "&nbsp;&nbsp;"
 msgstr "&nbsp;&nbsp;"
 
 #. module: wua_mdm_sensor_management
 #. openerp-web
-#: code:addons/wua_mdm_sensor_management/static/src/xml/button_assign_device.xml:8
+#: code:addons/wua_mdm_sensor_management/static/src/xml/buttons_assign_device.xml:8
 #, python-format
 msgid "Assign device"
-msgstr "Adscribir"
+msgstr "Vincular"
 
 #. module: wua_mdm_sensor_management
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_wua_parcel_mapped_to_specific_device
@@ -84,7 +84,7 @@ msgstr "Enlaces de dispositivos"
 #. module: wua_mdm_sensor_management
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_wua_parcel_deviceparcellink_ids
 msgid "Device Parcel Links"
-msgstr "Enlaces parcelas/dispositivos"
+msgstr "Enlaces de parcelas de dispositivos"
 
 #. module: wua_mdm_sensor_management
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_linked_all_parcels
@@ -101,7 +101,7 @@ msgstr "Enlaces dispositivo-parcela"
 #: model:ir.ui.menu,name:wua_mdm_sensor_management.wua_menu_device_parcellink
 #: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_mdm_device_parcellink_view_tree
 msgid "Device-Parcel Links"
-msgstr "Enlaces dispositivo-parcela"
+msgstr "Enlaces dispositivos-parcelas"
 
 #. module: wua_mdm_sensor_management
 #: model:ir.actions.act_window,name:wua_mdm_sensor_management.action_mdm_device_parcellink_from_parcel
@@ -156,6 +156,21 @@ msgid "If enabled, only one sensor of this type may coexist in the same parcel."
 msgstr "Si está activado, sólo puede coexistir un sensor de este tipo en la misma parcela."
 
 #. module: wua_mdm_sensor_management
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.mdm_device_view_tree
+msgid "In all parcels"
+msgstr "Todas las parcelas"
+
+#. module: wua_mdm_sensor_management
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.mdm_device_view_search
+msgid "In all parcels: No"
+msgstr "Vinculado a todas las parcelas: No"
+
+#. module: wua_mdm_sensor_management
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.mdm_device_view_search
+msgid "In all parcels: Yes"
+msgstr "Vinculado a todas las parcelas: Sí"
+
+#. module: wua_mdm_sensor_management
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_device_parcellink___last_update
 msgid "Last Modified on"
 msgstr "Última modificación en"
@@ -198,7 +213,7 @@ msgstr "Vinculada a algún dispositivo: Sí"
 #. module: wua_mdm_sensor_management
 #: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_parcel_from_device_view_tree
 msgid "Mapped"
-msgstr "Vinculada"
+msgstr "Vinculado"
 
 #. module: wua_mdm_sensor_management
 #: model:ir.model,name:wua_mdm_sensor_management.model_mdm_measurement_device
@@ -245,6 +260,12 @@ msgid "Partner"
 msgstr "Socio"
 
 #. module: wua_mdm_sensor_management
+#: code:addons/wua_mdm_sensor_management/models/measurement_device.py:314
+#, python-format
+msgid "Problem with the parcel %s: duplicated sensor."
+msgstr "Problema con la parcela %s: tipo de sensor duplicado."
+
+#. module: wua_mdm_sensor_management
 #: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_mdm_sensor_type_view_search
 msgid "Requires Exclusivity"
 msgstr "Requiere exclusividad"
@@ -272,12 +293,6 @@ msgid "Subparcel"
 msgstr "Subparcela"
 
 #. module: wua_mdm_sensor_management
-#: code:addons/wua_mdm_sensor_management/models/measurement_device.py:318
-#, python-format
-msgid "The device \"%s\" cannot be linked to parcel \"%s\" because that device provides sensors that are already present in the parcel and require exclusivity."
-msgstr "El dispositivo \"%s\" no puede ser vinculado a la parcela \"%s\" por que este dispositivo tiene sensores que ya se encuentran presentes en la parcela y requiere exclusividad."
-
-#. module: wua_mdm_sensor_management
 #: code:addons/wua_mdm_sensor_management/models/measurement_device.py:170
 #, python-format
 msgid "The sensor %s requires exclusivity."
@@ -285,10 +300,10 @@ msgstr "El sensor %s requiere exclusividad."
 
 #. module: wua_mdm_sensor_management
 #. openerp-web
-#: code:addons/wua_mdm_sensor_management/static/src/xml/button_unassign_device.xml:8
+#: code:addons/wua_mdm_sensor_management/static/src/xml/buttons_assign_device.xml:9
 #, python-format
 msgid "Unassign device"
-msgstr "Retirar adscripción"
+msgstr "Desvincular"
 
 #. module: wua_mdm_sensor_management
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_with_gis_measurement_device
