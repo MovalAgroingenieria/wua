@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_reservoir_view_form" model="ir.ui.view">
+        <field name="name">Reservoirs (form view)</field>
+        <field name="model">wua.reservoir</field>
+        <field name="inherit_id" ref="base_wua_reservoir.wua_reservoir_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='page_other_characteristics']" position="after">
+                <page name="sensors_page" string="Sensors" groups="mdm_sensor_management.group_mdm_user">
+                    <field readonly="1" name="sensor_ids" groups="mdm_sensor_management.group_mdm_user">
+                        <tree>
+                            <field name="device_id"/>
+                            <field name="name" string="Sensor"/>
+                            <field name="type_id"/>
+                            <field name="uom_id"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

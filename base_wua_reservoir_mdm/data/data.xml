@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Sensor Type: Pressure (m.c.a) -->
+        <record id="mdm_sensor_type_pressure_mca" model="mdm.measurement.device.sensor.type">
+            <field name="name">Reservoir Pressure (m.c.a)</field>
+            <field name="description">Pressure sensor measuring meters of water column for reservoirs</field>
+            <field name="uom_id" ref="mdm_sensor_management.mdm_sensor_uom_mca"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <!-- Transform Template: Sensor Readings to wua.reservoirreading -->
+        <record id="transform_template_sensor_to_reservoirreading" model="mdm.sensor.reading.transform.template">
+            <field name="name">MDM Sensor to Reservoir Reading</field>
+            <field name="description">Transform pressure sensor readings to wua.reservoirreading</field>
+            <field name="target_model_id" ref="base_wua_reservoir.model_wua_reservoirreading"/>
+            <field name="use_all_sensors" eval="True"/>
+            <field name="selection_mode">closest_reading</field>
+            <field name="sensor_domain_filter">[('type_id', '=', env.ref('base_wua_reservoir_mdm.mdm_sensor_type_pressure_mca').id), ('reservoir_id', '!=', None)]</field>
+            <field name="field_mapping_json"><![CDATA[{
+    "reservoir_id": "$sensor_id.reservoir_id.id",
+    "reading_time": "$now",
+    "height": "$value",
+    "volume_entered": 0
+}]]></field>
+            <field name="detect_negative_readings" eval="False"/>
+            <field name="active" eval="True"/>
+            <field name="readonly" eval="True"/>
+        </record>
+
+    </data>
+</odoo>
