@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Sensor Type: Flowmeter (Totalizer) -->
+        <record id="mdm_sensor_type_flowmeter_totalizer" model="mdm.measurement.device.sensor.type">
+            <field name="name">Flowmeter (Totalizer)</field>
+            <field name="description">Flow meter with totalizer for volume measurement</field>
+            <field name="uom_id" ref="mdm_sensor_management.mdm_sensor_uom_m3"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <!-- Transform Template: Sensor Readings to wua.flowreading -->
+        <record id="transform_template_sensor_to_flowreading" model="mdm.sensor.reading.transform.template">
+            <field name="name">MDM Sensor to Flow Reading</field>
+            <field name="description">Transform sensor readings to wua.flowreading with negative reading detection</field>
+            <field name="target_model_id" ref="base_wua_irrigation_measurement.model_wua_flowreading"/>
+            <field name="use_all_sensors" eval="True"/>
+            <field name="selection_mode">closest_reading</field>
+            <field name="sensor_domain_filter">[('type_id', '=', env.ref('base_wua_waterpipe_measurement_mdm.mdm_sensor_type_flowmeter_totalizer').id), ('flowmeter_id.intake_id', '!=', None)]</field>
+            <field name="field_mapping_json"><![CDATA[{
+    "flowmeter_id": "$sensor_id.flowmeter_id.id",
+    "reading_time": "$now",
+    "volume": "$value",
+    "instant_flow": 0,
+    "initialization_reading": false,
+    "validated": false
+}]]></field>
+            <field name="detect_negative_readings" eval="True"/>
+            <field name="negative_model_id" ref="base_wua_irrigation_measurement.model_wua_negative_flowreading"/>
+            <field name="reference_field">flowmeter_id</field>
+            <field name="volume_field">volume</field>
+            <field name="date_field_for_last_reading">reading_time</field>
+            <field name="negative_field_mapping_json"><![CDATA[{
+    "flowmeter_id": "$sensor_id.flowmeter_id.id",
+    "reading_time": "$now",
+    "volume": "$value",
+    "consumption_volume": "$volume_diff * -1",
+    "instant_flow": 0
+}]]></field>
+            <field name="active" eval="True"/>
+            <field name="readonly" eval="True"/>
+        </record>
+
+        <!-- Transform Template: Sensor Readings to wua.waterpipeflowreading -->
+        <record id="transform_template_sensor_to_waterpipeflowreading" model="mdm.sensor.reading.transform.template">
+            <field name="name">MDM Sensor to Waterpipe Flow Reading</field>
+            <field name="description">Transform sensor readings to wua.waterpipeflowreading with negative reading detection</field>
+            <field name="target_model_id" ref="base_wua_waterpipe_measurement.model_wua_waterpipeflowreading"/>
+            <field name="use_all_sensors" eval="True"/>
+            <field name="selection_mode">closest_reading</field>
+            <field name="sensor_domain_filter">[('type_id', '=', env.ref('base_wua_waterpipe_measurement_mdm.mdm_sensor_type_flowmeter_totalizer').id), ('flowmeter_id.waterpipe_id', '!=', None)]</field>
+            <field name="field_mapping_json"><![CDATA[{
+    "flowmeter_id": "$sensor_id.flowmeter_id.id",
+    "reading_time": "$now",
+    "volume": "$value",
+    "instant_flow": 0,
+    "initialization_reading": false,
+    "validated": false
+}]]></field>
+            <field name="detect_negative_readings" eval="True"/>
+            <field name="negative_model_id" ref="base_wua_irrigation_measurement.model_wua_negative_flowreading"/>
+            <field name="reference_field">flowmeter_id</field>
+            <field name="volume_field">volume</field>
+            <field name="date_field_for_last_reading">reading_time</field>
+            <field name="negative_field_mapping_json"><![CDATA[{
+    "flowmeter_id": "$sensor_id.flowmeter_id.id",
+    "reading_time": "$now",
+    "volume": "$value",
+    "consumption_volume": "$volume_diff * -1",
+    "instant_flow": 0
+}]]></field>
+            <field name="active" eval="True"/>
+            <field name="readonly" eval="True"/>
+        </record>
+
+    </data>
+</odoo>
