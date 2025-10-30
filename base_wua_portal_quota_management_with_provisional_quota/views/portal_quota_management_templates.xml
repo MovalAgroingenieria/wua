@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+        <template id="portal_my_quota_management_with_provisional" inherit_id="base_wua_portal_quota_management.portal_my_irrigationmanagement" name="Add Control Consumptions Menu">
+            <xpath expr="//div[@name='irrigation_menu']" position="inside">
+                <h3 class="page-header" style="order: 10;">
+                    <a href="/my/controlconsumptions">
+                        <i class="fa fa-fw fa-tint"/>
+                        Control Consumptions
+                        <small class="ml8">
+                            <t t-if="controlpresconsumptions_count">
+                                <span class='badge pull-right'><t t-esc="controlpresconsumptions_count"/></span>
+                            </t>
+                        </small>
+                    </a>
+                </h3>
+            </xpath>
+        </template>
+</odoo>

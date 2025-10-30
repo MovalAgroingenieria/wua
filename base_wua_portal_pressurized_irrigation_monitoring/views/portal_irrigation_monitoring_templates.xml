@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="portal_my_irrigation_monitoring" inherit_id="base_wua_portal_infrastructure.portal_my_irrigationmanagement" name="Add Control Readings Menu">
+            <xpath expr="//div[@name='irrigation_menu']" position="inside">
+                <h3 class="page-header" style="order: 9;">
+                    <a href="/my/controlreadings">
+                        <i class="fa fa-fw fa-tachometer"/>
+                        Control Readings
+                        <small class="ml8">
+                            <t t-if="controlreadings_count">
+                                <span class='badge pull-right'><t t-esc="controlreadings_count"/></span>
+                            </t>
+                        </small>
+                    </a>
+                </h3>
+            </xpath>
+        </template>
+    </data>
+</odoo>
