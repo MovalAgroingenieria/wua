@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <template id="wua_report_invoice_document_liquidation_switch"
+    <template id="account_wua_liquidation.report_invoice_document"
               inherit_id="account.report_invoice_document">
 
         <xpath expr="//span[@name='invoice_type_light_span_invoice']" position="replace">
@@ -69,6 +69,50 @@
                     <t t-else="">Invoicing address</t>
                 </i>
             </p>
+        </xpath>
+
+        <xpath expr="//div[@name='details_section']" position="before">
+            <t t-set="hide_taxes_liquidation" t-value="o.journal_id.expenses_diary"/>
+        </xpath>
+
+        <xpath expr="//th[@name='taxes']" position="attributes">
+            <attribute name="t-att-class">'hidden' if hide_taxes_liquidation else ''</attribute>
+        </xpath>
+
+        <xpath expr="//td[@name='taxes']" position="attributes">
+            <attribute name="t-att-class">'hidden' if hide_taxes_liquidation else ''</attribute>
+        </xpath>
+
+        <xpath expr="//t[@name='t_amount_by_group']" position="attributes">
+            <attribute name="t-if">not hide_taxes_liquidation</attribute>
+        </xpath>
+
+        <xpath expr="//div[@name='client_data_header']/t[@t-if=&quot;report_style == 'light'&quot;]//div[@style='float: left; display: inline;']" position="replace">
+            <div style="float: left; display: inline;">
+                <t t-if="o.type == 'in_invoice' or o.type == 'in_refund'">
+                    <strong>Vendor</strong>
+                </t>
+                <t t-else="">
+                    <strong>
+                        <t t-if="o.journal_id.expenses_diary">Partner</t>
+                        <t t-else="">Client</t>
+                    </strong>
+                </t>
+            </div>
+        </xpath>
+
+        <xpath expr="//div[@name='client_data_header']/t[@t-else='']//div[@style='float: left; display: inline;']" position="replace">
+            <div style="float: left; display: inline;">
+                <t t-if="o.type == 'in_invoice' or o.type == 'in_refund'">
+                    <strong>Vendor</strong>
+                </t>
+                <t t-else="">
+                    <strong>
+                        <t t-if="o.journal_id.expenses_diary">Partner</t>
+                        <t t-else="">Client</t>
+                    </strong>
+                </t>
+            </div>
         </xpath>
 
     </template>
