@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
         <template id="portal_my_quotas" name="My Quotas">
@@ -55,37 +56,37 @@
                                     </div>
                                 </form>
 
-                                <table class="table table-hover o_my_status_table">
+                                <table id="quota_management_table" class="table table-hover o_my_status_table">
                                     <thead>
                                         <tr class="active">
-                                            <th>Quota Period</th>
-                                            <th>Water type</th>
-                                            <th>Assignation (m³)</th>
-                                            <th>Consumptions (m³)</th>
-                                            <th>Available (m³)</th>
-                                            <th>Available %</th>
+                                            <th id="quota_period_th">Quota Period</th>
+                                            <th id="water_type_th">Water type</th>
+                                            <th id="assignation_th">Assignation (m³)</th>
+                                            <th id="consumptions_th">Consumptions (m³)</th>
+                                            <th id="available_th">Available (m³)</th>
+                                            <th id="available_percentage_th">Available %</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <t t-foreach="quotas" t-as="quota">
                                             <tr>
-                                                <td>
+                                                <td id="quota_period_td">
                                                     <t t-esc="quota.quotaperiod_id.initial_date"/>
                                                     <t t-esc="quota.quotaperiod_id.end_date"/>
                                                 </td>
-                                                <td>
+                                                <td id="water_type_td">
                                                     <t t-esc="quota.superproduct_id.name"/>
                                                 </td>
-                                                <td>
+                                                <td id="assignation_td">
                                                     <t t-esc="quota.accumulated_input"/>
                                                 </td>
-                                                <td>
+                                                <td id="consumptions_td">
                                                     <t t-esc="quota.accumulated_consumption"/>
                                                 </td>
-                                                <td>
+                                                <td id="available_td">
                                                     <t t-esc="quota.balance"/>
                                                 </td>
-                                                <td>
+                                                <td id="available_percentage_td">
                                                     <t t-esc="quota.available_quota_percentage"/>
                                                 </td>
                                             </tr>

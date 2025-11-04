@@ -3,8 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 {
-    "name":
-    "Water Users Association: Irrigation report Portal user experience",
+    "name": "Water Users Association: Quota Management With Provisional Hours Portal user experience",
     "summary": "Module that improves the user experience of the portal",
     "version": '10.0.0.0.0',
     "category": "Water Users Associations",
@@ -12,15 +11,11 @@
     "author": "Moval Agroingeniería",
     "license": "AGPL-3",
     "depends": [
-        "base_wua_portal",
-        "base_wua_portal_infrastructure",
-        "base_wua_irrigation_report",
-        "base_wua_irrigation_report_request",
+        "base_wua_portal_quota_management",
+        "base_wua_quota_management_with_provisional_quota_hours",
     ],
     "data": [
         "views/website_portal_templates.xml",
-        "views/portal_irrigationmanagement_templates.xml",
-        'security/ir.model.access.csv',
     ],
     "installable": True,
     "application": False,

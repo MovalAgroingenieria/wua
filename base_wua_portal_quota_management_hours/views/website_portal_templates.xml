@@ -1,74 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
         <template id="portal_my_quotas_hours"
                   inherit_id="base_wua_portal_quota_management.portal_my_quotas"
                   name="Portal My Quotas - Conditional Hours Table">
 
-            <!-- Replace only the table section -->
-            <xpath expr="//table[@class='table table-hover o_my_status_table']" position="replace">
-                <!-- Load the config parameter -->
+            <xpath expr="//th[@id='water_type_th']" position="after">
                 <t t-set="show_hours_portal"
                    t-value="request.env['ir.values'].sudo().get_default('wua.quotas.configuration', 'show_hours_portal')"/>
 
-                <!-- Conditional rendering -->
-                <t t-if="show_hours_portal">
-                    <table class="table table-hover o_my_status_table">
-                        <thead>
-                            <tr class="active">
-                                <th>Quota Period</th>
-                                <th>Water Type</th>
-                                <th>Assignation (h)</th>
-                                <th>Consumption (h)</th>
-                                <th>Available (h)</th>
-                                <th>Available %</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <t t-foreach="quotas" t-as="quota">
-                                <tr>
-                                    <td><t t-esc="quota.quotaperiod_id.name"/></td>
-                                    <td><t t-esc="quota.superproduct_id.name"/></td>
-                                    <td><t t-esc="quota.accumulated_input_hours"/></td>
-                                    <td><t t-esc="quota.accumulated_consumption_hours"/></td>
-                                    <td><t t-esc="quota.balance_hours"/></td>
-                                    <td><t t-esc="quota.available_quota_percentage"/></td>
-                                </tr>
-                            </t>
-                        </tbody>
-                    </table>
-                </t>
+                <th t-if="show_hours_portal">Assignation (h)</th>
+                <th t-if="show_hours_portal">Consumption (h)</th>
+                <th t-if="show_hours_portal">Available (h)</th>
+                <th t-if="show_hours_portal">Available %</th>
+            </xpath>
 
-                <t t-if="not show_hours_portal">
-                    <!-- Default table -->
-                    <table class="table table-hover o_my_status_table">
-                        <thead>
-                            <tr class="active">
-                                <th>Quota Period</th>
-                                <th>Water type</th>
-                                <th>Assignation (m³)</th>
-                                <th>Consumptions (m³)</th>
-                                <th>Available (m³)</th>
-                                <th>Available %</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <t t-foreach="quotas" t-as="quota">
-                                <tr>
-                                    <td>
-                                        <t t-esc="quota.quotaperiod_id.initial_date"/>
-                                        -
-                                        <t t-esc="quota.quotaperiod_id.end_date"/>
-                                    </td>
-                                    <td><t t-esc="quota.superproduct_id.name"/></td>
-                                    <td><t t-esc="quota.accumulated_input"/></td>
-                                    <td><t t-esc="quota.accumulated_consumption"/></td>
-                                    <td><t t-esc="quota.balance"/></td>
-                                    <td><t t-esc="quota.available_quota_percentage"/></td>
-                                </tr>
-                            </t>
-                        </tbody>
-                    </table>
-                </t>
+            <xpath expr="//th[@id='assignation_th']" position="attributes">
+                <attribute name="t-if">not show_hours_portal</attribute>
+            </xpath>
+            <xpath expr="//th[@id='consumptions_th']" position="attributes">
+                <attribute name="t-if">not show_hours_portal</attribute>
+            </xpath>
+            <xpath expr="//th[@id='available_th']" position="attributes">
+                <attribute name="t-if">not show_hours_portal</attribute>
+            </xpath>
+            <xpath expr="//th[@id='available_percentage_th']" position="attributes">
+                <attribute name="t-if">not show_hours_portal</attribute>
+            </xpath>
+
+            <xpath expr="//td[@id='assignation_td']" position="after">
+                <td t-if="show_hours_portal"><t t-esc="quota.accumulated_input_hours"/></td>
+                <td t-if="show_hours_portal"><t t-esc="quota.accumulated_consumption_hours"/></td>
+                <td t-if="show_hours_portal"><t t-esc="quota.balance_hours"/></td>
+                <td t-if="show_hours_portal"><t t-esc="quota.available_quota_percentage"/></td>
+            </xpath>
+
+            <xpath expr="//td[@id='assignation_td']" position="attributes">
+                <attribute name="t-if">not show_hours_portal</attribute>
+            </xpath>
+            <xpath expr="//td[@id='consumptions_td']" position="attributes">
+                <attribute name="t-if">not show_hours_portal</attribute>
+            </xpath>
+            <xpath expr="//td[@id='available_td']" position="attributes">
+                <attribute name="t-if">not show_hours_portal</attribute>
+            </xpath>
+            <xpath expr="//td[@id='available_percentage_td']" position="attributes">
+                <attribute name="t-if">not show_hours_portal</attribute>
             </xpath>
         </template>
     </data>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="portal_my_quotas_hours"
+                  inherit_id="base_wua_portal_quota_management.portal_my_quotas"
+                name="Portal My Quotas - Conditional Hours Table">
+            <xpath expr="//th[@id='assignation_th']" position="after">
+                    <th>Provisional Extra Consumption</th>
+                    <th>Provisional Balance</th>
+                    <th>Provisional Available Quota %</th>
+            </xpath>
+            <xpath expr="//td[@id='assignation_td']" position="after">
+                <td>
+                    <t t-esc="quota.provisional_extra_consumption"/>
+                </td>
+                <td>
+                    <t t-esc="quota.provisional_balance"/>
+                </td>
+                <td>
+                    <t t-esc="quota.provisional_available_quota_percentage"/>
+                </td>
+            </xpath>
+        </template>
+    </data>
+</odoo>
