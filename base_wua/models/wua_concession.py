@@ -39,7 +39,7 @@ class WuaConcession(models.Model):
 
     notes = fields.Html(
         string='Notes')
-    
+
     dotation = fields.Float(
         string='Dotation (m3/ha)',
         digits=(32, 4),
@@ -47,4 +47,5 @@ class WuaConcession(models.Model):
 
     included_in_certificate = fields.Boolean(
         string='Mark to include in certificate',
-        default=False,)
+        default=False,
+    )
