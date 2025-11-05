@@ -199,12 +199,16 @@ class WuaPreswateringrequest(models.Model):
             for record in self:
                 initial_datetime = fields.Datetime.from_string(
                     record.initial_date)
-                if (fields.Datetime.from_string(fields.Datetime.now()) >=
-                        initial_datetime - timedelta(
-                            hours=lock_modification_hours)):
+                modification_deadline = initial_datetime - timedelta(
+                    hours=lock_modification_hours)
+                if fields.Datetime.from_string(fields.Datetime.now()) >= \
+                        modification_deadline:
+                    deadline_str = fields.Datetime.to_string(
+                        modification_deadline)
                     raise exceptions.ValidationError(_(
-                        'The start date of the watering request must not be'
-                        'earlier than the current date.'))
+                        'The modification deadline has passed. '
+                        'Modifications are not allowed after %s.') % (
+                            deadline_str,))
 
     @api.constrains('initial_date', 'preswateringperiod_id')
     def _check_initial_date_within_period(self):
