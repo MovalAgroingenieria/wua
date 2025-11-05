@@ -99,8 +99,9 @@ class WuaPresresconsumption(models.Model):
         index=True,
     )
 
-    watering_duration = fields.Integer(
+    watering_duration = fields.Float(
         string='Watering Duration (Hours)',
+        digits=(32, 4),
         required=True,
     )
 
