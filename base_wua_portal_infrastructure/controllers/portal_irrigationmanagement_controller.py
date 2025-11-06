@@ -11,6 +11,7 @@ class PortalIrrigationManagement(http.Controller):
     def _prepare_portal_layout_values(self):
         """ prepare the values to render portal layout """
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         waterconnections = request.env['res.partner.waterconnection']
         waterconnection_count = waterconnections.search_count([
             ('partner_id', '=', partner.id),

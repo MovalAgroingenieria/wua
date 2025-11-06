@@ -16,6 +16,7 @@ class PortalQuotaWithProvisional(http.Controller):
                          search_field=None, controlperiod_id=None,
                          selected_columns=None, **kw):
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         values = {
             'company': request.website.company_id,
             'user': request.env.user,
@@ -85,6 +86,7 @@ class PortalQuotaWithProvisional(http.Controller):
                                       search_field=None, controlperiod_id=None,
                                       **kw):
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         values = {
             'company': request.website.company_id,
             'user': request.env.user,

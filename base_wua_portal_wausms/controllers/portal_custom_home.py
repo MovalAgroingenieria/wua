@@ -16,6 +16,7 @@ class website_account(website_account):
         """ Add wausms documents to main account page """
         response = super(website_account, self).account(**kw)
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
 
         wausms = request.env['wausms.tracking']
         wausms_count = wausms.search_count(
@@ -28,6 +29,7 @@ class website_account(website_account):
     def _prepare_portal_layout_values(self):
         """ prepare the values to render portal layout """
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         values = {
             'company': request.website.company_id,
             'user': request.env.user,
@@ -41,6 +43,7 @@ class website_account(website_account):
                          search_field=None, selected_columns=None, **kw):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         wausms_tracking_model = request.env['wausms.tracking']
         domain = [('partner_id', '=', partner.id)]
         if search and search_field:

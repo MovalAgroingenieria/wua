@@ -14,6 +14,7 @@ class PortalInvoices(http.Controller):
     def _prepare_portal_layout_values(self):
         """ prepare the values to render portal layout """
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         gis_viewer_link = partner.gis_viewer_link
         if gis_viewer_link and '&arg=' in gis_viewer_link:
             gis_viewer_link = gis_viewer_link.split('&arg=')[0]
@@ -52,6 +53,7 @@ class PortalInvoices(http.Controller):
                            search=None, search_field=None, **kw):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         AccountInvoice = request.env['account.invoice']
 
         domain = [

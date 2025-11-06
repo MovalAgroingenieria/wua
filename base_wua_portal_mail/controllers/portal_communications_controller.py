@@ -11,6 +11,7 @@ class PortalCommunications(http.Controller):
     def _prepare_portal_layout_values(self):
         """ prepare the values to render portal layout """
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         values = {
             'company': request.website.company_id,
             'user': request.env.user,

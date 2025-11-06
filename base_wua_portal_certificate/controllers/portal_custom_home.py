@@ -18,6 +18,7 @@ class website_account(website_account):
         """ Add certificates documents to main account page """
         response = super(website_account, self).account(**kw)
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
 
         certificates_count = request.env['wua.certificate'].search_count([
             ('partner_id', '=', partner.id)
@@ -34,6 +35,7 @@ class website_account(website_account):
                                selected_columns=None, **kw):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         domain = [('partner_id', '=', partner.id)]
         if search and search_field:
             field_map = {
@@ -87,6 +89,7 @@ class website_account(website_account):
                 type='http', auth="user", website=True)
     def portal_wua_certificate_report(self, certificate_id, **kw):
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         certificate = request.env['wua.certificate'].sudo().search([
             ('id', '=', certificate_id),
             ('partner_id', '=', partner.id)
@@ -110,6 +113,7 @@ class website_account(website_account):
                 methods=['POST'], csrf=False, website=True)
     def portal_create_certificate(self, **post):
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         certificatetype_id = \
             request.env['wua.certificate.type'].sudo().search([
                 ('id', '=', int(post.get('certificatetype_id')))

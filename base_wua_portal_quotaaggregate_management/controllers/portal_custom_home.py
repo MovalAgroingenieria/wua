@@ -16,6 +16,7 @@ class website_account(website_account):
         """ Add quotas and hydricmovements documents to main account page """
         response = super(website_account, self).account(**kw)
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         quotaaggregates_count = \
             request.env['wua.quota.aggregatevalue'].search_count([
                 ('partner_id', '=', partner.id)
@@ -32,6 +33,7 @@ class website_account(website_account):
                                   **kw):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         quotaaggregates_model = \
             request.env['wua.quota.aggregatevalue']
         domain = [

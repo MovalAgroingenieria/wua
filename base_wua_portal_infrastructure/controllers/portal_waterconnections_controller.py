@@ -17,6 +17,7 @@ class website_account(website_account):
         """ Add waterconnections documents to main account page """
         response = super(website_account, self).account(**kw)
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
 
         waterconnections = request.env['res.partner.waterconnection']
         waterconnection_count = waterconnections.search_count([
@@ -36,6 +37,7 @@ class website_account(website_account):
             search_field=None, selected_columns=None, **kw):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         waterconnection_partnerlink_model = \
             request.env['res.partner.waterconnection']
         domain = [('partner_id', '=', partner.id)]
@@ -106,6 +108,7 @@ class website_account(website_account):
             if 0 <= current_index < len(waterconnection_id_list) - 1 else None
         )
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
 
         return request.render(
             "base_wua_portal_infrastructure.waterconnections_followup", {

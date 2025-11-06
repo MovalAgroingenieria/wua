@@ -15,6 +15,7 @@ class PortalIrrigationMonitoring(http.Controller):
 
     def _prepare_portal_layout_values(self):
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         waterconnection = request.env['res.partner.waterconnection']
         waterconnections = waterconnection.search(
             [('partner_id', '=', partner.id)]).mapped('waterconnection_id').ids
@@ -44,6 +45,7 @@ class PortalIrrigationMonitoring(http.Controller):
                                    **kw):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         waterconnection = request.env['res.partner.waterconnection']
         all_links = waterconnection.sudo().search([], limit=10)
         partner_domain = [('partner_id', '=', partner.id)]
@@ -136,6 +138,7 @@ class PortalIrrigationMonitoring(http.Controller):
                                           **kw):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         waterconnection = request.env['res.partner.waterconnection']
         partner_domain = [('partner_id', '=', partner.id)]
         if search and search_field:

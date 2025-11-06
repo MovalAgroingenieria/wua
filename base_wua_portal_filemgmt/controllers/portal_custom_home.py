@@ -16,6 +16,7 @@ class website_account(website_account):
         """ Add files documents to main account page """
         response = super(website_account, self).account(**kw)
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
 
         files = request.env['res.file.partnerlink']
         files_count = files.search_count(
@@ -38,6 +39,7 @@ class website_account(website_account):
                         search_field=None, selected_columns=None, **kw):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         file_partnerlink_model = request.env['res.file.partnerlink']
         domain = [('partner_id', '=', partner.id)]
         if search and search_field:
@@ -81,6 +83,7 @@ class website_account(website_account):
                              search_field=None, selected_columns=None, **kw):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         registry_model = request.env['res.letter']
         domain = ['|', ('recipient_partner_id', '=', partner.id),
                   ('sender_partner_id', '=', partner.id)]
@@ -123,6 +126,7 @@ class website_account(website_account):
     def file_report(self, file_id=None, **kw):
         """Generates the File report and serves it as a PDF"""
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         partnerlink = request.env['res.file.partnerlink'].search([
             ('file_id', '=', file_id),
             ('partner_id', '=', partner.id)
@@ -172,6 +176,7 @@ class website_account(website_account):
     def registries_followup_report(self, registry_id=None, **kw):
         """Generates the Registry report and serves it as a PDF"""
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         registry = request.env['res.letter'].sudo().search([
             '|',
             ('recipient_partner_id', '=', partner.id),

@@ -16,6 +16,7 @@ class website_account(website_account):
         """ Add irrigationreports documents to main account page """
         response = super(website_account, self).account(**kw)
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
 
         irrigationreports = request.env['wua.irrigationreport']
         irrigationreports_count = irrigationreports.search_count(
@@ -41,6 +42,7 @@ class website_account(website_account):
                                     selected_columns=None, **kw):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         irrigationreports_tracking_model = request.env['wua.irrigationreport']
         domain = [('partner_id', '=', partner.id)]
         if search and search_field:
@@ -90,6 +92,7 @@ class website_account(website_account):
     def irrigationreports_followup_report(self, irrigationreport=None, **kw):
         """Generates the irrigationreport report and serves it as a PDF"""
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         irrigationreport_model = request.env['wua.irrigationreport'].sudo()
         model_report = request.env['report'].sudo()
         irrigationreport = irrigationreport_model.search([
@@ -124,6 +127,7 @@ class website_account(website_account):
                                            selected_columns=None, **kw):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         irrigationreport_requests = request.env['wua.reportrequest']
         domain = [('partner_id', '=', partner.id)]
         if search and search_field:
@@ -172,6 +176,7 @@ class website_account(website_account):
                                                  reportrequest=None, **kw):
         """Generates the reportrequest report and serves it as a PDF"""
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         reportrequest_model = request.env['wua.reportrequest'].sudo()
         model_report = request.env['report'].sudo()
         reportrequest = reportrequest_model.search([

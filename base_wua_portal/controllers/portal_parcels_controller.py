@@ -14,6 +14,7 @@ class PortalParcels(http.Controller):
     def _prepare_portal_layout_values(self):
         """ prepare the values to render portal layout """
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         values = {
             'company': request.website.company_id,
             'user': request.env.user,
@@ -27,6 +28,7 @@ class PortalParcels(http.Controller):
                           date_end=None, search=None, search_field=None, **kw):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         parcel_partnerlink_model = request.env['wua.parcel.partnerlink']
         domain = [('partner_id', '=', partner.id)]
 
@@ -72,6 +74,8 @@ class PortalParcels(http.Controller):
     def parcels_followup(self, parcel=None, ids=None, **kw):
         partnerlink = request.env['wua.parcel.partnerlink'].browse([parcel])
         parcel = partnerlink.parcel_id
+        partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         try:
             parcel.check_access_rights('read')
             parcel.check_access_rule('read')
@@ -101,7 +105,7 @@ class PortalParcels(http.Controller):
             gis_viewer_link = url + '?' + parcel_param + '=' + parcel.name
         return request.render("base_wua_portal.parcels_followup", {
             'parcel': parcel_sudo,
-            'partner': request.env.user.partner_id,
+            'partner': partner,
             'gis_url': gis_viewer_link,
             'prev_parcel_id': prev_id,
             'next_parcel_id': next_id,
@@ -114,10 +118,12 @@ class PortalParcels(http.Controller):
                 type='http', auth="user", website=True)
     def parcels_followup_report(self, parcel=None, **kw):
         """Generates the Partner report and serves it as a PDF"""
-        partner = request.env.user.partner_id
+        user = request.env.user
         partnerlink = request.env['wua.parcel.partnerlink'].search([
             ('parcel_id', '=', parcel),
-            ('partner_id', '=', partner.id)
+            '|',
+            ('partner_id', '=', user.partner_id.id),
+            ('partner_id', 'parent_of', user.partner_id.id)
         ], limit=1)
         parcel = partnerlink.parcel_id
         parcel_model = request.env['wua.parcel'].sudo()
@@ -130,7 +136,7 @@ class PortalParcels(http.Controller):
         report_ref = \
             'base_wua.wua_parcel_report_document'
         parcel_report = model_report.with_context(
-            {'lang': partner.lang}).get_pdf(
+            {'lang': user.partner_id.lang}).get_pdf(
                 [parcel.id], report_ref)
 
         response = request.make_response(
@@ -145,28 +151,22 @@ class PortalParcels(http.Controller):
 
     @http.route('/my/report', type='http', auth="user", website=True)
     def portal_wua_partner_report(self, **kw):
-        """Generates the Partner report and serves it as a PDF"""
-        partner = request.env.user.partner_id
-        partner_model = request.env['res.partner'].sudo()
+        user = request.env.user
         model_report = request.env['report'].sudo()
-        partner = partner_model.search([('id', '=', partner.id)], limit=1)
-        if not partner:
-            return Response(
-                "No partner found",
-                status=404)
-        report_ref = \
-            'base_wua.wua_partner_report_document'
+        partner = user.partner_id
+        partner = partner.parent_id or partner
+        report_ref = 'base_wua.wua_partner_report_document'
         partner_report = model_report.with_context(
             {'lang': partner.lang}).get_pdf(
-                [partner.id], report_ref)
-
+            [partner.id],
+            report_ref,
+        )
         response = request.make_response(
             partner_report,
             headers=[
                 ('Content-Type', 'application/pdf'),
                 ('Content-Disposition',
-                 'attachment; filename="wua_partner_report.pdf"')
-            ]
+                 'attachment; filename="wua_partner_report.pdf"'),
+            ],
         )
         return response
-

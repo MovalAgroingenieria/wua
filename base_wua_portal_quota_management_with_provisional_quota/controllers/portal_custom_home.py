@@ -13,6 +13,7 @@ class website_account(website_account):
     def account(self, **kw):
         response = super(website_account, self).account(**kw)
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         waterconnection = request.env['res.partner.waterconnection']
         waterconnections = waterconnection.search(
             [('partner_id', '=', partner.id)]).mapped('waterconnection_id').ids

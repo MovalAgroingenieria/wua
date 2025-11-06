@@ -16,6 +16,7 @@ class website_account(website_account):
         """ Add quotas and hydricmovements documents to main account page """
         response = super(website_account, self).account(**kw)
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
 
         quota = request.env['wua.quota']
         quota_count = quota.search_count([
@@ -42,6 +43,7 @@ class website_account(website_account):
                          search_field=None, selected_columns=None, **kw):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         quota_model = \
             request.env['wua.quota']
 
@@ -100,6 +102,7 @@ class website_account(website_account):
                                   **kw):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         hydricmovement_model = \
             request.env['wua.hydricmovement']
 
@@ -157,6 +160,7 @@ class website_account(website_account):
     def portal_wua_partner_report(self, **kw):
         """Generates the Partner quotareport and serves it as a PDF"""
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         partner_model = request.env['res.partner'].sudo()
         model_report = request.env['report'].sudo()
         partner = partner_model.search([('id', '=', partner.id)], limit=1)

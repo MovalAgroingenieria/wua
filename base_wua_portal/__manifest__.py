@@ -14,6 +14,7 @@
         "website_portal",
         "website_portal_sale",
         "base_wua",
+        "base_wua_invoicing",
         "portal_ext",
     ],
     "data": [

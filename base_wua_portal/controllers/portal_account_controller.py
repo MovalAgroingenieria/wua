@@ -17,6 +17,7 @@ class website_account(website_account):
     def account(self, **kw):
         response = super(website_account, self).account(**kw)
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         parcels = request.env['wua.parcel.partnerlink']
         parcel_count = parcels.search_count([('partner_id', '=', partner.id)])
         gis_viewer_link = partner.gis_viewer_link
@@ -30,6 +31,7 @@ class website_account(website_account):
 
     def _prepare_portal_layout_values(self):
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         return {
             'company': request.website.company_id,
             'user': request.env.user,
@@ -41,6 +43,7 @@ class website_account(website_account):
         response = \
             super(website_account, self).details(redirect=redirect, **post)
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         mandates = request.env['account.banking.mandate'].sudo().search([
             ('partner_id', '=', partner.id)
         ])

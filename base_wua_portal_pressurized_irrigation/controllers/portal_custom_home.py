@@ -16,6 +16,7 @@ class website_account(website_account):
         """ Add readings and presconsumptions documents to main account page"""
         response = super(website_account, self).account(**kw)
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
 
         waterconnection = request.env['res.partner.waterconnection']
         waterconnections = waterconnection.search(
@@ -39,6 +40,7 @@ class website_account(website_account):
                            search_field=None, selected_columns=None, **kw):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         waterconnection_partnerlink_model = \
             request.env['res.partner.waterconnection']
         domain = [('partner_id', '=', partner.id)]
@@ -97,6 +99,7 @@ class website_account(website_account):
                                    **kw):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         waterconnection_partnerlink_model = \
             request.env['res.partner.waterconnection']
         domain = [('partner_id', '=', partner.id)]
@@ -174,6 +177,7 @@ class website_account(website_account):
                                    **kw):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         waterconnection_partnerlink_model = \
             request.env['res.partner.waterconnection']
         domain = [('partner_id', '=', partner.id)]

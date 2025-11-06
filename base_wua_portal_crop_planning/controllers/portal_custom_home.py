@@ -17,6 +17,7 @@ class website_account(website_account):
         """ Add enrolledsubparcels documents to main account page """
         response = super(website_account, self).account(**kw)
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
 
         enrolledsubparcels = request.env['wua.enrolledsubparcel']
         enrolledsubparcels_count = enrolledsubparcels.search_count(
@@ -34,6 +35,7 @@ class website_account(website_account):
                                      selected_columns=None, **kw):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         enrolledsubparcels_model = request.env['wua.enrolledsubparcel']
         domain = [('partner_id', '=', partner.id)]
         if search and search_field:
@@ -84,6 +86,7 @@ class website_account(website_account):
                           date_end=None, search=None, search_field=None, **kw):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         cropplan_model = request.env['wua.cropplan']
         domain = [('partner_id', '=', partner.id)]
 
@@ -159,6 +162,7 @@ class website_account(website_account):
     def enrolledsubparcels_followup_report(self, cropplan=None, **kw):
         """Generates the Partner report and serves it as a PDF"""
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         cropplan = request.env['wua.cropplan'].search([
             ('id', '=', cropplan),
             ('partner_id', '=', partner.id)

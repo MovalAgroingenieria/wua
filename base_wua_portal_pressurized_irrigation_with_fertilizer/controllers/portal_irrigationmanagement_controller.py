@@ -15,6 +15,7 @@ class PortalIrrigationManagement(http.Controller):
                 PortalIrrigationManagement, self
             )._prepare_portal_layout_values()
         partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
         waterconnection = request.env['res.partner.waterconnection']
         waterconnections = waterconnection.search(
             [('partner_id', '=', partner.id)]).mapped('waterconnection_id').ids
