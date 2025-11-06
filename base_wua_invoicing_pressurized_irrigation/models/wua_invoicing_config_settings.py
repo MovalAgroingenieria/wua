@@ -27,6 +27,10 @@ class WuaInvoicingConfiguration(models.TransientModel):
         help='If marked, waterconnection lines will be grouped on report '
              'only if not invoicing based on wc',
     )
+    print_consumption_section = fields.Boolean(
+        string='Print Consumption/Parcels Section',
+        help='If marked, consumption section will be printed on invoice',
+    )
 
     @api.multi
     def set_default_values(self):
@@ -41,3 +45,6 @@ class WuaInvoicingConfiguration(models.TransientModel):
         values.set_default('wua.invoicing.configuration',
                            'group_wc_lines_on_report',
                            self.group_wc_lines_on_report)
+        values.set_default('wua.invoicing.configuration',
+                           'print_consumption_section',
+                           self.print_consumption_section)

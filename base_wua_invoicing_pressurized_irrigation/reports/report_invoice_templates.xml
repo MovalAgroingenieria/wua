@@ -10,7 +10,8 @@
                     <t t-set="with_presconsumptions" t-value="True"/>
                 </t>
             </t>
-            <t t-if="with_presconsumptions">
+            <t t-set="print_consumption" t-value="o.sudo()._must_print_consumption_section()"/>
+            <t t-if="with_presconsumptions and print_consumption">
                 <t t-set="consumptions"
                    t-value="o.sudo()._get_presconsumptions_from_lines(o.invoice_line_ids)"/>
                 <t t-if="consumptions">

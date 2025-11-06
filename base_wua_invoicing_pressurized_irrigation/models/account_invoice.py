@@ -75,3 +75,7 @@ class AccountInvoice(models.Model):
     def _must_group_wc_lines_on_report(self):
         return (self.env['ir.values'].get_default(
             'wua.invoicing.configuration', 'group_wc_lines_on_report'))
+
+    def _must_print_consumption_section(self):
+        return (self.env['ir.values'].get_default(
+            'wua.invoicing.configuration', 'print_consumption_section'))
