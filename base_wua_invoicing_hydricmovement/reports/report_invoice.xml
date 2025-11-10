@@ -9,7 +9,8 @@
                     <t t-set="with_hydricmov_presconsumptions" t-value="True"/>
                 </t>
             </t>
-            <t t-if="with_hydricmov_presconsumptions">
+            <t t-set="print_consumption" t-value="o.sudo()._must_print_consumption_section()"/>
+            <t t-if="with_hydricmov_presconsumptions and print_consumption">
                 <t t-set="consumptions_hydricmov" t-value="o.get_hydricmov_presconsumptions_from_lines(o.invoice_line_ids)"/>
                 <t t-if="consumptions_hydricmov">
                     <div name="consumptions_hydricmov">
