@@ -489,3 +489,22 @@ class WuaAttendance(models.Model):
                 "url": url_raw,
             }).short_url
         return url
+
+    @api.model
+    def _compute_area_measurement_name(self):
+        area__measurement_type = self.env['ir.values'].get_default(
+            'wua.configuration', 'area_measurement_type')
+        results = ""
+        if area__measurement_type:
+            if area__measurement_type == 0:
+                results = _('ha')
+            else:
+                area_measurement_name = self.env['ir.values'].get_default(
+                    'wua.configuration', 'area_measurement_name')
+                if area_measurement_name:
+                    results = area_measurement_name.decode('utf_8')
+                else:
+                    results = ""
+        else:
+            results = _('ha')
+        return results

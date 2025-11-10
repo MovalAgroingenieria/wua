@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <report id="action_wua_attendance_individual_call_with_votes_report"
+            string="Assembly Attendance Call with surface area and votes"
+            model="wua.attendance"
+            report_type="qweb-pdf"
+            name="base_wua_assembly.wua_attendance_individual_call_with_votes_report"
+            paperformat="base_wua_report.paperformat_wua_reports"
+            groups="base_wua.group_wua_user"/>
+
+    <template id="wua_attendance_individual_call_with_votes_report">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="lang" t-value="o.partner_id.lang or 'es_ES'"/>
+                <t t-set="o" t-value="o.with_context(lang=o.partner_id.lang or 'es_ES')"/>
+                <t t-call="base_wua_assembly.wua_attendance_individual_call_with_votes_report_document" t-lang="lang"/>
+            </t>
+        </t>
+    </template>
+
+    <template id="wua_attendance_individual_call_with_votes_report_document">
+
+        <t t-call="base_wua_report.wua_external_layout">
+            <div class="page">
+
+                <!-- Vars -->
+                <t t-set="report_style" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+
+                <div name="wua_partner_data">
+                    <div class="row" style="margin-top: 24px;">
+                        <div class="col-xs-12" style="display: table;">
+                            <div style="width: 50%; display: table-cell; vertical-align: top;" class="col-5">
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <td style="text-align: left; width: 100%;">
+                                            <t t-if="o.param_add_qr_code_in_attendance">
+                                                <img style="width: 115px; margin-bottom: 8px;"
+                                                    t-att-src="'/report/qr/?value=%s&amp;error_correction=%s&amp;box_size=%s&amp;border=%s&amp;version=%s'
+                                                    % (o._get_or_generate_attendance_link(), 3, 4, 0, 1)"/>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: center;">
+                                            <table name="partner_vote_data" t-att-style="'width: %s;'" t-attf="% o.param_add_qr_code_in_attendance and '70%' or '90%'"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div style="display: table-cell; padding-left: 96px;" class="col-5">
+                                <t t-if="o.partner_id.name">
+                                    <strong><span t-field="o.partner_id.name"/></strong>
+                                    <br/>
+                                </t>
+                                <t t-if="o.partner_id.street_type_show or o.partner_id.street or o.partner_id.street_num or o.partner_id.street2">
+                                    <t t-if="o.partner_id.street_type_show"><span t-field="o.partner_id.street_type_show"/></t>
+                                    <t t-if="o.partner_id.street"><span t-field="o.partner_id.street"/></t>
+                                    <t t-if="o.partner_id.street_num"><span t-field="o.partner_id.street_num"/></t>
+                                    <t t-if="o.partner_id.street2"><span t-field="o.partner_id.street2"/></t>
+                                    <br/>
+                                </t>
+                                <t t-if="o.partner_id.city or o.partner_id.zip">
+                                    <t t-if="o.partner_id.city"><span t-field="o.partner_id.city"/></t>
+                                    <t t-if="o.partner_id.zip"><span>-&amp;nbsp;</span><span t-field="o.partner_id.zip"/></t>
+                                    <br/>
+                                </t>
+                                <t t-if="o.partner_id.state_id or o.partner_id.country_id">
+                                    <t t-if="o.partner_id.state_id"><span t-field="o.partner_id.state_id"/></t>
+                                    <t t-if="o.partner_id.country_id"><span>-&amp;nbsp;</span><span t-field="o.partner_id.country_id"></span></t>
+                                    <br/>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>&amp;nbsp;</div>
+                <div>&amp;nbsp;</div>
+                <div>&amp;nbsp;</div>
+                <div>&amp;nbsp;</div>
+
+                <div name="votes_and_area_details" style="margin-top:20px;">
+                    <div class="row" style="padding-bottom: 4px;">
+                        <t t-set="report_style" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+                        <t t-set="measurement_unit" t-value="o._compute_area_measurement_name()"/>
+                        <t t-if="report_style == 'light'">
+                            <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px; margin-bottom:20px; color: black; font-size: 1em; background-color: #f0f0f0;">
+                                <div style="text-align: center; margin: 0 auto;">
+                                    <div style="display: inline-block; margin: 0 20px;">
+                                        <strong>Declared Area:</strong>
+                                        <span t-field="o.partner_id.parcel_owner_area"/>
+                                        <span><t t-esc="measurement_unit"/></span>
+                                    </div>
+                                    <div style="display: inline-block; margin: 0 20px;">
+                                        <strong>Number of Votes:</strong>
+                                        <span t-field="o.partner_id.number_of_votes"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <div class="col-xs-12 bg-theme-report-color" style="padding: 1px 16px; margin-bottom:20px; color: black; font-size: 1em; background-color: #f0f0f0;">
+                                <div style="text-align: center; margin: 0 auto;">
+                                    <div style="display: inline-block; margin: 0 20px;">
+                                        <strong>Declared Area:</strong>
+                                        <span t-field="o.partner_id.parcel_owner_area"/>
+                                        <span><t t-esc="measurement_unit"/></span>
+                                    </div>
+                                    <div style="display: inline-block; margin: 0 20px;">
+                                        <strong>Number of Votes:</strong>
+                                        <span t-field="o.partner_id.number_of_votes"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+
+                <div name="title" class="text-center">
+                    <div style="display:inline-blok;font-size: 1.2em;">
+                        <strong>Convocation:</strong>
+                        <span t-field="o.assembly_id.issue"/>
+                    </div>
+                </div>
+
+                <div name="citation_data">
+                    <div name="publication_text" style="margin-top: 24px;">
+                        <t t-if="o.assembly_id.rendered_publication_text">
+                            <span t-field="o.assembly_id.rendered_publication_text"></span>
+                        </t>
+                    </div>
+                </div>
+
+                <div name="agendaitem_data">
+                    <div>
+                        <t t-if="o.assembly_id.agendaitem_ids">
+                            <table class="table table-condensed">
+                                <tbody>
+                                    <tr t-foreach="o.assembly_id.agendaitem_ids" t-as="item"
+                                        style="page-break-before: always; page-break-after: auto; page-break-inside: avoid;">
+                                        <td name="td_number" width="4%" class="text-center" style="border: 0;">
+                                            <span t-field="item.number"/><span>.-</span>
+                                        </td>
+                                        <td name="th_description" align="justify" style="border: 0;">
+                                            <span t-field="item.description"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </t>
+                    </div>
+                </div>
+
+                <t t-if="o.assembly_id.rendered_final_paragraph">
+                    <div name="final_paragraph" style="margin-top: 32px;">
+                        <span t-field="o.assembly_id.rendered_final_paragraph"></span>
+                    </div>
+                </t>
+                <!-- Force new page -->
+                <p style="page-break-after:always;"/>
+
+            </div> <!-- End page -->
+
+        </t>
+
+    </template>
+
+</odoo>
