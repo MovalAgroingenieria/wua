@@ -4,7 +4,7 @@
 
 import datetime
 import logging
-from odoo import models, fields, _
+from odoo import models, fields, api, _
 
 
 class WuaControlreading(models.Model):
@@ -16,6 +16,25 @@ class WuaControlreading(models.Model):
         ondelete='cascade',
         index=True,
     )
+
+    @api.model
+    def create(self, vals):
+        # If there's an adjustement_volume in context, we need to pass it
+        # to the controlpresconsumption that will be auto-created
+        controlreading = super(WuaControlreading, self).create(vals)
+        if (self.env.context.get('adjustement_volume') and
+                controlreading.controlpresconsumption_id):
+            # Use SQL to avoid triggering write and regeneration
+            # Don't use a class variablo for in create
+            self.env.cr.execute(
+                "UPDATE wua_controlpresconsumption "
+                "SET adjustement_volume = %s WHERE id = %s",
+                (self.env.context.get('adjustement_volume'),
+                 controlreading.controlpresconsumption_id.id))
+            # Invalidate cache to force recomputation
+            controlreading.controlpresconsumption_id.invalidate_cache(
+                ['adjustement_volume', 'volume_real'])
+        return controlreading
 
     def _create_controlreading_for_pr(
             self, presresconsumption):
@@ -38,8 +57,11 @@ class WuaControlreading(models.Model):
         )
         if last_controlreading:
             last_volume = last_controlreading.volume
-        # Create controlreading and assign them to presresconsumption
-        controlreading = self.create({
+        # Create controlreading with adjustement_volume in context
+        # so it gets passed to the auto-created controlpresconsumption
+        controlreading = self.with_context(
+            adjustement_volume=presresconsumption.watering_volume
+        ).create({
             'watermeter_id':
                 presresconsumption.waterconnection_id.watermeter_id.id,
             'reading_time': fields.Datetime.to_string(time_for_reading),
@@ -48,9 +70,6 @@ class WuaControlreading(models.Model):
             'from_import': False,
             'presresconsumption_id': presresconsumption.id,
         })
-        # Set the adjustment volume on controlpresconsumption
-        controlreading.controlpresconsumption_id.adjustement_volume = (
-            presresconsumption.watering_volume)
         presresconsumption.controlreading_id = controlreading
         return controlreading
 
