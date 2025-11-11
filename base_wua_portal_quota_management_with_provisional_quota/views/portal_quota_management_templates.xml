@@ -15,4 +15,13 @@
                 </h3>
             </xpath>
         </template>
+
+        <template id="waterconnections_followup" name="Portal layout : waterconnection entries" inherit_id="base_wua_portal_infrastructure.waterconnections_followup">
+            <xpath expr="//div[contains(@name,'buttons')]" position="inside">
+                <a t-att-href="'/my/controlconsumptions?search_field=waterconnection&amp;search=' + waterconnection.name" class="btn oe_stat_button">
+                    <div class="fa fa-fw fa-moval-irrigation o_button_icon"></div>
+                    <span>Control Consumptions</span>
+                </a>
+            </xpath>
+        </template>
 </odoo>

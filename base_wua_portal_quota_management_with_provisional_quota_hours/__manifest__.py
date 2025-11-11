@@ -12,9 +12,11 @@
     "license": "AGPL-3",
     "depends": [
         "base_wua_portal_quota_management",
+        "base_wua_portal_quota_management_hours",
         "base_wua_quota_management_with_provisional_quota_hours",
     ],
     "data": [
+        "security/ir.model.access.csv",
         "views/website_portal_templates.xml",
     ],
     "installable": True,
