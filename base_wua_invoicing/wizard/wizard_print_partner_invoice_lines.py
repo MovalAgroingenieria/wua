@@ -75,9 +75,18 @@ class WizardPrintPartnerInvoiceLines(models.TransientModel):
                     raise exceptions.UserError(
                         _('''Incorrect dates,
                             the initial date is after the end date.'''))
+                initial_dt = fields.Datetime.context_timestamp(
+                    self, fields.Datetime.from_string(record.initial_date))
+                end_dt = fields.Datetime.context_timestamp(
+                    self, fields.Datetime.from_string(record.end_date))
+
+                initial_date_formatted = fields.Date.to_string(
+                    initial_dt.date(),
+                )
+                end_date_formatted = fields.Date.to_string(end_dt.date())
                 search_domain = [
-                    ('invoice_id.date_invoice', '>=', record.initial_date),
-                    ('invoice_id.date_invoice', '<=', record.end_date),
+                    ('invoice_id.date_invoice', '>=', initial_date_formatted),
+                    ('invoice_id.date_invoice', '<=', end_date_formatted),
                     ('partner_id',
                         'in', record.partner_ids.ids)]
                 if (record.filter_by_journals and
