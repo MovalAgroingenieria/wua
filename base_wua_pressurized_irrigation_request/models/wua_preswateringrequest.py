@@ -189,6 +189,23 @@ class WuaPreswateringrequest(models.Model):
         ('unique_name', 'UNIQUE(name)', 'The request code must be unique.'),
     ]
 
+    @api.constrains('name', 'partner_id', 'initial_date')
+    def _check_unique_request_code(self):
+        for record in self:
+            if record.name:
+                duplicate = self.search([
+                    ('name', '=', record.name),
+                    ('id', '!=', record.id),
+                ], limit=1)
+                if duplicate:
+                    raise exceptions.ValidationError(_(
+                        'The request code "%s" already exists for irrigator '
+                        '"%s" on date %s.\n'
+                        'Please change the date or the irrigator.') % (
+                            record.name,
+                            record.partner_id.name,
+                            record.initial_date))
+
     @api.constrains('initial_date', 'partner_id', 'user_id')
     def _check_initial_date_earlier_than_today(self):
         lock_modification_hours = self.env['ir.values'].sudo().get_default(
@@ -221,24 +238,6 @@ class WuaPreswateringrequest(models.Model):
                         'The start date of the watering request (%s) must be '
                         'within the period (%s - %s).') % (
                             record.initial_date,
-                            period.initial_date,
-                            period.end_date,
-                        ),
-                    )
-
-    @api.constrains('recurrence_end_date', 'preswateringperiod_id',
-                    'is_recurrence')
-    def _check_recurrence_end_date_within_period(self):
-        for record in self:
-            if record.recurrence_end_date and \
-                    record.preswateringperiod_id and record.is_recurrence:
-                period = record.preswateringperiod_id
-                if not (period.initial_date <= record.recurrence_end_date <=
-                        period.end_date):
-                    raise exceptions.ValidationError(_(
-                        'The end date of the recurrence (%s) must be within '
-                        'the period (%s - %s).') % (
-                            record.recurrence_end_date,
                             period.initial_date,
                             period.end_date,
                         ),
@@ -367,8 +366,15 @@ class WuaPreswateringrequest(models.Model):
         copy_date_str = copy_date.strftime('%Y-%m-%d')
         if not request.partner_id or not request.partner_id.active:
             return
+        # Find the preswateringperiod that contains the copy_date
+        preswateringperiod = self.env['wua.preswateringperiod'].search([
+            ('initial_date', '<=', copy_date_str),
+            ('end_date', '>=', copy_date_str),
+        ], limit=1)
+        if not preswateringperiod:
+            return
         new_request_vals = {
-            'preswateringperiod_id': request.preswateringperiod_id.id,
+            'preswateringperiod_id': preswateringperiod.id,
             'initial_date': copy_date_str,
             'partner_id': request.partner_id.id,
             'from_recurrence': True,
@@ -415,6 +421,22 @@ class WuaPreswateringrequest(models.Model):
                 self._copy_single_request(record, current_date)
                 current_date += timedelta(days=record.recurrence_interval)
             record.recurrence_alredy_created = True
+
+    @api.multi
+    def copy(self, default=None):
+        # When duplicating, increment the initial_date by 1 day to avoid
+        # unique constraint violation on 'name' (which is computed from
+        # partner_id + initial_date)
+        if default is None:
+            default = {}
+        if 'initial_date' not in default and self.initial_date:
+            # Increment date by 1 day
+            next_date = fields.Date.from_string(self.initial_date) + \
+                timedelta(days=1)
+            default['initial_date'] = fields.Date.to_string(next_date)
+        # Exclude computed name to let it be recalculated
+        default['name'] = False
+        return super(WuaPreswateringrequest, self).copy(default)
 
     @api.model
     def create(self, vals):
