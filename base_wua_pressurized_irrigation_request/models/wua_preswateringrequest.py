@@ -532,10 +532,16 @@ class WuaPreswateringrequest(models.Model):
                 pres._onchange_waterconnection_id()
 
     def change_state_draft(self):
+        if not self.env.user.has_group('base_wua.group_wua_manager'):
+            raise exceptions.UserError(_(
+                'You do not have permission to change the state to draft.'))
         for record in self:
             record.state = '01_draft'
 
     def change_state_validated(self):
+        if not self.env.user.has_group('base_wua.group_wua_manager'):
+            raise exceptions.UserError(_(
+                'You do not have permission to validate requests.'))
         for record in self:
             record.state = '02_validated'
 

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-10 07:16+0000\n"
-"PO-Revision-Date: 2025-04-10 07:16+0000\n"
+"POT-Creation-Date: 2025-11-11 14:22+0000\n"
+"PO-Revision-Date: 2025-11-11 14:22+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -258,11 +258,6 @@ msgstr "<strong>Conformitat</strong>"
 
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.report_wua_preswateringrequest_document
-msgid "<strong>Consumption Requests</strong>"
-msgstr "<strong>Consumption Requests</strong>"
-
-#. module: base_wua_pressurized_irrigation_request
-#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.report_wua_preswateringrequest_document
 msgid "<strong>Irrigator</strong>"
 msgstr "<strong>Regant</strong>"
 
@@ -283,6 +278,10 @@ msgstr "Àrea afectada (hectàrees)"
 
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_presresconsumption_view_pivot
+msgid "Aggregated Values"
+msgstr "Valors agregats"
+
+#. module: base_wua_pressurized_irrigation_request
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswatering_view_pivot
 msgid "Agregated Values"
 msgstr "Valors agregats"
@@ -343,7 +342,7 @@ msgid "Cancel"
 msgstr "Cancel·la"
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:248
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:251
 #, python-format
 msgid "Cannot create preswaterinrequests on a closed period "
 msgstr "No es poden crear Sol·licituds de reg en un període tancat "
@@ -409,8 +408,13 @@ msgid "Consumption Details"
 msgstr "Detalls de consum"
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/res_partner.py:115
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_waterconnection.py:62
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_presresconsumption_view_graph
+msgid "Consumption Graph"
+msgstr "Gràfica de consum"
+
+#. module: base_wua_pressurized_irrigation_request
+#: code:addons/base_wua_pressurized_irrigation_request/models/res_partner.py:116
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_waterconnection.py:81
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation_request.wua_presresconsumption_action
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_res_partner_presresconsumption_ids
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_res_users_presresconsumption_ids
@@ -430,6 +434,11 @@ msgstr "Sol·licituds de consum (seguiment)"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_state
 msgid "Consumption State"
 msgstr "Estat del consum"
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.report_wua_preswateringrequest_document
+msgid "Consumption Requests (Start Date:"
+msgstr "Sol·licituds de consum (Data d'inici:"
 
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wizard_copy_preswateringrequests_view_form
@@ -559,6 +568,11 @@ msgstr "Mostrar Nom"
 #: selection:wua.preswateringrequest,state:0
 msgid "Draft"
 msgstr "Esborrany"
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.report_wua_preswateringrequest_document
+msgid "Duration"
+msgstr "Durada"
 
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_portal_can_modify
@@ -832,7 +846,7 @@ msgid "Modification Message"
 msgstr "Missatge de modificació"
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_presresconsumption.py:492
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_presresconsumption.py:493
 #, python-format
 msgid "Modifications allowed until {}"
 msgstr "Es permeten modificacions fins {}"
@@ -1074,7 +1088,7 @@ msgid "Presresconsumption"
 msgstr "Consum de sol·licitud"
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:434
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:433
 #, python-format
 msgid "Presresconsumptions"
 msgstr "Consums"
@@ -1271,7 +1285,7 @@ msgid "Selected"
 msgstr "Seleccionat"
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:487
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:486
 #, python-format
 msgid "Selection of presresconsumption for the calculation process"
 msgstr "Selecció del pre-consum per al procés de càlcul"
@@ -1282,6 +1296,7 @@ msgid "Sequence"
 msgstr "Seqüència"
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.actions.server,name:base_wua_pressurized_irrigation_request.wua_set_preswateringrequest_to_draft
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringrequest_view_form
 msgid "Set state to draft"
 msgstr "Establir estat a esborrany"
@@ -1296,6 +1311,11 @@ msgstr "Signatura"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringrequest_initial_date
 msgid "Start Date"
 msgstr "Data inicial"
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.report_wua_preswateringrequest_document
+msgid "Start Hour"
+msgstr "Hora d'inici"
 
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_condition_line_state
@@ -1317,7 +1337,7 @@ msgid "Sum"
 msgstr "Sumatori"
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:622
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:621
 #, python-format
 msgid "The conditions %s are not met."
 msgstr "Les condicions %s no es compleixen."
@@ -1350,19 +1370,13 @@ msgid "The duration must be a non-negative value."
 msgstr "La durada ha de ser un valor no negatiu."
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:234
-#, python-format
-msgid "The end date of the recurrence (%s) must be within the period (%s - %s)."
-msgstr "La data de finalització de la recurrència (%s) ha d'estar dins del període (%s - %s)."
-
-#. module: base_wua_pressurized_irrigation_request
 #: code:addons/base_wua_pressurized_irrigation_request/wizard/wizard_copy_preswateringrequests.py:61
 #, python-format
 msgid "The interval must be greater than 0."
-msgstr "The interval must be greater than 0."
+msgstr "L'interval ha de ser superior a 0."
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:208
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:225
 #, python-format
 msgid "The modification deadline has passed. Modifications are not allowed after %s."
 msgstr "El termini de modificació ha expirat. No es permeten modificacions després de %s."
@@ -1379,27 +1393,29 @@ msgid "The range of dates must be within the agricultural season."
 msgstr "L'interval de dates ha d'estar dins de la campanya agrícola."
 
 #. module: base_wua_pressurized_irrigation_request
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:201
+#, python-format
+msgid "The request code \"%s\" already exists for irrigator \"%s\" on date %s.\n"
+"Please change the date or the irrigator."
+msgstr "El codi de sol·licitud \"%s\" ja existeix per a regador \"%s\" en data %s.\n"
+"Si us plau, canvieu la data o el regador."
+
+#. module: base_wua_pressurized_irrigation_request
 #: sql_constraint:wua.preswateringrequest:0
 msgid "The request code must be unique."
 msgstr "El codi de sol·licitud ha de ser únic."
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:216
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:215
 #, python-format
 msgid "The start date of the preswatering (%s) must be within the period (%s - %s)."
 msgstr "La data d'inici de la planificació de reg (%s) ha d'estar dins del període (%s - %s).."
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:216
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:237
 #, python-format
 msgid "The start date of the watering request (%s) must be within the period (%s - %s)."
 msgstr "La data d'inici de la sol·licitud de reg (%s) ha de ser dins del període (%s - %s)."
-
-#. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:205
-#, python-format
-msgid "The start date of the watering request must not beearlier than the current date."
-msgstr "La data d'inici de la sol·licitud de reg no ha de ser anterior a la data actual."
 
 #. module: base_wua_pressurized_irrigation_request
 #: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringperiod.py:146
@@ -1434,6 +1450,7 @@ msgid "User"
 msgstr "Usuari"
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.actions.server,name:base_wua_pressurized_irrigation_request.wua_set_preswateringrequest_to_validated
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswatering_view_form
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringrequest_view_form
 msgid "Validate"
@@ -1480,7 +1497,7 @@ msgid "Waterconnection id domain"
 msgstr "Domini de presa d'aigua"
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:323
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:326
 #, python-format
 msgid "Waterconnection: %s, Flow: %s %s, Duration: %s h, Volumen: %s m³"
 msgstr "Presa: %s, Cabal: %s %s, Durada: %s min, Volum: %s m³"
@@ -1492,7 +1509,6 @@ msgstr "Presses"
 
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_watering_duration
-#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.report_wua_preswateringrequest_document
 msgid "Watering Duration (Hours)"
 msgstr "Durada del reg (hores)"
 
@@ -1542,38 +1558,49 @@ msgid "Year"
 msgstr "Any"
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:514
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:552
 #, python-format
 msgid "You cannot delete a closed press watering request."
 msgstr "No es pot eliminar una sol·licitud de reg a pressió tancada."
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_presresconsumption.py:580
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_presresconsumption.py:581
 #, python-format
 msgid "You cannot delete a presresconsumption in a granted or issued state. First you must delete the watering."
 msgstr "No podeu eliminar un consum de sol·licitud en estat concedit o servit. Heu d'eliminar primer la planificació de reg associada."
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:401
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:400
 #, python-format
 msgid "You cannot delete a preswatering if there are issued consumptions."
 msgstr "No podeu esborrar una planificació de reg si ja hi ha algun consum servit."
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:517
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:555
 #, python-format
 msgid "You cannot delete a validated press watering request."
 msgstr "No es pot eliminar una sol·licitud de reg a pressió validada."
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:414
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:424
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:536
+#, python-format
+msgid "You do not have permission to change the state to draft."
+msgstr "No tens permís per canviar l'estat a esborrany."
+
+#. module: base_wua_pressurized_irrigation_request
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:446
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:456
 #, python-format
 msgid "You do not have permission to edit data."
 msgstr "No tens permís per editar dades."
 
 #. module: base_wua_pressurized_irrigation_request
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:543
+#, python-format
+msgid "You do not have permission to validate requests."
+msgstr "No teniu permís per validar sol·licituds."
+
+#. module: base_wua_pressurized_irrigation_request
 #: model:mail.template,subject:base_wua_pressurized_irrigation_request.email_template_preswateringrequest_update
 msgid "Your Preswatering Request has been Updated"
 msgstr "La vostra sol·licitud de reg ha estat actualitzada"
-

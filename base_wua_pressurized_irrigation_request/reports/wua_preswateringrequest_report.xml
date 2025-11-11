@@ -100,13 +100,13 @@
                     <t t-if="report_style == 'light'">
                         <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
                             <div style="float: left; width: 32px;"><span class="fa fa-tint"/></div>
-                            <div style="float: left; display: inline;"><strong>Consumption Requests</strong></div>
+                            <div style="float: left; display: inline;"><strong>Consumption&#160;Requests&#160;(Start&#160;Date:&#160;<span t-field="o.initial_date"/>)</strong></div>
                         </div>
                     </t>
                     <t t-else="">
                         <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
                             <div style="float: left; width: 32px;"><span class="fa fa-tint"/></div>
-                            <div style="float: left; display: inline;"><strong>Consumption Requests</strong></div>
+                            <div style="float: left; display: inline;"><strong>Consumption&#160;Requests&#160;(Start&#160;Date:&#160;<span t-field="o.initial_date"/>)</strong></div>
                         </div>
                     </t>
                 </div>
@@ -115,7 +115,8 @@
                         <thead>
                             <tr>
                                 <th>Water Connection</th>
-                                <th>Watering Duration (Hours)</th>
+                                <th>Start Hour</th>
+                                <th>Duration</th>
                                 <t t-if="flow_in_ls">
                                     <th>Nominal Flow (l/s)</th>
                                 </t>
@@ -129,14 +130,23 @@
                             <t t-foreach="o.presresconsumption_ids" t-as="consumption">
                                 <tr>
                                     <td><span t-field="consumption.waterconnection_id.name"/></td>
-                                    <td><span t-field="consumption.watering_duration"/></td>
+                                    <td>
+                                        <t t-set="start_hour" t-value="int(consumption.initial_hour)"/>
+                                        <t t-set="start_minute" t-value="int((consumption.initial_hour - start_hour) * 60)"/>
+                                        <span t-esc="'%02d:%02d' % (start_hour, start_minute)"/>
+                                    </td>
+                                    <td>
+                                        <t t-set="duration_hour" t-value="int(consumption.watering_duration)"/>
+                                        <t t-set="duration_minute" t-value="int((consumption.watering_duration - duration_hour) * 60)"/>
+                                        <span t-esc="'%02d:%02d' % (duration_hour, duration_minute)"/>
+                                    </td>
                                     <t t-if="flow_in_ls">
-                                        <td><span t-field="consumption.nominal_flow_ls"/></td>
+                                        <td><span t-esc="'%.2f' % consumption.nominal_flow_ls"/></td>
                                     </t>
                                     <t t-else="">
-                                        <td><span t-field="consumption.nominal_flow"/></td>
+                                        <td><span t-esc="'%.2f' % consumption.nominal_flow"/></td>
                                     </t>
-                                    <td><span t-field="consumption.watering_volume"/></td>
+                                    <td><span t-esc="'%.2f' % consumption.watering_volume"/></td>
                                 </tr>
                             </t>
                         </tbody>

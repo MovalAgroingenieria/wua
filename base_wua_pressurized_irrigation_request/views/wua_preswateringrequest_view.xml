@@ -255,4 +255,43 @@
               action="wua_preswateringrequest_action"
               sequence="21"/>
 
+    <!-- Server Actions -->
+    <record id="wua_set_preswateringrequest_to_draft" model="ir.actions.server">
+        <field name="name">Set state to draft</field>
+        <field name="model_id" ref="model_wua_preswateringrequest"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                for record in env['wua.preswateringrequest'].browse(context['active_ids']):
+                    record.change_state_draft()
+        </field>
+    </record>
+
+    <record id="wua_action_set_preswateringrequest_to_draft" model="ir.values">
+        <field name="name">Set state to draft</field>
+        <field name="model">wua.preswateringrequest</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_set_preswateringrequest_to_draft'))"/>
+    </record>
+
+    <record id="wua_set_preswateringrequest_to_validated" model="ir.actions.server">
+        <field name="name">Validate</field>
+        <field name="model_id" ref="model_wua_preswateringrequest"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                for record in env['wua.preswateringrequest'].browse(context['active_ids']):
+                    record.change_state_validated()
+        </field>
+    </record>
+
+    <record id="wua_action_set_preswateringrequest_to_validated" model="ir.values">
+        <field name="name">Validate</field>
+        <field name="model">wua.preswateringrequest</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_set_preswateringrequest_to_validated'))"/>
+    </record>
+
 </odoo>
