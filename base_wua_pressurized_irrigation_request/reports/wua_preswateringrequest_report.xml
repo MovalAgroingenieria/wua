@@ -83,10 +83,6 @@
                                         <td><span>Agricultural Season:</span></td>
                                         <td class="text-right"><span t-field="o.agriculturalseason_id"/></td>
                                     </tr>
-                                    <tr>
-                                        <td><span>Start Date:</span></td>
-                                        <td class="text-right"><span t-field="o.initial_date"/></td>
-                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -141,12 +137,12 @@
                                         <span t-esc="'%02d:%02d' % (duration_hour, duration_minute)"/>
                                     </td>
                                     <t t-if="flow_in_ls">
-                                        <td><span t-esc="'%.2f' % consumption.nominal_flow_ls"/></td>
+                                        <td><span t-esc="('%.2f' % consumption.nominal_flow_ls).replace('.', ',')"/></td>
                                     </t>
                                     <t t-else="">
-                                        <td><span t-esc="'%.2f' % consumption.nominal_flow"/></td>
+                                        <td><span t-esc="('%.2f' % consumption.nominal_flow).replace('.', ',')"/></td>
                                     </t>
-                                    <td><span t-esc="'%.2f' % consumption.watering_volume"/></td>
+                                    <td><span t-esc="('%.2f' % consumption.watering_volume).replace('.', ',')"/></td>
                                 </tr>
                             </t>
                         </tbody>
