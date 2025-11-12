@@ -190,7 +190,11 @@
                                             <td><t t-esc="cropplan.number_of_enrolledsubparcels"/></td>
                                             <td><t t-esc="cropplan.area_official"/></td>
                                             <td><t t-esc="cropplan.order_number"/></td>
-                                            <td><t t-esc="cropplan.state"/></td>
+                                            <td>
+                                                <t t-if="cropplan.state == 'validated'">
+                                                    <i class="fa fa-check text-success ml8" title="Validated"></i>
+                                                </t>
+                                            </td>
                                         </tr>
                                     </t>
                                 </table>
