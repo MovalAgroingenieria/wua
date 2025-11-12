@@ -552,7 +552,7 @@ class MaintenanceRequest(models.Model):
         self.ensure_one()
         data = {
             'parcels': [],
-            'payer': False,
+            'extra_info': False,
         }
         equipment = self.equipment_id
         if not equipment:
@@ -580,7 +580,7 @@ class MaintenanceRequest(models.Model):
                     'hydraulic_sector': equipment.hydraulicsector_id.name or
                     '',
                 })
-            data['payer'] = wc.partner_id
+            data['extra_info'] = self.related_element_extradata
         return data
 
 
