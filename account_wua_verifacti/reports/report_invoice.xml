@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_invoice_document_verifacti_qr" inherit_id="account.report_invoice_document">
+        <xpath expr="//div[@style='display: table-cell; padding-left: 40px;']" position="after">
+            <div t-if="o.verifacti_qr_code" style="display: table-cell; padding-left: 40px; text-align: center; vertical-align: middle;">
+                <table name="verifacti_qr_data" class="table-condensed" style="width:100%;">
+                    <tbody>
+                        <tr name="tr_verifacti_qr_title">
+                            <td style="text-align: center; padding-bottom: 8px;">
+                                <strong style="color: #0a6340; font-size: 12px;">QR Verifactu:</strong>
+                            </td>
+                        </tr>
+                        <tr name="tr_verifacti_qr_code">
+                            <td style="text-align: center;">
+                                <img t-att-src="'data:image/png;base64,%s' % o.verifacti_qr_code"
+                                     style="max-width: 90px; max-height: 90px;"
+                                     alt="Verifactu QR"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </xpath>
+    </template>
+</odoo>
