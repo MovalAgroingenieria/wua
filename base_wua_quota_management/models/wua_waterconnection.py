@@ -34,6 +34,12 @@ class WuaWaterconnection(models.Model):
         string='Consumptions Graph Invisible',
         compute='_compute_consumptions_graph_invisible')
 
+    hydricmovement_category_id = fields.Many2one(
+        comodel_name='wua.individualinput.category',
+        string='Hydric Movement Category',
+        index=True,
+    )
+
     _sql_constraints = [
         ('non_negative_water_product_order', 'CHECK (water_product_order > 0)',
          'The Water Order Number must be greater than 0.'),

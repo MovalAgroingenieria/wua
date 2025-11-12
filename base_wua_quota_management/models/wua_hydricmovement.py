@@ -23,7 +23,7 @@ class WuaHydricmovement(models.Model):
                     'neg_output_next_quota'}
     INPUT_TYPES = {'multiple_assign', 'pos_indiv_assign',
                    'received_cession', 'input_prev_quota',
-                   'neg_input_prev_quota'
+                   'neg_input_prev_quota',
                    }
 
     event_time = fields.Datetime(
@@ -135,7 +135,7 @@ class WuaHydricmovement(models.Model):
         ('neg_output_next_quota', 'Negative output to next quota')],
         string='Type',
         required=True,
-        readonly=True,)
+        readonly=True)
 
     is_consumption = fields.Boolean(
         string='Is consumption',
@@ -188,7 +188,7 @@ class WuaHydricmovement(models.Model):
         string='Watering Request',
         comodel_name='wua.wateringrequest',
         store=True,
-        compute='_compute_wateringrequest_id',)
+        compute='_compute_wateringrequest_id')
 
     irrigationreport_id = fields.Many2one(
         string='Irrigation Report',
@@ -250,6 +250,12 @@ class WuaHydricmovement(models.Model):
         index=True,
         store=True,
         compute='_compute_category_id')
+
+    direct_category_id = fields.Many2one(
+        comodel_name='wua.individualinput.category',
+        string='Direct Category',
+        index=True,
+    )
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
@@ -377,12 +383,15 @@ class WuaHydricmovement(models.Model):
                 accounting_volume = -accounting_volume
             record.accounting_volume = accounting_volume
 
-    @api.depends('individualinput_id', 'individualinput_id.category_id')
+    @api.depends('individualinput_id', 'individualinput_id.category_id',
+                 'direct_category_id')
     def _compute_category_id(self):
         for record in self:
             category_id = None
-            if (record.individualinput_id and
-               record.individualinput_id.category_id):
+            if record.direct_category_id:
+                category_id = record.direct_category_id
+            elif (record.individualinput_id and
+                  record.individualinput_id.category_id):
                 category_id = record.individualinput_id.category_id
             record.category_id = category_id
 
@@ -455,6 +464,11 @@ class WuaHydricmovement(models.Model):
                      ('event_time', '=', event_time)])
             vals['event_time'] = event_time
         new_hydricmovement = super(WuaHydricmovement, self).create(vals)
+        valid_category_id = new_hydricmovement._get_direct_category_from_wc()
+        if valid_category_id:
+            new_hydricmovement.write({
+                'direct_category_id': valid_category_id.id,
+                })
         return new_hydricmovement
 
     @api.multi
@@ -500,7 +514,7 @@ class WuaHydricmovement(models.Model):
             'view_type': 'form',
             'views': [(id_form_view, 'form')],
             'target': 'current',
-            'flags': {'mode': 'readonly'}
+            'flags': {'mode': 'readonly'},
             }
         return act_window
 
@@ -669,3 +683,14 @@ class WuaHydricmovement(models.Model):
     # from the "_check_reference_id" method)
     def _test_reference_id_for_new_types(self, hydricmovement):
         return True
+
+    def _get_direct_category_from_wc(self):
+        """Obtain the direct category from the water connection
+        associated to the hydric movement."""
+        self.ensure_one()
+        if (self.type == 'pres_consumption' and
+                self.presconsumption_id.waterconnection_id.
+                hydricmovement_category_id):
+            return (self.presconsumption_id.waterconnection_id.
+                    hydricmovement_category_id)
+        return None
