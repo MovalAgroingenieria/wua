@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="report_invoice_document_verifacti_qr" inherit_id="account.report_invoice_document">
-        <xpath expr="//div[@style='display: table-cell; padding-left: 40px;']" position="after">
+        <xpath expr="//table[@name='castratre_data']/.." position="after">
             <div t-if="o.verifacti_qr_code" style="display: table-cell; padding-left: 40px; text-align: center; vertical-align: middle;">
                 <table name="verifacti_qr_data" class="table-condensed" style="width:100%;">
                     <tbody>
@@ -15,6 +15,13 @@
                                 <img t-att-src="'data:image/png;base64,%s' % o.verifacti_qr_code"
                                      style="max-width: 90px; max-height: 90px;"
                                      alt="Verifactu QR"/>
+                            </td>
+                        </tr>
+                        <tr name="tr_verifacti_id" t-if="o.verifacti_id">
+                            <td style="text-align: center; padding-top: 4px;">
+                                <span style="font-size: 9px; color: #666;">
+                                    <span t-field="o.verifacti_id"/>
+                                </span>
                             </td>
                         </tr>
                     </tbody>
