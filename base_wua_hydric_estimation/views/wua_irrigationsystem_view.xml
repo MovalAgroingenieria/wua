@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_irrigationsystem_view_form" model="ir.ui.view">
+        <field name="name">wua.irrigationsystem.view.form.base_wua_hydric_estimation</field>
+        <field name="model">wua.irrigationsystem</field>
+        <field name="inherit_id" ref="base_wua.wua_irrigationsystem_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='description']" position="after">
+                <field name="standard_application_efficiency"
+                       string="Applic. Efficiency"
+                       style="width:100px"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_irrigationsystem_view_tree" model="ir.ui.view">
+        <field name="name">wua.irrigationsystem.view.tree.base_wua_hydric_estimation</field>
+        <field name="model">wua.irrigationsystem</field>
+        <field name="inherit_id" ref="base_wua.wua_irrigationsystem_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='description']" position="after">
+                <field name="standard_application_efficiency"
+                       string="Application Efficiency"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

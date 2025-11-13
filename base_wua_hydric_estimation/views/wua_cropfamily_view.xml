@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_cropfamily_view_form" model="ir.ui.view">
+        <field name="name">wua.cropfamily.view.form</field>
+        <field name="model">wua.cropfamily</field>
+        <field name="arch" type="xml">
+            <form duplicate="false">
+                <div name="button_box" class="oe_button_box">
+                    <button name="action_get_cultivations"
+                            type="object" class="oe_stat_button"
+                            icon="fa-pagelines">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_text">Cultivations</span>
+                        </div>
+                    </button>
+                </div>
+                <group name="master_data">
+                    <group name="master_data_left">
+                        <field name="name" string="Crop Family"
+                               style="width:250px"/>
+                        <field name="kc_a" string="Coefficient 𝒂"
+                               style="width:100px"/>
+                        <field name="kc_b" string="Coefficient 𝒃"
+                               style="width:100px"/>
+                        <field name="kc_c" string="Coefficient 𝒄"
+                               style="width:100px"/>
+                    </group>
+                    <group name="master_data_right">
+                        <div name="formula_info" class="text-center" colspan="2" style="margin-bottom:25px">
+                            <h4>Kc(ndvi) = 𝒂 · ndvi² + 𝒃 · ndvi + 𝒄</h4>
+                        </div>
+                        <div name="kc_ndvi_low_info" class="text-center" colspan="2">
+                            <span style="display:inline">Kc(0.0) = </span>
+                            <field name="kc_ndvi_low" nolabel="1" style="display:inline"/>
+                        </div>
+                        <div name="kc_ndvi_medium_info" class="text-center" colspan="2">
+                            <span style="display:inline">Kc(0.5) = </span>
+                            <field name="kc_ndvi_medium" nolabel="1" style="display:inline"/>
+                        </div>
+                        <div name="kc_ndvi_low_hight" class="text-center" colspan="2">
+                            <span style="display:inline">Kc(1.0) = </span>
+                            <field name="kc_ndvi_hight" nolabel="1" style="display:inline"/>
+                        </div>
+                    </group>
+                </group>
+                <group name="slave_data">
+                    <notebook name="slave_data_notebook">
+                        <page string="Notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_cropfamily_view_tree" model="ir.ui.view">
+        <field name="name">wua.cropfamily.view.tree</field>
+        <field name="model">wua.cropfamily</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" string="Crop Family"/>
+                <field name="kc_function" string="Kc Function"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_cropfamily_view_search" model="ir.ui.view">
+        <field name="name">wua.cropfamily.view.search</field>
+        <field name="model">wua.cropfamily</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" string="Crop Family"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_cropfamily_action"
+            model="ir.actions.act_window">
+        <field name="name">Crop Families</field>
+        <field name="res_model">wua.cropfamily</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_cropfamily_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('wua_cropfamily_view_form')})]"/>
+        <field name="search_view_id" ref="wua_cropfamily_view_search"/>
+    </record>
+
+    <menuitem id="wua_cropfamily_menu"
+              name="Crop Families"
+              parent="base_wua.base_wua_census_configuration_menu"
+              action="wua_cropfamily_action"
+              sequence="7"/>
+
+</odoo>
