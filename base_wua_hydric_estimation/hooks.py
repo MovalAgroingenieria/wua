@@ -28,6 +28,7 @@ def post_init_hook(cr, registry):
     env = api.Environment(cr, SUPERUSER_ID, {})
     _update_parameters(env)
     _update_wua_irrigationsystem(env)
+    _update_wua_cultivation(env)
 
 
 def uninstall_hook(cr, registry):
@@ -163,6 +164,49 @@ def _update_wua_irrigationsystem(env):
         except ValueError:
             continue
         rec.write({'standard_application_efficiency': value})
+
+
+def _update_wua_cultivation(env):
+    crop_families = {
+        1: [34],
+        2: [],
+        3: [],
+        4: [],
+        5: [],
+        6: [],
+        7: [],
+        8: [],
+        9: [],
+        10: [],
+        11: [],
+        12: [],
+        13: [],
+        14: [],
+        15: [],
+        16: [],
+        17: [],
+        18: [],
+        19: [],
+        20: [],
+        21: [57, 59],
+    }
+    for cropfamily_index, cultivations_index in crop_families.items():
+        cropfamily = None
+        cropfamily_xml_id = 'base_wua_hydric_estimation.cropfamily_' + \
+                            str(cropfamily_index).rjust(3, '0')
+        try:
+            cropfamily = env.ref(cropfamily_xml_id)
+        except ValueError:
+            continue
+        for cultivation_index in cultivations_index:
+            cultivation = None
+            cultivation_xml_id = 'base_wua.cultivation_' + \
+                str(cultivation_index).rjust(3, '0')
+            try:
+                cultivation = env.ref(cultivation_xml_id)
+            except ValueError:
+                continue
+            cultivation.write({'cropfamily_id': cropfamily.id})
 
 
 def _delete_parameters(env):

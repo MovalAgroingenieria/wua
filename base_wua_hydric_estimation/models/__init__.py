@@ -5,3 +5,4 @@
 from . import wua_config_settings
 from . import wua_irrigationsystem
 from . import wua_cropfamily
+from . import wua_cultivation
