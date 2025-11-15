@@ -14,6 +14,7 @@
     "depends": [
         "base_wua_portal",
         "mail",
+        "mass_mailing",
     ],
     "data": [
         "views/website_portal_templates.xml",
