@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_cropunit_view_form" model="ir.ui.view">
+        <field name="name">wua.cropunit.view.form</field>
+        <field name="model">wua.cropunit</field>
+        <field name="arch" type="xml">
+            <form duplicate="false">
+                <group name="master_data">
+                    <group name="master_data_left">
+                        <field name="agriculturalseason_id"
+                               string = "Agricultural Season"
+                               options="{'no_create_edit':True}"/>
+                        <field name="parcel_id"
+                               string = "Parcel"
+                               style="width:250px"
+                               options="{'no_create_edit':True}"/>
+                        <field name="cultivation_id"
+                               string = "Cultivation"
+                               style="width:250px"
+                               options="{'no_create_edit':True}"/>
+                        <field name="order_number"
+                               string = "Order Number"
+                               style="width:100px"/>
+                        <label for="initial_date"/>
+                        <div>
+                            <field name="initial_date" class="oe_inline"/>
+                            <span class="oe_inline"> - </span>
+                            <field name="end_date" class="oe_inline"/>
+                        </div>
+                    </group>
+                    <group name="master_data_right">
+                    </group>
+                </group>
+                <group name="slave_data">
+                    <group name="master_data_right">
+                    </group>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_cropunit_view_tree" model="ir.ui.view">
+        <field name="name">wua.cropunit.view.tree</field>
+        <field name="model">wua.cropunit</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="parcel_id" string = "Parcel"/>
+                <field name="cultivation_id" string = "Cultivation"/>
+                <field name="initial_date" string = "Crop cycle initial date"/>
+                <field name="end_date" string = "Crop cycle end date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_cropunit_view_search" model="ir.ui.view">
+        <field name="name">wua.cropunit.view.search</field>
+        <field name="model">wua.cropunit</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="parcel_id" string = "Parcel"/>
+                <field name="cultivation_id" string = "Cultivation"/>
+                <field name="initial_date" string = "Crop cycle initial date"/>
+                <field name="end_date" string = "Crop cycle end date"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_cropunit_action"
+            model="ir.actions.act_window">
+        <field name="name">Crop Units</field>
+        <field name="res_model">wua.cropunit</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_cropunit_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('wua_cropunit_view_form')})]"/>
+        <field name="search_view_id" ref="wua_cropunit_view_search"/>
+    </record>
+
+    <menuitem id="wua_cropunit_menu"
+              name="Crop Units"
+              parent="base_wua.base_wua_census_landparcels_menu"
+              action="wua_cropunit_action"
+              sequence="25"/>
+
+</odoo>

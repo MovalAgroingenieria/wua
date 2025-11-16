@@ -2,7 +2,7 @@
 # 2025 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 
 
 class WuaCropfamily(models.Model):
@@ -135,5 +135,25 @@ class WuaCropfamily(models.Model):
     @api.multi
     def action_get_cultivations(self):
         self.ensure_one()
-        # Provisional
-        print 'action_get_cultivations'
+        current_cropfamily = self
+        id_tree_view = self.env.ref(
+            'base_wua_hydric_estimation.wua_cultivation_view_tree').id
+        id_form_view = self.env.ref(
+            'base_wua_hydric_estimation.wua_cultivation_view_form').id
+        search_view = self.env.ref(
+            'base_wua_hydric_estimation.wua_cultivation_view_search')
+        custom_context = \
+            {'default_cropfamily_id': current_cropfamily.id}
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Cultivations'),
+            'res_model': 'wua.cultivation',
+            'view_type': 'form',
+            'view_mode': 'form,tree',
+            'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+            'search_view_id': [search_view.id],
+            'target': 'current',
+            'domain': [('cropfamily_id', '=', current_cropfamily.id)],
+            'context': custom_context,
+            }
+        return act_window

@@ -14,6 +14,12 @@ class WuaCultivation(models.Model):
         index=True,
     )
 
+    suitable_hydric_estimation = fields.Boolean(
+        string='Suitable for hydric estimation',
+        default=True,
+        required=True,
+    )
+
     kc_a = fields.Float(
         string='Coefficient a in the quadratic function of Kc',
         digits=(32, 4),
@@ -36,7 +42,7 @@ class WuaCultivation(models.Model):
     def _compute_kc_a(self):
         for record in self:
             kc_a = 0
-            if record.cropfamily_id:
+            if record.suitable_hydric_estimation and record.cropfamily_id:
                 kc_a = record.cropfamily_id.kc_a
             record.kc_a = kc_a
 
@@ -44,7 +50,7 @@ class WuaCultivation(models.Model):
     def _compute_kc_b(self):
         for record in self:
             kc_b = 0
-            if record.cropfamily_id:
+            if record.suitable_hydric_estimation and record.cropfamily_id:
                 kc_b = record.cropfamily_id.kc_b
             record.kc_b = kc_b
 
@@ -52,6 +58,6 @@ class WuaCultivation(models.Model):
     def _compute_kc_c(self):
         for record in self:
             kc_c = 0
-            if record.cropfamily_id:
+            if record.suitable_hydric_estimation and record.cropfamily_id:
                 kc_c = record.cropfamily_id.kc_c
             record.kc_c = kc_c
