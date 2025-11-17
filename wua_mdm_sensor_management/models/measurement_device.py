@@ -42,6 +42,7 @@ class MeasurementDevice(models.Model):
     with_gis_measurement_device = fields.Boolean(
         string='With GIS Measurement Device',
         readonly=True,
+        copy=False,
     )
 
     deviceparcellink_ids = fields.One2many(
@@ -295,7 +296,7 @@ class MeasurementDeviceParcellink(models.Model):
     def _check_sensor_exclusivity(self):
         for record in self:
             sql_statement = \
-                ('select s.type_id, count(*) ' 
+                ('select s.type_id, count(*) '
                  'from mdm_measurement_device_sensor s '
                  'inner join mdm_measurement_device_sensor_type st '
                  'on st.id = s.type_id '

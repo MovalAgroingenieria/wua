@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from lxml import etree
-from odoo import models, fields, api, _, exceptions
+from odoo import models, fields, api
 
 
 class WuaParcel(models.Model):
@@ -112,6 +112,16 @@ class WuaParcel(models.Model):
             record.mapped_to_specific_device_as_symbol = \
                 mapped_to_specific_device_as_symbol
 
+    def check_gis_measurement_device_table_created(self):
+        resp = False
+        self.env.cr.execute("""
+            SELECT EXISTS(SELECT * FROM information_schema.tables
+            WHERE table_name='mdm_gis_measurement_device')
+            """)
+        if self.env.cr.fetchone()[0]:
+            resp = True
+        return resp
+
     def create_mdm_gis_measurement_device_table(self):
         gis_table_created = self.check_gis_measurement_device_table_created()
         postgis_ready = self.check_extension_and_schema_postgis_created()
@@ -149,7 +159,6 @@ class WuaParcel(models.Model):
     def create_measurement_device_triggers(self):
         gis_table_created = self.check_gis_measurement_device_table_created()
         postgis_ready = self.check_extension_and_schema_postgis_created()
-
         if gis_table_created and postgis_ready:
             self.env.cr.execute("""
                 CREATE OR REPLACE FUNCTION
@@ -174,21 +183,18 @@ class WuaParcel(models.Model):
                 SECURITY DEFINER;
             """)
             self.env.cr.commit()
-
             self.env.cr.execute("""
                 DROP TRIGGER IF EXISTS mdm_gis_measurement_device_write_trigger
                 ON public.mdm_gis_measurement_device;
                 DROP TRIGGER IF EXISTS
                     mdm_gis_measurement_device_create_unlink_trigger ON
                     public.mdm_gis_measurement_device;
-
                 CREATE TRIGGER mdm_gis_measurement_device_write_trigger
                 AFTER UPDATE OF name ON
                 public.mdm_gis_measurement_device FOR EACH ROW WHEN
                 (OLD.name IS DISTINCT FROM NEW.name)
                 EXECUTE PROCEDURE
                     mdm_gis_measurement_device_update_on_mdm_measurement_device();
-
                 CREATE TRIGGER mdm_gis_measurement_device_create_unlink_trigger
                 AFTER INSERT OR DELETE ON
                 public.mdm_gis_measurement_device FOR EACH ROW
@@ -196,7 +202,6 @@ class WuaParcel(models.Model):
                     mdm_gis_measurement_device_update_on_mdm_measurement_device();
             """)
             self.env.cr.commit()
-
             self.env.cr.execute("""
                 CREATE OR REPLACE FUNCTION
                     mdm_measurement_device_update_on_mdm_measurement_device()
@@ -217,20 +222,17 @@ class WuaParcel(models.Model):
                 SECURITY DEFINER;
             """)
             self.env.cr.commit()
-
             self.env.cr.execute("""
                 DROP TRIGGER IF EXISTS mdm_measurement_device_write_trigger ON
                     public.mdm_measurement_device;
                 DROP TRIGGER IF EXISTS mdm_measurement_device_create_trigger ON
                     public.mdm_measurement_device;
-
                 CREATE TRIGGER mdm_measurement_device_write_trigger
                 AFTER UPDATE OF name ON
                 public.mdm_measurement_device FOR EACH ROW WHEN
                 (OLD.name IS DISTINCT FROM NEW.name)
                 EXECUTE PROCEDURE
                     mdm_measurement_device_update_on_mdm_measurement_device();
-
                 CREATE TRIGGER mdm_measurement_device_create_trigger
                 AFTER INSERT ON
                 public.mdm_measurement_device FOR EACH ROW
@@ -247,7 +249,6 @@ class WuaParcel(models.Model):
             );
         """)
         postgis_ext = self.env.cr.fetchone()[0]
-
         self.env.cr.execute("""
             SELECT EXISTS (
                 SELECT schema_name FROM information_schema.schemata
@@ -255,11 +256,11 @@ class WuaParcel(models.Model):
             );
         """)
         public_schema = self.env.cr.fetchone()[0]
-
         return postgis_ext and public_schema
 
     def set_gis_fields_measurement_device(self):
-        gis_measurement_device_ok = self.check_gis_drainagevalve_created()
+        gis_measurement_device_ok = self.\
+            check_gis_measurement_device_table_created()
         if gis_measurement_device_ok:
             try:
                 self.env.cr.savepoint()
@@ -270,8 +271,7 @@ class WuaParcel(models.Model):
                 self.env.cr.execute("""
                     UPDATE public.mdm_measurement_device wi1
                     SET with_gis_measurement_device = TRUE
-
-                    FROM public.mdm_measurement_device wgi1 WHERE
+                    FROM public.mdm_gis_measurement_device wgi1 WHERE
                         wi1.name = wgi1.name;
                 """)
                 self.env.cr.commit()
@@ -320,7 +320,7 @@ class WuaParcel(models.Model):
     def create(self, vals):
         new_parcel = super(WuaParcel, self).create(vals)
         devices_linked_all_parcels = self.env['mdm.measurement.device'].search(
-            [('linked_all_parcels', '=', True)]
+            [('linked_all_parcels', '=', True)],
         )
         deviceparcellinks = []
         for device in (devices_linked_all_parcels or []):
