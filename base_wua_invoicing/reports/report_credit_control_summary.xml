@@ -26,6 +26,18 @@
         <xpath expr="//div[@id='address']" position="replace">
             <t t-set="report_style" t-value="doc.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
 
+            <!-- Get first delivery child contact if exists for credit control line (only for shipping address) -->
+            <t t-set="shipping_contact_partner" t-value="doc.partner_id"/>
+            <t t-foreach="doc.credit_control_line_ids" t-as="line">
+                <t t-if="line.partner_id and line.partner_id.child_ids">
+                    <t t-set="delivery_children" t-value="line.partner_id.child_ids.filtered(lambda c: c.type == 'delivery')"/>
+                    <t t-if="delivery_children">
+                        <t t-set="shipping_contact_partner" t-value="delivery_children[0]"/>
+                        <t t-break=""/>
+                    </t>
+                </t>
+            </t>
+
             <div name="partner_data">
                 <div class="row h4 mt28 mb4" style="padding-bottom: 4px;" name="partner_title">
                     <t t-if="report_style == 'light'">
@@ -81,7 +93,10 @@
                                 </div>
                                 <div name="div_shipping_address" style="width: 40%; display: table-cell; padding: 0px 4px;">
                                     <p name="p_shipping_address_title" style="margin-bottom: 0px"><i>Shipping Address</i></p>
-                                    <div groups="!sale.group_delivery_invoice_address">
+                                    <t t-set="latest_sale_config" t-value="doc.env['sale.config.settings'].sudo().search([], limit=1, order='id desc')"/>
+                                    <t t-set="delivery_address_config" t-value="latest_sale_config.group_sale_delivery_address if latest_sale_config else 0"/>
+                                    <t t-set="delivery_address_enabled" t-value="delivery_address_config == 1"/>
+                                    <t t-if="not delivery_address_enabled">
                                         <div>
                                             <t t-if="doc.partner_id.name"><strong><span t-field="doc.partner_id.name"/></strong></t><br/>
                                             <t t-if="doc.partner_id.street_type_show"><span t-field="doc.partner_id.street_type_show"/></t>
@@ -94,65 +109,41 @@
                                                 <span>&amp;nbsp;-&amp;nbsp;</span>
                                                 <span t-field="doc.partner_id.zip"/>
                                             </t>
-                                            <t id="state_invoicing_address_2" t-if="doc.partner_id.state_id">
+                                            <t id="state_shipping_address_2" t-if="doc.partner_id.state_id">
                                                 <span t-tag="span">(</span><span t-field="doc.partner_id.state_id"/>
                                                 <t t-if="not doc.partner_id.country_id"><span>)</span></t>
                                                 <t t-else=""><span>-</span></t>
                                             </t>
-                                            <t id="country_invoicing_address_2" t-if="doc.partner_id.country_id">
+                                            <t id="country_shipping_address_2" t-if="doc.partner_id.country_id">
                                                 <t t-if="not doc.partner_id.state_id"><span>(</span></t>
                                                 <span t-field="doc.partner_id.country_id"></span><span>)</span>
                                             </t>
                                         </div>
-                                    </div>
-                                    <div groups="sale.group_delivery_invoice_address">
-                                        <t t-set="partner_delivery_address_id" t-value="doc.partner_id.address_get(['delivery']).get('delivery')"/>
-                                        <t t-set="partner_delivery_address" t-value="doc.env['res.partner'].browse(partner_delivery_address_id)"/>
-                                        <t t-if="partner_delivery_address.id != doc.partner_id.id">
-                                            <t t-if="partner_delivery_address.name"><strong><span t-field="partner_delivery_address.name"/></strong></t><br/>
-                                            <t t-if="partner_delivery_address.street_type_show"><span t-field="partner_delivery_address.street_type_show"/></t>
-                                            <t t-if="partner_delivery_address.street"><span t-field="partner_delivery_address.street"/></t>
-                                            <t t-if="partner_delivery_address.street_num"><span t-field="partner_delivery_address.street_num"/></t>
-                                            <t t-if="partner_delivery_address.street2"><span t-field="partner_delivery_address.street2"/></t>
+                                    </t>
+                                    <t t-if="delivery_address_enabled">
+                                        <div>
+                                            <t t-if="shipping_contact_partner.name"><strong><span t-field="shipping_contact_partner.name"/></strong></t><br/>
+                                            <t t-if="shipping_contact_partner.street_type_show"><span t-field="shipping_contact_partner.street_type_show"/></t>
+                                            <t t-if="shipping_contact_partner.street"><span t-field="shipping_contact_partner.street"/></t>
+                                            <t t-if="shipping_contact_partner.street_num"><span t-field="shipping_contact_partner.street_num"/></t>
+                                            <t t-if="shipping_contact_partner.street2"><span t-field="shipping_contact_partner.street2"/></t>
                                             <br/>
-                                            <t t-if="partner_delivery_address.city"><span t-field="partner_delivery_address.city"/></t>
-                                            <t t-if="partner_delivery_address.zip">
+                                            <t t-if="shipping_contact_partner.city"><span t-field="shipping_contact_partner.city"/></t>
+                                            <t t-if="shipping_contact_partner.zip">
                                                 <span>&amp;nbsp;-&amp;nbsp;</span>
-                                                <span t-field="partner_delivery_address.zip"/>
+                                                <span t-field="shipping_contact_partner.zip"/>
                                             </t>
-                                            <t id="state_shipping_address" t-if="partner_delivery_address.state_id">
-                                                <span t-tag="span">(</span><span t-field="partner_delivery_address.state_id"/>
-                                                <t t-if="not doc.partner_id.country_id"><span>)</span></t>
+                                            <t id="state_shipping_address_3" t-if="shipping_contact_partner.state_id">
+                                                <span t-tag="span">(</span><span t-field="shipping_contact_partner.state_id"/>
+                                                <t t-if="not shipping_contact_partner.country_id"><span>)</span></t>
                                                 <t t-else=""><span>-</span></t>
                                             </t>
-                                            <t id="country_shipping_address" t-if="partner_delivery_address.country_id">
-                                                <t t-if="not partner_delivery_address.state_id"><span>(</span></t>
-                                                <span t-field="partner_delivery_address.country_id"></span><span>)</span>
+                                            <t id="country_shipping_address_3" t-if="shipping_contact_partner.country_id">
+                                                <t t-if="not shipping_contact_partner.state_id"><span>(</span></t>
+                                                <span t-field="shipping_contact_partner.country_id"></span><span>)</span>
                                             </t>
-                                        </t>
-                                        <t t-else="">
-                                            <t t-if="doc.partner_id.name"><strong><span t-field="doc.partner_id.name"/></strong></t><br/>
-                                            <t t-if="doc.partner_id.street_type_show"><span t-field="doc.partner_id.street_type_show"/></t>
-                                            <t t-if="doc.partner_id.street"><span t-field="doc.partner_id.street"/></t>
-                                            <t t-if="doc.partner_id.street_num"><span t-field="doc.partner_id.street_num"/></t>
-                                            <t t-if="doc.partner_id.street2"><span t-field="doc.partner_id.street2"/></t>
-                                            <br/>
-                                            <t t-if="doc.partner_id.city"><span t-field="doc.partner_id.city"/></t>
-                                            <t t-if="doc.partner_id.zip">
-                                                <span>&amp;nbsp;-&amp;nbsp;</span>
-                                                <span t-field="doc.partner_id.zip"/>
-                                            </t>
-                                            <t id="state_invoicing_address_3" t-if="doc.partner_id.state_id">
-                                                <span t-tag="span">(</span><span t-field="doc.partner_id.state_id"/>
-                                                <t t-if="not doc.partner_id.country_id"><span>)</span></t>
-                                                <t t-else=""><span>-</span></t>
-                                            </t>
-                                            <t id="country_invoicing_address_3" t-if="doc.partner_id.country_id">
-                                                <t t-if="not doc.partner_id.state_id"><span>(</span></t>
-                                                <span t-field="doc.partner_id.country_id"></span><span>)</span>
-                                            </t>
-                                        </t>
-                                    </div>
+                                        </div>
+                                    </t>
                                 </div>
                             </div>
                         </div>
