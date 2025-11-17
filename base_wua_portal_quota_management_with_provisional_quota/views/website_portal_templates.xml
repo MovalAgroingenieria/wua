@@ -153,6 +153,25 @@
                 </h3>
             </xpath>
         </template>
-
+        <template id="portal_my_quotas_management_with_provisional_quotas"
+                  inherit_id="base_wua_portal_quota_management.portal_my_quotas"
+                name="Portal My Quotas - Conditional Hours Table">
+            <xpath expr="//th[@id='available_th']" position="after">
+                    <th id="provisional_extra_consumption_th">Provisional Extra Consumption (m³)</th>
+                    <th id="provisional_balance_th">Provisional Balance (m³)</th>
+                    <th id="provisional_available_quota_percentage_th">Provisional Available Quota %</th>
+            </xpath>
+            <xpath expr="//td[@id='available_td']" position="after">
+                <td id="provisional_extra_consumption_td">
+                    <t t-esc="quota.provisional_extra_consumption"/>
+                </td>
+                <td id="provisional_balance_td">
+                    <t t-esc="quota.provisional_balance"/>
+                </td>
+                <td id="provisional_available_quota_percentage_td">
+                    <t t-esc="quota.provisional_available_quota_percentage"/>
+                </td>
+            </xpath>
+        </template>
     </data>
 </odoo>
