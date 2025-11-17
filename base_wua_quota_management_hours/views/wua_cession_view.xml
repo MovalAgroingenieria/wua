@@ -22,7 +22,10 @@
             <xpath expr="//field[@name='quota_balance']" position="after">
                 <field name="quota_balance_vol_hours" attrs="{'invisible':[('quota_balance','&lt;',0)]}"/>
             </xpath>
-            <xpath expr="//field[@name='quota_negative_balance']" position="replace">
+            <xpath expr="//field[@name='quota_negative_balance']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='quota_negative_balance']" position="after">
                 <field name="quota_negative_balance_vol_hours" style="color:red" attrs="{'invisible':[('quota_balance','>=',0)]}"/>
             </xpath>
         </field>
