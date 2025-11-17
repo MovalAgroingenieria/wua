@@ -294,11 +294,15 @@ class WuaPreswateringperiod(models.Model):
 
     @api.multi
     def action_see_preswateringrequests(self):
+        tree_view_id = self.env.ref(
+            'base_wua_pressurized_irrigation_request.'
+            'wua_preswateringrequest_view_tree').id
         return {
             'type': 'ir.actions.act_window',
             'name': _('Preswatering Requests'),
             'res_model': 'wua.preswateringrequest',
             'view_mode': 'tree,form',
+            'views': [(tree_view_id, 'tree'), (False, 'form')],
             'domain': [('preswateringperiod_id', '=', self.id)],
             'target': 'current',
         }
