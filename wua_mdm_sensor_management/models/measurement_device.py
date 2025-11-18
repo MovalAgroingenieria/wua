@@ -314,3 +314,8 @@ class MeasurementDeviceParcellink(models.Model):
                         raise exceptions.ValidationError(
                             _('Problem with the parcel %s: duplicated '
                               'sensor.') % record.parcel_id.name)
+
+    @api.model
+    def cron_refresh_materialized_views(self):
+        self.env['wua.parcel.sensor.reading'].refresh_materialized_view()
+        self.env['res.partner.sensor.reading'].refresh_materialized_view()

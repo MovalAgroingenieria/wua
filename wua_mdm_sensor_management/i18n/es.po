@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-30 12:04+0000\n"
-"PO-Revision-Date: 2025-10-30 12:04+0000\n"
+"POT-Creation-Date: 2025-11-17 18:15+0000\n"
+"PO-Revision-Date: 2025-11-17 18:15+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -67,7 +67,13 @@ msgstr "Creado el"
 
 #. module: wua_mdm_sensor_management
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_device_parcellink_device_id
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_res_partner_sensor_reading_device_id
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_wua_parcel_sensor_reading_device_id
 #: model:ir.ui.view,arch_db:wua_mdm_sensor_management.mdm_device_parcellink_view_search
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.res_partner_sensor_reading_view_search
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.res_partner_sensor_reading_view_tree
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_parcel_sensor_reading_view_search
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_parcel_sensor_reading_view_tree
 msgid "Device"
 msgstr "Dispositivo"
 
@@ -111,6 +117,8 @@ msgstr "Dispositivos"
 
 #. module: wua_mdm_sensor_management
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_device_parcellink_display_name
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_res_partner_sensor_reading_display_name
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_wua_parcel_sensor_reading_display_name
 msgid "Display Name"
 msgstr "Nombre a mostrar"
 
@@ -142,13 +150,27 @@ msgstr "Enlace visor GIS"
 
 #. module: wua_mdm_sensor_management
 #: model:ir.ui.view,arch_db:wua_mdm_sensor_management.mdm_device_parcellink_view_search
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.res_partner_sensor_reading_view_search
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_parcel_sensor_reading_view_search
 msgid "Group By"
 msgstr "Agrupar por"
 
 #. module: wua_mdm_sensor_management
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_device_parcellink_id
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_res_partner_sensor_reading_id
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_wua_parcel_sensor_reading_id
 msgid "ID"
 msgstr "ID"
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_wua_parcel_sensor_reading_name
+msgid "Identifier of parcel sensor-reading"
+msgstr "IIdentificador de las lecturas de sensores de la parcela"
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_res_partner_sensor_reading_name
+msgid "Identifier of partner sensor-reading"
+msgstr "Identificador de las lecturas de sensores del socio"
 
 #. module: wua_mdm_sensor_management
 #: model:ir.model.fields,help:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_type_requires_exclusivity
@@ -172,6 +194,8 @@ msgstr "Vinculado a todas las parcelas: Sí"
 
 #. module: wua_mdm_sensor_management
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_device_parcellink___last_update
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_res_partner_sensor_reading___last_update
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_wua_parcel_sensor_reading___last_update
 msgid "Last Modified on"
 msgstr "Última modificación en"
 
@@ -226,9 +250,23 @@ msgid "Measurement Device Sensor"
 msgstr "Sensor del dispositivo de medición"
 
 #. module: wua_mdm_sensor_management
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_res_partner_sensor_reading_measurement_time
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_wua_parcel_sensor_reading_measurement_time
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.res_partner_sensor_reading_view_search
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.res_partner_sensor_reading_view_tree
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_parcel_sensor_reading_view_search
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_parcel_sensor_reading_view_tree
+msgid "Measurement Time"
+msgstr "Fecha de medición"
+
+#. module: wua_mdm_sensor_management
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_device_parcellink_parcel_id
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_parcel_id
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_res_partner_sensor_reading_parcel_id
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_wua_parcel_sensor_reading_parcel_id
 #: model:ir.ui.view,arch_db:wua_mdm_sensor_management.mdm_device_parcellink_view_search
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.res_partner_sensor_reading_view_search
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.res_partner_sensor_reading_view_tree
 msgid "Parcel"
 msgstr "Parcela"
 
@@ -241,6 +279,12 @@ msgstr "Información Parcela"
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_deviceparcellink_ids
 msgid "Parcel Links"
 msgstr "Enlaces de parcelas"
+
+#. module: wua_mdm_sensor_management
+#: model:ir.actions.act_window,name:wua_mdm_sensor_management.wua_parcel_sensor_reading_action
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_parcel_sensor_reading_view_tree
+msgid "Parcel Sensor Readings"
+msgstr "Lecturas de sensores para la parcela"
 
 #. module: wua_mdm_sensor_management
 #: model:ir.model,name:wua_mdm_sensor_management.model_mdm_device_parcellink
@@ -256,14 +300,27 @@ msgstr "Parcelas"
 
 #. module: wua_mdm_sensor_management
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_partner_id
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_res_partner_sensor_reading_partner_id
 msgid "Partner"
 msgstr "Socio"
+
+#. module: wua_mdm_sensor_management
+#: model:ir.actions.act_window,name:wua_mdm_sensor_management.res_partner_sensor_reading_action
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.res_partner_sensor_reading_view_tree
+msgid "Partner Sensor Readings"
+msgstr "Lecturas de sensores para el socio"
 
 #. module: wua_mdm_sensor_management
 #: code:addons/wua_mdm_sensor_management/models/measurement_device.py:314
 #, python-format
 msgid "Problem with the parcel %s: duplicated sensor."
 msgstr "Problema con la parcela %s: tipo de sensor duplicado."
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_res_partner_sensor_reading_reading_id
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_wua_parcel_sensor_reading_reading_id
+msgid "Reading"
+msgstr "Lectura"
 
 #. module: wua_mdm_sensor_management
 #: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_mdm_sensor_type_view_search
@@ -283,7 +340,39 @@ msgid "Search Device-Parcel Links"
 msgstr "Buscar enlaces dispositivo-parcela"
 
 #. module: wua_mdm_sensor_management
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_parcel_sensor_reading_view_search
+msgid "Search Parcel Sensor Readings"
+msgstr "Search Parcel Sensor Readings"
+
+#. module: wua_mdm_sensor_management
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.res_partner_sensor_reading_view_search
+msgid "Search Partner Sensor Readings"
+msgstr "Search Partner Sensor Readings"
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_res_partner_sensor_reading_sensor_id
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_wua_parcel_sensor_reading_sensor_id
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.res_partner_sensor_reading_view_search
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.res_partner_sensor_reading_view_tree
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_parcel_sensor_reading_view_search
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_parcel_sensor_reading_view_tree
+msgid "Sensor"
+msgstr "Sensor"
+
+#. module: wua_mdm_sensor_management
+#: model:ir.actions.act_window,name:wua_mdm_sensor_management.res_partner_sensor_reading_action_from_partner
+#: model:ir.actions.act_window,name:wua_mdm_sensor_management.wua_parcel_sensor_reading_action_from_parcel
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.res_partner_view_form_inherit_sensor_readings_shortcut
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_parcel_view_form_inherit_device_shortcut
+msgid "Sensor Readings"
+msgstr "Lecturas de sensor"
+
+#. module: wua_mdm_sensor_management
 #: model:ir.model,name:wua_mdm_sensor_management.model_mdm_measurement_device_sensor_type
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_res_partner_sensor_reading_type_id
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_wua_parcel_sensor_reading_type_id
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.res_partner_sensor_reading_view_search
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_parcel_sensor_reading_view_search
 msgid "Sensor Type"
 msgstr "Tipo de sensor"
 
@@ -306,7 +395,36 @@ msgid "Unassign device"
 msgstr "Desvincular"
 
 #. module: wua_mdm_sensor_management
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.res_partner_sensor_reading_view_tree
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_parcel_sensor_reading_view_tree
+msgid "Unit"
+msgstr "Unidad"
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_res_partner_sensor_reading_uom_id
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_wua_parcel_sensor_reading_uom_id
+msgid "Unit of Measure"
+msgstr "Unidad de medida"
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_res_partner_sensor_reading_value
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_wua_parcel_sensor_reading_value
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.res_partner_sensor_reading_view_tree
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_parcel_sensor_reading_view_tree
+msgid "Value"
+msgstr "Valor"
+
+#. module: wua_mdm_sensor_management
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_with_gis_measurement_device
 msgid "With GIS Measurement Device"
 msgstr "Con dispositivo de medición GIS"
 
+#. module: wua_mdm_sensor_management
+#: model:ir.model,name:wua_mdm_sensor_management.model_res_partner_sensor_reading
+msgid "res.partner.sensor.reading"
+msgstr "res.partner.sensor.reading"
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model,name:wua_mdm_sensor_management.model_wua_parcel_sensor_reading
+msgid "wua.parcel.sensor.reading"
+msgstr "wua.parcel.sensor.reading"

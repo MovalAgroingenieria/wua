@@ -1,0 +1,117 @@
+<odoo>
+    <data>
+        <template id="portal_my_home_wua" inherit_id="base_wua_portal.portal_my_home_wua" name="Add Sensor Readings">
+            <xpath expr="//div[contains(@class,'o_my_home_content')]" position="inside">
+                <h3 class="page-header" style="order: 17;">
+                    <a href="/my/sensorreadings">
+                        <i class="fa fa-fw fa-tachometer"></i>
+                        Sensor Readings
+                        <small class="ml8">
+                            <t t-if="sensorreadings_count">
+                                <span class='badge pull-right'><t t-esc="sensorreadings_count"/></span>
+                            </t>
+                            <t t-if="not sensorreadings_count">
+                                There are currently no sensor readings for your account.
+                            </t>
+                        </small>
+                    </a>
+                </h3>
+            </xpath>
+        </template>
+
+        <template id="portal_menu_add_sensorreadings" inherit_id="base_wua_portal.portal_my_home_menu_wua" name="Add Sensor Readings to Menu">
+            <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="inside">
+                <li style="order: 3;">
+                    <a name="sensorreadings_menu" href="/my/sensorreadings">Sensor Readings</a>
+                </li>
+            </xpath>
+        </template>
+        <template id="portal_my_sensorreadings" name="My Sensor Readings">
+            <t t-call="website.layout">
+                <div class="container mt16">
+                    <div class="navbar navbar-default">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#oe-help-navbar-collapse">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a class="navbar-brand" href="/my/home">My Account</a>
+                        </div>
+                        <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
+                            <ul class="nav navbar-nav o_portal_submenu">
+                                <li><a href="/my/invoices">Invoices</a></li>
+                                <li><a href="/my/parcels">Parcels</a></li>
+                                <li><a href="/my/sensorreadings" class="active">Sensor Readings</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="wrap">
+                    <div class="container mb64" style="max-width: 1200px;">
+                        <div class="col-md-12">
+                            <h3 class="page-header" style="margin-top: 0;">Your Sensor Readings</h3>
+                            <t t-if="not sensorreadings">
+                                <p>There are currently no sensor readings for your account.</p>
+                            </t>
+                            <t t-if="sensorreadings">
+                                <form action="/my/sensorreadings" method="get" class="mb-4">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <select id="search_field" name="search_field" class="form-control">
+                                                <option value="device_id" t-att-selected="'device_id' == search_field">Device</option>
+                                                <option value="sensor_id" t-att-selected="'sensor_id' == search_field">Sensor</option>
+                                                <option value="type_id" t-att-selected="'type_id' == search_field">Sensor Type</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" name="search" class="form-control" placeholder="Search sensor readings..." t-att-value="search_query or ''"/>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <select name="sortby" class="form-control">
+                                                <option value="name" t-att-selected="'name' == sortby or not sortby">Default Order</option>
+                                                <option value="measurement_time" t-att-selected="'measurement_time' == sortby">Measurement Time</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <button type="submit" class="btn btn-primary btn-block">Search</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <table class="table table-hover o_my_status_table" style="table-layout: fixed; width: 100%; margin-top: 20px;">
+                                    <thead>
+                                        <tr class="active">
+                                            <th style="width: 18%;">Parcel</th>
+                                            <th style="width: 22%; text-align: left;">Device</th>
+                                            <th style="width: 15%; text-align: left;">Sensor</th>
+                                            <th style="width: 15%; text-align: left;">Sensor Type</th>
+                                            <th style="width: 15%; text-align: center;">Measurement Time</th>
+                                            <th style="width: 10%;">Value</th>
+                                            <th style="width: 5%; text-align: center;">Unit</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="sensorreadings" t-as="reading">
+                                            <tr>
+                                                <td style="text-align: left; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;"><span t-field="reading.parcel_id"/></td>
+                                                <td style="text-align: left; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;"><span t-field="reading.device_id"/></td>
+                                                <td style="text-align: left; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;"><span t-field="reading.sensor_id"/></td>
+                                                <td style="text-align: left; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;"><span t-field="reading.type_id"/></td>
+                                                <td style="text-align: center; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;"><span t-field="reading.measurement_time" t-options='{"widget": "datetime"}'/></td>
+                                                <td style="text-align: right; word-wrap: break-word; overflow: hidden;"><span t-field="reading.value"/></td>
+                                                <td style="text-align: center; word-wrap: break-word; overflow: hidden;"><span t-field="reading.uom_id"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                                <div t-if="pager" class="o_portal_pager text-center" style="margin: 0; padding: 0; line-height: 1;">
+                                    <t t-call="website.pager"/>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

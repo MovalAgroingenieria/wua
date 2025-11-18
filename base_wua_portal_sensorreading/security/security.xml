@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_partner_sensor_reading_group_portal" model="ir.rule">
+        <field name="name">Rule for portal user on sensor readings</field>
+        <field name="model_id"
+         ref="wua_mdm_sensor_management.model_res_partner_sensor_reading"/>
+        <field name="domain_force">
+            [('partner_id','=',user.partner_id.id)]
+        </field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+
+    <record id="mdm_measurement_device_group_portal" model="ir.rule">
+        <field name="name">Rule for portal user on measurement devices</field>
+        <field name="model_id"
+         ref="wua_mdm_sensor_management.model_mdm_measurement_device"/>
+        <field name="domain_force">
+            [('partner_id','=',user.partner_id.id)]
+        </field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+
+    <record id="mdm_measurement_device_sensor_group_portal" model="ir.rule">
+        <field name="name">Rule for portal user on measurement device sensors</field>
+        <field name="model_id"
+         ref="wua_mdm_sensor_management.model_mdm_measurement_device_sensor"/>
+        <field name="domain_force">
+            [('device_id.partner_id','=',user.partner_id.id)]
+        </field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+
+    <record id="mdm_measurement_device_sensor_type_group_portal" model="ir.rule">
+        <field name="name">Rule for portal user on measurement device sensor types</field>
+        <field name="model_id"
+         ref="wua_mdm_sensor_management.model_mdm_measurement_device_sensor_type"/>
+        <field name="domain_force">
+            [('sensor_ids.device_id.partner_id','=',user.partner_id.id)]
+        </field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+
+</odoo>

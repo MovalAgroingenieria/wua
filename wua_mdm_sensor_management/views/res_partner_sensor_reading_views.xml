@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_partner_sensor_reading_view_tree" model="ir.ui.view">
+        <field name="name">res.partner.sensor.reading.tree</field>
+        <field name="model">res.partner.sensor.reading</field>
+        <field name="arch" type="xml">
+            <tree string="Partner Sensor Readings" create="false" edit="false" delete="false">
+                <field name="parcel_id" string="Parcel"/>
+                <field name="device_id" string="Device"/>
+                <field name="sensor_id" string="Sensor"/>
+                <field name="measurement_time" string="Measurement Time" widget="datetime"/>
+                <field name="value" string="Value"/>
+                <field name="uom_id" string="Unit"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="res_partner_sensor_reading_view_search" model="ir.ui.view">
+        <field name="name">res.partner.sensor.reading.search</field>
+        <field name="model">res.partner.sensor.reading</field>
+        <field name="arch" type="xml">
+            <search string="Search Partner Sensor Readings">
+                <field name="parcel_id" string="Parcel"/>
+                <field name="device_id" string="Device"/>
+                <field name="sensor_id" string="Sensor"/>
+                <field name="type_id" string="Sensor Type"/>
+                <field name="measurement_time" string="Measurement Time"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="group_parcel" string="Parcel" context="{'group_by': 'parcel_id'}"/>
+                    <filter name="group_device" string="Device" context="{'group_by': 'device_id'}"/>
+                    <filter name="group_sensor" string="Sensor" context="{'group_by': 'sensor_id'}"/>
+                    <filter name="group_type" string="Sensor Type" context="{'group_by': 'type_id'}"/>
+                    <filter name="group_measurement_time" string="Measurement Time"
+                            context="{'group_by': 'measurement_time:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="res_partner_sensor_reading_action" model="ir.actions.act_window">
+        <field name="name">Partner Sensor Readings</field>
+        <field name="res_model">res.partner.sensor.reading</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="res_partner_sensor_reading_view_tree"/>
+        <field name="search_view_id" ref="res_partner_sensor_reading_view_search"/>
+        <field name="limit">50</field>
+        <field name="target">current</field>
+        <field name="context">{
+            'search_default_last_30_days': 1,
+        }</field>
+    </record>
+
+    <record id="res_partner_sensor_reading_action_from_partner" model="ir.actions.act_window">
+        <field name="name">Sensor Readings</field>
+        <field name="res_model">res.partner.sensor.reading</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="res_partner_sensor_reading_view_tree"/>
+        <field name="search_view_id" ref="res_partner_sensor_reading_view_search"/>
+        <field name="domain">[('partner_id', '=', active_id)]</field>
+        <field name="target">current</field>
+        <field name="context">{
+            'default_partner_id': active_id,
+            'search_default_last_30_days': 1,
+        }</field>
+        <field name="limit">50</field>
+    </record>
+
+</odoo>
