@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_irrigationshed_view_form" model="ir.ui.view">
+        <field name="name">Irrigation Sheds - Regacom (form view)</field>
+        <field name="model">wua.irrigationshed</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_irrigationshed_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='elevation']" position="after">
+                <field name="regacom_enabled"/>
+                <field name="regacom_dirum"
+                       attrs="{'invisible': [('regacom_enabled', '=', False)],
+                               'required': [('regacom_enabled', '=', True)]}"/>
+                <field name="regacom_diriru"
+                       attrs="{'invisible': [('regacom_enabled', '=', False)],
+                               'required': [('regacom_enabled', '=', True)]}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

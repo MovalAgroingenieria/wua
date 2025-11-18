@@ -517,6 +517,7 @@ class WuaWaterconnection(models.Model):
             },
         }
 
+
 class WuaWaterconnectionIrrigationShiftlink(models.Model):
     _name = 'wua.waterconnection.irrigation.shiftlink'
     _auto = False
