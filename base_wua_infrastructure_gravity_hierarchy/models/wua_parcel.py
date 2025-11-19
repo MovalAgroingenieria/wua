@@ -985,6 +985,7 @@ class WuaParcel(models.Model):
                     USING gist (geom);
             """)
             self.env.cr.commit()
+        self.grant_gis_privileges('wua_gis_drainageditch')
 
     def create_drainageditch_triggers(self):
         gis_drainageditch_table_created = \

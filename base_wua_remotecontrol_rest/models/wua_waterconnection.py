@@ -28,7 +28,7 @@ class WuaWaterconnection(models.Model):
         [],
         string='Type of telecontrol associated')
 
-    conversion_factor = fields.Integer(
+    conversion_factor = fields.Float(
         string="Conversion Factor",
         required=True,
         default=1)

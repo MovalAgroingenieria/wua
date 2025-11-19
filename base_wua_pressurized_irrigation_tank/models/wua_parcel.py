@@ -56,6 +56,7 @@ class WuaParcel(models.Model):
                     USING gist (geom);
             """)
             self.env.cr.commit()
+        self.grant_gis_privileges('wua_gis_tank')
 
     def create_tank_triggers(self):
         gis_tank_table_created = \

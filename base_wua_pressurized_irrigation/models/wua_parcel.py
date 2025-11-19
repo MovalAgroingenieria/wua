@@ -79,6 +79,7 @@ class WuaParcel(models.Model):
                     USING gist (geom);
             """)
             self.env.cr.commit()
+        self.grant_gis_privileges('wua_gis_pressuresensor')
 
     def create_pressuresensor_triggers(self):
         gis_pressuresensor_table_created = \
@@ -227,6 +228,7 @@ class WuaParcel(models.Model):
                     USING gist (geom);
             """)
             self.env.cr.commit()
+        self.grant_gis_privileges('wua_gis_tertiarypipe')
 
     def create_tertiarypipe_triggers(self):
         gis_tertiarypipe_table_created = \
