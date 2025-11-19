@@ -233,10 +233,10 @@
                                                 <t t-set="uom_id" t-value="empty"/>
                                                 <t t-foreach="wizard.invoice_line_ids.filtered(lambda line: line.partner_id.id == partner.id)" t-as="l">
                                                     <t t-if="l.product_id.id == p.id">
-                                                        <t t-set="product_tax_amount" t-value="sum(l.price_subtotal * tax.amount / 100 for tax in l.invoice_line_tax_ids)"/>
-                                                        <t t-set="product_total_qty" t-value="product_total_qty + l.quantity"/>
-                                                        <t t-set="product_subtotal_amount" t-value="product_subtotal_amount + l.price_subtotal"/>
-                                                        <t t-set="product_total_amount" t-value="product_total_amount + l.price_subtotal + product_tax_amount"/>
+                                                        <t t-set="product_tax_amount" t-value="sum(l.price_subtotal * tax.amount / 100 for tax in l.invoice_line_tax_ids) * (-1 if l.invoice_id.type == 'out_refund' else 1)"/>
+                                                        <t t-set="product_total_qty" t-value="product_total_qty + (l.quantity * (-1 if l.invoice_id.type == 'out_refund' else 1))"/>
+                                                        <t t-set="product_subtotal_amount" t-value="product_subtotal_amount + (l.price_subtotal * (-1 if l.invoice_id.type == 'out_refund' else 1))"/>
+                                                        <t t-set="product_total_amount" t-value="product_total_amount + (l.price_subtotal * (-1 if l.invoice_id.type == 'out_refund' else 1)) + product_tax_amount"/>
                                                         <t t-set="uom_id" t-value="l.sudo().uom_id.name"/>
                                                     </t>
                                                 </t>
