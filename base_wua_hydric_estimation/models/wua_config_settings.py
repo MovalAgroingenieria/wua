@@ -10,11 +10,13 @@ DEFAULT_KC_NDVI_A = 0.0
 DEFAULT_KC_NDVI_B = 1.44
 DEFAULT_KC_NDVI_C = -0.1
 MAX_OFFSET_ALTERNATIVE_NDVI = 14
-AERIAL_IMAGE_LAYERS = 'pnoa,cropunit_perimeter'
+# AERIAL_IMAGE_LAYERS = 'pnoa,cropunit_perimeter'
+AERIAL_IMAGE_LAYERS = 'catastro,parcel_dark_perimeter_dotted,'\
+                      'cropunit_dark_perimeter'
 AERIAL_IMAGE_WIDTH = 0
-AERIAL_IMAGE_HEIGHT = 824
-AERIAL_IMAGE_ZOOM = 1.2
-AERIAL_IMAGE_FORMAT = 'jpeg'
+AERIAL_IMAGE_HEIGHT = 288
+AERIAL_IMAGE_ZOOM = 1.5
+AERIAL_IMAGE_FORMAT = 'png'
 HYDRIC_EST_NDVI_MODEL = 'wua.parcel.vegetationindex.ndvi'
 KC_LOWER_SATURATION = 0.05
 KC_UPPER_SATURATION = 1.5

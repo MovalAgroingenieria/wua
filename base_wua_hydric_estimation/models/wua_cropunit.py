@@ -2,14 +2,35 @@
 # 2025 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import base64
+import datetime
+import io
+import re
+import requests
+
+from PIL import Image
+from pyproj import Proj, transform
 from unidecode import unidecode
+
+from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import DEFAULT_STANDARD_APPLICATION_EFFICIENCY
 from odoo import models, fields, api, exceptions, _
 
 
 class WuaCropunit(models.Model):
+    _inherit = 'mail.thread'
     _name = 'wua.cropunit'
     _description = 'Crop Unit'
     _order = 'name'
+
+    # Static variables related to the GIS component.
+    _gis_table = 'wua_gis_cropunit'
+    _geom_field = 'geom'
+    _link_field = 'name'
+    _url_googlemaps = 'https://maps.google.com/maps?t=h&q=loc:ycval+xcval'
+
+    # Timeout for getmap requests.
+    OGC_TIMEOUT = 15
+    DEFAULT_AERIAL_IMAGE_SIZE = 320
 
     def _default_agriculturalseason_id(self):
         resp = None
@@ -18,6 +39,15 @@ class WuaCropunit(models.Model):
                 [('active_agriculturalseason', '=', True)])
         if the_active_agriculturalseason:
             resp = the_active_agriculturalseason[0].id
+        return resp
+
+    def _default_standard_application_efficiency(self):
+        resp = DEFAULT_STANDARD_APPLICATION_EFFICIENCY
+        default_standard_application_efficiency = \
+            self.env['ir.values'].get_default(
+                'wua.configuration', 'default_standard_application_efficiency')
+        if default_standard_application_efficiency:
+            resp = default_standard_application_efficiency
         return resp
 
     agriculturalseason_id = fields.Many2one(
@@ -41,22 +71,28 @@ class WuaCropunit(models.Model):
         domain=[('suitable_hydric_estimation', '=', True)],
         index=True,
         required=True,
+        track_visibility='onchange',
     )
 
     initial_date = fields.Date(
         string='Crop cycle initial date',
         required=True,
-        index=True,)
+        index=True,
+        track_visibility='onchange',
+    )
 
     end_date = fields.Date(
         string='Crop cycle end date',
         required=True,
-        index=True,)
+        index=True,
+        track_visibility='onchange',
+    )
 
     order_number = fields.Integer(
         string='Order Number',
         default=1,
         required=True,
+        track_visibility='onchange',
     )
 
     name = fields.Char(
@@ -65,6 +101,167 @@ class WuaCropunit(models.Model):
         index=True,
         compute='_compute_name',
     )
+
+    partner_id = fields.Many2one(
+        string='Irrigation Partner',
+        comodel_name='res.partner',
+        store=True,
+        index=True,
+        compute='_compute_partner_id',
+    )
+
+    state = fields.Selection(
+        string='State',
+        selection=[
+            ('01_not_started', 'Not started'),
+            ('02_active', 'Active Crop'),
+            ('03_closed', 'Finished')
+        ],
+        compute='_compute_state',
+        search='_search_state')
+
+    parcel_type = fields.Selection([
+        ('R', 'Rustic Parcel'),
+        ('U', 'Urban Parcel'),
+        ], string='Parcel Type',
+        related='parcel_id.parcel_type',
+    )
+
+    county_id = fields.Many2one(
+        string='County',
+        comodel_name='wua.region.state.county',
+        related='parcel_id.county_id',
+    )
+
+    irrigationsystem_id = fields.Many2one(
+        string='Irrigation System',
+        comodel_name='wua.irrigationsystem',
+        index=True,
+        track_visibility='onchange',
+    )
+
+    standard_application_efficiency = fields.Float(
+        string='Standard Application Efficiency',
+        default=_default_standard_application_efficiency,
+        digits=(32, 2),
+        required=True,
+        track_visibility='onchange',
+    )
+
+    exists_current_recommendation = fields.Boolean(
+        string='There is a recommendation for the current period (y/n)',
+        compute='_compute_exists_current_recommendation',
+    )
+
+    current_controlperiod_initial_date = fields.Date(
+        string='Current Period',
+        compute='_compute_current_controlperiod_initial_date',
+    )
+
+    current_controlperiod_end_date = fields.Date(
+        string='End date of current control period',
+        compute='_compute_current_controlperiod_end_date',
+    )
+
+    current_controlperiod_kc = fields.Float(
+        string='Kc(ndvi) Function',
+        digits=(32, 2),
+        compute='_compute_current_controlperiod_kc',
+    )
+
+    current_controlperiod_ndvi = fields.Float(
+        string='NDVI',
+        digits=(32, 4),
+        compute='_compute_current_controlperiod_ndvi',
+    )
+
+    current_controlperiod_et0 = fields.Float(
+        string='ETo, Pe',
+        digits=(32, 4),
+        compute='_compute_current_controlperiod_et0',
+    )
+
+    current_controlperiod_pe = fields.Float(
+        string='Pe',
+        digits=(32, 4),
+        compute='_compute_current_controlperiod_pe',
+    )
+
+    current_controlperiod_nin = fields.Float(
+        string='Net Irrig. Need',
+        digits=(32, 2),
+        compute='_compute_current_controlperiod_nin',
+    )
+
+    current_controlperiod_gin = fields.Float(
+        string='Gross Irrig. Need',
+        digits=(32, 2),
+        compute='_compute_current_controlperiod_gin',
+    )
+
+    current_controlperiod_total_gin = fields.Float(
+        string='Total Gross Irrig. Need',
+        digits=(32, 2),
+        compute='_compute_current_controlperiod_total_gin',
+    )
+
+    notes = fields.Html(
+        string='Notes',
+    )
+
+    mapped_to_polygon = fields.Boolean(
+        string='Mapped to polygon',
+        compute='_compute_mapped_to_polygon',
+        search='_search_mapped_to_polygon',
+    )
+
+    geom_ewkt = fields.Char(
+        string='EWKT Geometry',
+        compute='_compute_geom_ewkt',
+    )
+
+    area_gis = fields.Integer(
+        string='GIS Area (m²)',
+        compute='_compute_area_gis',
+    )
+
+    area_gis_ha = fields.Float(
+        string='Crop Unit Area',
+        digits=(32, 4),
+        compute='_compute_area_gis_ha',
+    )
+
+    aerial_image_calculated = fields.Binary(
+        string='Aerial Image (computed)',
+        compute='_compute_aerial_image_calculated',
+    )
+
+    aerial_image = fields.Binary(
+        string='Aerial Image',
+        attachment=True,
+    )
+
+    aerial_image_shown = fields.Binary(
+        string='Aerial Image (non-persistent)',
+        compute='_compute_aerial_image_shown',
+    )
+
+    centroid_ewkt = fields.Char(
+        string='EWKT Centroid',
+        compute='_compute_centroid_ewkt')
+
+    simplified_centroid_ewkt = fields.Char(
+        string='EWKT Centroid based on integer values',
+        compute='_compute_simplified_centroid_ewkt')
+
+    googlemaps_link = fields.Char(
+        string='Google Maps Link',
+        default='',
+        compute='_compute_googlemaps_link',)
+
+    html_frame_googlemaps = fields.Char(
+        string='GIS preview with google maps viewer',
+        compute='_compute_html_frame_googlemaps')
 
     _sql_constraints = [
         ('name_unique',
@@ -75,8 +272,13 @@ class WuaCropunit(models.Model):
          'The end date of the crop cycle must be later than the start date.'),
         ('order_number_ok',
          'CHECK (order_number > 0)',
-         'The order number must be a positive value.')
-        ]
+         'The order number must be a positive value.'),
+        ('valid_standard_application_efficiency',
+         'CHECK (standard_application_efficiency >= 0 '
+         'and standard_application_efficiency <= 1)',
+         'The standard application efficiency must be a value between '
+         '0 and 1.'),
+    ]
 
     @api.depends('agriculturalseason_id', 'parcel_id', 'cultivation_id',
                  'order_number')
@@ -94,6 +296,391 @@ class WuaCropunit(models.Model):
                         unidecode(record.cultivation_id.name[:3]).upper() + '-' +
                         str(record.order_number).rjust(3, '0'))
             record.name = name
+
+    @api.depends('parcel_id')
+    def _compute_partner_id(self):
+        for record in self:
+            partner_id = None
+            if record.parcel_id and record.parcel_id.partner_id:
+                partner_id = record.parcel_id.partner_id
+            record.partner_id = partner_id
+
+    @api.multi
+    def _compute_state(self):
+        current_date = datetime.date.today()
+        for record in self:
+            state = '01_not_started'
+            initial_date = fields.Date.from_string(record.initial_date)
+            end_date = fields.Date.from_string(record.end_date)
+            if current_date >= initial_date:
+                state = '02_active'
+                if current_date > end_date:
+                    state = '03_closed'
+            record.state = state
+
+    @api.multi
+    def _compute_exists_current_recommendation(self):
+        for record in self:
+            exists_current_recommendation = record.state == '02_active'
+            if exists_current_recommendation:
+                # TODO (provisional)
+                # Con SQL:
+                # · Comprobar si en la fecha actual hay algún período de
+                #   control.
+                # · Si lo hubiere, comprobar si existe el período de
+                #   control anterior, y, en su caso, constatar que está
+                #   "calculado".
+                # · Si no se cumple la anterior condición, tornar
+                #   exists_current_recommendation a "False".
+                pass
+            record.exists_current_recommendation = \
+                exists_current_recommendation
+
+    @api.multi
+    def _compute_current_controlperiod_initial_date(self):
+        for record in self:
+            current_controlperiod_initial_date = None
+            if record.exists_current_recommendation:
+                # TODO (provisional)
+                # Con SQL:
+                # · Obtener el período de control en el que se encuentra
+                #   la fecha actual.
+                # · Instanciar "current_controlperiod_initial_date" con la
+                #   fecha de inicio de ese período de control
+                current_controlperiod_initial_date = \
+                    record.agriculturalseason_id.initial_date
+            record.current_controlperiod_initial_date = \
+                current_controlperiod_initial_date
+
+    @api.multi
+    def _compute_current_controlperiod_end_date(self):
+        for record in self:
+            current_controlperiod_end_date = None
+            if record.exists_current_recommendation:
+                # TODO (provisional)
+                # Con SQL:
+                # · Obtener el período de control en el que se encuentra
+                #   la fecha actual.
+                # · Instanciar "current_controlperiod_end_date" con la
+                #   fecha de finalización de ese período de control
+                current_controlperiod_end_date = \
+                    record.agriculturalseason_id.end_date
+            record.current_controlperiod_end_date = \
+                current_controlperiod_end_date
+
+    @api.multi
+    def _compute_current_controlperiod_kc(self):
+        for record in self:
+            current_controlperiod_kc = 0
+            # TODO (provisional)
+            # Con SQL:
+            # · Coger el valor del período de control previo al actual
+            #   (si lo hubiere, considerar el mismo criterio que para el
+            #   campo "exists_current_recommendation").
+            current_controlperiod_kc = 0.47
+            record.current_controlperiod_kc = current_controlperiod_kc
+
+    @api.multi
+    def _compute_current_controlperiod_ndvi(self):
+        for record in self:
+            current_controlperiod_ndvi = 0
+            # TODO (provisional)
+            # Con SQL:
+            # · Coger el valor del período de control previo al actual
+            #   (si lo hubiere, considerar el mismo criterio que para el
+            #   campo "exists_current_recommendation").
+            current_controlperiod_ndvi = 0.4603
+            record.current_controlperiod_ndvi = current_controlperiod_ndvi
+
+    @api.multi
+    def _compute_current_controlperiod_et0(self):
+        for record in self:
+            current_controlperiod_et0 = 0
+            # TODO (provisional)
+            # Con SQL:
+            # · Coger el valor del período de control previo al actual
+            #   (si lo hubiere, considerar el mismo criterio que para el
+            #   campo "exists_current_recommendation").
+            current_controlperiod_et0 = 2.2066
+            record.current_controlperiod_et0 = current_controlperiod_et0
+
+    @api.multi
+    def _compute_current_controlperiod_pe(self):
+        for record in self:
+            current_controlperiod_pe = 0
+            # TODO (provisional)
+            # Con SQL:
+            # · Coger el valor del período de control previo al actual
+            #   (si lo hubiere, considerar el mismo criterio que para el
+            #   campo "exists_current_recommendation").
+            current_controlperiod_pe = 0.0000
+            record.current_controlperiod_pe = current_controlperiod_pe
+
+    @api.multi
+    def _compute_current_controlperiod_nin(self):
+        for record in self:
+            current_controlperiod_nin = 0
+            # TODO (provisional)
+            # Con SQL:
+            # · Coger el valor del período de control previo al actual
+            #   (si lo hubiere, considerar el mismo criterio que para el
+            #   campo "exists_current_recommendation").
+            current_controlperiod_nin = 10.37
+            record.current_controlperiod_nin = current_controlperiod_nin
+
+    @api.multi
+    def _compute_current_controlperiod_gin(self):
+        for record in self:
+            current_controlperiod_gin = 0
+            # TODO (provisional)
+            # Con SQL:
+            # · Coger el valor del período de control previo al actual
+            #   (si lo hubiere, considerar el mismo criterio que para el
+            #   campo "exists_current_recommendation").
+            current_controlperiod_gin = 10.92
+            record.current_controlperiod_gin = current_controlperiod_gin
+
+    @api.multi
+    def _compute_current_controlperiod_total_gin(self):
+        for record in self:
+            record.current_controlperiod_total_gin = \
+                record.current_controlperiod_gin * record.area_gis_ha
+
+    @api.multi
+    def _compute_mapped_to_polygon(self):
+        geom_ok = self.geom_ok()
+        for record in self:
+            mapped_to_polygon = False
+            if geom_ok:
+                self.env.cr.execute("""
+                    SELECT """ + self._link_field + """
+                    FROM """ + self._gis_table + """
+                    WHERE """ + self._link_field + """='""" + record.name + """'
+                    """)
+                query_results = self.env.cr.dictfetchall()
+                if (query_results and
+                   query_results[0].get(self._link_field) is not None):
+                    mapped_to_polygon = True
+            record.mapped_to_polygon = mapped_to_polygon
+
+    def _search_mapped_to_polygon(self, operator, value):
+        record_ids = []
+        operator_of_filter = 'in'
+        mapped_to_polygon = ((operator == '=' and value) or
+                             (operator == '!=' and not value))
+        geom_ok = self.geom_ok()
+        if geom_ok:
+            table = self._name.replace('.', '_')
+            sql_statement = \
+                'SELECT t.id FROM ' + table + ' t ' + \
+                'INNER JOIN ' + self._gis_table + ' gt ' + \
+                'ON t.name = gt.' + self._link_field
+            if not mapped_to_polygon:
+                sql_statement = \
+                    'SELECT t.id FROM ' + table + ' t ' + \
+                    'LEFT JOIN ' + self._gis_table + ' gt ' + \
+                    'ON t.name = gt.' + self._link_field + ' ' + \
+                    'WHERE gt.gid IS NULL'
+            self.env.cr.execute(sql_statement)
+            sql_resp = self.env.cr.fetchall()
+            if sql_resp:
+                for item in sql_resp:
+                    record_ids.append(item[0])
+        return [('id', operator_of_filter, record_ids)]
+
+    def _compute_geom_ewkt(self):
+        geom_ok = self.geom_ok()
+        for record in self:
+            geom_ewkt = ''
+            if geom_ok:
+                self.env.cr.execute("""
+                    SELECT postgis.st_asewkt(""" + self._geom_field + """)
+                    FROM """ + self._gis_table + """
+                    WHERE """ + self._link_field + """
+                    ='""" + record.name + """'""")
+                query_results = self.env.cr.dictfetchall()
+                if (query_results and
+                   query_results[0].get('st_asewkt') is not None):
+                    geom_ewkt = query_results[0].get('st_asewkt')
+            record.geom_ewkt = geom_ewkt
+
+    def _compute_area_gis(self):
+        geom_ok = self.geom_ok()
+        for record in self:
+            area_gis = 0
+            if geom_ok:
+                self.env.cr.execute("""
+                    SELECT postgis.geometrytype(""" + self._geom_field + """),
+                    postgis.st_area(""" + self._geom_field + """)
+                    FROM """ + self._gis_table + """
+                    WHERE """ + self._link_field + """
+                    ='""" + record.name + """'""")
+                query_results = self.env.cr.dictfetchall()
+                if (query_results and
+                   query_results[0].get('geometrytype') is not None):
+                    geometry_type = \
+                        query_results[0].get('geometrytype').lower()
+                    if (geometry_type == 'polygon' or
+                       geometry_type == 'multipolygon'):
+                        area_gis = \
+                            round(float(query_results[0].get('st_area')))
+            record.area_gis = area_gis
+
+    def _compute_area_gis_ha(self):
+        for record in self:
+            record.area_gis_ha = record.area_gis / 10000.0
+
+    @api.multi
+    def _compute_aerial_image_calculated(self):
+        wms = self.env['ir.values'].get_default(
+            'wua.configuration', 'aerial_image_wms')
+        layers = self.env['ir.values'].get_default(
+            'wua.configuration', 'aerial_image_layers')
+        image_width = self.env['ir.values'].get_default(
+            'wua.configuration', 'aerial_image_width')
+        image_height = self.env['ir.values'].get_default(
+            'wua.configuration', 'aerial_image_height')
+        if (not image_width) and (not image_height):
+            image_width = 0
+            image_height = self.DEFAULT_AERIAL_IMAGE_SIZE
+        zoom = self.env['ir.values'].get_default(
+            'wua.configuration', 'aerial_image_zoom')
+        if not zoom:
+            zoom = 1.0
+        image_format = self.env['ir.values'].get_default(
+            'wua.configuration', 'aerial_image_format')
+        if not image_format:
+            image_format = 'png'
+        for record in self:
+            if wms and layers:
+                record.aerial_image_calculated = record.get_aerial_image(
+                    wms=wms, layers=layers,
+                    image_width=image_width, image_height=image_height,
+                    image_format=image_format, zoom=zoom, with_cql_filter=True)
+            else:
+                record.aerial_image_calculated = record.get_aerial_image(
+                    image_width=image_width, image_height=image_height,
+                    image_format=image_format, zoom=zoom, with_cql_filter=True)
+
+    @api.multi
+    def _compute_aerial_image_shown(self):
+        for record in self:
+            aerial_image_shown = None
+            if record.aerial_image:
+                aerial_image_shown = record.aerial_image
+            else:
+                wms = self.env['ir.values'].get_default(
+                    'wua.configuration', 'aerial_image_wms')
+                layers = self.env['ir.values'].get_default(
+                    'wua.configuration', 'aerial_image_layers')
+                image_width = self.env['ir.values'].get_default(
+                    'wua.configuration', 'aerial_image_width')
+                image_height = self.env['ir.values'].get_default(
+                    'wua.configuration', 'aerial_image_height')
+                if (not image_width) and (not image_height):
+                    image_width = 0
+                    image_height = self.DEFAULT_AERIAL_IMAGE_SIZE
+                zoom = self.env['ir.values'].get_default(
+                    'wua.configuration', 'aerial_image_zoom')
+                if not zoom:
+                    zoom = 1.0
+                image_format = self.env['ir.values'].get_default(
+                    'wua.configuration', 'aerial_image_format')
+                if not image_format:
+                    image_format = 'png'
+                aerial_image_raw = None
+                if wms and layers:
+                    aerial_image_raw = record.get_aerial_image(
+                        wms=wms, layers=layers,
+                        image_width=image_width, image_height=image_height,
+                        image_format=image_format, zoom=zoom,
+                        get_raw=True, with_cql_filter=True)
+                else:
+                    aerial_image_raw = record.get_aerial_image(
+                        image_width=image_width, image_height=image_height,
+                        image_format=image_format, zoom=zoom,
+                        get_raw=True, with_cql_filter=True)
+                if aerial_image_raw:
+                    aerial_image_shown = base64.b64encode(
+                        aerial_image_raw.getvalue())
+                    record.write({'aerial_image': aerial_image_shown})
+            record.aerial_image_shown = aerial_image_shown
+
+    def _compute_centroid_ewkt(self):
+        geom_ok = self.geom_ok()
+        for record in self:
+            centroid_ewkt = ''
+            if geom_ok:
+                self.env.cr.execute("""
+                    SELECT postgis.st_asewkt
+                    (st_centroid(""" + self._geom_field + """))
+                    FROM """ + self._gis_table + """
+                    WHERE """ + self._link_field + """='""" + record.name + """'""")
+                query_results = self.env.cr.dictfetchall()
+                if (query_results and
+                   query_results[0].get('st_asewkt') is not None):
+                    centroid_ewkt = query_results[0].get('st_asewkt')
+            record.centroid_ewkt = centroid_ewkt
+
+    def _compute_simplified_centroid_ewkt(self):
+        for record in self:
+            simplified_centroid_ewkt = ''
+            centroid_ewkt = record.centroid_ewkt
+            if centroid_ewkt:
+                simplified_centroid_ewkt = \
+                    re.sub(r'\d+\.\d{1,}', lambda m: str(
+                        int(round(float(m.group(0))))), centroid_ewkt)
+            record.simplified_centroid_ewkt = simplified_centroid_ewkt
+
+    @api.multi
+    def _compute_googlemaps_link(self):
+        for record in self:
+            googlemaps_link = ''
+            srid, coordinates = record.extract_coordinates(
+                record.simplified_centroid_ewkt)
+            if srid and coordinates:
+                srid = 'epsg:' + srid
+                pos_bracketleft = coordinates.find('(')
+                pos_bracketright = coordinates.find(')')
+                pos_space = coordinates.find(' ')
+                if (pos_bracketleft != -1 and pos_bracketright != -1 and
+                   pos_space != -1 and pos_bracketleft < pos_space < pos_bracketright):
+                    x_in = 0
+                    y_in = 0
+                    try:
+                        x_in = int(coordinates[pos_bracketleft + 1:pos_space])
+                        y_in = int(coordinates[pos_space + 1:pos_bracketright])
+                    except Exception:
+                        x_in = -1
+                        y_in = -1
+                    if x_in >= 0 and y_in >= 0:
+                        in_proj = Proj(init=srid)
+                        out_proj = Proj(init='epsg:4326')
+                        x_out, y_out = transform(
+                            in_proj, out_proj, x_in, y_in)
+                        googlemaps_link = self._url_googlemaps.replace(
+                            'ycval', str(y_out)).replace('xcval', str(x_out))
+            record.googlemaps_link = googlemaps_link
+
+    @api.multi
+    def _compute_html_frame_googlemaps(self):
+        image_height = self.env['ir.values'].get_default(
+            'wua.configuration', 'aerial_image_height')
+        if not image_height:
+            image_height = self.DEFAULT_AERIAL_IMAGE_SIZE
+        for record in self:
+            html_frame_googlemaps = ''
+            googlemaps_link = record.googlemaps_link
+            if googlemaps_link:
+                url = googlemaps_link + '&output=embed'
+                html_frame_googlemaps = \
+                    '<p style="text-align:center;margin-top:1px">' + \
+                    '<iframe id="iframe_googlemaps" ' + \
+                    'scrolling="yes" marginheight="0" ' + \
+                    'marginwidth="0" src="' + url + '" ' + \
+                    'height="' + str(image_height) + '"px" width="75%">' + \
+                    '</iframe></p>'
+            record.html_frame_googlemaps = html_frame_googlemaps
 
     @api.constrains('cultivation_id',
                     'cultivation_id.suitable_hydric_estimation')
@@ -131,3 +718,225 @@ class WuaCropunit(models.Model):
             if previous_similar_cropunits:
                 order_number = previous_similar_cropunits[0].order_number + 1
             self.order_number = order_number
+
+    @api.onchange('irrigationsystem_id')
+    def _onchange_irrigationsystem_id(self):
+        if self.irrigationsystem_id:
+            self.standard_application_efficiency = \
+                self.irrigationsystem_id.standard_application_efficiency
+
+    def geom_ok(self):
+        resp = False
+        try:
+            self.env.cr.execute(
+                'SELECT ' + self._link_field + ', ' + self._geom_field +
+                ' FROM ' + self._gis_table + ' LIMIT 1')
+            resp = True
+        except Exception:
+            pass
+        return resp
+
+    @api.model
+    def extract_coordinates(self, geom_ewkt):
+        srid = ''
+        coordinates = ''
+        if geom_ewkt:
+            pos_semicolon = geom_ewkt.find(';')
+            if pos_semicolon != -1 and pos_semicolon < len(geom_ewkt) - 1:
+                coordinates = geom_ewkt[pos_semicolon + 1:]
+                srid_temp = geom_ewkt[0:pos_semicolon]
+                pos_equal = srid_temp.find('=')
+                if pos_equal and pos_equal < len(srid_temp) - 1:
+                    srid = srid_temp[pos_equal + 1:]
+                if not srid:
+                    coordinates = ''
+        return srid, coordinates
+
+    @api.model
+    def extract_bounding_box(self, geom_ewkt, force_square_shape=True):
+        bounding_box = []
+        srid, coordinates = self.extract_coordinates(geom_ewkt)
+        if coordinates:
+            coordinates = coordinates.lower()
+            points = ''
+            if coordinates.find('multipolygon') != -1:
+                points = \
+                    re.search(r'\(\(\((.*?)\)\)\)', coordinates).group(1)
+            elif coordinates.find('polygon') != -1:
+                points = \
+                    re.search(r'\(\((.*?)\)\)', coordinates).group(1)
+            if points:
+                points = points.replace('),(', ', ').replace('), (', ', ')
+                points = points.replace(', ', ',')
+                list_of_points = points.split(',')
+                first_point = True
+                minx = 0
+                maxx = 0
+                miny = 0
+                maxy = 0
+                for point in list_of_points:
+                    coordinates = point.split(' ')
+                    if len(coordinates) == 2:
+                        x = float(coordinates[0])
+                        y = float(coordinates[1])
+                        if first_point:
+                            first_point = False
+                            minx = x
+                            maxx = x
+                            miny = y
+                            maxy = y
+                        else:
+                            if x < minx:
+                                minx = x
+                            if x > maxx:
+                                maxx = x
+                            if y < miny:
+                                miny = y
+                            if y > maxy:
+                                maxy = y
+                if force_square_shape:
+                    w = maxx - minx
+                    h = maxy - miny
+                    if w != h:
+                        if h > w:
+                            inc = round((h - w) / 2)
+                            minx = minx - inc
+                            maxx = maxx + inc
+                        else:
+                            inc = round((w - h) / 2)
+                            miny = miny - inc
+                            maxy = maxy + inc
+                bounding_box = [minx, miny, maxx, maxy]
+        return srid, bounding_box
+
+    @api.model
+    def get_bbox_final(self, zoom, bbox_initial,
+                       image_width_initial, image_height_initial):
+        bbox_final = [0, 0, 0, 0]
+        image_width_final = 0
+        image_height_final = 0
+        if (bbox_initial and len(bbox_initial) == 4
+           and image_width_initial >= 0 and image_height_initial >= 0):
+            minx = bbox_initial[0]
+            miny = bbox_initial[1]
+            maxx = bbox_initial[2]
+            maxy = bbox_initial[3]
+            image_width_meters = maxx - minx
+            image_height_meters = maxy - miny
+            if (image_width_meters > 0 and image_height_meters > 0 and
+               zoom >= 1):
+                new_image_width_meters = \
+                    image_width_meters * zoom
+                new_image_height_meters = \
+                    image_height_meters * zoom
+                dif_width_meters = \
+                    new_image_width_meters - image_width_meters
+                dif_height_meters = \
+                    new_image_height_meters - image_height_meters
+                offset_width_meters = dif_width_meters / 2
+                offset_height_meters = dif_height_meters / 2
+                minx = int(round(minx - offset_width_meters))
+                miny = int(round(miny - offset_height_meters))
+                maxx = int(round(maxx + offset_width_meters))
+                maxy = int(round(maxy + offset_height_meters))
+                if image_width_initial == 0 and image_height_initial == 0:
+                    image_height_initial = self.NORMAL_SIZE
+                image_width_meters = maxx - minx
+                image_height_meters = maxy - miny
+                image_height_pixels = image_height_initial
+                image_width_pixels = image_width_initial
+                if image_width_pixels == 0 or image_height_pixels == 0:
+                    if image_width_pixels == 0:
+                        image_width_pixels = int(round((
+                            image_width_meters * image_height_pixels) /
+                            image_height_meters))
+                    else:
+                        image_height_pixels = int(round((
+                            image_height_meters * image_width_pixels) /
+                            image_width_meters))
+                bbox_final = [minx, miny, maxx, maxy]
+                image_width_final = image_width_pixels
+                image_height_final = image_height_pixels
+        return bbox_final, image_width_final, image_height_final
+
+    def get_aerial_image(self,
+                         wms='https://www.ign.es/wms-inspire/pnoa-ma',
+                         layers='OI.OrthoimageCoverage',
+                         styles='default',
+                         image_width=0,
+                         image_height=512,
+                         image_format='png',
+                         zoom=1.2,
+                         get_raw=False,
+                         with_cql_filter=False,
+                         force_square_shape=True):
+        aerial_images = []
+        number_of_layers = len(layers.split(',')) - 1
+        for record in self:
+            image = None
+            srid, bounding_box = record.extract_bounding_box(
+                record.geom_ewkt, force_square_shape=force_square_shape)
+            if srid and bounding_box:
+                bounding_box_final, image_width_pixels, image_height_pixels = \
+                    self.get_bbox_final(zoom, bounding_box,
+                                        image_width, image_height)
+                if image_width_pixels > 0 and image_height_pixels > 0:
+                    minx = bounding_box_final[0]
+                    miny = bounding_box_final[1]
+                    maxx = bounding_box_final[2]
+                    maxy = bounding_box_final[3]
+                    cql_filter = ''
+                    if with_cql_filter:
+                        cql_filter = '&FILTER=' + '()' * number_of_layers + \
+                                     '(<Filter><PropertyIsLike wildCard="*" ' + \
+                                     'singleChar="." escape="!">' + \
+                                     '<PropertyName>' + self._link_field + \
+                                     '</PropertyName><Literal>' + record.name + \
+                                     '</Literal></PropertyIsLike></Filter>)'
+                    url = wms + '?service=wms' + \
+                        '&request=getmap&crs=epsg:' + str(srid) + \
+                        '&bbox=' + str(minx) + ',' + str(miny) + ',' + \
+                        str(maxx) + ',' + str(maxy) + \
+                        '&width=' + str(image_width_pixels) + \
+                        '&height=' + str(image_height_pixels) + \
+                        '&layers=' + layers + \
+                        '&styles=' + styles + \
+                        '&transparent=true' + \
+                        cql_filter + \
+                        '&format=image/' + image_format + '&version=1.3.0'
+                    request_ok = True
+                    resp = None
+                    try:
+                        resp = requests.get(url, stream=True, verify=False,
+                                            timeout=self.OGC_TIMEOUT)
+                    except Exception:
+                        request_ok = False
+                    if request_ok and resp.status_code == 200:
+                        image_raw = io.BytesIO(resp.raw.read())
+                        try:
+                            Image.open(image_raw)
+                            image = base64.b64encode(image_raw.getvalue())
+                        except Exception:
+                            image = None
+                        if image and get_raw:
+                            image = image_raw
+            aerial_images.append(image)
+        if all(i is None for i in aerial_images):
+            return None
+        else:
+            if len(aerial_images) == 1:
+                aerial_images = aerial_images[0]
+        return aerial_images
+
+    @api.multi
+    def refresh_aerial_img(self):
+        for record in self:
+            if record.mapped_to_polygon:
+                record.aerial_image = None
+                record._compute_aerial_image_shown()
+
+    @api.multi
+    def action_get_hydric_estimations(self):
+        self.ensure_one()
+        # TODO (provisional)
+        print 'action_get_hydric_estimations...'
