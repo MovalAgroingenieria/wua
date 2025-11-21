@@ -186,11 +186,18 @@
         <field name="name">wua.cropunit.view.tree</field>
         <field name="model">wua.cropunit</field>
         <field name="arch" type="xml">
-            <tree>
+            <tree class="o_base_wua_hydric_estimation_cropunit_view_tree"
+                  colors="green:state=='02_active';">
+                <field name="name" string = "Crop Unit"/>
+                <field name="area_gis_ha" string = "Area (ha)"/>
                 <field name="parcel_id" string = "Parcel"/>
+                <field name="partner_id" string = "Irrigation Partner"/>
                 <field name="cultivation_id" string = "Cultivation"/>
-                <field name="initial_date" string = "Crop cycle initial date"/>
-                <field name="end_date" string = "Crop cycle end date"/>
+                <field name="order_number" string = "Order N."/>
+                <field name="initial_date" string = "Initial date"/>
+                <field name="end_date" string = "End date"/>
+                <field name="current_controlperiod_total_gin" string = "Current Rec. (m³)"/>
+                <field name="state" string = "State"/>
             </tree>
         </field>
     </record>

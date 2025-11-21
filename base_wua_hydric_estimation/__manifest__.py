@@ -19,6 +19,7 @@
     "data": [
         "security/ir.model.access.csv",
         "data/wua_cropfamily_data.xml",
+        "views/resources.xml",
         "views/wua_config_settings_view.xml",
         "views/wua_irrigationsystem_view.xml",
         "views/wua_cropfamily_view.xml",
