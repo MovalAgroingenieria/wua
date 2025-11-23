@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_invoiceset_line_watertransfer_view_tree" model="ir.ui.view" >
+        <field name="name">Invoice-set line for enrolled subparcels (tree view)</field>
+        <field name="model">wua.invoiceset.line.watertransfer</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false" export="false">
+                <field name="selected" invisible="1"/>
+                <button type="object" class="oe_read_only"
+                        icon="fa-check-circle"
+                        attrs="{'invisible':
+                                [('selected','=',False)]}"/>
+                <field name="watertransfer_id"/>
+                <field name="partner_id"/>
+                <field name="volume"/>
+                <field name="number_of_invoicing_processes"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_invoiceset_line_watertransfer_view_search" model="ir.ui.view" >
+        <field name="name">Invoice-set line for enrolled subparcels (search view)</field>
+        <field name="model">wua.invoiceset.line.watertransfer</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <group expand="0" string="Group By">
+                    <filter string="Partner"
+                     name="partner"
+                     context="{'group_by':'partner_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_add_watertransfer_to_invoiceset" model="ir.actions.server">
+        <field name="name">Add to invoice set</field>
+        <field name="model_id" ref="model_wua_invoiceset_line_watertransfer"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.invoiceset.line.watertransfer'].browse(context['active_ids']).add_to_invoiceset()
+        </field>
+    </record>
+
+    <record id="wua_action_add_watertransfer_to_invoiceset" model="ir.values">
+        <field name="name">Add enrolled subparcel to invoice set</field>
+        <field name="model">wua.invoiceset.line.watertransfer</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_add_watertransfer_to_invoiceset'))"/>
+    </record>
+
+    <record id="wua_remove_watertransfer_to_invoiceset" model="ir.actions.server">
+        <field name="name">Remove from invoice set</field>
+        <field name="model_id" ref="model_wua_invoiceset_line_watertransfer"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.invoiceset.line.watertransfer'].browse(context['active_ids']).remove_from_invoiceset()
+        </field>
+    </record>
+
+    <record id="wua_action_remove_watertransfer_to_invoiceset" model="ir.values">
+        <field name="name">Remove enrolled subparcel from invoice set</field>
+        <field name="model">wua.invoiceset.line.watertransfer</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_remove_watertransfer_to_invoiceset'))"/>
+    </record>
+
+</odoo>
