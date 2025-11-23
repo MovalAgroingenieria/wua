@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_monitoringperiod_view_form" model="ir.ui.view">
+        <field name="name">wua.monitoringperiod.view.form</field>
+        <field name="model">wua.monitoringperiod</field>
+        <field name="arch" type="xml">
+            <form duplicate="false">
+                <field name="id" invisible="1"/>
+                <header>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_get_hydric_estimations"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-calculator">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_text">
+                                    Recommen-
+                                </span>
+                                <span class="o_stat_text">
+                                    dations
+                                </span>
+                            </div>
+                        </button>
+                    </div>
+                    <group name="master_data">
+                        <field name="agriculturalseason_id"/>
+                        <field name="initial_date"/>
+                        <field name="end_date"/>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="page_notes" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"
+                           widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids"
+                           widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_monitoringperiod_view_tree" model="ir.ui.view">
+        <field name="name">wua.monitoringperiod.view.tree</field>
+        <field name="model">wua.monitoringperiod</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="agriculturalseason_id" string="Agricultural Season"/>
+                <field name="initial_date" string="Initial Date"/>
+                <field name="end_date" string="End Date"/>
+                <field name="state" string="State"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_monitoringperiod_view_search" model="ir.ui.view">
+        <field name="name">wua.monitoringperiod.view.search</field>
+        <field name="model">wua.monitoringperiod</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="initial_date" string="Initial Date"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_monitoringperiod_action"
+            model="ir.actions.act_window">
+        <field name="name">Control Periods</field>
+        <field name="res_model">wua.monitoringperiod</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_monitoringperiod_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('wua_monitoringperiod_view_form')})]"/>
+        <field name="search_view_id" ref="wua_monitoringperiod_view_search"/>
+    </record>
+
+    <menuitem id="wua_monitoringperiod_menu"
+              name="Control Periods"
+              parent="base_wua_census_calculation_menu"
+              action="wua_monitoringperiod_action"
+              sequence="20"/>
+
+</odoo>

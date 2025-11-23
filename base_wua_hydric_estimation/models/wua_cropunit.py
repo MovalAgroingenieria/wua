@@ -41,6 +41,24 @@ class WuaCropunit(models.Model):
             resp = the_active_agriculturalseason[0].id
         return resp
 
+    def _default_initial_date(self):
+        resp = None
+        the_active_agriculturalseason = \
+            self.env['wua.agriculturalseason'].search(
+                [('active_agriculturalseason', '=', True)])
+        if the_active_agriculturalseason:
+            resp = the_active_agriculturalseason[0].initial_date
+        return resp
+
+    def _default_end_date(self):
+        resp = None
+        the_active_agriculturalseason = \
+            self.env['wua.agriculturalseason'].search(
+                [('active_agriculturalseason', '=', True)])
+        if the_active_agriculturalseason:
+            resp = the_active_agriculturalseason[0].end_date
+        return resp
+
     def _default_standard_application_efficiency(self):
         resp = DEFAULT_STANDARD_APPLICATION_EFFICIENCY
         default_standard_application_efficiency = \
@@ -76,6 +94,7 @@ class WuaCropunit(models.Model):
 
     initial_date = fields.Date(
         string='Crop cycle initial date',
+        default=_default_initial_date,
         required=True,
         index=True,
         track_visibility='onchange',
@@ -83,6 +102,7 @@ class WuaCropunit(models.Model):
 
     end_date = fields.Date(
         string='Crop cycle end date',
+        default=_default_end_date,
         required=True,
         index=True,
         track_visibility='onchange',
@@ -113,9 +133,9 @@ class WuaCropunit(models.Model):
     state = fields.Selection(
         string='State',
         selection=[
-            ('01_not_started', 'Not started'),
+            ('01_not_started', 'Crop not started'),
             ('02_active', 'Active Crop'),
-            ('03_closed', 'Finished')
+            ('03_closed', 'Crop finished')
         ],
         compute='_compute_state',
         search='_search_state')
@@ -131,6 +151,12 @@ class WuaCropunit(models.Model):
         string='County',
         comodel_name='wua.region.state.county',
         related='parcel_id.county_id',
+    )
+
+    state_id = fields.Many2one(
+        string='State',
+        comodel_name='wua.region.state',
+        related='parcel_id.county_id.state_id',
     )
 
     irrigationsystem_id = fields.Many2one(
@@ -205,6 +231,12 @@ class WuaCropunit(models.Model):
         compute='_compute_current_controlperiod_total_gin',
     )
 
+    mapped_to_active_agriculturalseason = fields.Boolean(
+        string='Mapped to the active agricultural season',
+        compute='_compute_mapped_to_active_agriculturalseason',
+        search='_search_mapped_to_active_agriculturalseason',
+    )
+
     notes = fields.Html(
         string='Notes',
     )
@@ -222,12 +254,16 @@ class WuaCropunit(models.Model):
 
     area_gis = fields.Integer(
         string='GIS Area (m²)',
+        store=True,
+        index=True,
         compute='_compute_area_gis',
     )
 
     area_gis_ha = fields.Float(
         string='Crop Unit Area',
         digits=(32, 4),
+        store=True,
+        index=True,
         compute='_compute_area_gis_ha',
     )
 
@@ -317,6 +353,39 @@ class WuaCropunit(models.Model):
                 if current_date > end_date:
                     state = '03_closed'
             record.state = state
+
+    def _search_state(self, operator, value):
+        cropunit_ids = []
+        filter_operator = 'in'
+        if value:
+            if value in ['01_not_started', '02_active', '03_closed']:
+                current_date = datetime.date.today().strftime('%Y-%m-%d')
+                sql_for_01_not_started = \
+                    ('SELECT id FROM wua_cropunit WHERE '
+                     'initial_date > \'%s\'' % (current_date, ))
+                sql_for_02_active = \
+                    ('SELECT id FROM wua_cropunit WHERE '
+                     'initial_date <= \'%s\' AND end_date >= \'%s\''
+                     % (current_date, current_date, ))
+                sql_for_03_closed = \
+                    ('SELECT id FROM wua_cropunit WHERE '
+                     'end_date < \'%s\'' % (current_date, ))
+                sql_statement = sql_for_01_not_started
+                if value == '02_active':
+                    sql_statement = sql_for_02_active
+                elif value == '03_closed':
+                    sql_statement = sql_for_03_closed
+                self.env.cr.execute(sql_statement)
+                sql_resp = self.env.cr.fetchall()
+                if sql_resp:
+                    for item in sql_resp:
+                        cropunit_ids.append(item[0])
+                if operator == '!=':
+                    filter_operator = 'not in'
+        else:
+            if operator == '!=':
+                cropunit_ids = self.search([]).ids
+        return [('id', filter_operator, cropunit_ids)]
 
     @api.multi
     def _compute_exists_current_recommendation(self):
@@ -447,6 +516,41 @@ class WuaCropunit(models.Model):
                 record.current_controlperiod_gin * record.area_gis_ha
 
     @api.multi
+    def _compute_mapped_to_active_agriculturalseason(self):
+        for record in self:
+            mapped_to_active_agriculturalseason = False
+            if (record.agriculturalseason_id and
+               record.agriculturalseason_id.active_agriculturalseason):
+                mapped_to_active_agriculturalseason = True
+            record.mapped_to_active_agriculturalseason = \
+                mapped_to_active_agriculturalseason
+
+    def _search_mapped_to_active_agriculturalseason(self, operator, value):
+        cropunit_ids = []
+        filter_operator = 'in'
+        mapped_to_active_agriculturalseason = \
+            ((operator == '=' and value) or (operator == '!=' and not value))
+        id_of_active_agriculturalseason = 0
+        active_agriculturalseason = \
+            self.env['wua.agriculturalseason'].search(
+                [('active_agriculturalseason', '=', True)])
+        if active_agriculturalseason:
+            id_of_active_agriculturalseason = active_agriculturalseason[0].id
+        sql_statement = \
+            ('SELECT id FROM wua_cropunit WHERE agriculturalseason_id = '
+             '%s' % (id_of_active_agriculturalseason, ))
+        if not mapped_to_active_agriculturalseason:
+            sql_statement = \
+                ('SELECT id FROM wua_cropunit WHERE agriculturalseason_id <> '
+                 '%s' % (id_of_active_agriculturalseason,))
+        self.env.cr.execute(sql_statement)
+        sql_resp = self.env.cr.fetchall()
+        if sql_resp:
+            for item in sql_resp:
+                cropunit_ids.append(item[0])
+        return [('id', filter_operator, cropunit_ids)]
+
+    @api.multi
     def _compute_mapped_to_polygon(self):
         geom_ok = self.geom_ok()
         for record in self:
@@ -464,8 +568,8 @@ class WuaCropunit(models.Model):
             record.mapped_to_polygon = mapped_to_polygon
 
     def _search_mapped_to_polygon(self, operator, value):
-        record_ids = []
-        operator_of_filter = 'in'
+        cropunit_ids = []
+        filter_operator = 'in'
         mapped_to_polygon = ((operator == '=' and value) or
                              (operator == '!=' and not value))
         geom_ok = self.geom_ok()
@@ -485,8 +589,8 @@ class WuaCropunit(models.Model):
             sql_resp = self.env.cr.fetchall()
             if sql_resp:
                 for item in sql_resp:
-                    record_ids.append(item[0])
-        return [('id', operator_of_filter, record_ids)]
+                    cropunit_ids.append(item[0])
+        return [('id', filter_operator, cropunit_ids)]
 
     def _compute_geom_ewkt(self):
         geom_ok = self.geom_ok()
@@ -504,6 +608,7 @@ class WuaCropunit(models.Model):
                     geom_ewkt = query_results[0].get('st_asewkt')
             record.geom_ewkt = geom_ewkt
 
+    @api.depends('aerial_image')
     def _compute_area_gis(self):
         geom_ok = self.geom_ok()
         for record in self:
@@ -526,6 +631,7 @@ class WuaCropunit(models.Model):
                             round(float(query_results[0].get('st_area')))
             record.area_gis = area_gis
 
+    @api.depends('area_gis')
     def _compute_area_gis_ha(self):
         for record in self:
             record.area_gis_ha = record.area_gis / 10000.0
@@ -724,6 +830,82 @@ class WuaCropunit(models.Model):
         if self.irrigationsystem_id:
             self.standard_application_efficiency = \
                 self.irrigationsystem_id.standard_application_efficiency
+
+    @api.model
+    def read_group(self, domain, fields, groupby,
+                   offset=0, limit=None, orderby=False, lazy=True):
+        if 'order_number' in fields:
+            fields.remove('order_number')
+        return super(WuaCropunit, self).read_group(
+            domain, fields, groupby, offset, limit, orderby, lazy)
+
+    @api.multi
+    def write(self, vals):
+        if len(self) == 1:
+            update_gis = False
+            prev_code = ''
+            prev_agriculturalseason_id = 0
+            prev_parcel_id = 0
+            prev_cultivation_id = 0
+            prev_order_number = 0
+            if (('agriculturalseason_id' in vals and vals['agriculturalseason_id']) or
+               ('parcel_id' in vals and vals['parcel_id']) or
+               ('cultivation_id' in vals and vals['cultivation_id']) or
+               ('order_number' in vals and vals['order_number'])):
+                prev_code = self.name
+                prev_agriculturalseason_id = self.agriculturalseason_id.id
+                prev_parcel_id = self.parcel_id.id
+                prev_cultivation_id = self.cultivation_id.id
+                prev_order_number = self.order_number
+                if (prev_code and prev_agriculturalseason_id and
+                   prev_parcel_id and prev_cultivation_id and
+                   prev_order_number):
+                    update_gis = True
+            updated_cropunits = super(WuaCropunit, self).write(vals)
+            if update_gis:
+                agriculturalseason_id = prev_agriculturalseason_id
+                if 'agriculturalseason_id' in vals and vals['agriculturalseason_id']:
+                    agriculturalseason_id = vals['agriculturalseason_id']
+                parcel_id = prev_parcel_id
+                if 'parcel_id' in vals and vals['parcel_id']:
+                    parcel_id = vals['parcel_id']
+                cultivation_id = prev_cultivation_id
+                if 'cultivation_id' in vals and vals['cultivation_id']:
+                    cultivation_id = vals['cultivation_id']
+                order_number = prev_order_number
+                if 'order_number' in vals and vals['order_number']:
+                    order_number = vals['order_number']
+                if (agriculturalseason_id and parcel_id and cultivation_id and
+                   order_number):
+                    agriculturalseason = self.env['wua.agriculturalseason'].browse(
+                        agriculturalseason_id)
+                    parcel = self.env['wua.parcel'].browse(parcel_id)
+                    cultivation = self.env['wua.cultivation'].browse(cultivation_id)
+                    if (agriculturalseason and parcel and cultivation and
+                       order_number):
+                        initial_year = fields.Date.from_string(
+                            agriculturalseason.initial_date).strftime('%Y')
+                        end_year = fields.Date.from_string(
+                            agriculturalseason.end_date).strftime('%Y')
+                        new_code = (parcel.name + '-' +
+                                    initial_year[2:] + '/' + end_year[2:] + '-' +
+                                    unidecode(cultivation.name[:3]).upper() + '-' +
+                                    str(order_number).rjust(3, '0'))
+                        self.update_wua_gis_cropunit(prev_code, new_code)
+        else:
+            updated_cropunits = super(WuaCropunit, self).write(vals)
+        return updated_cropunits
+
+    def update_wua_gis_cropunit(self, prev_code, new_code):
+        sql_statement = \
+            ('UPDATE wua_gis_cropunit SET name = \'%s\' '
+             'WHERE name = \'%s\'' % (new_code, prev_code, ))
+        try:
+            self.env.cr.savepoint()
+            self.env.cr.execute(sql_statement)
+            self.env.cr.commit()
+        except Exception:
+            self.env.cr.rollback()
 
     def geom_ok(self):
         resp = False
@@ -939,4 +1121,4 @@ class WuaCropunit(models.Model):
     def action_get_hydric_estimations(self):
         self.ensure_one()
         # TODO (provisional)
-        print 'action_get_hydric_estimations...'
+        print 'action_get_hydric_estimations (from crop unit)...'

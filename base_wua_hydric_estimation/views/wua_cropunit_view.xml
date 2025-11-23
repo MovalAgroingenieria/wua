@@ -63,22 +63,22 @@
                                 <p>CROP UNIT DATA</p>
                             </div>
                             <field name="agriculturalseason_id"
-                                   string = "Agricultural Season"
+                                   string="Agricultural Season"
                                    options="{'no_create_edit':True}"
                                    attrs="{'readonly': [('id', '>', 0)]}"/>
                             <field name="parcel_id"
-                                   string = "Parcel"
+                                   string="Parcel"
                                    style="width:250px"
                                    options="{'no_create_edit':True}"
                                    attrs="{'readonly': [('id', '>', 0)]}"/>
                             <field name="partner_id"
-                                   string = "Irrigation Partner"/>
+                                   string="Irrigation Partner"/>
                             <field name="cultivation_id"
-                                   string = "Cultivation"
+                                   string="Cultivation"
                                    style="width:250px"
                                    options="{'no_create_edit':True}"/>
                             <field name="order_number"
-                                   string = "Order Number"
+                                   string="Order Number"
                                    style="width:100px"/>
                             <label for="initial_date"/>
                             <div>
@@ -87,7 +87,7 @@
                                 <field name="end_date" class="oe_inline"/>
                             </div>
                             <field name="irrigationsystem_id"
-                                   string = "Irrigation System"
+                                   string="Irrigation System"
                                    style="width:250px"
                                    options="{'no_create_edit':True}"/>
                             <field name="standard_application_efficiency"
@@ -158,9 +158,9 @@
                                  colspan="2" class="text-center panel-body"
                                  style="border-color:#cccccc;border-width:1px;border-style:solid;height:49px;margin-top:15px;margin-left:30%;margin-right:30%"
                                  attrs="{'invisible': [('exists_current_recommendation', '=', False)]}">
-                                <span class="oe_inline">Total = </span>
+                                <b><span class="oe_inline">Total = </span>
                                 <field name="current_controlperiod_total_gin" class="oe_inline"/>
-                                <span class="oe_inline"> m³</span>
+                                <span class="oe_inline"> m³</span></b>
                             </div>
                         </group>
                     </group>
@@ -188,16 +188,16 @@
         <field name="arch" type="xml">
             <tree class="o_base_wua_hydric_estimation_cropunit_view_tree"
                   colors="green:state=='02_active';">
-                <field name="name" string = "Crop Unit"/>
-                <field name="area_gis_ha" string = "Area (ha)"/>
-                <field name="parcel_id" string = "Parcel"/>
-                <field name="partner_id" string = "Irrigation Partner"/>
-                <field name="cultivation_id" string = "Cultivation"/>
-                <field name="order_number" string = "Order N."/>
-                <field name="initial_date" string = "Initial date"/>
-                <field name="end_date" string = "End date"/>
-                <field name="current_controlperiod_total_gin" string = "Current Rec. (m³)"/>
-                <field name="state" string = "State"/>
+                <field name="name" string="Crop Unit"/>
+                <field name="area_gis_ha" string="Area (ha)"/>
+                <field name="parcel_id" string="Parcel"/>
+                <field name="partner_id" string="Irrigation Partner"/>
+                <field name="cultivation_id" string="Cultivation"/>
+                <field name="order_number" string="Order N."/>
+                <field name="initial_date" string="Initial date"/>
+                <field name="end_date" string="End date"/>
+                <field name="current_controlperiod_total_gin" string="Current Rec. (m³)"/>
+                <field name="state" string="State"/>
             </tree>
         </field>
     </record>
@@ -207,10 +207,26 @@
         <field name="model">wua.cropunit</field>
         <field name="arch" type="xml">
             <search>
-                <field name="parcel_id" string = "Parcel"/>
-                <field name="cultivation_id" string = "Cultivation"/>
-                <field name="initial_date" string = "Crop cycle initial date"/>
-                <field name="end_date" string = "Crop cycle end date"/>
+                <field name="name" string="Crop Unit"/>
+                <field name="partner_id" string="Partner"/>
+                <field name="cultivation_id" string="Cultivation"/>
+                <field name="initial_date" string="Crop cycle initial date"/>
+                <field name="end_date" string="Crop cycle end date"/>
+                <field name="state" string="State"/>
+                <filter string="Active agricultural season"
+                        name="mapped_to_active_agriculturalseason_yes"
+                        domain="[('mapped_to_active_agriculturalseason', '=', True)]"/>
+                <separator/>
+                <filter string="State: Not started"
+                        name="state_not_started"
+                        domain="[('state', '=', '01_not_started')]"/>
+                <filter string="State: Active Crop"
+                        name="state_active"
+                        domain="[('state', '=', '02_active')]"/>
+                <filter string="State: Finished"
+                        name="state_closed"
+                        domain="[('state', '=', '03_closed')]"/>
+                <separator/>
                 <filter name="mapped_to_polygon_yes"
                         string="With GIS link: Yes"
                         domain="[('mapped_to_polygon', '=', True)]"/>
@@ -218,7 +234,99 @@
                         string="With GIS link: No"
                         domain="[('mapped_to_polygon', '!=', True)]"/>
                 <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Agricultural Season"
+                            name="grouped_agriculturalseason"
+                     context="{'group_by':'agriculturalseason_id'}"/>
+                    <filter string="Partner"
+                            name="grouped_partner"
+                     context="{'group_by':'partner_id'}"/>
+                    <filter string="Parcel"
+                            name="grouped_parcel"
+                     context="{'group_by':'parcel_id'}"/>
+                    <filter string="Cultivation"
+                            name="grouped_cultivation"
+                     context="{'group_by':'cultivation_id'}"/>
+                </group>
             </search>
+        </field>
+    </record>
+
+    <record id="wua_cropunit_view_kanban" model="ir.ui.view">
+        <field name="name">wua.cropunit.view.kanban</field>
+        <field name="model">wua.cropunit</field>
+        <field name="arch" type="xml">
+            <kanban create="false"
+                    group_create="false"
+                    group_delete="false"
+                    default_order="name">
+                <field name="id"/>
+                <field name="aerial_image_shown"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="area_gis_ha"/>
+                <field name="cultivation_id"/>
+                <field name="county_id"/>
+                <field name="state_id"/>
+                <field name="exists_current_recommendation"/>
+                <field name="initial_date"/>
+                <field name="end_date"/>
+                <field name="current_controlperiod_total_gin"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_cropunit_kanban_image">
+                                <t t-if="record.aerial_image_shown and record.aerial_image_shown.raw_value">
+                                    <img t-att-src="kanban_image('wua.cropunit', 'aerial_image_shown', record.id.raw_value)" alt="wua_cropunit" style="border-color:#696969;border-width:1px;border-style:solid"/>
+                                </t>
+                                <t t-else="">
+                                    <img t-att-src="'/base_wua_hydric_estimation/static/src/img/avatar_cropunit.png'" width="150" alt="wua_cropunit_avatar" style="margin-top:40px"/>
+                                </t>
+                            </div>
+                            <div class="oe_kanban_details" style="margin-top:10px">
+                                <div class="text-center">
+                                    <strong><field name="name"/></strong><br/>
+                                    <strong>(<field name="state"/>)</strong>
+                                </div>
+                                <div class="container" style="margin-top:10px">
+                                    <div name="div_content" class="row">
+                                        <div name="div_content_01">
+                                            <field name="partner_id"/>
+                                        </div>
+                                        <div name="div_content_02">
+                                            <field name="cultivation_id"/>, <field name="area_gis_ha"/> ha
+                                        </div>
+                                        <div name="div_content_03">
+                                            <field name="county_id"/> (<field name="state_id"/>)
+                                        </div>
+                                        <t t-if="record.exists_current_recommendation.value">
+                                            <div name="div_content_04_01" style="margin-top:10px">
+                                                <i class="fa fa-calculator fa-lg" style="margin-right:6px"/> <field name="initial_date"/> - <field name="end_date"/> : <strong><field name="current_controlperiod_total_gin"/> m³</strong>
+                                            </div>
+                                        </t>
+                                        <t t-else="">
+                                            <div name="div_content_04_02" style="margin-top:10px">
+                                                <span>(no irrigation recommendations)</span>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="wua_cropunit_view_pivot" model="ir.ui.view">
+        <field name="name">wua.cropunit.view.pivot</field>
+        <field name="model">wua.cropunit</field>
+        <field name="arch" type="xml">
+            <pivot string="Agregated Values" display_quantity="true">
+                <field name="partner_id" type="row"/>
+                <field name="area_gis_ha" type="measure"/>
+            </pivot>
         </field>
     </record>
 
@@ -243,14 +351,19 @@
         <field name="name">Crop Units</field>
         <field name="res_model">wua.cropunit</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,kanban,pivot</field>
         <field name="view_ids"
          eval="[(5, 0),
                 (0, 0, {'view_mode': 'tree',
                         'view_id': ref('wua_cropunit_view_tree')}),
                 (0, 0, {'view_mode': 'form',
-                        'view_id': ref('wua_cropunit_view_form')})]"/>
+                        'view_id': ref('wua_cropunit_view_form')}),
+                (0, 0, {'view_mode': 'kanban',
+                        'view_id': ref('wua_cropunit_view_kanban')}),
+                (0, 0, {'view_mode': 'pivot',
+                        'view_id': ref('wua_cropunit_view_pivot')})]"/>
         <field name="search_view_id" ref="wua_cropunit_view_search"/>
+        <field name="context">{'search_default_mapped_to_active_agriculturalseason_yes': True}</field>
     </record>
 
     <menuitem id="wua_cropunit_menu"
