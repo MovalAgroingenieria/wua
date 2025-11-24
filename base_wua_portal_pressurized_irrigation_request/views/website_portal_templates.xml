@@ -1,0 +1,519 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Portal view for pressurized irrigation requests -->
+        <template id="portal_my_preswateringrequests" name="My Pressurized Irrigation Requests">
+            <t t-call="website.layout">
+                <div class="container mt16">
+                    <div class="navbar navbar-default">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#oe-help-navbar-collapse">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a class="navbar-brand" href="/my/home">
+                                My Account
+                            </a>
+                        </div>
+                        <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
+                            <ul class="nav navbar-nav o_portal_submenu">
+                                <li><a href="/my/invoices">Invoices</a></li>
+                                <li><a href="/my/parcels">Parcels</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <t t-if="not preswateringrequests">
+                    <div class="alert alert-info" role="alert">
+                        There are currently no pressurized irrigation requests for the selected period.
+                    </div>
+                </t>
+                <t t-if="preswateringrequests">
+                    <div id="wrap">
+                        <div class="container-fluid mb64" style="max-width: 98%; margin: 0 auto;">
+                            <div class="col-md-12">
+                                <h3 class="page-header">Pressurized Irrigation Requests</h3>
+                                <div class="row" style="margin-bottom:6px;">
+                                    <div class="col-md-3">
+                                        <form method="GET" class="form-inline" style="margin:0;">
+                                            <input type="hidden" name="filter_is_open" t-att-value="filter_is_open or ''"/>
+                                            <div class="form-group">
+                                                <label for="preswateringperiod_filter" class="mr8">Period:</label>
+                                                <select name="preswateringperiod_id" id="preswateringperiod_filter" class="form-control" onchange="this.form.submit()">
+                                                    <option value="">All Periods</option>
+                                                    <t t-foreach="preswateringperiods" t-as="period">
+                                                        <option t-att-value="period.id" t-att-selected="'selected' if selected_preswateringperiod_id == period.id else None">
+                                                            <t t-esc="period.display_name"/>
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <form method="GET" class="form-inline" style="margin:0;">
+                                            <input type="hidden" name="preswateringperiod_id" t-att-value="selected_preswateringperiod_id or ''"/>
+                                            <div class="form-group">
+                                                <label for="is_open_filter" class="mr8">Status:</label>
+                                                <select name="filter_is_open" id="is_open_filter" class="form-control" onchange="this.form.submit()">
+                                                    <option value="">All</option>
+                                                    <option value="open" t-att-selected="'selected' if filter_is_open == 'open' else None">Open</option>
+                                                    <option value="closed" t-att-selected="'selected' if filter_is_open == 'closed' else None">Closed</option>
+                                                </select>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="col-md-7">
+                                        <form method="GET" style="width:100%;">
+                                            <input type="hidden" name="preswateringperiod_id" t-att-value="selected_preswateringperiod_id or ''"/>
+                                            <input type="hidden" name="filter_is_open" t-att-value="filter_is_open or ''"/>
+                                            <div style="display:flex; align-items:center;">
+                                                <div class="form-group mr8">
+                                                    <select name="search_field" class="form-control">
+                                                        <option value="">Search by...</option>
+                                                        <option value="initial_date" t-att-selected="'selected' if search_field == 'initial_date' else None">Start Date</option>
+                                                        <option value="period" t-att-selected="'selected' if search_field == 'period' else None">Period</option>
+                                                        <option value="state" t-att-selected="'selected' if search_field == 'state' else None">Status</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group mr8" style="flex:1;">
+                                                    <input type="text" name="search" class="form-control" placeholder="Search..." t-att-value="search_query or ''" style="width:100%; box-sizing:border-box;"/>
+                                                </div>
+                                                <div class="form-group">
+                                                    <button type="submit" class="btn btn-primary">Search</button>
+                                                    <a href="/my/preswateringrequests" class="btn btn-default ml8">Clear</a>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <t t-if="not grouped_requests">
+                                        <p class="text-muted">There are no pressurized irrigation requests.</p>
+                                    </t>
+                                    <t t-else="">
+                                        <t t-foreach="grouped_requests.items()" t-as="period_group">
+                                            <t t-set="period_name" t-value="period_group[0]"/>
+                                            <t t-set="status_groups" t-value="period_group[1]"/>
+
+                                            <div class="panel panel-default" style="margin-top: 15px;">
+                                                <div class="panel-heading" style="background-color: #f5f5f5;">
+                                                    <h4 class="panel-title" style="margin: 0; font-weight: bold;">
+                                                        <i class="fa fa-calendar"></i>
+                                                        <t t-esc="period_name"/>
+                                                    </h4>
+                                                </div>
+                                                <div class="panel-body" style="padding: 0;">
+                                                    <t t-foreach="['Open', 'Closed']" t-as="status">
+                                                        <t t-if="status_groups.get(status)">
+                                                            <div style="padding: 10px 15px; background-color: #fafafa; border-bottom: 1px solid #ddd;">
+                                                                <strong style="font-size: 14px;">
+                                                                    <t t-if="status == 'Open'">
+                                                                        <i class="fa fa-unlock text-success"></i> Open Requests
+                                                                    </t>
+                                                                    <t t-else="">
+                                                                        <i class="fa fa-lock text-muted"></i> Closed Requests
+                                                                    </t>
+                                                                    <span class="badge" t-esc="len(status_groups[status])"/>
+                                                                </strong>
+                                                            </div>
+                                                            <table class="table table-hover o_my_status_table" style="margin-bottom: 0;">
+                                                                <thead>
+                                                                    <tr class="active">
+                                                                        <th style="width: 15%;">Code</th>
+                                                                        <th style="width: 12%;">Start Date</th>
+                                                                        <th style="width: 10%;" class="text-center">Consumptions</th>
+                                                                        <th style="width: 12%;">Status</th>
+                                                                        <th class="text-center" style="width: 18%;">Modification Deadline</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <t t-foreach="status_groups[status]" t-as="preswateringrequest">
+                                                                        <tr>
+                                                                            <td>
+                                                                                <a t-attf-href="/my/preswateringrequest/#{preswateringrequest.id}">
+                                                                                    <t t-esc="preswateringrequest.name"/>
+                                                                                </a>
+                                                                            </td>
+                                                                            <td><t t-esc="preswateringrequest.initial_date"/></td>
+                                                                            <td class="text-center"><t t-esc="preswateringrequest.number_of_presresconsumptions"/></td>
+                                                                            <td>
+                                                                                <t t-if="preswateringrequest.state == '01_draft'">
+                                                                                    <span class="label label-default">Draft</span>
+                                                                                </t>
+                                                                                <t t-if="preswateringrequest.state == '02_validated'">
+                                                                                    <span class="label label-success">Validated</span>
+                                                                                </t>
+                                                                            </td>
+                                                                            <td class="text-center">
+                                                                                <t t-if="preswateringrequest.modification_deadline_message">
+                                                                                    <t t-esc="preswateringrequest.modification_deadline_message"/>
+                                                                                </t>
+                                                                                <t t-else="">
+                                                                                    -
+                                                                                </t>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </t>
+                                                                </tbody>
+                                                            </table>
+                                                        </t>
+                                                    </t>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </t>
+                                </div>
+
+                                <t t-if="pager">
+                                    <div class="o_portal_pager text-center">
+                                        <t t-call="website.pager">
+                                            <t t-set="classname">pagination</t>
+                                        </t>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+
+        <!-- Portal view for pressurized irrigation request consumptions -->
+        <template id="portal_my_presresconsumptions" name="My Request Consumptions">
+            <t t-call="website.layout">
+                <div class="container mt16">
+                    <div class="navbar navbar-default">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#oe-help-navbar-collapse">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a class="navbar-brand" href="/my/home">
+                                My Account
+                            </a>
+                        </div>
+                        <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
+                            <ul class="nav navbar-nav o_portal_submenu">
+                                <li><a href="/my/invoices">Invoices</a></li>
+                                <li><a href="/my/parcels">Parcels</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <t t-if="not presresconsumptions">
+                    <div class="alert alert-info" role="alert">
+                        There are currently no request consumptions for your account.
+                    </div>
+                </t>
+                <t t-if="presresconsumptions">
+                    <div id="wrap">
+                        <div class="container-fluid mb64" style="max-width: 98%; margin: 0 auto;">
+                            <div class="col-md-12">
+                                <h3 class="page-header">Request Consumptions</h3>
+                                <div class="row" style="margin-bottom:6px;">
+                                    <div class="col-md-4">
+                                        <form method="GET" class="form-inline" style="margin:0;">
+                                            <div class="form-group">
+                                                <label for="preswateringperiod_filter_prc" class="mr8">Period:</label>
+                                                <select name="preswateringperiod_id" id="preswateringperiod_filter_prc" class="form-control" onchange="this.form.submit()">
+                                                    <option value="">All Periods</option>
+                                                    <t t-foreach="preswateringperiods" t-as="period">
+                                                        <option t-att-value="period.id" t-att-selected="'selected' if selected_preswateringperiod_id == period.id else None">
+                                                            <t t-esc="period.name"/>
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <form method="GET" style="width:100%;">
+                                            <input type="hidden" name="preswateringperiod_id" t-att-value="selected_preswateringperiod_id or ''"/>
+                                            <div style="display:flex; align-items:center;">
+                                                <div class="form-group mr8">
+                                                    <select name="search_field" class="form-control">
+                                                        <option value="">Search by...</option>
+                                                        <option value="waterconnection" t-att-selected="'selected' if search_field == 'waterconnection' else None">Water Connection</option>
+                                                        <option value="request_date" t-att-selected="'selected' if search_field == 'request_date' else None">Request Date</option>
+                                                        <option value="state" t-att-selected="'selected' if search_field == 'state' else None">Status</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group mr8" style="flex:1;">
+                                                    <input type="text" name="search" class="form-control" placeholder="Search..." t-att-value="search_query or ''" style="width:100%; box-sizing:border-box;"/>
+                                                </div>
+                                                <div class="form-group">
+                                                    <button type="submit" class="btn btn-primary">Search</button>
+                                                    <a href="/my/presresconsumptions" class="btn btn-default ml8">Clear</a>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table class="table table-hover o_my_status_table" style="width: 100%; min-width: 1200px;">
+                                        <thead>
+                                            <tr class="active">
+                                                <th style="width:15%;">Water Connection</th>
+                                                <th style="width:10%;">Request Date</th>
+                                                <th class="text-center" style="width:10%;">Start Hour</th>
+                                                <th class="text-right" style="width:12%;">Duration (h)</th>
+                                                <th class="text-right" style="width:12%;">Requested Flow (m³/h)</th>
+                                                <th class="text-right" style="width:12%;">Granted Flow (m³/h)</th>
+                                                <th class="text-right" style="width:12%;">Volume (m³)</th>
+                                                <th style="width:12%;">Status</th>
+                                                <th class="text-center" style="width:5%;">Selected</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="presresconsumptions" t-as="consumption">
+                                                <tr>
+                                                    <td style="width:15%; overflow:hidden; text-overflow:ellipsis;" t-att-title="consumption.waterconnection_id.name">
+                                                        <t t-esc="consumption.waterconnection_id.name"/>
+                                                    </td>
+                                                    <td style="width:10%;"><t t-esc="consumption.request_date"/></td>
+                                                    <td class="text-center" style="width:10%;">
+                                                        <t t-esc="'%02d:%02d' % (int(consumption.initial_hour or 0), int(round((consumption.initial_hour or 0 - int(consumption.initial_hour or 0)) * 60)))"/>
+                                                    </td>
+                                                    <td class="text-right" style="width:12%;">
+                                                        <t t-esc="'%02d:%02d' % (int(consumption.watering_duration or 0), int(round((consumption.watering_duration or 0 - int(consumption.watering_duration or 0)) * 60)))"/>
+                                                    </td>
+                                                    <td class="text-right" style="width:12%;"><t t-esc="'%.2f' % (consumption.nominal_flow or 0)"/></td>
+                                                    <td class="text-right" style="width:12%;"><t t-esc="'%.2f' % (consumption.nominal_flow_granted or 0)"/></td>
+                                                    <td class="text-right" style="width:12%;"><t t-esc="'%.2f' % (consumption.watering_volume or 0)"/></td>
+                                                    <td style="width:12%;">
+                                                        <t t-if="consumption.state == '01_proposed'">
+                                                            <span class="label label-info">Proposed</span>
+                                                        </t>
+                                                        <t t-if="consumption.state == '02_granted'">
+                                                            <span class="label label-warning">Granted</span>
+                                                        </t>
+                                                        <t t-if="consumption.state == '03_issued'">
+                                                            <span class="label label-success">Issued</span>
+                                                        </t>
+                                                    </td>
+                                                    <td class="text-center" style="width:5%;">
+                                                        <t t-if="consumption.selected">
+                                                            <i class="fa fa-check text-success" aria-hidden="true" title="Selected"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <i class="fa fa-times text-muted" aria-hidden="true" title="Not selected"/>
+                                                        </t>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <t t-if="pager">
+                                    <div class="o_portal_pager text-center">
+                                        <t t-call="website.pager">
+                                            <t t-set="classname">pagination</t>
+                                        </t>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+
+        <!-- Portal view for single pressurized irrigation request detail -->
+        <template id="portal_my_preswateringrequest_detail" name="My Pressurized Irrigation Request Detail">
+            <t t-call="website.layout">
+                <div class="container mt16">
+                    <div class="navbar navbar-default">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#oe-help-navbar-collapse">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a class="navbar-brand" href="/my/home">
+                                My Account
+                            </a>
+                        </div>
+                        <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
+                            <ul class="nav navbar-nav o_portal_submenu">
+                                <li><a href="/my/invoices">Invoices</a></li>
+                                <li><a href="/my/parcels">Parcels</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="wrap">
+                    <div class="container-fluid mb64" style="max-width: 98%; margin: 0 auto;">
+                        <div class="col-md-12">
+                            <div class="row mb16">
+                                <div class="col-md-12">
+                                    <ol class="breadcrumb">
+                                        <li><a href="/my/home">My Account</a></li>
+                                        <li><a href="/my/preswateringrequests">Pressurized Irrigation Requests</a></li>
+                                        <li class="active"><t t-esc="preswateringrequest.name"/></li>
+                                    </ol>
+                                </div>
+                            </div>
+
+                            <h3 class="page-header">
+                                Irrigation Request: <t t-esc="preswateringrequest.name"/>
+                            </h3>
+
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">Request Details</h4>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <strong>Code:</strong><br/>
+                                            <t t-esc="preswateringrequest.name"/>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <strong>Period:</strong><br/>
+                                            <t t-esc="preswateringrequest.preswateringperiod_id.display_name or 'N/A'"/>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <strong>Start Date:</strong><br/>
+                                            <t t-esc="preswateringrequest.initial_date"/>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <strong>Status:</strong><br/>
+                                            <t t-if="preswateringrequest.state == '01_draft'">
+                                                <span class="label label-default">Draft</span>
+                                            </t>
+                                            <t t-if="preswateringrequest.state == '02_validated'">
+                                                <span class="label label-success">Validated</span>
+                                            </t>
+                                        </div>
+                                    </div>
+                                    <div class="row mt16">
+                                        <div class="col-md-2">
+                                            <strong>Is Open:</strong><br/>
+                                            <t t-if="preswateringrequest.is_open">
+                                                <span class="text-primary">
+                                                    <i class="fa fa-check-circle"></i> Si
+                                                </span>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="text-muted">
+                                                    <i class="fa fa-times-circle"></i> No
+                                                </span>
+                                            </t>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <strong>Total Consumptions:</strong><br/>
+                                            <t t-esc="preswateringrequest.number_of_presresconsumptions"/>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <strong>Modification Deadline:</strong><br/>
+                                            <t t-if="preswateringrequest.modification_deadline_message">
+                                                <t t-esc="preswateringrequest.modification_deadline_message"/>
+                                            </t>
+                                            <t t-else="">
+                                                -
+                                            </t>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <t t-if="preswateringrequest.html_quota_balance">
+                                                <div style="font-size: 11px;">
+                                                    <t t-raw="preswateringrequest.html_quota_balance"/>
+                                                </div>
+                                            </t>
+                                            <t t-else="">
+                                                -
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h4 class="page-header mt32">
+                                Associated Consumptions
+                                <span class="badge"><t t-esc="len(presresconsumptions)"/></span>
+                            </h4>
+
+                            <t t-if="not presresconsumptions">
+                                <div class="alert alert-info" role="alert">
+                                    There are no consumptions associated with this irrigation request.
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-striped o_my_status_table">
+                                        <thead>
+                                            <tr class="active">
+                                                <th style="width:15%;">Water Connection</th>
+                                                <th style="width:10%;">Request Date</th>
+                                                <th class="text-center" style="width:10%;">Start Hour</th>
+                                                <th class="text-right" style="width:12%;">Duration (h)</th>
+                                                <th class="text-right" style="width:12%;">Flow (l/s)</th>
+                                                <th class="text-right" style="width:12%;">Flow Granted (l/s)</th>
+                                                <th class="text-right" style="width:12%;">Volume (m³)</th>
+                                                <th style="width:12%;">Status</th>
+                                                <th class="text-center" style="width:5%;">Selected</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="presresconsumptions" t-as="consumption">
+                                                <tr>
+                                                    <td style="overflow:hidden; text-overflow:ellipsis;" t-att-title="consumption.waterconnection_id.name">
+                                                        <t t-esc="consumption.waterconnection_id.name"/>
+                                                    </td>
+                                                    <td><t t-esc="consumption.request_date"/></td>
+                                                    <td class="text-center">
+                                                        <t t-esc="'%02d:%02d' % (int(consumption.initial_hour or 0), int(round((consumption.initial_hour or 0 - int(consumption.initial_hour or 0)) * 60)))"/>
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <t t-esc="'%02d:%02d' % (int(consumption.watering_duration or 0), int(round((consumption.watering_duration or 0 - int(consumption.watering_duration or 0)) * 60)))"/>
+                                                    </td>
+                                                    <td class="text-right"><t t-esc="'%.2f' % (consumption.nominal_flow or 0)"/></td>
+                                                    <td class="text-right"><t t-esc="'%.2f' % (consumption.nominal_flow_granted or 0)"/></td>
+                                                    <td class="text-right"><t t-esc="'%.2f' % (consumption.watering_volume or 0)"/></td>
+                                                    <td>
+                                                        <t t-if="consumption.state == '01_proposed'">
+                                                            <span class="label label-info">Proposed</span>
+                                                        </t>
+                                                        <t t-if="consumption.state == '02_granted'">
+                                                            <span class="label label-warning">Granted</span>
+                                                        </t>
+                                                        <t t-if="consumption.state == '03_issued'">
+                                                            <span class="label label-success">Issued</span>
+                                                        </t>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <t t-if="consumption.selected">
+                                                            <i class="fa fa-check text-success" aria-hidden="true" title="Selected"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <i class="fa fa-times text-muted" aria-hidden="true" title="Not selected"/>
+                                                        </t>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </t>
+
+                            <div class="row mt32">
+                                <div class="col-md-12">
+                                    <a href="/my/preswateringrequests" class="btn btn-default">
+                                        <i class="fa fa-arrow-left"></i> Back to Requests List
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+    </data>
+</odoo>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="portal_my_irrigationmanagement"
+                  inherit_id="base_wua_portal_infrastructure.portal_my_irrigationmanagement"
+                  name="Add Pressurized Irrigation Requests Menu">
+            <xpath expr="//div[@name='irrigation_menu']" position="inside">
+                <h3 class="page-header" style="order: 100;">
+                    <a href="/my/preswateringrequests">
+                        <i class="fa fa-fw fa-calendar-check-o"/>
+                        Pressurized Irrigation Requests
+                        <small class="ml8">
+                            <t t-if="preswateringrequest_count">
+                                <span class='badge pull-right'><t t-esc="preswateringrequest_count"/></span>
+                            </t>
+                        </small>
+                    </a>
+                </h3>
+                <h3 class="page-header" style="order: 101;">
+                    <a href="/my/presresconsumptions">
+                        <i class="fa fa-table"/>
+                        Request Consumptions
+                        <small class="ml8">
+                            <t t-if="presresconsumption_count">
+                                <span class='badge pull-right'><t t-esc="presresconsumption_count"/></span>
+                            </t>
+                        </small>
+                    </a>
+                </h3>
+            </xpath>
+        </template>
+    </data>
+</odoo>
