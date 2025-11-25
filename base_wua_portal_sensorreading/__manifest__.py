@@ -13,11 +13,15 @@
     "depends": [
         "base_wua_portal",
         "wua_mdm_sensor_management",
+        "board_grafana_integration",
     ],
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
         "views/portal_sensorreadings_templates.xml",
+        "views/mdm_settings_views.xml",
+        "data/template_portal_user_grafana_dashboard.xml",
+        "data/template_portal_user_histogram_grafana_dashboard.xml",
     ],
     "installable": True,
     "application": False,

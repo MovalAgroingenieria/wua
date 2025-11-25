@@ -60,12 +60,14 @@ class WuaParcelSensorReading(models.Model):
         new_cr = sql_db.db_connect(db_name).cursor()
 
         try:
-            new_cr.execute("REFRESH MATERIALIZED VIEW CONCURRENTLY wua_parcel_sensor_reading;")
+            new_cr.execute("REFRESH MATERIALIZED VIEW CONCURRENTLY \
+                wua_parcel_sensor_reading;")
             new_cr.commit()
         except Exception:
             new_cr.rollback()
             try:
-                new_cr.execute("REFRESH MATERIALIZED VIEW wua_parcel_sensor_reading;")
+                new_cr.execute("REFRESH MATERIALIZED VIEW \
+                    wua_parcel_sensor_reading;")
                 new_cr.commit()
             except Exception:
                 new_cr.rollback()

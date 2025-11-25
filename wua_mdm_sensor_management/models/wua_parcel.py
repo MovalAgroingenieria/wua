@@ -342,22 +342,27 @@ class WuaParcel(models.Model):
             view = self.env['ir.ui.view'].browse(view_id)
             if view and view.name == 'Parcels (tree view)':
                 doc = etree.XML(res['arch'])
-                for node in doc.xpath("//field[@name='mapped_to_specific_device_as_symbol']"):
+                for node in doc.xpath(
+                        "//field[@name='mapped_to_specific_device_as_symbol']"):
                     node.set('modifiers', '{"invisible": true}')
                     node.set('modifiers', '{"tree_invisible": true}')
                 res['arch'] = etree.tostring(doc)
             if view and view.name == 'wua.parcel.from.device.view.search':
                 doc = etree.XML(res['arch'])
-                for node in doc.xpath("//filter[@name='mapped_to_any_device_yes']"):
+                for node in doc.xpath(
+                        "//filter[@name='mapped_to_any_device_yes']"):
                     node.set('modifiers', '{"invisible": true}')
-                for node in doc.xpath("//filter[@name='mapped_to_any_device_no']"):
+                for node in doc.xpath(
+                        "//filter[@name='mapped_to_any_device_no']"):
                     node.set('modifiers', '{"invisible": true}')
                 res['arch'] = etree.tostring(doc)
             if view and view.name == 'Parcels (search view)':
                 doc = etree.XML(res['arch'])
-                for node in doc.xpath("//filter[@name='mapped_to_specific_device_yes']"):
+                for node in doc.xpath(
+                        "//filter[@name='mapped_to_specific_device_yes']"):
                     node.set('modifiers', '{"invisible": true}')
-                for node in doc.xpath("//filter[@name='mapped_to_specific_device_no']"):
+                for node in doc.xpath(
+                        "//filter[@name='mapped_to_specific_device_no']"):
                     node.set('modifiers', '{"invisible": true}')
                 res['arch'] = etree.tostring(doc)
         return res

@@ -4,6 +4,7 @@
 
 from odoo import api, fields, models
 
+
 class ResPartnerSensorReading(models.Model):
 
     _name = 'res.partner.sensor.reading'
@@ -64,12 +65,14 @@ class ResPartnerSensorReading(models.Model):
         new_cr = sql_db.db_connect(db_name).cursor()
 
         try:
-            new_cr.execute("REFRESH MATERIALIZED VIEW CONCURRENTLY res_partner_sensor_reading;")
+            new_cr.execute("REFRESH MATERIALIZED VIEW CONCURRENTLY \
+                res_partner_sensor_reading;")
             new_cr.commit()
         except Exception:
             new_cr.rollback()
             try:
-                new_cr.execute("REFRESH MATERIALIZED VIEW res_partner_sensor_reading;")
+                new_cr.execute("REFRESH MATERIALIZED VIEW \
+                    res_partner_sensor_reading;")
                 new_cr.commit()
             except Exception:
                 new_cr.rollback()

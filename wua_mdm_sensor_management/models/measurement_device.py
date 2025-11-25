@@ -207,10 +207,11 @@ class MeasurementDevice(models.Model):
 
     def _link_all_parcels_sql(self):
         self.ensure_one()
-        # Use direct SQL INSERT-SELECT for performance with thousands of parcels
+        # Use direct SQL INSERT-SELECT for performance with thousands of items
         query = """
             INSERT INTO mdm_device_parcellink
-                (device_id, parcel_id, name, create_uid, create_date, write_uid, write_date)
+                (device_id, parcel_id, name, create_uid, create_date,
+                 write_uid, write_date)
             SELECT
                 %s as device_id,
                 wp.id as parcel_id,
