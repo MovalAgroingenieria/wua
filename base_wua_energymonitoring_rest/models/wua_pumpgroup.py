@@ -301,7 +301,7 @@ class WuaPumpgroup(models.Model):
         return vals
 
     # Hook
-    def _get_desc_of_measurements(self):
+    def _get_desc_of_measurements(self, identifier_list=None):
         return []
 
     @api.multi
