@@ -17,7 +17,7 @@
     'depends': [
         'base_ter',
     ],
-    'data': [
+    'data_old': [
         'security/ir.model.access.csv',
         'data/ter_profile_data.xml',
         'views/base_ter_menus.xml',
