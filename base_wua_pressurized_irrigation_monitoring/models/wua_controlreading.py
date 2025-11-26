@@ -301,24 +301,28 @@ class WuaControlreading(models.Model):
                     sub_prorrated_value_to_subparcels()
             self.validated = False
 
+    def _format_reading_datetime(self, reading_time):
+        reading_dt = fields.Datetime.from_string(reading_time)
+        if self.env.user.tz:
+            local_timezone = pytz.timezone(self.env.user.tz)
+            offset = local_timezone.utcoffset(reading_dt)
+            reading_dt = reading_dt + offset
+        reading_time_str = str(reading_dt)
+        date_str = reading_time_str[:10]
+        hour_str = reading_time_str[-8:]
+        date_str_localized = self.env['wua.parcel'].\
+            transform_date_to_locale(date_str)
+        full_datetime_str = date_str_localized + ' ' + hour_str
+        return date_str_localized, hour_str, full_datetime_str
+
     @api.multi
     def name_get(self):
         result = []
         for record in self:
             watermeter_name = record.watermeter_id.name
-            reading_time = \
-                fields.Datetime.from_string(record.reading_time)
-            if self.env.user.tz:
-                local_timezone = pytz.timezone(self.env.user.tz)
-                offset = local_timezone.utcoffset(reading_time)
-                reading_time = reading_time + offset
-            reading_time_str = str(reading_time)
-            date_str = reading_time_str[:10]
-            hour_str = reading_time_str[-8:]
-            date_str_localized = self.env['wua.parcel'].\
-                transform_date_to_locale(date_str)
-            name = watermeter_name + ' - ' + date_str_localized + \
-                ' ' + hour_str
+            date_localized, time_str, full_datetime_str = \
+                record._format_reading_datetime(record.reading_time)
+            name = watermeter_name + ' - ' + full_datetime_str
             result.append((record.id, name))
         return result
 
@@ -344,8 +348,10 @@ class WuaControlreading(models.Model):
         newest_reading = None
         error_watermeter = False
         readings_to_delete = 0
+        different_watermeters = set()
         for record in self:
             readings_to_delete = readings_to_delete + 1
+            different_watermeters.add(record.watermeter_id.name)
             if watermeter is None:
                 watermeter = record.watermeter_id
                 older_reading_time = record.reading_time
@@ -360,12 +366,22 @@ class WuaControlreading(models.Model):
                         newest_reading = record
                 else:
                     error_watermeter = True
-                    break
         if error_watermeter:
-            raise exceptions.UserError(_('There are different water meters.'))
+            watermeters_list = ', '.join(sorted(different_watermeters))
+            raise exceptions.UserError(
+                _('Cannot delete readings from different water meters. '
+                  'Selected readings belong to: %s. '
+                  'Please select readings from the same water meter.') % (
+                      watermeters_list,))
         if not newest_reading.is_last_reading:
-            raise exceptions.UserError(_('There can be no final readings '
-                                         'without eliminating.'))
+            watermeter_name = newest_reading.watermeter_id.name
+            date_localized, time_str, full_datetime_str = \
+                newest_reading._format_reading_datetime(
+                    newest_reading.reading_time)
+            raise exceptions.UserError(
+                _('Cannot delete reading from water meter "%s" with date '
+                  '%s because there are newer readings that must be '
+                  'deleted first.') % (watermeter_name, full_datetime_str))
         # Get the time of the new "last-reading".
         readings = self.env['wua.controlreading']
         new_last_reading = readings.search(
@@ -378,8 +394,21 @@ class WuaControlreading(models.Model):
              ('reading_time', '>=', older_reading_time),
              ('reading_time', '<=', newest_reading_time)])
         if len(readings_after_new_last_reading) != readings_to_delete:
-            raise exceptions.UserError(_('There can be no intermediate '
-                                         'readings without eliminating.'))
+            watermeter_name = watermeter.name
+            date_localized_older, time_str_older, older_datetime_str = \
+                self._format_reading_datetime(older_reading_time)
+            date_localized_newest, time_str_newest, newest_datetime_str = \
+                self._format_reading_datetime(newest_reading_time)
+            raise exceptions.UserError(
+                _('Cannot delete readings from water meter "%s". You are '
+                  'trying to delete %s readings but there are %s readings '
+                  'in the range from %s to %s. All readings in this '
+                  'range must be selected for deletion.') % (
+                      watermeter_name,
+                      readings_to_delete,
+                      len(readings_after_new_last_reading),
+                      older_datetime_str,
+                      newest_datetime_str))
         for record in self:
             if (record.validated and record.controlpresconsumption_id):
                 record.controlpresconsumption_id.\

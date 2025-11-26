@@ -158,8 +158,9 @@ class WuaControlreading(models.Model):
                             # Unset, because ondelete='restrict'
                             presresconsumption_ids.write(
                                 {'controlreading_id': None})
-                            # Ensure ordered by reading time because newer
-                            # must be deleted first
+                            # Ensure ordered by reading time desc because
+                            # newer must be deleted first, then we reverse
+                            # to recreate in natural order (oldest to newest)
                             for control_reading in controlreadings_to_delete:
                                 control_reading.unlink()
                             self.create({
@@ -170,7 +171,9 @@ class WuaControlreading(models.Model):
                                 'from_import': False,
                                 'validated': True,
                             })
-                            for pr in presresconsumption_ids:
+                            # Recreate in natural order (oldest to newest)
+                            for pr in presresconsumption_ids.sorted(
+                                    key=lambda r: r.request_time):
                                 # Recreate controlreading for each
                                 # presresconsumption
                                 self._create_controlreading_for_pr(pr)
