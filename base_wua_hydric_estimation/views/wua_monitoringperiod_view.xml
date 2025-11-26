@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_monitoringperiod_view_form" model="ir.ui.view">
+        <field name="name">wua.monitoringperiod.view.form</field>
+        <field name="model">wua.monitoringperiod</field>
+        <field name="arch" type="xml">
+            <form duplicate="false">
+                <field name="id" invisible="1"/>
+                <header>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_get_hydric_estimations"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-calculator">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_text">
+                                    Recommen-
+                                </span>
+                                <span class="o_stat_text">
+                                    dations
+                                </span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title" colspan="2">
+                        <field name="agriculturalseason_id_title"/>
+                        <h2>
+                            <div>
+                                <field name="initial_date_title" class="oe_inline"/>
+                                <span class="oe_inline"> - </span>
+                                <field name="end_date_title" class="oe_inline"/>
+                            </div>
+                        </h2>
+                    </div>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="agriculturalseason_id"
+                                   string="Agricultural Season"
+                                   options="{'no_create_edit':True}"
+                                   attrs="{'invisible': [('id', '>', 0)]}"/>
+                            <label for="initial_date"/>
+                            <div>
+                                <field name="initial_date" class="oe_inline"/>
+                                <span class="oe_inline"> - </span>
+                                <field name="end_date" class="oe_inline"/>
+                            </div>
+                            <field name="number_of_cropunits"
+                                   string="Crop units"/>
+                            <field name="number_of_hydricestimations"
+                                   string="Recommendations"/>
+                        </group>
+                        <group name="master_data_right">
+                            <div name="section_sum_total_gin_no_value" colspan="2" class="text-center"
+                                 attrs="{'invisible': [('sum_total_gin', '>', 0)]}">
+                                <p>(No recommendations are available for the control period)</p>
+                            </div>
+                            <div name="section_sum_total_gin_title" colspan="2" class="text-center"
+                                 attrs="{'invisible': [('sum_total_gin', '=', 0)]}">
+                                <p>Gross Irrigation Need :</p>
+                            </div>
+                            <div name="section_sum_total_gin"
+                                 colspan="2" class="text-center panel-body"
+                                 style="border-color:#cccccc;border-width:1px;border-style:solid;height:50px;margin-top:5px;margin-left:25%;margin-right:25%"
+                                 attrs="{'invisible': [('sum_total_gin', '=', 0)]}">
+                                <b><span class="oe_inline">Total = </span>
+                                <field name="sum_total_gin" class="oe_inline"/>
+                                <span class="oe_inline"> m³</span></b>
+                            </div>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="page_notes" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"
+                           widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids"
+                           widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_monitoringperiod_view_tree" model="ir.ui.view">
+        <field name="name">wua.monitoringperiod.view.tree</field>
+        <field name="model">wua.monitoringperiod</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_hydric_estimation_monitoringperiod_view_tree"
+                  colors="green:is_current_controlperiod==True;"
+                  default_order="initial_date desc">
+                <field name="is_current_controlperiod" invisible="1"/>
+                <field name="initial_date" string="Initial Date"/>
+                <field name="end_date" string="End Date"/>
+                <field name="agriculturalseason_id" string="Agricultural Season"/>
+                <field name="number_of_cropunits" string="No. crop units"/>
+                <field name="number_of_hydricestimations" string="No. estimations"/>
+                <field name="sum_total_gin" string="Gross Irrig. Need"/>
+                <field name="state" string="State"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_monitoringperiod_view_search" model="ir.ui.view">
+        <field name="name">wua.monitoringperiod.view.search</field>
+        <field name="model">wua.monitoringperiod</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="initial_date" string="Initial Date"/>
+                <field name="state" string="State"/>
+                <filter string="Active agricultural season"
+                        name="mapped_to_active_agriculturalseason_yes"
+                        domain="[('mapped_to_active_agriculturalseason', '=', True)]"/>
+                <separator/>
+                <filter string="State: Uncalculated"
+                        name="state_uncalculated"
+                        domain="[('state', '=', '01_uncalculated')]"/>
+                <filter string="State: Calculated"
+                        name="state_calculated"
+                        domain="[('state', '=', '02_calculated')]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Agricultural Season"
+                            name="grouped_agriculturalseason"
+                     context="{'group_by':'agriculturalseason_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_monitoringperiod_view_kanban" model="ir.ui.view">
+        <field name="name">wua.monitoringperiod.view.kanban</field>
+        <field name="model">wua.monitoringperiod</field>
+        <field name="arch" type="xml">
+            <kanban create="false"
+                    group_create="false"
+                    group_delete="false"
+                    default_order="name desc">
+                <field name="id"/>
+                <field name="initial_date"/>
+                <field name="end_date"/>
+                <field name="is_current_controlperiod"/>
+                <field name="number_of_cropunits"/>
+                <field name="number_of_hydricestimations"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="oe_kanban_details">
+                                <div class="text-center">
+                                    <strong><field name="initial_date"/> - <field name="end_date"/></strong><br/>
+                                    <t t-if="record.is_current_controlperiod.raw_value">
+                                        <span class="text-success"><strong>(CURRENT PERIOD)</strong></span>
+                                    </t>
+                                </div>
+                                <div class="text-center" style="margin-top:10px">
+                                    <t t-if="record.sum_total_gin.raw_value">
+                                        <h1><field name="sum_total_gin"/> m³</h1>
+                                    </t>
+                                    <t t-else="">
+                                        <span>No recommendations available</span>
+                                    </t>
+                                </div>
+                                <div class="container" style="margin-top:10px">
+                                    <div name="div_content" class="row">
+                                        <div name="div_content_01">
+                                            <field name="number_of_cropunits"/> crop units
+                                        </div>
+                                        <div name="div_content_01">
+                                            <field name="number_of_hydricestimations"/> irrigation recommendations
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="wua_monitoringperiod_view_calendar" model="ir.ui.view">
+        <field name="name">wua.monitoringperiod.view.calendar</field>
+        <field name="model">wua.monitoringperiod</field>
+        <field name="arch" type="xml">
+            <calendar date_start="initial_date"
+                      date_stop="end_date"
+                      mode="month"
+                      display="Gross Irrigation Need = [sum_total_gin] m³">
+                <field name="initial_date"/>
+                <field name="end_date"/>
+                <field name="sum_total_gin"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="wua_monitoringperiod_view_graph" model="ir.ui.view">
+        <field name="name">wua.monitoringperiod.view.graph</field>
+        <field name="model">wua.monitoringperiod</field>
+        <field name="arch" type="xml">
+            <graph string="Gross Irrigation Need (m³)" stacked="False">
+                <field name="initial_date"/>
+                <field name="sum_total_gin" type='measure'/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="wua_monitoringperiod_view_pivot" model="ir.ui.view">
+        <field name="name">wua.monitoringperiod.view.pivot</field>
+        <field name="model">wua.monitoringperiod</field>
+        <field name="arch" type="xml">
+            <pivot string="Agregated Values" display_quantity="true">
+                <field name="agriculturalseason_id" type="row"/>
+                <field name="sum_total_gin" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="wua_monitoringperiod_action"
+            model="ir.actions.act_window">
+        <field name="name">Control Periods</field>
+        <field name="res_model">wua.monitoringperiod</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_monitoringperiod_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('wua_monitoringperiod_view_form')}),
+                (0, 0, {'view_mode': 'kanban',
+                        'view_id': ref('wua_monitoringperiod_view_kanban')}),
+                (0, 0, {'view_mode': 'calendar',
+                        'view_id': ref('wua_monitoringperiod_view_calendar')}),
+                (0, 0, {'view_mode': 'graph',
+                        'view_id': ref('wua_monitoringperiod_view_graph')}),
+                (0, 0, {'view_mode': 'pivot',
+                        'view_id': ref('wua_monitoringperiod_view_pivot')})]"/>
+        <field name="search_view_id" ref="wua_monitoringperiod_view_search"/>
+        <field name="context">
+            {'upper_description_agriculturalseason': True,
+             'search_default_mapped_to_active_agriculturalseason_yes': True}
+        </field>
+    </record>
+
+    <menuitem id="wua_monitoringperiod_menu"
+              name="Control Periods"
+              parent="base_wua_census_calculation_menu"
+              action="wua_monitoringperiod_action"
+              sequence="20"/>
+
+</odoo>

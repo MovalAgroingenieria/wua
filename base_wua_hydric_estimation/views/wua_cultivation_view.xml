@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_cultivation_view_form" model="ir.ui.view">
+        <field name="name">wua.cultivation.view.form.base_wua_hydric_estimation</field>
+        <field name="model">wua.cultivation</field>
+        <field name="inherit_id" ref="base_wua.wua_cultivation_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='description']" position="after">
+                <field name="cropfamily_id"
+                       string="Crop Family"
+                       style="width:250px"
+                       options="{'no_create_edit':True}"/>
+                <field name="suitable_hydric_estimation"
+                       string="Suitable for irrigation recommendations"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_cultivation_view_tree" model="ir.ui.view">
+        <field name="name">wua.cultivation.view.tree.base_wua_hydric_estimation</field>
+        <field name="model">wua.cultivation</field>
+        <field name="inherit_id" ref="base_wua.wua_cultivation_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='number_of_varieties']" position="after">
+                <field name="cropfamily_id" string="Crop Family"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_cultivation_view_search" model="ir.ui.view">
+        <field name="name">wua.cultivation.view.search.base_wua_hydric_estimation</field>
+        <field name="model">wua.cultivation</field>
+        <field name="inherit_id" ref="base_wua.wua_cultivation_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="cropfamily_id" string="Crop Family"/>
+                <filter name="suitable_hydric_estimation_yes"
+                        string="Suitable for irrigation recommendations"
+                        domain="[('suitable_hydric_estimation', '=', True)]"/>
+                <filter name="suitable_hydric_estimation_no"
+                        string="Not suitable for irrigation recommendations"
+                        domain="[('suitable_hydric_estimation', '!=', True)]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Crop Family"
+                     name="cropfamily"
+                     context="{'group_by':'cropfamily_id'}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="base_wua.wua_cultivation_action" model="ir.actions.act_window">
+        <field name="context">
+            {'search_default_suitable_hydric_estimation_yes': True,}
+        </field>
+    </record>
+
+</odoo>
