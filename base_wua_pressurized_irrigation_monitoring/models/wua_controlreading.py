@@ -485,8 +485,13 @@ class WuaControlreading(models.Model):
                             self.__class__.__name__)
                         _logger.info(prefix_message_02 + '... ' +
                                      suffix_message_02)
+                        error_subject = _(
+                            'Remote Control: Error getting readings')
                         remotecontrol.message_post(
+                            subject=error_subject,
                             body="Error %s: " % suffix_message_02,
+                            message_type='email',
+                            subtype='mail.mt_comment',
                         )
                     if controlperiod_ids:
                         controlperiods = \
@@ -503,7 +508,10 @@ class WuaControlreading(models.Model):
                         'base_wua_remotecontrol_rest.wua_remotecontrol_logger',
                     )
                     new_remotecontrol.message_post(
-                        body="Error %s: " % e,
+                        subject=_('Remote Control: Exception Error'),
+                        body="Error: %s" % e,
+                        message_type='email',
+                        subtype='mail.mt_comment',
                     )
                     new_cr.commit()
                 raise e
@@ -587,9 +595,13 @@ class WuaControlreading(models.Model):
             remotecontrol = self.env.ref(
                 'base_wua_remotecontrol_rest.wua_remotecontrol_logger')
             remotecontrol.message_post(
-                body="Controlreadings from remote control: %s\n"
+                subject=_('Remote Control: Controlreadings Saved'),
+                body="Controlreadings from remote control: %s<br/>"
                      "Negative controlreadings: %s" % (
-                         number_of_readings, number_of_negative_readings))
+                         number_of_readings, number_of_negative_readings),
+                message_type='email',
+                subtype='mail.mt_comment',
+            )
         if controlperiod_ids:
             controlperiod_ids = list(set(controlperiod_ids))
         return number_of_negative_readings, controlperiod_ids

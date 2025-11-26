@@ -185,9 +185,13 @@ class WuaControlreading(models.Model):
             remotecontrol = self.env.ref(
                 'base_wua_remotecontrol_rest.wua_remotecontrol_logger')
             remotecontrol.message_post(
-                body="Controlreadings from remote control: %s\n"
+                subject=_('Remote Control: Controlreadings Saved'),
+                body="Controlreadings from remote control: %s<br/>"
                      "Negative controlreadings: %s" % (
-                         number_of_readings, number_of_negative_readings))
+                         number_of_readings, number_of_negative_readings),
+                message_type='email',
+                subtype='mail.mt_comment',
+            )
         if controlperiod_ids:
             controlperiod_ids = list(set(controlperiod_ids))
         return number_of_negative_readings, controlperiod_ids

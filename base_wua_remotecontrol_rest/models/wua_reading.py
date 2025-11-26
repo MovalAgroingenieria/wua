@@ -78,9 +78,13 @@ class WuaReading(models.Model):
                         self.__class__.__name__)
                     _logger.info(prefix_message_02 + '... ' +
                                  suffix_message_02)
+                    error_subject = _('Remote Control: Error getting readings')
                     remotecontrol.message_post(
+                        subject=error_subject,
                         body="Error %s: %s" % (
                             suffix_message_02, error_message),
+                        message_type='email',
+                        subtype='mail.mt_comment',
                     )
                     telecontrol_failed_template_id = self.env.ref(
                         'base_wua_remotecontrol_rest.'
@@ -103,7 +107,6 @@ class WuaReading(models.Model):
             except Exception as e:
                 _logger = logging.getLogger(self.__class__.__name__)
                 _logger.error("Error getting readings: %s", str(e))
-                # This does not seem as working
                 with self.pool.cursor() as new_cr:
                     new_env = api.Environment(
                         new_cr, self.env.uid, self.env.context)
@@ -111,7 +114,10 @@ class WuaReading(models.Model):
                         'base_wua_remotecontrol_rest.wua_remotecontrol_logger',
                     )
                     new_remotecontrol.message_post(
-                        body="Error %s: " % str(e),
+                        subject=_('Remote Control: Exception Error'),
+                        body="Error: %s" % str(e),
+                        message_type='email',
+                        subtype='mail.mt_comment',
                     )
                     new_cr.commit()
                 raise e
@@ -202,7 +208,11 @@ class WuaReading(models.Model):
             remotecontrol = self.env.ref(
                 'base_wua_remotecontrol_rest.wua_remotecontrol_logger')
             remotecontrol.message_post(
-                body="Readings from remote control: %s\n"
+                subject=_('Remote Control: Readings Saved'),
+                body="Readings from remote control: %s<br/>"
                      "Negative readings: %s" % (
-                         number_of_readings, number_of_negative_readings))
+                         number_of_readings, number_of_negative_readings),
+                message_type='email',
+                subtype='mail.mt_comment',
+            )
         return number_of_negative_readings
