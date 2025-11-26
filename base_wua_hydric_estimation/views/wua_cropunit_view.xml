@@ -59,7 +59,7 @@
                         <group name="master_data_02_left" class="text-left">
                             <div name="section_cropunit_data_title"
                                  colspan="2" class="text-center panel-body"
-                                 style="background:#fbfbfb;border-color:#cccccc;border-width:1px;border-style:solid;height:49px;margin-bottom:20px;margin-left:1px;margin-right:4px">
+                                 style="background:#fbfbfb;border-color:#cccccc;border-width:1px;border-style:solid;height:50px;margin-bottom:20px;margin-left:1px;margin-right:4px">
                                 <p>CROP UNIT DATA</p>
                             </div>
                             <field name="agriculturalseason_id"
@@ -98,7 +98,7 @@
                                attrs="{'invisible': [('exists_current_recommendation', '=', True)]}">
                             <div name="section_current_recommendation_title_no_recommendation"
                                  colspan="2" class="text-center panel-body"
-                                 style="background:#fbfbfb;border-color:#cccccc;border-width:1px;border-style:solid;height:49px;margin-bottom:20px;margin-left:1px;margin-right:4px">
+                                 style="background:#fbfbfb;border-color:#cccccc;border-width:1px;border-style:solid;height:50px;margin-bottom:20px;margin-left:1px;margin-right:4px">
                                 <p>CURRENT RECOMMENDATION</p>
                             </div>
                             <div name="no_recommendation"
@@ -110,7 +110,7 @@
                                attrs="{'invisible': [('exists_current_recommendation', '=', False)]}">
                             <div name="section_current_recommendation_title"
                                  colspan="2" class="text-center panel-body"
-                                 style="background:#fbfbfb;border-color:#cccccc;border-width:1px;border-style:solid;height:49px;margin-bottom:20px;margin-left:1px;margin-right:4px">
+                                 style="background:#fbfbfb;border-color:#cccccc;border-width:1px;border-style:solid;height:50px;margin-bottom:20px;margin-left:1px;margin-right:4px">
                                 <p>CURRENT RECOMMENDATION</p>
                             </div>
                             <label for="current_controlperiod_initial_date"
@@ -156,7 +156,7 @@
                             </div>
                             <div name="section_current_controlperiod_total_gin"
                                  colspan="2" class="text-center panel-body"
-                                 style="border-color:#cccccc;border-width:1px;border-style:solid;height:49px;margin-top:15px;margin-left:30%;margin-right:30%"
+                                 style="border-color:#cccccc;border-width:1px;border-style:solid;height:50px;margin-top:15px;margin-left:25%;margin-right:25%"
                                  attrs="{'invisible': [('exists_current_recommendation', '=', False)]}">
                                 <b><span class="oe_inline">Total = </span>
                                 <field name="current_controlperiod_total_gin" class="oe_inline"/>
@@ -276,7 +276,7 @@
                     <t t-name="kanban-box">
                         <div class="oe_kanban_global_click">
                             <div class="o_cropunit_kanban_image">
-                                <t t-if="record.aerial_image_shown and record.aerial_image_shown.raw_value">
+                                <t t-if="record.aerial_image_shown.raw_value">
                                     <img t-att-src="kanban_image('wua.cropunit', 'aerial_image_shown', record.id.raw_value)" alt="wua_cropunit" style="border-color:#696969;border-width:1px;border-style:solid"/>
                                 </t>
                                 <t t-else="">
@@ -363,7 +363,9 @@
                 (0, 0, {'view_mode': 'pivot',
                         'view_id': ref('wua_cropunit_view_pivot')})]"/>
         <field name="search_view_id" ref="wua_cropunit_view_search"/>
-        <field name="context">{'search_default_mapped_to_active_agriculturalseason_yes': True}</field>
+        <field name="context">
+            {'search_default_mapped_to_active_agriculturalseason_yes': True}
+        </field>
     </record>
 
     <menuitem id="wua_cropunit_menu"
