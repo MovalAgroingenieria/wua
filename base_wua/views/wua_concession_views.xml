@@ -31,10 +31,10 @@
     </record>
 
     <record id="wua_concession_view_tree" model="ir.ui.view">
-        <field name="name">wua.concession.view.tree</field>
+        <field name="name">wua.concession.view.list</field>
         <field name="model">wua.concession</field>
             <field name="arch" type="xml">
-            <tree default_order="alphanum_code"
+            <list default_order="alphanum_code"
                   class="o_base_wua_concession">
                 <field name="alphanum_code" string="Short Name"/>
                 <field name="description" string="Long Name / Description"/>
@@ -47,7 +47,7 @@
                        class="text-right"/>
                 <field name="provision" string="Provision (m³/ha)"
                        class="text-right"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -66,10 +66,10 @@
     <record id="wua_concession_action" model="ir.actions.act_window">
         <field name="name">Concessions</field>
         <field name="res_model">wua.concession</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="view_ids"
          eval="[(5, 0),
-                (0, 0, {'view_mode': 'tree',
+                (0, 0, {'view_mode': 'list',
                         'view_id': ref('wua_concession_view_tree')}),
                 (0, 0, {'view_mode': 'form',
                         'view_id': ref('wua_concession_view_form')})]"/>

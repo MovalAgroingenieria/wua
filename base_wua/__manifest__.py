@@ -4,7 +4,7 @@
 {
     'name': 'Water Users Association Management',
     'summary': 'In a water users association, management of users and parcels',
-    'version': "17.0.1.0.0",
+    'version': "18.0.1.0.0",
     'category': 'Water Users Associations',
     'website': 'https://www.moval.es',
     'author': 'Moval Agroingeniería',
