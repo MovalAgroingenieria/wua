@@ -4,7 +4,7 @@
 {
     'name': 'Massive Invoicing for Water Users Associations',
     'summary': 'In a Water Users Association, management of billing based on invoice sets.',
-    'version': "17.0.1.0.0",
+    'version': "18.0.1.0.0",
     'category': 'Accounting/Accounting',
     'website': 'https://www.moval.es',
     'author': 'Moval Agroingeniería',
