@@ -16,9 +16,10 @@
         "base_wua_quota_management",
     ],
     "data": [
+        "security/security.xml",
+        "security/ir.model.access.csv",
         "views/website_portal_templates.xml",
         "views/portal_irrigationmanagement_templates.xml",
-        'security/ir.model.access.csv',
     ],
     "installable": True,
     "application": False,

@@ -16,11 +16,12 @@
         "wua_crm_filemgmt",
     ],
     "data": [
+        "security/security.xml",
+        'security/ir.model.access.csv',
         "views/website_portal_templates.xml",
         "views/portal_documents_templates.xml",
         "views/portal_account_templates.xml",
         "views/res_file_views.xml",
-        'security/ir.model.access.csv',
     ],
     "installable": True,
     "application": False,
