@@ -624,7 +624,6 @@ class WuaInvoicesetLineInvoiceSurchargeVariable(models.Model):
         string='Invoiceset',
         comodel_name='wua.invoiceset',
         ondelete='cascade',
-        index=True,
     )
 
     selected = fields.Boolean(
@@ -682,6 +681,19 @@ class WuaInvoicesetLineInvoiceSurchargeVariable(models.Model):
         index=True,
     )
 
+    def _auto_init(self):
+        res = super(
+            WuaInvoicesetLineInvoiceSurchargeVariable, self
+        )._auto_init()
+        # Create index for invoiceset_id with a shorter name
+        self._cr.execute("""
+            CREATE INDEX IF NOT EXISTS
+                wua_invsetln_invsurch_var_invset_idx
+            ON wua_invoiceset_line_invoice_surcharge_variable
+                (invoiceset_id)
+        """)
+        return res
+
     @api.multi
     def _compute_currency_id(self):
         for record in self:
@@ -730,7 +742,6 @@ class WuaInvoicesetLineInvoiceSurchargeFixed(models.Model):
         string='Invoiceset',
         comodel_name='wua.invoiceset',
         ondelete='cascade',
-        index=True,
     )
 
     selected = fields.Boolean(
@@ -788,6 +799,19 @@ class WuaInvoicesetLineInvoiceSurchargeFixed(models.Model):
         index=True,
     )
 
+    def _auto_init(self):
+        res = super(
+            WuaInvoicesetLineInvoiceSurchargeFixed, self
+        )._auto_init()
+        # Create index for invoiceset_id with a shorter name
+        self._cr.execute("""
+            CREATE INDEX IF NOT EXISTS
+                wua_invsetln_invsurch_fix_invset_idx
+            ON wua_invoiceset_line_invoice_surcharge_fixed
+                (invoiceset_id)
+        """)
+        return res
+
     @api.multi
     def _compute_currency_id(self):
         for record in self:
@@ -837,7 +861,6 @@ class WuaInvoicesetLineInvoiceTotalSurchargeVariable(models.Model):
         string='Invoiceset',
         comodel_name='wua.invoiceset',
         ondelete='cascade',
-        index=True,
     )
 
     selected = fields.Boolean(
@@ -893,6 +916,19 @@ class WuaInvoicesetLineInvoiceTotalSurchargeVariable(models.Model):
         string='Invoicing Processes Variable Surcharges (Total)',
         index=True,
     )
+
+    def _auto_init(self):
+        res = super(
+            WuaInvoicesetLineInvoiceTotalSurchargeVariable, self
+        )._auto_init()
+        # Create index for invoiceset_id with a shorter name
+        self._cr.execute("""
+            CREATE INDEX IF NOT EXISTS
+                wua_invsetln_invtot_surchvar_invset_idx
+            ON wua_invoiceset_line_invoice_total_surcharge_variable
+                (invoiceset_id)
+        """)
+        return res
 
     @api.multi
     def _compute_currency_id(self):

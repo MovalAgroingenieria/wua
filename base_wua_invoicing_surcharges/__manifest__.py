@@ -6,7 +6,7 @@
     "name": "Water Users Association: Invoice Surcharge Invoicing",
     "summary": "In a water users association, unpayed invoice "
                "invoicing with fixed or variable surcharges",
-    "version": '10.0.1.1.3',
+    "version": '10.0.1.1.4',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
@@ -23,6 +23,7 @@
         "views/resources.xml",
         "views/wua_invoiceset_view.xml",
     ],
+    "uninstall_hook": "uninstall_hook",
     "installable": True,
     "application": True,
 }

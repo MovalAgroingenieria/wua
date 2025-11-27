@@ -28,9 +28,6 @@ class MDMConfigSettings(models.TransientModel):
             "mdm.config.settings", "portal_user_sensorreading_dashboard_id",
             self.portal_user_sensorreading_dashboard_id.id)
         values.set_default(
-            "mdm.config.settings", "portal_user_sensorreading_dashboard_id",
-            self.portal_user_sensorreading_dashboard_id.id)
-        values.set_default(
             "mdm.config.settings",
             "portal_user_sensorreading_dashboard_histogram_id",
             self.portal_user_sensorreading_dashboard_histogram_id.id)
