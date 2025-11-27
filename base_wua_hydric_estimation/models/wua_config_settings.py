@@ -169,10 +169,10 @@ class WuaConfiguration(models.TransientModel):
 
     _sql_constraints = [
         ('valid_default_standard_application_efficiency',
-         'CHECK (default_standard_application_efficiency >= 0 '
+         'CHECK (default_standard_application_efficiency > 0 '
          'and default_standard_application_efficiency <= 1)',
-         'The default standard application efficiency must be a value between '
-         '0 and 1.'),
+         'The default standard application efficiency must be a value greater '
+         'than 0 and less than or equal to 1.'),
         ('valid_default_control_periodicity',
          'CHECK (default_control_periodicity > 0)',
          'The number of days in each control period must be a '

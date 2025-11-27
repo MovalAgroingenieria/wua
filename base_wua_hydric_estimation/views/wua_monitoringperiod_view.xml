@@ -8,6 +8,24 @@
             <form duplicate="false">
                 <field name="id" invisible="1"/>
                 <header>
+                    <button name="calculate"
+                            type="object" string="Calculate"
+                            icon="fa-calculator"
+                            states="01_uncalculated"
+                            groups="base_wua.group_wua_manager"
+                            confirm="⚠️ Please confirm the operation."/>
+                    <button name="reset"
+                            type="object" string="Reset"
+                            icon="fa-eraser"
+                            states="02_calculated"
+                            groups="base_wua.group_wua_manager"
+                            confirm="⚠️ Please confirm the operation."/>
+                    <button name="refresh"
+                            type="object" string="Refresh"
+                            icon="fa-refresh"
+                            states="02_calculated"
+                            groups="base_wua.group_wua_manager"
+                            confirm="⚠️ Please confirm the operation."/>
                     <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>
@@ -255,5 +273,53 @@
               parent="base_wua_census_calculation_menu"
               action="wua_monitoringperiod_action"
               sequence="20"/>
+
+    <record id="wua_monitoringperiod_calculate" model="ir.actions.server">
+        <field name="name">Calculate</field>
+        <field name="model_id" ref="base_wua_hydric_estimation.model_wua_monitoringperiod"/>
+        <field name="code">
+            action =  env['wua.monitoringperiod'].browse(context['active_ids']).exec_multiple_calculate()
+        </field>
+    </record>
+
+    <record id="wua_monitoringperiod_action_calculate" model="ir.values">
+        <field name="name">Calculate</field>
+        <field name="model">wua.monitoringperiod</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_monitoringperiod_calculate'))"/>
+    </record>
+
+    <record id="wua_monitoringperiod_reset" model="ir.actions.server">
+        <field name="name">Reset</field>
+        <field name="model_id" ref="base_wua_hydric_estimation.model_wua_monitoringperiod"/>
+        <field name="code">
+            action =  env['wua.monitoringperiod'].browse(context['active_ids']).exec_multiple_reset()
+        </field>
+    </record>
+
+    <record id="wua_monitoringperiod_action_reset" model="ir.values">
+        <field name="name">Reset</field>
+        <field name="model">wua.monitoringperiod</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_monitoringperiod_reset'))"/>
+    </record>
+
+    <record id="wua_monitoringperiod_refresh" model="ir.actions.server">
+        <field name="name">Refresh</field>
+        <field name="model_id" ref="base_wua_hydric_estimation.model_wua_monitoringperiod"/>
+        <field name="code">
+            action =  env['wua.monitoringperiod'].browse(context['active_ids']).exec_multiple_refresh()
+        </field>
+    </record>
+
+    <record id="wua_monitoringperiod_action_refresh" model="ir.values">
+        <field name="name">Refresh</field>
+        <field name="model">wua.monitoringperiod</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_monitoringperiod_refresh'))"/>
+    </record>
 
 </odoo>

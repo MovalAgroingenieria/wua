@@ -27,6 +27,7 @@ class WuaMonitoringperiod(models.Model):
         comodel_name='wua.agriculturalseason',
         index=True,
         required=True,
+        ondelete='restrict',
     )
 
     initial_date = fields.Date(
@@ -258,3 +259,71 @@ class WuaMonitoringperiod(models.Model):
         self.ensure_one()
         # TODO (provisional)
         print 'action_get_hydric_estimations (from monitoring period)...'
+
+    @api.multi
+    def calculate(self, update_state=True):
+        self.ensure_one()
+        if self.state == '01_uncalculated' or (not update_state):
+            if not self.env.user.has_group('base_wua.group_wua_manager'):
+                raise exceptions.ValidationError(_(
+                    'Operation not allowed.'))
+            self.reset(update_state=False)
+            cropunits_to_calculate = self.env['wua.cropunit'].search(
+                [('end_date', '>=', self.initial_date),
+                 ('initial_date', '<=', self.end_date)])
+            for cropunit_to_calculate in (cropunits_to_calculate or []):
+                self.env['wua.hydricneed'].create({
+                    'cropunit_id': cropunit_to_calculate.id,
+                    'monitoringperiod_id': self.id,
+                })
+            if update_state:
+                self.state = '02_calculated'
+            self.message_post(
+                _('Calculation executed successfully, total gross irrigation '
+                  'needs') + ' = {:.2f}'.format(self.sum_total_gin) +
+                ' ' + 'm3')
+
+    @api.multi
+    def reset(self, update_state=True):
+        self.ensure_one()
+        if self.state == '02_calculated':
+            if not self.env.user.has_group('base_wua.group_wua_manager'):
+                raise exceptions.ValidationError(_(
+                    'Operation not allowed.'))
+            try:
+                self.env.cr.savepoint()
+                self.env.cr.execute(
+                    ('DELETE FROM wua_hydricneed WHERE '
+                     'monitoringperiod_id = %s' % (self.id,)))
+                self.env.cr.commit()
+            except (Exception,):
+                self.env.cr.rollback()
+                raise exceptions.UserError(_(
+                    'It has not been possible to reset the control periods.'))
+            if update_state:
+                self.state = '01_uncalculated'
+
+    @api.multi
+    def refresh(self):
+        self.ensure_one()
+        if self.state == '02_calculated':
+            if not self.env.user.has_group('base_wua.group_wua_manager'):
+                raise exceptions.ValidationError(_(
+                    'Operation not allowed.'))
+            self.reset(update_state=False)
+            self.calculate(update_state=False)
+
+    @api.multi
+    def exec_multiple_calculate(self):
+        for record in self:
+            record.calculate()
+
+    @api.multi
+    def exec_multiple_reset(self):
+        for record in self:
+            record.reset()
+
+    @api.multi
+    def exec_multiple_refresh(self):
+        for record in self:
+            record.refresh()

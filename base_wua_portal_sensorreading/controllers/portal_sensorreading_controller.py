@@ -27,6 +27,8 @@ class website_sensorreadings(website_account):
         return response
 
     def get_grafana_dashboard_configuration(self, view):
+        # Provisional
+        return '', '', 0, 0
         # Get grafana url
         grafana_url = request.env["ir.values"].get_default(
             "board.grafana.configuration", "grafana_url")

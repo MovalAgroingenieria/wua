@@ -74,6 +74,7 @@ class WuaCropunit(models.Model):
         default=_default_agriculturalseason_id,
         index=True,
         required=True,
+        ondelete='restrict',
     )
 
     parcel_id = fields.Many2one(
@@ -81,6 +82,7 @@ class WuaCropunit(models.Model):
         comodel_name='wua.parcel',
         index=True,
         required=True,
+        ondelete='restrict',
     )
 
     cultivation_id = fields.Many2one(
@@ -89,6 +91,15 @@ class WuaCropunit(models.Model):
         domain=[('suitable_hydric_estimation', '=', True)],
         index=True,
         required=True,
+        ondelete='restrict',
+        track_visibility='onchange',
+    )
+
+    variety_id = fields.Many2one(
+        string='Variety',
+        comodel_name='wua.cultivation.variety',
+        index=True,
+        ondelete='restrict',
         track_visibility='onchange',
     )
 
@@ -127,6 +138,7 @@ class WuaCropunit(models.Model):
         comodel_name='res.partner',
         store=True,
         index=True,
+        ondelete='restrict',
         compute='_compute_partner_id',
     )
 
@@ -163,6 +175,7 @@ class WuaCropunit(models.Model):
         string='Irrigation System',
         comodel_name='wua.irrigationsystem',
         index=True,
+        ondelete='restrict',
         track_visibility='onchange',
     )
 
@@ -310,10 +323,10 @@ class WuaCropunit(models.Model):
          'CHECK (order_number > 0)',
          'The order number must be a positive value.'),
         ('valid_standard_application_efficiency',
-         'CHECK (standard_application_efficiency >= 0 '
+         'CHECK (standard_application_efficiency > 0 '
          'and standard_application_efficiency <= 1)',
-         'The standard application efficiency must be a value between '
-         '0 and 1.'),
+         'The default standard application efficiency must be a value greater '
+         'than 0 and less than or equal to 1.'),
     ]
 
     @api.depends('agriculturalseason_id', 'parcel_id', 'cultivation_id',
@@ -796,6 +809,15 @@ class WuaCropunit(models.Model):
                (not record.cultivation_id.suitable_hydric_estimation)):
                 raise exceptions.ValidationError(
                     _('Not suitable for irrigation recommendations.'))
+
+    @api.constrains('cultivation_id', 'variety_id')
+    def _check_variety(self):
+        for record in self:
+            if record.variety_id:
+                if ((not record.cultivation_id) or
+                   (record.variety_id.cultivation_id != record.cultivation_id)):
+                    raise exceptions.ValidationError(
+                        _('Incorrect variety.'))
 
     @api.constrains('initial_date',
                     'end_date')

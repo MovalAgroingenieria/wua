@@ -115,7 +115,9 @@ class WuaCropfamily(models.Model):
                 ' · ndvi + ' + str(record.kc_c)
 
     # Possible "hook" for other specializations.
+    @api.multi
     def calculate_kc(self, ndvi=0.0):
+        self.ensure_one()
         kc_lower_saturation = self.env['ir.values'].get_default(
             'wua.configuration', 'kc_lower_saturation')
         if not kc_lower_saturation:

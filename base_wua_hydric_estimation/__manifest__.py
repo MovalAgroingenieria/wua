@@ -15,6 +15,7 @@
         "wua_remotesensing_sentinelhub_ndvi",
         "remotecontrol_siar",
         "wua_mdm_sensor_management",
+        # "base_wua_portal_sensorreading",
     ],
     "data": [
         "security/ir.model.access.csv",

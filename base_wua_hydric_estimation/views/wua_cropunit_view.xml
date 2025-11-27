@@ -77,6 +77,11 @@
                                    string="Cultivation"
                                    style="width:250px"
                                    options="{'no_create_edit':True}"/>
+                            <field name="variety_id"
+                                   string="Variety"
+                                   style="width:250px"
+                                   domain="[('cultivation_id', '=', cultivation_id)]"
+                                   options="{'no_create_edit':True}"/>
                             <field name="order_number"
                                    string="Order Number"
                                    style="width:100px"/>
@@ -247,6 +252,9 @@
                     <filter string="Cultivation"
                             name="grouped_cultivation"
                      context="{'group_by':'cultivation_id'}"/>
+                    <filter string="Variety"
+                            name="grouped_variety"
+                     context="{'group_by':'variety_id'}"/>
                 </group>
             </search>
         </field>
