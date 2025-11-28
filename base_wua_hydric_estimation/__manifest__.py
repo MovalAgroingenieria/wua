@@ -16,6 +16,8 @@
         "remotecontrol_siar",
         "wua_mdm_sensor_management",
         # "base_wua_portal_sensorreading",
+        "base_wua_sigpac",
+        "web_widget_bokeh_chart",
     ],
     "data": [
         "security/ir.model.access.csv",

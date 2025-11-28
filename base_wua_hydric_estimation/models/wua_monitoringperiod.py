@@ -60,18 +60,16 @@ class WuaMonitoringperiod(models.Model):
         compute='_compute_name',
     )
 
-    number_of_cropunits = fields.Integer(
-        string='Number of crop units',
-        store=True,
-        index=True,
-        compute='_compute_number_of_cropunits',
-    )
+    hydricneed_ids = fields.One2many(
+        string='Associated hydric estimations',
+        comodel_name='wua.hydricneed',
+        inverse_name='monitoringperiod_id')
 
-    number_of_hydricestimations = fields.Integer(
+    number_of_hydricneeds = fields.Integer(
         string='Number of hydric estimations',
-        store=True,
+        default=0,
+        readonly=True,
         index=True,
-        compute='_compute_number_of_hydricestimations',
     )
 
     notes = fields.Html(
@@ -101,6 +99,8 @@ class WuaMonitoringperiod(models.Model):
         string='Total Gross Irrig. Need',
         digits=(32, 2),
         default=0,
+        readonly=True,
+        index=True,
     )
 
     is_current_controlperiod = fields.Boolean(
@@ -136,20 +136,6 @@ class WuaMonitoringperiod(models.Model):
                 name = (initial_year[2:] + '/' + end_year[2:] + '-' +
                         record.initial_date + '-' + record.end_date)
             record.name = name
-
-    @api.depends('initial_date')
-    def _compute_number_of_cropunits(self):
-        for record in self:
-            number_of_cropunits = 0
-            # TODO (provisional... set api.depends!)
-            record.number_of_cropunits = number_of_cropunits
-
-    @api.depends('initial_date')
-    def _compute_number_of_hydricestimations(self):
-        for record in self:
-            number_of_hydricestimations = 0
-            # TODO (provisional... set api.depends!)
-            record.number_of_hydricestimations = number_of_hydricestimations
 
     @api.multi
     def _compute_agriculturalseason_description(self):
@@ -277,7 +263,13 @@ class WuaMonitoringperiod(models.Model):
                     'monitoringperiod_id': self.id,
                 })
             if update_state:
-                self.state = '02_calculated'
+                number_of_hydricneeds, sum_total_gin = \
+                    self.get_aggregated_values()
+                self.write({
+                    'number_of_hydricneeds': number_of_hydricneeds,
+                    'sum_total_gin': sum_total_gin,
+                    'state': '02_calculated',
+                })
             self.message_post(
                 _('Calculation executed successfully, total gross irrigation '
                   'needs') + ' = {:.2f}'.format(self.sum_total_gin) +
@@ -301,7 +293,11 @@ class WuaMonitoringperiod(models.Model):
                 raise exceptions.UserError(_(
                     'It has not been possible to reset the control periods.'))
             if update_state:
-                self.state = '01_uncalculated'
+                self.write({
+                    'number_of_hydricneeds': 0,
+                    'sum_total_gin': 0.0,
+                    'state': '01_uncalculated',
+                })
 
     @api.multi
     def refresh(self):
@@ -327,3 +323,24 @@ class WuaMonitoringperiod(models.Model):
     def exec_multiple_refresh(self):
         for record in self:
             record.refresh()
+
+    @api.multi
+    def get_aggregated_values(self):
+        self.ensure_one()
+        number_of_hydricneeds = 0
+        sum_total_gin = 0
+        self.env.cr.execute(
+            '(SELECT COUNT(*) FROM wua_hydricneed WHERE '
+            'monitoringperiod_id = %s)', (self.id,))
+        query_results = self.env.cr.dictfetchall()
+        if (query_results and
+                query_results[0].get('count') is not None):
+            number_of_hydricneeds = query_results[0].get('count')
+        self.env.cr.execute(
+            '(SELECT SUM(total_gin) FROM wua_hydricneed WHERE '
+            'monitoringperiod_id = %s)', (self.id,))
+        query_results = self.env.cr.dictfetchall()
+        if (query_results and
+                query_results[0].get('sum') is not None):
+            sum_total_gin = query_results[0].get('sum')
+        return number_of_hydricneeds, sum_total_gin
