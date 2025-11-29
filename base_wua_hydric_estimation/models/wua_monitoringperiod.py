@@ -253,7 +253,7 @@ class WuaMonitoringperiod(models.Model):
             if not self.env.user.has_group('base_wua.group_wua_manager'):
                 raise exceptions.ValidationError(_(
                     'Operation not allowed.'))
-            self.reset(update_state=False)
+            self.reset(update_state=update_state)
             cropunits_to_calculate = self.env['wua.cropunit'].search(
                 [('end_date', '>=', self.initial_date),
                  ('initial_date', '<=', self.end_date)])
@@ -262,14 +262,15 @@ class WuaMonitoringperiod(models.Model):
                     'cropunit_id': cropunit_to_calculate.id,
                     'monitoringperiod_id': self.id,
                 })
+            number_of_hydricneeds, sum_total_gin = \
+                self.get_aggregated_values()
+            vals = {
+                'number_of_hydricneeds': number_of_hydricneeds,
+                'sum_total_gin': sum_total_gin,
+            }
             if update_state:
-                number_of_hydricneeds, sum_total_gin = \
-                    self.get_aggregated_values()
-                self.write({
-                    'number_of_hydricneeds': number_of_hydricneeds,
-                    'sum_total_gin': sum_total_gin,
-                    'state': '02_calculated',
-                })
+                vals['state'] = '02_calculated'
+            self.write(vals)
             self.message_post(
                 _('Calculation executed successfully, total gross irrigation '
                   'needs') + ' = {:.2f}'.format(self.sum_total_gin) +
@@ -306,7 +307,6 @@ class WuaMonitoringperiod(models.Model):
             if not self.env.user.has_group('base_wua.group_wua_manager'):
                 raise exceptions.ValidationError(_(
                     'Operation not allowed.'))
-            self.reset(update_state=False)
             self.calculate(update_state=False)
 
     @api.multi
