@@ -30,6 +30,7 @@
         "views/wua_cultivation_view.xml",
         "views/wua_cropunit_view.xml",
         "views/wua_monitoringperiod_view.xml",
+        "views/wua_hydricneed_view.xml",
     ],
     "installable": True,
     "pre_init_hook": "pre_init_hook",

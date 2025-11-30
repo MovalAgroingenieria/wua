@@ -91,6 +91,56 @@ class WuaHydricneed(models.Model):
         compute='_compute_total_gin',
     )
 
+    initial_date = fields.Date(
+        string='Control period dates',
+        store=True,
+        index=True,
+        compute='_compute_initial_date',
+    )
+
+    end_date = fields.Date(
+        string='End date',
+        store=True,
+        index=True,
+        compute='_compute_end_date',
+    )
+
+    agriculturalseason_id = fields.Many2one(
+        string='Agricultural Season',
+        comodel_name='wua.agriculturalseason',
+        store=True,
+        index=True,
+        compute='_compute_agriculturalseason_id',
+    )
+
+    parcel_id = fields.Many2one(
+        string='Parcel',
+        comodel_name='wua.parcel',
+        store=True,
+        index=True,
+        compute='_compute_parcel_id',
+    )
+
+    cultivation_id = fields.Many2one(
+        string='Cultivation',
+        comodel_name='wua.cultivation',
+        store=True,
+        index=True,
+        compute='_compute_cultivation_id',
+    )
+
+    order_number = fields.Integer(
+        string='Order Number',
+        store=True,
+        index=True,
+        compute='_compute_order_number',
+    )
+
+    is_current_controlperiod = fields.Boolean(
+        string='Current Control Period (y/n)',
+        related='monitoringperiod_id.is_current_controlperiod',
+    )
+
     _sql_constraints = [
         ('name_unique',
          'UNIQUE (name)',
@@ -124,11 +174,12 @@ class WuaHydricneed(models.Model):
                 cropfamily = record.cropunit_id.cultivation_id.cropfamily_id
                 if cropfamily:
                     kc = cropfamily.calculate_kc(record.mean_ndvi)
+            record.kc = kc
 
     @api.multi
     def _compute_accumulated_etc(self):
         for record in self:
-            accumulated_etc = record.accumulated_et0 * record.kc
+            record.accumulated_etc = record.accumulated_et0 * record.kc
 
     @api.model
     def calculate_nin(self, accumulated_et0=0, accumulated_pe=0,
@@ -152,6 +203,70 @@ class WuaHydricneed(models.Model):
     def _compute_total_gin(self):
         for record in self:
             record.total_gin = record.gin * record.cropunit_id.area_gis_ha
+
+    @api.depends('monitoringperiod_id')
+    def _compute_initial_date(self):
+        for record in self:
+            initial_date = None
+            if (record.monitoringperiod_id and
+               record.monitoringperiod_id.initial_date):
+                initial_date = record.monitoringperiod_id.initial_date
+            record.initial_date = initial_date
+
+    @api.depends('monitoringperiod_id')
+    def _compute_end_date(self):
+        for record in self:
+            end_date = None
+            if (record.monitoringperiod_id and
+               record.monitoringperiod_id.end_date):
+                end_date = record.monitoringperiod_id.end_date
+            record.end_date = end_date
+
+    @api.depends('cropunit_id')
+    def _compute_agriculturalseason_id(self):
+        for record in self:
+            agriculturalseason_id = None
+            if record.cropunit_id and record.cropunit_id.agriculturalseason_id:
+                agriculturalseason_id = \
+                    record.cropunit_id.agriculturalseason_id
+            record.agriculturalseason_id = agriculturalseason_id
+
+    @api.depends('cropunit_id')
+    def _compute_parcel_id(self):
+        for record in self:
+            parcel_id = None
+            if record.cropunit_id and record.cropunit_id.parcel_id:
+                parcel_id = record.cropunit_id.parcel_id
+            record.parcel_id = parcel_id
+
+    @api.depends('cropunit_id', 'cropunit_id.cultivation_id')
+    def _compute_cultivation_id(self):
+        for record in self:
+            cultivation_id = None
+            if record.cropunit_id and record.cropunit_id.cultivation_id:
+                cultivation_id = record.cropunit_id.cultivation_id
+            record.cultivation_id = cultivation_id
+
+    @api.depends('cropunit_id')
+    def _compute_order_number(self):
+        for record in self:
+            order_number = 0
+            if record.cropunit_id and record.cropunit_id.order_number:
+                order_number = record.cropunit_id.order_number
+            record.order_number = order_number
+
+    @api.multi
+    def name_get(self):
+        result = []
+        for record in self:
+            initial_date_str = self.env['wua.parcel'].transform_date_to_locale(
+                record.initial_date)
+            end_date_str = self.env['wua.parcel'].transform_date_to_locale(
+                record.end_date)
+            name = initial_date_str + ' - ' + end_date_str + \
+                ', ' + record.cropunit_id.name
+            result.append((record.id, name))
+        return result
 
     @api.model
     def create(self, vals):

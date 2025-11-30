@@ -187,6 +187,18 @@ class WuaCropunit(models.Model):
         track_visibility='onchange',
     )
 
+    current_monitoringperiod_id = fields.Many2one(
+        string='Current control period',
+        comodel_name='wua.monitoringperiod',
+        compute='_compute_current_monitoringperiod_id',
+    )
+
+    previous_calculated_monitoringperiod_id = fields.Many2one(
+        string='Previous calculated control period',
+        comodel_name='wua.monitoringperiod',
+        compute='_compute_previous_calculated_monitoringperiod_id',
+    )
+
     exists_current_recommendation = fields.Boolean(
         string='There is a recommendation for the current period (y/n)',
         compute='_compute_exists_current_recommendation',
@@ -200,6 +212,12 @@ class WuaCropunit(models.Model):
     current_controlperiod_end_date = fields.Date(
         string='End date of current control period',
         compute='_compute_current_controlperiod_end_date',
+    )
+
+    previous_hydricneed_id = fields.Many2one(
+        string='Previous Hydric Need',
+        comodel_name='wua.hydricneed',
+        compute='_compute_previous_hydricneed_id',
     )
 
     current_controlperiod_kc = fields.Float(
@@ -401,36 +419,78 @@ class WuaCropunit(models.Model):
         return [('id', filter_operator, cropunit_ids)]
 
     @api.multi
+    def _compute_current_monitoringperiod_id(self):
+        for record in self:
+            current_monitoringperiod_id = 0
+            current_date = datetime.date.today().strftime('%Y-%m-%d')
+            sql_statement_current_mp = \
+                ('SELECT id FROM wua_monitoringperiod '
+                 'WHERE initial_date <= \'%s\' AND '
+                 'end_date >= \'%s\'' % (current_date, current_date,))
+            self.env.cr.execute(sql_statement_current_mp)
+            query_results = self.env.cr.dictfetchall()
+            if (query_results and
+               query_results[0].get('id') is not None):
+                current_monitoringperiod_id = query_results[0].get('id')
+            record.current_monitoringperiod_id = current_monitoringperiod_id
+
+    @api.multi
+    def _compute_previous_calculated_monitoringperiod_id(self):
+        for record in self:
+            previous_calculated_monitoringperiod_id = 0
+            if record.state == '02_active':
+                current_mp_initial_date = None
+                current_date = datetime.date.today().strftime('%Y-%m-%d')
+                sql_statement_current_mp = \
+                    ('SELECT initial_date FROM wua_monitoringperiod '
+                     'WHERE initial_date <= \'%s\' AND '
+                     'end_date >= \'%s\'' % (current_date, current_date,))
+                self.env.cr.execute(sql_statement_current_mp)
+                query_results = self.env.cr.dictfetchall()
+                if (query_results and
+                   query_results[0].get('initial_date') is not None):
+                    current_mp_initial_date = query_results[0].get('initial_date')
+                if current_mp_initial_date:
+                    current_mp_initial_date = datetime.datetime.strptime(
+                        str(current_mp_initial_date), '%Y-%m-%d')
+                    previous_mp_end_date = (
+                            current_mp_initial_date -
+                            datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+                    sql_statement_previous_mp = \
+                        ('SELECT id FROM wua_monitoringperiod '
+                         'WHERE end_date = \'%s\' AND '
+                         'state = \'02_calculated\'' % (previous_mp_end_date,))
+                    self.env.cr.execute(sql_statement_previous_mp)
+                    query_results = self.env.cr.dictfetchall()
+                    if (query_results and
+                       query_results[0].get('id') is not None):
+                        previous_calculated_monitoringperiod_id = \
+                            query_results[0].get('id')
+            record.previous_calculated_monitoringperiod_id = \
+                previous_calculated_monitoringperiod_id
+
+    @api.multi
     def _compute_exists_current_recommendation(self):
         for record in self:
-            exists_current_recommendation = record.state == '02_active'
-            if exists_current_recommendation:
-                # TODO (provisional)
-                # Con SQL:
-                # · Comprobar si en la fecha actual hay algún período de
-                #   control.
-                # · Si lo hubiere, comprobar si existe el período de
-                #   control anterior, y, en su caso, constatar que está
-                #   "calculado".
-                # · Si no se cumple la anterior condición, tornar
-                #   exists_current_recommendation a "False".
-                pass
             record.exists_current_recommendation = \
-                exists_current_recommendation
+                record.previous_calculated_monitoringperiod_id.id > 0
 
     @api.multi
     def _compute_current_controlperiod_initial_date(self):
         for record in self:
             current_controlperiod_initial_date = None
-            if record.exists_current_recommendation:
-                # TODO (provisional)
-                # Con SQL:
-                # · Obtener el período de control en el que se encuentra
-                #   la fecha actual.
-                # · Instanciar "current_controlperiod_initial_date" con la
-                #   fecha de inicio de ese período de control
-                current_controlperiod_initial_date = \
-                    record.agriculturalseason_id.initial_date
+            current_monitoringperiod_id = \
+                record.current_monitoringperiod_id.id
+            if current_monitoringperiod_id > 0:
+                sql_statement_current_mp = \
+                    ('SELECT initial_date FROM wua_monitoringperiod '
+                     'WHERE id = \'%s\'' % (current_monitoringperiod_id,))
+                self.env.cr.execute(sql_statement_current_mp)
+                query_results = self.env.cr.dictfetchall()
+                if (query_results and
+                        query_results[0].get('initial_date') is not None):
+                    current_controlperiod_initial_date = \
+                        query_results[0].get('initial_date')
             record.current_controlperiod_initial_date = \
                 current_controlperiod_initial_date
 
@@ -438,88 +498,97 @@ class WuaCropunit(models.Model):
     def _compute_current_controlperiod_end_date(self):
         for record in self:
             current_controlperiod_end_date = None
-            if record.exists_current_recommendation:
-                # TODO (provisional)
-                # Con SQL:
-                # · Obtener el período de control en el que se encuentra
-                #   la fecha actual.
-                # · Instanciar "current_controlperiod_end_date" con la
-                #   fecha de finalización de ese período de control
-                current_controlperiod_end_date = \
-                    record.agriculturalseason_id.end_date
+            current_monitoringperiod_id = \
+                record.current_monitoringperiod_id.id
+            if current_monitoringperiod_id > 0:
+                sql_statement_current_mp = \
+                    ('SELECT end_date FROM wua_monitoringperiod '
+                     'WHERE id = \'%s\'' % (current_monitoringperiod_id,))
+                self.env.cr.execute(sql_statement_current_mp)
+                query_results = self.env.cr.dictfetchall()
+                if (query_results and
+                        query_results[0].get('end_date') is not None):
+                    current_controlperiod_end_date = \
+                        query_results[0].get('end_date')
             record.current_controlperiod_end_date = \
                 current_controlperiod_end_date
+
+    @api.multi
+    def _compute_previous_hydricneed_id(self):
+        for record in self:
+            previous_hydricneed_id = 0
+            previous_calculated_monitoringperiod_id = \
+                record.previous_calculated_monitoringperiod_id
+            if previous_calculated_monitoringperiod_id.id > 0:
+                sql_statement_previous_hn = \
+                    ('SELECT id FROM wua_hydricneed WHERE '
+                     'monitoringperiod_id = %s AND cropunit_id = '
+                     '%s' % (previous_calculated_monitoringperiod_id.id,
+                             record.id))
+                self.env.cr.execute(sql_statement_previous_hn)
+                query_results = self.env.cr.dictfetchall()
+                if (query_results and
+                        query_results[0].get('id') is not None):
+                    previous_hydricneed_id = \
+                        query_results[0].get('id')
+            record.previous_hydricneed_id = previous_hydricneed_id
 
     @api.multi
     def _compute_current_controlperiod_kc(self):
         for record in self:
             current_controlperiod_kc = 0
-            # TODO (provisional)
-            # Con SQL:
-            # · Coger el valor del período de control previo al actual
-            #   (si lo hubiere, considerar el mismo criterio que para el
-            #   campo "exists_current_recommendation").
-            current_controlperiod_kc = 0.47
+            previous_hydricneed_id = record.previous_hydricneed_id
+            if previous_hydricneed_id.id > 0:
+                current_controlperiod_kc = previous_hydricneed_id.kc
             record.current_controlperiod_kc = current_controlperiod_kc
 
     @api.multi
     def _compute_current_controlperiod_ndvi(self):
         for record in self:
             current_controlperiod_ndvi = 0
-            # TODO (provisional)
-            # Con SQL:
-            # · Coger el valor del período de control previo al actual
-            #   (si lo hubiere, considerar el mismo criterio que para el
-            #   campo "exists_current_recommendation").
-            current_controlperiod_ndvi = 0.4603
+            previous_hydricneed_id = record.previous_hydricneed_id
+            if previous_hydricneed_id.id > 0:
+                current_controlperiod_ndvi = previous_hydricneed_id.mean_ndvi
             record.current_controlperiod_ndvi = current_controlperiod_ndvi
 
     @api.multi
     def _compute_current_controlperiod_et0(self):
         for record in self:
             current_controlperiod_et0 = 0
-            # TODO (provisional)
-            # Con SQL:
-            # · Coger el valor del período de control previo al actual
-            #   (si lo hubiere, considerar el mismo criterio que para el
-            #   campo "exists_current_recommendation").
-            current_controlperiod_et0 = 2.2066
+            previous_hydricneed_id = record.previous_hydricneed_id
+            if previous_hydricneed_id.id > 0:
+                current_controlperiod_et0 = \
+                    previous_hydricneed_id.accumulated_et0
             record.current_controlperiod_et0 = current_controlperiod_et0
 
     @api.multi
     def _compute_current_controlperiod_pe(self):
         for record in self:
             current_controlperiod_pe = 0
-            # TODO (provisional)
-            # Con SQL:
-            # · Coger el valor del período de control previo al actual
-            #   (si lo hubiere, considerar el mismo criterio que para el
-            #   campo "exists_current_recommendation").
-            current_controlperiod_pe = 0.0000
+            previous_hydricneed_id = record.previous_hydricneed_id
+            if previous_hydricneed_id.id > 0:
+                current_controlperiod_pe = \
+                    previous_hydricneed_id.accumulated_pe
             record.current_controlperiod_pe = current_controlperiod_pe
 
     @api.multi
     def _compute_current_controlperiod_nin(self):
         for record in self:
             current_controlperiod_nin = 0
-            # TODO (provisional)
-            # Con SQL:
-            # · Coger el valor del período de control previo al actual
-            #   (si lo hubiere, considerar el mismo criterio que para el
-            #   campo "exists_current_recommendation").
-            current_controlperiod_nin = 10.37
+            previous_hydricneed_id = record.previous_hydricneed_id
+            if previous_hydricneed_id.id > 0:
+                current_controlperiod_nin = \
+                    previous_hydricneed_id.nin
             record.current_controlperiod_nin = current_controlperiod_nin
 
     @api.multi
     def _compute_current_controlperiod_gin(self):
         for record in self:
             current_controlperiod_gin = 0
-            # TODO (provisional)
-            # Con SQL:
-            # · Coger el valor del período de control previo al actual
-            #   (si lo hubiere, considerar el mismo criterio que para el
-            #   campo "exists_current_recommendation").
-            current_controlperiod_gin = 10.92
+            previous_hydricneed_id = record.previous_hydricneed_id
+            if previous_hydricneed_id.id > 0:
+                current_controlperiod_gin = \
+                    previous_hydricneed_id.gin
             record.current_controlperiod_gin = current_controlperiod_gin
 
     @api.multi

@@ -68,6 +68,7 @@
                             </div>
                             <field name="number_of_hydricneeds"
                                    string="Recommendations"/>
+                            <field name="is_occurred_or_current_controlperiod"/>
                         </group>
                         <group name="master_data_right">
                             <div name="section_sum_total_gin_title" colspan="2" class="text-center">
@@ -128,6 +129,10 @@
                 <filter string="Active agricultural season"
                         name="mapped_to_active_agriculturalseason_yes"
                         domain="[('mapped_to_active_agriculturalseason', '=', True)]"/>
+                <separator/>
+                <filter string="Current or past control period"
+                        name="is_occurred_or_current_controlperiod_yes"
+                        domain="[('is_occurred_or_current_controlperiod', '=', True)]"/>
                 <separator/>
                 <filter string="State: Uncalculated"
                         name="state_uncalculated"
@@ -244,7 +249,8 @@
         <field name="search_view_id" ref="wua_monitoringperiod_view_search"/>
         <field name="context">
             {'upper_description_agriculturalseason': True,
-             'search_default_mapped_to_active_agriculturalseason_yes': True}
+             'search_default_mapped_to_active_agriculturalseason_yes': True,
+             'search_default_is_occurred_or_current_controlperiod_yes': True}
         </field>
     </record>
 

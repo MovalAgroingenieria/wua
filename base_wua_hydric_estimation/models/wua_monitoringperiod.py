@@ -114,6 +114,12 @@ class WuaMonitoringperiod(models.Model):
         search='_search_mapped_to_active_agriculturalseason',
     )
 
+    is_occurred_or_current_controlperiod = fields.Boolean(
+        string='Occurred or current control period (y/n)',
+        compute='_compute_is_occurred_or_current_controlperiod',
+        search='_search_is_occurred_or_current_controlperiod',
+    )
+
     _sql_constraints = [
         ('name_unique',
          'UNIQUE (name)',
@@ -193,6 +199,35 @@ class WuaMonitoringperiod(models.Model):
                 monitoringperiod_ids.append(item[0])
         return [('id', filter_operator, monitoringperiod_ids)]
 
+    @api.multi
+    def _compute_is_occurred_or_current_controlperiod(self):
+        current_date = datetime.date.today()
+        for record in self:
+            is_occurred_or_current_controlperiod = False
+            initial_date = fields.Date.from_string(record.initial_date)
+            if current_date >= initial_date:
+                is_occurred_or_current_controlperiod = True
+            record.is_occurred_or_current_controlperiod = \
+                is_occurred_or_current_controlperiod
+
+    def _search_is_occurred_or_current_controlperiod(self, operator, value):
+        monitoringperiod_ids = []
+        filter_operator = 'in'
+        is_occurred_or_current_controlperiod =\
+            ((operator == '=' and value) or (operator == '!=' and not value))
+        current_date = datetime.date.today().strftime('%Y-%m-%d')
+        sql_statement = ('SELECT id FROM wua_monitoringperiod '
+                         'WHERE initial_date < \'%s\'' % (current_date,))
+        if not is_occurred_or_current_controlperiod:
+            sql_statement = ('SELECT id FROM wua_monitoringperiod '
+                             'WHERE initial_date >= \'%s\'' % (current_date,))
+        self.env.cr.execute(sql_statement)
+        sql_resp = self.env.cr.fetchall()
+        if sql_resp:
+            for item in sql_resp:
+                monitoringperiod_ids.append(item[0])
+        return [('id', filter_operator, monitoringperiod_ids)]
+
     @api.constrains('initial_date',
                     'end_date')
     def _check_dates(self):
@@ -239,6 +274,18 @@ class WuaMonitoringperiod(models.Model):
                    (initial_date > monitoringperiod.end_date))):
                     raise exceptions.ValidationError(_(
                         'There are overlapping control periods.'))
+
+    @api.multi
+    def name_get(self):
+        result = []
+        for record in self:
+            initial_date_str = self.env['wua.parcel'].transform_date_to_locale(
+                record.initial_date)
+            end_date_str = self.env['wua.parcel'].transform_date_to_locale(
+                record.end_date)
+            name = initial_date_str + ' - ' + end_date_str
+            result.append((record.id, name))
+        return result
 
     @api.multi
     def action_get_hydric_estimations(self):

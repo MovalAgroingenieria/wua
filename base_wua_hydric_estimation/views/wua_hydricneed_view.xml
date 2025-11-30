@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_hydricneed_view_form" model="ir.ui.view">
+        <field name="name">wua.hydricneed.view.form</field>
+        <field name="model">wua.hydricneed</field>
+        <field name="arch" type="xml">
+            <form string="Parcels (NDVI)"
+                  duplicate="false" create="false" edit="false" delete="false">
+                <div class="panel-body text-center" style="background:#ededed;border-color:#696969;border-width:1px;border-style:solid">
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="accumulated_et0"/>
+                            <field name="accumulated_pe"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="mean_ndvi"/>
+                        </group>
+                    </group>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_hydricneed_view_tree" model="ir.ui.view">
+        <field name="name">wua.hydricneed.view.tree</field>
+        <field name="model">wua.hydricneed</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_hydric_estimation_hydricneed_view_tree"
+                  colors="green:is_current_controlperiod==True;"
+                  default_order="initial_date desc, parcel_id, cultivation_id, order_number">
+                <field name="is_current_controlperiod" invisible="1"/>
+                <field name="initial_date" string="Initial Date"/>
+                <field name="end_date" string="End Date"/>
+                <field name="parcel_id" string="Parcel"/>
+                <field name="cultivation_id" string="Cultivation"/>
+                <field name="order_number" string="Order N."/>
+                <field name="accumulated_et0" string="Et0"/>
+                <field name="accumulated_pe" string="Pe"/>
+                <field name="mean_ndvi" string="NDVI"/>
+                <field name="nin" string="NIN"/>
+                <field name="gin" string="GIN"/>
+                <field name="total_gin" string="Total GIN"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_hydricneed_view_search" model="ir.ui.view">
+        <field name="name">wua.hydricneed.view.search</field>
+        <field name="model">wua.hydricneed</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" string="Hydric Need"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_hydricneed_action"
+            model="ir.actions.act_window">
+        <field name="name">Irrigation Recommendations</field>
+        <field name="res_model">wua.hydricneed</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_hydricneed_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('wua_hydricneed_view_form')})]"/>
+        <field name="search_view_id" ref="wua_hydricneed_view_form"/>
+    </record>
+
+    <menuitem id="wua_hydricneed_menu"
+              name="Irrigation Recommendations"
+              parent="base_wua_census_calculation_menu"
+              action="wua_hydricneed_action"
+              sequence="30"/>
+
+</odoo>
