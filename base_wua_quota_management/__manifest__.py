@@ -16,6 +16,7 @@
         "base_wua_invoicing_gravity_irrigation",
         "base_wua_invoicing_irrigation_report",
         "web_widget_bokeh_chart",
+        "purchase",
     ],
     "data": [
         "security/security.xml",

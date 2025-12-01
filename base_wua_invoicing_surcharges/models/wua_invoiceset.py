@@ -683,7 +683,7 @@ class WuaInvoicesetLineInvoiceSurchargeVariable(models.Model):
 
     def _auto_init(self):
         res = super(
-            WuaInvoicesetLineInvoiceSurchargeVariable, self
+            WuaInvoicesetLineInvoiceSurchargeVariable, self,
         )._auto_init()
         # Create index for invoiceset_id with a shorter name
         self._cr.execute("""
@@ -801,7 +801,7 @@ class WuaInvoicesetLineInvoiceSurchargeFixed(models.Model):
 
     def _auto_init(self):
         res = super(
-            WuaInvoicesetLineInvoiceSurchargeFixed, self
+            WuaInvoicesetLineInvoiceSurchargeFixed, self,
         )._auto_init()
         # Create index for invoiceset_id with a shorter name
         self._cr.execute("""
@@ -919,7 +919,7 @@ class WuaInvoicesetLineInvoiceTotalSurchargeVariable(models.Model):
 
     def _auto_init(self):
         res = super(
-            WuaInvoicesetLineInvoiceTotalSurchargeVariable, self
+            WuaInvoicesetLineInvoiceTotalSurchargeVariable, self,
         )._auto_init()
         # Create index for invoiceset_id with a shorter name
         self._cr.execute("""

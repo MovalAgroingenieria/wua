@@ -15,7 +15,8 @@
     "depends": [
         "base_action_rule",
         "base_wua_remotecontrol_rest",
-        "web_widget_bokeh_chart", ],
+        "web_widget_bokeh_chart",
+    ],
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",

@@ -60,7 +60,7 @@ class WuaControlreading(models.Model):
         # Create controlreading with adjustement_volume in context
         # so it gets passed to the auto-created controlpresconsumption
         controlreading = self.with_context(
-            adjustement_volume=presresconsumption.watering_volume
+            adjustement_volume=presresconsumption.watering_volume,
         ).create({
             'watermeter_id':
                 presresconsumption.waterconnection_id.watermeter_id.id,

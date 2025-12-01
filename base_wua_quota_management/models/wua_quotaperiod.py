@@ -828,9 +828,13 @@ class WuaQuotaperiod(models.Model):
                     DELETE FROM wua_cession
                     WHERE quotaperiod_id=""" + str(quotaperiod_id))
                 self.env.cr.commit()
-            except Exception:
+            except Exception as e:
                 self.env.cr.rollback()
-                raise exceptions.UserError(_('Error when updating records.'))
+                error_msg = _(
+                    'Error when deleting individual inputs and '
+                    'cessions: %s',
+                ) % str(e)
+                raise exceptions.UserError(error_msg)
 
     # Hook (only cessions and individual inputs?)
     def _delete_other_entities(self, quotaperiod):
@@ -848,9 +852,12 @@ class WuaQuotaperiod(models.Model):
                     DELETE FROM wua_quota
                     WHERE quotaperiod_id=""" + str(quotaperiod_id))
                 self.env.cr.commit()
-            except Exception:
+            except Exception as e:
                 self.env.cr.rollback()
-                raise exceptions.UserError(_('Error when updating records.'))
+                error_msg = _(
+                    'Error when deleting quotas and hydric movements: %s',
+                ) % str(e)
+                raise exceptions.UserError(error_msg)
 
     def _create_general_quota(self, quotaperiodline):
         if (quotaperiodline and quotaperiodline.quotaperiodlineparcel_ids):
@@ -1030,11 +1037,14 @@ class WuaQuotaperiod(models.Model):
                             self.env['wua.hydricmovement'].search(
                                 [('id', '>', last_id)])
                         self.env.cr.commit()
-                    except Exception:
+                    except Exception as e:
                         commit_ok = False
                         self.env.cr.rollback()
-                        raise exceptions.UserError(_('Error when '
-                                                     'updating records.'))
+                        error_msg = _(
+                            'Error when creating quotas and hydric '
+                            'movements for superproduct %s: %s',
+                        ) % (quotaperiodline.superproduct_id.name, str(e))
+                        raise exceptions.UserError(error_msg)
                     if commit_ok:
                         added_quotas._compute_name()
                         added_quotas._compute_available_quota_percentage()
@@ -1058,10 +1068,13 @@ class WuaQuotaperiod(models.Model):
                         DELETE FROM wua_quotaperiod_line_parcel WHERE
                         quotaperiodline_id=""" + str(quotaperiodline_id) + sf)
                     self.env.cr.commit()
-                except Exception:
+                except Exception as e:
                     self.env.cr.rollback()
-                    raise exceptions.UserError(
-                        _('Error when updating records.'))
+                    error_msg = _(
+                        'Error when deleting parcel assignments '
+                        'for line %s: %s',
+                    ) % (quotaperiodline.name, str(e))
+                    raise exceptions.UserError(error_msg)
                 if not only_unselected:
                     quotaperiodline._compute_number_of_parcels(
                         test_parcel_assignments=False)
@@ -1089,9 +1102,14 @@ class WuaQuotaperiod(models.Model):
                     WHERE s.quotaperiodline_id=%s AND
                     SELECTED=TRUE)""", (dst_id, src_id))
                 self.env.cr.commit()
-            except Exception:
+            except Exception as e:
                 self.env.cr.rollback()
-                raise exceptions.UserError(_('Error when updating records.'))
+                error_msg = _(
+                    'Error when updating selected parcels from line %s '
+                    'to %s: %s',
+                ) % (src_quotaperiodline.name, dst_quotaperiodline.name,
+                     str(e))
+                raise exceptions.UserError(error_msg)
 
     def _get_next_quotaperiod_open_generated(self, quotaperiod):
         resp = None
@@ -1244,9 +1262,12 @@ class WuaQuotaperiod(models.Model):
             self.env.cr.execute("""
                 UPDATE wua_parcel
                 SET mapped_to_current_quotaperiod=FALSE""")
-        except Exception:
+        except Exception as e:
             self.env.cr.rollback()
-            raise ValidationError(_('Error when updating records.'))
+            error_msg = _(
+                'Error when resetting mapped_to_current_quotaperiod: %s',
+            ) % str(e)
+            raise ValidationError(error_msg)
 
     def _set_mapped_to_current_quotaperiod(self, quotaperiod, reset=True):
         if quotaperiod:
@@ -1607,9 +1628,12 @@ class WuaQuotaperiodLine(models.Model):
                     ON l.parcel_id=r.parcel_id
                     WHERE l.quotaperiodline_id=""" + str(quotaperiodline_id))
                 self.env.cr.commit()
-            except Exception:
+            except Exception as e:
                 self.env.cr.rollback()
-                raise exceptions.UserError(_('Error when updating records.'))
+                error_msg = _(
+                    'Error when populating parcel selection for line %s: %s',
+                ) % (self.name, str(e))
+                raise exceptions.UserError(error_msg)
 
     def _get_value_from_translation(self, module, src):
         resp = src
