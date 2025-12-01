@@ -1,0 +1,51 @@
+<odoo>
+
+    <!-- Extend the sensor readings template to add Grafana functionality -->
+
+    <template id="portal_my_sensorreadings_grafana" inherit_id="base_wua_portal_sensorreading.portal_my_sensorreadings" name="Add Grafana Charts">
+
+        <!-- Add Grafana chart buttons to the header -->
+        <xpath expr="//h3[@class='page-header']" position="replace">
+            <h3 class="page-header" style="margin-top: 0;">Your Sensor Readings
+                <a href="/my/sensorreadings?view=grafana-histogram" class="btn btn-primary pull-right" style="margin-left: 10px;">
+                    <span class="fa fa-bar-chart"/>
+                    Bar Chart
+                </a>
+                <a href="/my/sensorreadings?view=grafana" class="btn btn-primary pull-right" style="margin-left: 10px;">
+                    <span class="fa fa-line-chart"/>
+                    Line Chart
+                </a>
+                <a href="/my/sensorreadings?view=list" class="btn btn-primary pull-right">
+                    <span class="fa fa-list-ul"/>
+                    List
+                </a>
+            </h3>
+        </xpath>
+
+        <!-- Modify the list view condition to include view parameter -->
+        <xpath expr="//t[@t-if='sensorreadings']" position="attributes">
+            <attribute name="t-if">sensorreadings and view == 'list'</attribute>
+        </xpath>
+
+        <!-- Add Grafana iframe section after the existing content -->
+        <xpath expr="//div[@class='col-md-12']" position="inside">
+            <t t-if="sensorreadings and (view == 'grafana' or view == 'grafana-histogram')">
+                <div t-if="frame_url">
+                    <iframe t-att-id="frame_id"
+                            t-att-src="frame_url"
+                            t-att-width="frame_width"
+                            t-att-height="frame_height"
+                            marginwidth="0"
+                            marginheight="0"
+                            frameborder="0">
+                    </iframe>
+                </div>
+                <div t-if="not frame_url">
+                    <p class="alert alert-warning">Error getting Grafana frame URL. Please check your configuration.</p>
+                </div>
+            </t>
+        </xpath>
+
+    </template>
+
+</odoo>
