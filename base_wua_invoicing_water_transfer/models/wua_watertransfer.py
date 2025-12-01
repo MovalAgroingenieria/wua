@@ -30,12 +30,6 @@ class WuaWatertransfer(models.Model):
         index=True,
         compute='_compute_sum_price_subtotal')
 
-    _sql_constraints = [
-        ('number_of_invoicing_processes_between_0_1',
-         'CHECK ( number_of_invoicing_processes <= 1 )',
-         'A water transfer cannot be invoiced again.'),
-        ]
-
     @api.depends('invoiceline_ids',
                  'invoiceline_ids.price_subtotal')
     def _compute_sum_price_subtotal(self):
