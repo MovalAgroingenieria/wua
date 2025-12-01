@@ -82,6 +82,14 @@ class WuaHydricneed(models.Model):
         compute='_compute_gin',
     )
 
+    area_gis_ha = fields.Float(
+        string='Crop Unit Area',
+        digits=(32, 4),
+        store=True,
+        index=True,
+        compute='_compute_area_gis_ha',
+    )
+
     total_gin = fields.Float(
         string='Total gross irrigation needs',
         digits=(32, 2),
@@ -139,6 +147,18 @@ class WuaHydricneed(models.Model):
     is_current_controlperiod = fields.Boolean(
         string='Current Control Period (y/n)',
         related='monitoringperiod_id.is_current_controlperiod',
+    )
+
+    mapped_to_active_agriculturalseason = fields.Boolean(
+        string='Mapped to the active agricultural season',
+        compute='_compute_mapped_to_active_agriculturalseason',
+        search='_search_mapped_to_active_agriculturalseason',
+    )
+
+    is_occurred_or_current_controlperiod = fields.Boolean(
+        string='Occurred or current control period (y/n)',
+        compute='_compute_is_occurred_or_current_controlperiod',
+        search='_search_is_occurred_or_current_controlperiod',
     )
 
     _sql_constraints = [
@@ -199,6 +219,14 @@ class WuaHydricneed(models.Model):
             record.gin = (record.nin /
                           record.cropunit_id.standard_application_efficiency)
 
+    @api.depends('cropunit_id', 'cropunit_id.area_gis_ha')
+    def _compute_area_gis_ha(self):
+        for record in self:
+            area_gis_ha = 0
+            if record.cropunit_id and record.cropunit_id.area_gis_ha:
+                area_gis_ha = record.cropunit_id.area_gis_ha
+            record.area_gis_ha = area_gis_ha
+
     @api.depends('gin', 'cropunit_id.area_gis_ha')
     def _compute_total_gin(self):
         for record in self:
@@ -256,6 +284,70 @@ class WuaHydricneed(models.Model):
             record.order_number = order_number
 
     @api.multi
+    def _compute_mapped_to_active_agriculturalseason(self):
+        for record in self:
+            mapped_to_active_agriculturalseason = False
+            if (record.agriculturalseason_id and
+               record.agriculturalseason_id.active_agriculturalseason):
+                mapped_to_active_agriculturalseason = True
+            record.mapped_to_active_agriculturalseason = \
+                mapped_to_active_agriculturalseason
+
+    def _search_mapped_to_active_agriculturalseason(self, operator, value):
+        hydricneed_ids = []
+        filter_operator = 'in'
+        mapped_to_active_agriculturalseason = \
+            ((operator == '=' and value) or (operator == '!=' and not value))
+        id_of_active_agriculturalseason = 0
+        active_agriculturalseason = \
+            self.env['wua.agriculturalseason'].search(
+                [('active_agriculturalseason', '=', True)])
+        if active_agriculturalseason:
+            id_of_active_agriculturalseason = active_agriculturalseason[0].id
+        sql_statement = \
+            ('SELECT id FROM wua_hydricneed WHERE agriculturalseason_id = '
+             '%s' % (id_of_active_agriculturalseason, ))
+        if not mapped_to_active_agriculturalseason:
+            sql_statement = \
+                ('SELECT id FROM wua_hydricneed WHERE agriculturalseason_id <> '
+                 '%s' % (id_of_active_agriculturalseason,))
+        self.env.cr.execute(sql_statement)
+        sql_resp = self.env.cr.fetchall()
+        if sql_resp:
+            for item in sql_resp:
+                hydricneed_ids.append(item[0])
+        return [('id', filter_operator, hydricneed_ids)]
+
+    @api.multi
+    def _compute_is_occurred_or_current_controlperiod(self):
+        current_date = datetime.date.today()
+        for record in self:
+            is_occurred_or_current_controlperiod = False
+            initial_date = fields.Date.from_string(record.initial_date)
+            if current_date >= initial_date:
+                is_occurred_or_current_controlperiod = True
+            record.is_occurred_or_current_controlperiod = \
+                is_occurred_or_current_controlperiod
+
+    def _search_is_occurred_or_current_controlperiod(self, operator, value):
+        hydricneed_ids = []
+        filter_operator = 'in'
+        is_occurred_or_current_controlperiod =\
+            ((operator == '=' and value) or (operator == '!=' and not value))
+        current_date = datetime.date.today().strftime('%Y-%m-%d')
+        sql_statement = ('SELECT id FROM wua_hydricneed '
+                         'WHERE initial_date <= \'%s\'' % (current_date,))
+        if not is_occurred_or_current_controlperiod:
+            sql_statement = ('SELECT id FROM wua_hydricneed '
+                             'WHERE initial_date > \'%s\'' % (current_date,))
+        self.env.cr.execute(sql_statement)
+        sql_resp = self.env.cr.fetchall()
+        if sql_resp:
+            for item in sql_resp:
+                hydricneed_ids.append(item[0])
+        return [('id', filter_operator, hydricneed_ids)]
+
+    @api.multi
     def name_get(self):
         result = []
         for record in self:
@@ -267,6 +359,20 @@ class WuaHydricneed(models.Model):
                 ', ' + record.cropunit_id.name
             result.append((record.id, name))
         return result
+
+    @api.model
+    def read_group(self, domain, fields, groupby,
+                   offset=0, limit=None, orderby=False, lazy=True):
+        if 'order_number' in fields:
+            fields.remove('order_number')
+        if 'mean_ndvi' in fields:
+            fields.remove('mean_ndvi')
+        if 'nin' in fields:
+            fields.remove('nin')
+        if 'gin' in fields:
+            fields.remove('gin')
+        return super(WuaHydricneed, self).read_group(
+            domain, fields, groupby, offset, limit, orderby, lazy)
 
     @api.model
     def create(self, vals):

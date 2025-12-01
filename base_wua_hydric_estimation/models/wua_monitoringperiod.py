@@ -217,10 +217,10 @@ class WuaMonitoringperiod(models.Model):
             ((operator == '=' and value) or (operator == '!=' and not value))
         current_date = datetime.date.today().strftime('%Y-%m-%d')
         sql_statement = ('SELECT id FROM wua_monitoringperiod '
-                         'WHERE initial_date < \'%s\'' % (current_date,))
+                         'WHERE initial_date <= \'%s\'' % (current_date,))
         if not is_occurred_or_current_controlperiod:
             sql_statement = ('SELECT id FROM wua_monitoringperiod '
-                             'WHERE initial_date >= \'%s\'' % (current_date,))
+                             'WHERE initial_date > \'%s\'' % (current_date,))
         self.env.cr.execute(sql_statement)
         sql_resp = self.env.cr.fetchall()
         if sql_resp:

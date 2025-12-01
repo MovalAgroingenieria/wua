@@ -35,12 +35,13 @@
                 <field name="parcel_id" string="Parcel"/>
                 <field name="cultivation_id" string="Cultivation"/>
                 <field name="order_number" string="Order N."/>
-                <field name="accumulated_et0" string="Et0"/>
-                <field name="accumulated_pe" string="Pe"/>
-                <field name="mean_ndvi" string="NDVI"/>
-                <field name="nin" string="NIN"/>
-                <field name="gin" string="GIN"/>
-                <field name="total_gin" string="Total GIN"/>
+                <field name="accumulated_et0" string="Et0 (mm)"/>
+                <field name="accumulated_pe" string="Pe (mm)"/>
+                <field name="mean_ndvi" string="NDVI [-1,1]"/>
+                <field name="nin" string="NIN (m³/ha)"/>
+                <field name="gin" string="GIN (m³/ha)"/>
+                <field name="area_gis_ha" string="Area (ha)"/>
+                <field name="total_gin" string="Total GIN (m³)"/>
             </tree>
         </field>
     </record>
@@ -50,7 +51,34 @@
         <field name="model">wua.hydricneed</field>
         <field name="arch" type="xml">
             <search>
-                <field name="name" string="Hydric Need"/>
+                <field name="initial_date" string="Initial Date"/>
+                <field name="parcel_id" string="Parcel"/>
+                <field name="cultivation_id" string="Cultivation"/>
+                <filter string="Active agricultural season"
+                        name="mapped_to_active_agriculturalseason_yes"
+                        domain="[('mapped_to_active_agriculturalseason', '=', True)]"/>
+                <separator/>
+                <filter string="Current or past control period"
+                        name="is_occurred_or_current_controlperiod_yes"
+                        domain="[('is_occurred_or_current_controlperiod', '=', True)]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Agricultural Season"
+                            name="grouped_agriculturalseason"
+                     context="{'group_by':'agriculturalseason_id'}"/>
+                    <filter string="Control Period"
+                            name="grouped_monitoringperiod"
+                     context="{'group_by':'monitoringperiod_id'}"/>
+                    <filter string="Parcel"
+                            name="grouped_parcel"
+                     context="{'group_by':'parcel_id'}"/>
+                    <filter string="Cultivation"
+                            name="grouped_cultivation"
+                     context="{'group_by':'cultivation_id'}"/>
+                    <filter string="Crop Unit"
+                            name="grouped_cropunit"
+                     context="{'group_by':'cropunit_id'}"/>
+                </group>
             </search>
         </field>
     </record>
@@ -67,7 +95,11 @@
                         'view_id': ref('wua_hydricneed_view_tree')}),
                 (0, 0, {'view_mode': 'form',
                         'view_id': ref('wua_hydricneed_view_form')})]"/>
-        <field name="search_view_id" ref="wua_hydricneed_view_form"/>
+        <field name="search_view_id" ref="wua_hydricneed_view_search"/>
+        <field name="context">
+            {'search_default_mapped_to_active_agriculturalseason_yes': True,
+             'search_default_is_occurred_or_current_controlperiod_yes': True}
+        </field>
     </record>
 
     <menuitem id="wua_hydricneed_menu"
