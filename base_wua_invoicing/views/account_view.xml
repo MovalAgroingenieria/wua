@@ -69,6 +69,14 @@
         <xpath expr="//button[@name='action_done_cancel']" position="after">
             <button name="action_process_missing_functions" string="Process Pending" type="object" class="btn-primary" invisible="1"/>
         </xpath>
+        <xpath expr="//div[@class='oe_title']/h1" position="after">
+            <div attrs="{'invisible': [('has_multiple_schemes', '=', False)]}" style="color: red; font-weight: bold; margin-top: 10px;">
+                ⚠ ATENCIÓN: Esta orden de cobro contiene líneas con más de un esquema de mandato
+            </div>
+        </xpath>
+        <xpath expr="//field[@name='name']" position="after">
+            <field name="has_multiple_schemes" invisible="1"/>
+        </xpath>
     </field>
   </record>
 

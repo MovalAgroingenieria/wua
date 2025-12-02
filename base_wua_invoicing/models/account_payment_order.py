@@ -9,6 +9,22 @@ from odoo import models, fields, api
 class AccountPaymentOrder(models.Model):
     _inherit = 'account.payment.order'
 
+    has_multiple_schemes = fields.Boolean(
+        string='Has Multiple Schemes',
+        compute='_compute_has_multiple_schemes',
+        help='True if payment lines have different schemes'
+    )
+
+    @api.multi
+    @api.depends('payment_line_ids.mandate_id.scheme')
+    def _compute_has_multiple_schemes(self):
+        for order in self:
+            schemes = set()
+            for line in order.payment_line_ids:
+                if line.mandate_id and line.mandate_id.scheme:
+                    schemes.add(line.mandate_id.scheme)
+            order.has_multiple_schemes = len(schemes) > 1
+
     @api.multi
     def generated2uploaded(self):
         for order in self:
@@ -34,7 +50,7 @@ class AccountPaymentOrder(models.Model):
                 invoices_str = invoices_str + ', ' + str(invoice_id)
             invoices_str = invoices_str[2:]
             self.env.cr.execute("""
-                UPDATE account_invoice
+                UPDATE account_invoice 
                 set reconciled=TRUE, state='paid', residual=0,
                     residual_signed=0, residual_company_signed=0
                 WHERE id in (""" + invoices_str + """)""")
