@@ -7,6 +7,25 @@
         <field name="arch" type="xml">
             <form duplicate="0">
                 <field name="id" invisible="1"/>
+                <field name="state_change_available" invisible="1"/>
+                <header>
+                     <button name="cancel_watertransfer"
+                            type="object" string="Water Transfer Cancel"
+                            class="oe_read_only"
+                            style="width: 105px;"
+                            groups="base_wua_quota_management.group_wua_quota_manager"
+                            attrs="{'invisible':['|', '|', ('id','=',False), ('state_change_available', '=', False), ('watertransfer_state', '=', '00_draft')]}"/>
+                     <button name="validate_watertransfer"
+                            type="object" string="Water Transfer Validate"
+                            class="oe_read_only"
+                            style="width: 105px;"
+                            groups="base_wua_quota_management.group_wua_quota_manager"
+                            attrs="{'invisible':['|', '|', ('id','=',False), ('state_change_available', '=', False), ('watertransfer_state', '=', '01_validated')]}"/>
+                     <field name="watertransfer_state"
+                            widget="statusbar"
+                            attrs="{'invisible':['|', ('id','=',False), ('state_change_available', '=', False)]}"
+                            statusbar_visible="00_draft,01_validated"/>
+                </header>
                 <sheet>
                     <div class="panel-body text-center" style="background:#ededed;border-radius:4px;border-color:#696969;border-width:1px;border-style:solid;padding-top:1px;padding-bottom:8px;margin-bottom:5px"><h2>WATER TRANSFER</h2></div>
                     <group name="master_data" col="5">
@@ -39,11 +58,11 @@
                             <field name="receiver_quota_id" colspan="4"
                                    attrs="{'invisible':[('id','=',False)]}"/>
                             <field name="event_time" colspan="3"
-                                   attrs="{'readonly':[('id','>',0)]}"/>
+                                   attrs="{'readonly':['|', ('id','>',0), ('watertransfer_state', '=', '01_validated')]}"/>
                             <div colspan="1"></div>
                             <field name="volume" colspan="3"
-                                   attrs="{'readonly':[('id','>',0)]}"/>
-                            <div colspan="1"></div>
+                                   attrs="{'readonly':['|', ('id','>',0), ('watertransfer_state', '=', '01_validated')]}"/>
+                            <div name="colspan_watertransfer_name" colspan="1"></div>
                         </group>
                         <group name="master_data_right"
                                colspan="2">
@@ -79,6 +98,7 @@
                         class="oe_stat_button"
                         icon="fa-external-link"/>
                 <field name="volume"/>
+                <field name="watertransfer_state"/>
             </tree>
         </field>
     </record>
@@ -93,6 +113,12 @@
                         name="active_agriculturalseason"
                         domain="[('of_active_agriculturalseason','=',True)]"/>
                 <separator/>
+                <filter string="Draft"
+                        name="draft_state"
+                        domain="[('watertransfer_state','=','00_draft')]"/>
+                <filter string="Validated"
+                        name="validated_state"
+                        domain="[('watertransfer_state','=','01_validated')]"/>
                 <separator/>
                 <group expand="0" string="Group By">
                     <filter string="Agricultural Season"
@@ -113,11 +139,49 @@
                     <filter string="WUA Partner"
                             name="grouped_partner"
                      context="{'group_by':'partner_id'}"/>
+                    <filter string="Water Transfer State"
+                            name="grouped_watertransfer_state"
+                     context="{'group_by':'watertransfer_state'}"/>
                 </group>
             </search>
         </field>
     </record>
 
+    <record id="wua_validate_watertransfers" model="ir.actions.server">
+      <field name="name">Validate Water Transfer</field>
+      <field name="model_id" ref="model_wua_watertransfer"/>
+      <field name="state">code</field>
+      <field name="code">
+          if context.get('active_ids'):
+              action = env['wua.watertransfer'].validate_watertransfers(context['active_ids'])
+      </field>
+  </record>
+
+  <record id="wua_action_validate_watertransfers" model="ir.values">
+      <field name="name">Validate</field>
+      <field name="model">wua.watertransfer</field>
+      <field name="key">action</field>
+      <field name="key2">client_action_multi</field>
+      <field name="value" eval="'ir.actions.server,' + str(ref('wua_validate_watertransfers'))"/>
+  </record>
+
+  <record id="wua_cancel_watertransfers" model="ir.actions.server">
+      <field name="name">Cancel Water Transfer</field>
+      <field name="model_id" ref="model_wua_watertransfer"/>
+      <field name="state">code</field>
+      <field name="code">
+          if context.get('active_ids'):
+              action = env['wua.watertransfer'].cancel_watertransfers(context['active_ids'])
+      </field>
+  </record>
+
+  <record id="wua_action_cancel_watertransfers" model="ir.values">
+      <field name="name">Cancel Water Transfer</field>
+      <field name="model">wua.watertransfer</field>
+      <field name="key">action</field>
+      <field name="key2">client_action_multi</field>
+      <field name="value" eval="'ir.actions.server,' + str(ref('wua_cancel_watertransfers'))"/>
+  </record>
 
     <record id="wua_watertransfer_action"
             model="ir.actions.act_window">

@@ -61,6 +61,14 @@ class WuaWatertransfer(models.Model):
                         resp = filtered_quotaperiods[0].id
         return resp
 
+    def _default_watertransfer_state(self):
+        resp = '01_validated'
+        draft_available = self.env['ir.values'].get_default(
+            'wua.quotas.configuration', 'draft_watertransfer_allow')
+        if (draft_available):
+            resp = '00_draft'
+        return resp
+
     agriculturalseason_id = fields.Many2one(
         string='Agricultural Season',
         comodel_name='wua.agriculturalseason',
@@ -80,7 +88,7 @@ class WuaWatertransfer(models.Model):
     individualinput_ids = fields.One2many(
         string='Individual inputs',
         comodel_name='wua.individualinput',
-        inverse_name='watertransfer_id',)
+        inverse_name='watertransfer_id')
 
     superproduct_id = fields.Many2one(
         string='Superproduct',
@@ -95,7 +103,7 @@ class WuaWatertransfer(models.Model):
         comodel_name='res.partner',
         required=True,
         index=True,
-        ondelete='restrict',)
+        ondelete='restrict')
 
     quota_id = fields.Many2one(
         string='Quota',
@@ -161,7 +169,20 @@ class WuaWatertransfer(models.Model):
         comodel_name='wua.superproduct',
         required=True,
         index=True,
-        ondelete='restrict',)
+        ondelete='restrict')
+
+    watertransfer_state = fields.Selection(
+        selection=[
+            ('00_draft', 'Draft'),
+            ('01_validated', 'Validated'),
+        ],
+        string='Water Transfer State',
+        index=True,
+        default=_default_watertransfer_state)
+
+    state_change_available = fields.Boolean(
+        string='State change Available',
+        compute='_compute_state_change_available')
 
     notes = fields.Html(string='Notes')
 
@@ -226,6 +247,13 @@ class WuaWatertransfer(models.Model):
                 receiver_quota_name = record.receiver_quota_id.name
             record.receiver_quota_name = receiver_quota_name
 
+    @api.multi
+    def _compute_state_change_available(self):
+        draft_watertransfer_allow = self.env['ir.values'].get_default(
+            'wua.quotas.configuration', 'draft_watertransfer_allow')
+        for record in self:
+            record.state_change_available = draft_watertransfer_allow
+
     @api.depends('quota_name', 'receiver_quota_name', 'event_time')
     def _compute_name(self):
         for record in self:
@@ -235,6 +263,50 @@ class WuaWatertransfer(models.Model):
                 name = record.quota_name + ' - ' + \
                     record.receiver_quota_name + ' - ' + record.event_time
             record.name = name
+
+    # Header Buttons
+    @api.multi
+    def validate_watertransfer(self):
+        self.ensure_one()
+        # Apply water transfer data
+        if (self.watertransfer_state != '01_validated'):
+            self._create_individualinputs(self)
+            self.watertransfer_state = '01_validated'
+
+    # Header Buttons
+    @api.multi
+    def cancel_watertransfer(self):
+        self.ensure_one()
+        if (self.watertransfer_state != '00_draft'):
+            # Remove related individualinputs
+            if self.individualinput_ids:
+                self.individualinput_ids.with_context(
+                    force_unlink=True).unlink()
+            self.watertransfer_state = '00_draft'
+
+    # Action Buttons
+    def validate_watertransfers(self, active_watertransfers):
+        if (not self.env.user.has_group(
+                'base_wua_quota_management.group_wua_quota_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        watertransfers = self.env['wua.watertransfer'].browse(
+            active_watertransfers)
+        for watertransfer in watertransfers:
+            if watertransfer.watertransfer_state != '01_validated':
+                watertransfer.validate_watertransfer()
+
+    # Action Buttons
+    def cancel_watertransfers(self, active_watertransfers):
+        if (not self.env.user.has_group(
+                'base_wua_quota_management.group_wua_quota_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        watertransfers = self.env['wua.watertransfer'].browse(
+            active_watertransfers)
+        for watertransfer in watertransfers:
+            if watertransfer.watertransfer_state != '00_draft':
+                watertransfer.cancel_watertransfer()
 
     @api.constrains('quotaperiod_id')
     def _check_quotaperiod_id(self):
@@ -303,7 +375,7 @@ class WuaWatertransfer(models.Model):
                 'domain': {'quotaperiod_id':
                            [('agriculturalseason_id', '=',
                              self.agriculturalseason_id.id),
-                            ('state', '=', 'generated')]}
+                            ('state', '=', 'generated')]},
                 }
 
     @api.onchange('quotaperiod_id')
@@ -317,9 +389,9 @@ class WuaWatertransfer(models.Model):
                 return {
                     'domain': {'superproduct_id':
                                [('id', 'in', valid_superproduct_ids),
-                                ('is_transferable', '=', True,)],
+                                ('is_transferable', '=', True)],
                                'receiver_superproduct_id':
-                               [('id', 'in', valid_superproduct_ids)]}
+                               [('id', 'in', valid_superproduct_ids)]},
                     }
 
     @api.onchange('superproduct_id')
@@ -333,13 +405,17 @@ class WuaWatertransfer(models.Model):
     @api.model
     def create(self, vals):
         new_watertransfer = super(WuaWatertransfer, self).create(vals)
-        self._create_individualinputs(new_watertransfer)
+        # Only create individual inputs if the state is validated
+        if (new_watertransfer.watertransfer_state == '01_validated'):
+            self._create_individualinputs(new_watertransfer)
         return new_watertransfer
 
     @api.multi
     def unlink(self):
         for record in self:
-            if record.individualinput_ids:
+            # Only delete individualinputs if validated
+            if (record.watertransfer_state == '01_validated' and
+                    record.individualinput_ids):
                 record.individualinput_ids.with_context(
                     force_unlink=True).unlink()
         return super(WuaWatertransfer, self).unlink()
@@ -370,6 +446,23 @@ class WuaWatertransfer(models.Model):
                 node.set('modifiers',
                          '{"readonly": true, "required": true}')
             res['arch'] = etree.tostring(doc)
+        draft_available = self.env['ir.values'].get_default(
+            'wua.quotas.configuration', 'draft_watertransfer_allow')
+        # Hide action depending on the parameter validate / cancel
+        if not draft_available:
+            validate_button = self.env.ref(
+                'base_wua_quota_management_water_transfer.'
+                'wua_validate_watertransfers').id or False
+            cancel_button = self.env.ref(
+                'base_wua_quota_management_water_transfer.'
+                'wua_cancel_watertransfers').id or False
+            action_buttons = res.get('toolbar', {}).get('action', [])
+            actions_to_remove = []
+            for button in action_buttons:
+                if button['id'] in [validate_button, cancel_button]:
+                    actions_to_remove.append(button)
+            for action_remove in actions_to_remove:
+                res['toolbar']['action'].remove(action_remove)
         return res
 
     @api.multi
@@ -410,7 +503,7 @@ class WuaWatertransfer(models.Model):
             'view_type': 'form',
             'views': [(id_form_view, 'form')],
             'target': 'current',
-            'flags': {'mode': 'readonly'}
+            'flags': {'mode': 'readonly'},
             }
         return act_window
 

@@ -19,6 +19,7 @@
         "views/resources.xml",
         "views/wua_superproduct_view.xml",
         "views/wua_watertransfer_view.xml",
+        "reports/wua_partner_quota_watertransfer_report.xml",
     ],
     "installable": True,
     "application": True,

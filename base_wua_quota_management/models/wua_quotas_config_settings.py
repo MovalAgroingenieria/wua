@@ -26,6 +26,10 @@ class WuaQuotasConfiguration(models.TransientModel):
         string='Allow Draft State on Cessions',
         default=False)
 
+    draft_watertransfer_allow = fields.Boolean(
+        string='Allow Draft State on Water Transfers',
+        default=False)
+
     days_cession_notice = fields.Integer(
         string='Nº days until cession notice',
         default=15,
@@ -83,6 +87,9 @@ class WuaQuotasConfiguration(models.TransientModel):
                            'draft_cession_allow',
                            self.draft_cession_allow)
         values.set_default('wua.quotas.configuration',
+                           'draft_watertransfer_allow',
+                           self.draft_watertransfer_allow)
+        values.set_default('wua.quotas.configuration',
                            'show_aggregated_quotas',
                            self.show_aggregated_quotas)
         values.set_default('wua.quotas.configuration',
@@ -113,6 +120,13 @@ class WuaQuotasConfiguration(models.TransientModel):
             if (len(cessions_draft) > 0):
                 raise exceptions.UserError(_(
                     'All cessions must be validated.'))
+        # If not allowed change of states, all watertransfers must be validated
+        if (not self.draft_watertransfer_allow):
+            watertransfers_draft = self.env['wua.watertransfer'].search(
+                [('watertransfer_state', '!=', '01_validated')])
+            if (len(watertransfers_draft) > 0):
+                raise exceptions.UserError(_(
+                    'All water transfers must be validated.'))
         if self.show_aggregated_quotas:
             active_menu = True
         else:

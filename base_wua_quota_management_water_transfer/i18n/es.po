@@ -6,14 +6,86 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-25 09:31+0000\n"
-"PO-Revision-Date: 2022-11-25 09:31+0000\n"
+"POT-Creation-Date: 2025-12-01 09:18+0000\n"
+"PO-Revision-Date: 2025-12-01 09:18+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: base_wua_quota_management_water_transfer
+#: model:ir.ui.view,arch_db:base_wua_quota_management_water_transfer.wua_partner_quota_watertransfer_report_document
+msgid "&amp;nbsp;"
+msgstr "&amp;nbsp;"
+
+#. module: base_wua_quota_management_water_transfer
+#: model:ir.ui.view,arch_db:base_wua_quota_management_water_transfer.wua_partner_quota_watertransfer_report_document
+msgid "<span><strong>Agricultural season:</strong></span>"
+msgstr "<span><strong>Campaña:</strong></span>"
+
+#. module: base_wua_quota_management_water_transfer
+#: model:ir.ui.view,arch_db:base_wua_quota_management_water_transfer.wua_partner_quota_watertransfer_report_document
+msgid "<span><strong>Notes:</strong></span><br/>"
+msgstr "<span><strong>Notas:</strong></span><br/>"
+
+#. module: base_wua_quota_management_water_transfer
+#: model:ir.ui.view,arch_db:base_wua_quota_management_water_transfer.wua_partner_quota_watertransfer_report_document
+msgid "<span><strong>Quota period:</strong></span>"
+msgstr "<span><strong>Período de cupo:</strong></span>"
+
+#. module: base_wua_quota_management_water_transfer
+#: model:ir.ui.view,arch_db:base_wua_quota_management_water_transfer.wua_partner_quota_watertransfer_report_document
+msgid "<span><strong>Superproduct (destination):</strong></span>"
+msgstr "<span><strong>Supraproducto (beneficiario):</strong></span>"
+
+#. module: base_wua_quota_management_water_transfer
+#: model:ir.ui.view,arch_db:base_wua_quota_management_water_transfer.wua_partner_quota_watertransfer_report_document
+msgid "<span><strong>Superproduct (origin):</strong></span>"
+msgstr "<span><strong>Supraproducto (origen):</strong></span>"
+
+#. module: base_wua_quota_management_water_transfer
+#: model:ir.ui.view,arch_db:base_wua_quota_management_water_transfer.wua_partner_quota_watertransfer_report_document
+msgid "<span><strong>Volume:</strong></span>"
+msgstr "<span><strong>Volumen:</strong></span>"
+
+#. module: base_wua_quota_management_water_transfer
+#: model:ir.ui.view,arch_db:base_wua_quota_management_water_transfer.wua_partner_quota_watertransfer_report_document
+msgid "<span>Partner:</span>"
+msgstr "<span>Socio:</span>"
+
+#. module: base_wua_quota_management_water_transfer
+#: model:ir.ui.view,arch_db:base_wua_quota_management_water_transfer.wua_partner_quota_watertransfer_report_document
+msgid "<span>m<sup>3</sup></span>"
+msgstr "<span>m<sup>3</sup></span>"
+
+#. module: base_wua_quota_management_water_transfer
+#: model:ir.ui.view,arch_db:base_wua_quota_management_water_transfer.wua_partner_quota_watertransfer_report_document
+msgid "<strong>Conformity</strong>"
+msgstr "<strong>Conformidad</strong>"
+
+#. module: base_wua_quota_management_water_transfer
+#: model:ir.ui.view,arch_db:base_wua_quota_management_water_transfer.wua_partner_quota_watertransfer_report_document
+msgid "<strong>Date/hour:</strong>"
+msgstr "<strong>Fecha/hora:</strong>"
+
+#. module: base_wua_quota_management_water_transfer
+#: model:ir.ui.view,arch_db:base_wua_quota_management_water_transfer.wua_partner_quota_watertransfer_report_document
+msgid "<strong>Summary</strong>"
+msgstr "<strong>Resumen</strong>"
+
+#. module: base_wua_quota_management_water_transfer
+#: model:ir.ui.view,arch_db:base_wua_quota_management_water_transfer.wua_partner_quota_watertransfer_report_document
+msgid "<strong>Water Transfer report</strong><br/>\n"
+"                            <span>&amp;nbsp; [</span>"
+msgstr "<strong>Informe transferencia de agua</strong><br/>\n"
+"                            <span>&amp;nbsp; [</span>"
+
+#. module: base_wua_quota_management_water_transfer
+#: model:ir.ui.view,arch_db:base_wua_quota_management_water_transfer.wua_partner_quota_watertransfer_report_document
+msgid "<strong>Water Transfer&amp;nbsp;data</strong>"
+msgstr "<strong>Datos&amp;nbsp;transferencia de agua</strong>"
 
 #. module: base_wua_quota_management_water_transfer
 #: model:ir.ui.view,arch_db:base_wua_quota_management_water_transfer.wua_watertransfer_view_search
@@ -29,10 +101,15 @@ msgstr "Campaña"
 #. module: base_wua_quota_management_water_transfer
 #: model:ir.model.fields,field_description:base_wua_quota_management_water_transfer.field_wua_watertransfer_quota_balance
 msgid "Balance"
-msgstr "Saldo disponible"
+msgstr "Saldo pendiente"
 
 #. module: base_wua_quota_management_water_transfer
-#: code:addons/base_wua_quota_management_water_transfer/models/wua_individualinput.py:23
+#: model:ir.actions.server,name:base_wua_quota_management_water_transfer.wua_cancel_watertransfers
+msgid "Cancel Water Transfer"
+msgstr "Cancelar transferencia de agua"
+
+#. module: base_wua_quota_management_water_transfer
+#: code:addons/base_wua_quota_management_water_transfer/models/wua_individualinput.py:22
 #, python-format
 msgid "Cannot delete individual input associated with water transfer, delete the water transfer instead."
 msgstr "No se pueden eliminar asignaciones individuales asociadas a transferencias de agua, borre la transferencia en su lugar."
@@ -64,9 +141,10 @@ msgid "Display Name"
 msgstr "Nombre a mostrar"
 
 #. module: base_wua_quota_management_water_transfer
-#: model:ir.model,name:base_wua_quota_management_water_transfer.model_product_template
-msgid "Entity (WUA Product Template)"
-msgstr "Elemento (plantilla producto)"
+#: model:ir.ui.view,arch_db:base_wua_quota_management_water_transfer.wua_watertransfer_view_search
+#: selection:wua.watertransfer,watertransfer_state:0
+msgid "Draft"
+msgstr "Borrador"
 
 #. module: base_wua_quota_management_water_transfer
 #: sql_constraint:wua.watertransfer:0
@@ -126,6 +204,11 @@ msgid "Of active ag.season"
 msgstr "De campaña activa"
 
 #. module: base_wua_quota_management_water_transfer
+#: model:ir.ui.view,arch_db:base_wua_quota_management_water_transfer.wua_partner_quota_watertransfer_report_document
+msgid "Partner"
+msgstr "Socio"
+
+#. module: base_wua_quota_management_water_transfer
 #: model:ir.model.fields,field_description:base_wua_quota_management_water_transfer.field_wua_watertransfer_quota_id
 #: model:ir.model.fields,field_description:base_wua_quota_management_water_transfer.field_wua_watertransfer_quota_name
 msgid "Quota"
@@ -141,13 +224,18 @@ msgstr "Cupo (beneficiario)"
 #: model:ir.model.fields,field_description:base_wua_quota_management_water_transfer.field_wua_watertransfer_quotaperiod_id
 #: model:ir.ui.view,arch_db:base_wua_quota_management_water_transfer.wua_watertransfer_view_search
 msgid "Quota Period"
-msgstr "Periodo de cupo"
+msgstr "Período de cupo"
 
 #. module: base_wua_quota_management_water_transfer
-#: code:addons/base_wua_quota_management_water_transfer/models/wua_watertransfer.py:415
+#: code:addons/base_wua_quota_management_water_transfer/models/wua_watertransfer.py:500
 #, python-format
 msgid "Quotas"
 msgstr "Cupos"
+
+#. module: base_wua_quota_management_water_transfer
+#: model:ir.model.fields,field_description:base_wua_quota_management_water_transfer.field_wua_watertransfer_state_change_available
+msgid "State change Available"
+msgstr "Cambio de estado disponible"
 
 #. module: base_wua_quota_management_water_transfer
 #: model:ir.model,name:base_wua_quota_management_water_transfer.model_wua_superproduct
@@ -155,6 +243,16 @@ msgstr "Cupos"
 #: model:ir.ui.view,arch_db:base_wua_quota_management_water_transfer.wua_watertransfer_view_search
 msgid "Superproduct"
 msgstr "Supraproducto"
+
+#. module: base_wua_quota_management_water_transfer
+#: model:ir.ui.view,arch_db:base_wua_quota_management_water_transfer.wua_partner_quota_watertransfer_report_document
+msgid "Superproduct (destination)"
+msgstr "Supraproducto (beneficiario)"
+
+#. module: base_wua_quota_management_water_transfer
+#: model:ir.ui.view,arch_db:base_wua_quota_management_water_transfer.wua_partner_quota_watertransfer_report_document
+msgid "Superproduct (origin)"
+msgstr "Supraproducto (origen)"
 
 #. module: base_wua_quota_management_water_transfer
 #: model:ir.model.fields,field_description:base_wua_quota_management_water_transfer.field_wua_watertransfer_receiver_superproduct_id
@@ -168,37 +266,37 @@ msgid "Superproduct to transfer"
 msgstr "Supraproducto a transferir"
 
 #. module: base_wua_quota_management_water_transfer
-#: code:addons/base_wua_quota_management_water_transfer/models/wua_watertransfer.py:298
+#: code:addons/base_wua_quota_management_water_transfer/models/wua_watertransfer.py:369
 #, python-format
 msgid "The available balance is not sufficient."
 msgstr "El saldo disponible no es suficiente."
 
 #. module: base_wua_quota_management_water_transfer
-#: code:addons/base_wua_quota_management_water_transfer/models/wua_watertransfer.py:291
+#: code:addons/base_wua_quota_management_water_transfer/models/wua_watertransfer.py:362
 #, python-format
 msgid "The balance of chosen partner is zero o negative."
 msgstr "El saldo del socio seleccionado es menor o igual a cero."
 
 #. module: base_wua_quota_management_water_transfer
-#: code:addons/base_wua_quota_management_water_transfer/models/wua_watertransfer.py:283
+#: code:addons/base_wua_quota_management_water_transfer/models/wua_watertransfer.py:354
 #, python-format
 msgid "The instant of this water transfer is not within the chosen quota period."
 msgstr "La fecha/hora de esta transferencia no se encuentra dentro del periodo de cupo."
 
 #. module: base_wua_quota_management_water_transfer
-#: code:addons/base_wua_quota_management_water_transfer/models/wua_watertransfer.py:249
+#: code:addons/base_wua_quota_management_water_transfer/models/wua_watertransfer.py:320
 #, python-format
 msgid "The quota period is not within the chosen agricultural season."
 msgstr "El periodo de cupo seleccionado no se encuentra dentro de la campaña seleccionada."
 
 #. module: base_wua_quota_management_water_transfer
-#: code:addons/base_wua_quota_management_water_transfer/models/wua_watertransfer.py:245
+#: code:addons/base_wua_quota_management_water_transfer/models/wua_watertransfer.py:316
 #, python-format
 msgid "The state of quota period must be 'generated'."
 msgstr "El estado del periodo de cupo debe ser 'generado'."
 
 #. module: base_wua_quota_management_water_transfer
-#: code:addons/base_wua_quota_management_water_transfer/models/wua_watertransfer.py:263
+#: code:addons/base_wua_quota_management_water_transfer/models/wua_watertransfer.py:334
 #, python-format
 msgid "The superproduct is not enrolled in the chosen quota period."
 msgstr "El supraproducto no está disponible en el periodo de cupo seleccionado."
@@ -207,6 +305,22 @@ msgstr "El supraproducto no está disponible en el periodo de cupo seleccionado.
 #: sql_constraint:wua.watertransfer:0
 msgid "The volume of water transfer must be a positive value."
 msgstr "El volumen de la transferencia de agua debe ser positivo."
+
+#. module: base_wua_quota_management_water_transfer
+#: model:ir.actions.server,name:base_wua_quota_management_water_transfer.wua_validate_watertransfers
+msgid "Validate Water Transfer"
+msgstr "Validar transferencia de agua"
+
+#. module: base_wua_quota_management_water_transfer
+#: model:ir.ui.view,arch_db:base_wua_quota_management_water_transfer.wua_watertransfer_view_search
+#: selection:wua.watertransfer,watertransfer_state:0
+msgid "Validated"
+msgstr "Validado"
+
+#. module: base_wua_quota_management_water_transfer
+#: model:ir.ui.view,arch_db:base_wua_quota_management_water_transfer.wua_partner_quota_watertransfer_report_document
+msgid "Volume"
+msgstr "Volumen"
 
 #. module: base_wua_quota_management_water_transfer
 #: model:ir.model.fields,field_description:base_wua_quota_management_water_transfer.field_wua_watertransfer_volume
@@ -234,13 +348,41 @@ msgid "Water Transfer"
 msgstr "Transferencia de agua"
 
 #. module: base_wua_quota_management_water_transfer
-#: code:addons/base_wua_quota_management_water_transfer/models/wua_watertransfer.py:436
+#: model:ir.ui.view,arch_db:base_wua_quota_management_water_transfer.wua_watertransfer_view_form
+msgid "Water Transfer Cancel"
+msgstr "Cancelar transferencia de agua"
+
+#. module: base_wua_quota_management_water_transfer
+#: model:ir.model.fields,field_description:base_wua_quota_management_water_transfer.field_wua_watertransfer_watertransfer_state
+#: model:ir.ui.view,arch_db:base_wua_quota_management_water_transfer.wua_watertransfer_view_search
+msgid "Water Transfer State"
+msgstr "Estado transferencia de agua"
+
+#. module: base_wua_quota_management_water_transfer
+#: model:ir.ui.view,arch_db:base_wua_quota_management_water_transfer.wua_watertransfer_view_form
+msgid "Water Transfer Validate"
+msgstr "Validar transferencia de agua"
+
+#. module: base_wua_quota_management_water_transfer
+#: model:ir.actions.report.xml,name:base_wua_quota_management_water_transfer.wua_partner_quota_watertransfer_report
+msgid "Water Transfer report"
+msgstr "Informe transferencia de agua"
+
+#. module: base_wua_quota_management_water_transfer
+#: code:addons/base_wua_quota_management_water_transfer/models/wua_watertransfer.py:511
 #, python-format
 msgid "Water transfer from"
 msgstr "Transferencia de"
 
 #. module: base_wua_quota_management_water_transfer
-#: code:addons/base_wua_quota_management_water_transfer/models/wua_watertransfer.py:438
+#: code:addons/base_wua_quota_management_water_transfer/models/wua_watertransfer.py:291
+#: code:addons/base_wua_quota_management_water_transfer/models/wua_watertransfer.py:303
+#, python-format
+msgid "You do not have permission to execute this action."
+msgstr "No tienes permisos para ejecutar está acción."
+
+#. module: base_wua_quota_management_water_transfer
+#: code:addons/base_wua_quota_management_water_transfer/models/wua_watertransfer.py:513
 #, python-format
 msgid "to superproduct"
 msgstr "a"
