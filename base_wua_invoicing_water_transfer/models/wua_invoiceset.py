@@ -148,7 +148,7 @@ class WuaInvoicesetLine(models.Model):
                     INSERT INTO wua_invoiceset_line_watertransfer (
                         id, create_uid, write_uid, create_date, write_date,
                         invoicesetline_id, selected,
-                        watertransfer_id, partner_id,
+                        watertransfer_id, partner_id, product_id,
                         volume, number_of_invoicing_processes,
                         sum_price_subtotal
                     )
@@ -158,6 +158,7 @@ class WuaInvoicesetLine(models.Model):
                         %s, TRUE,
                         e.id,
                         e.partner_id,
+                        e.product_id,
                         e.volume,
                         e.number_of_invoicing_processes,
                         e.sum_price_subtotal
@@ -221,6 +222,13 @@ class WuaInvoicesetLinewatertransfer(models.Model):
         compute='_compute_volume',
         store=True,
     )
+
+    product_id = fields.Many2one(
+        string='Product',
+        comodel_name='product.product',
+        required=True,
+        index=True,
+        ondelete='restrict')
 
     sum_price_subtotal = fields.Float(
         string='Invoiced Amount')

@@ -30,6 +30,13 @@ class WuaWatertransfer(models.Model):
         index=True,
         compute='_compute_sum_price_subtotal')
 
+    product_id = fields.Many2one(
+        string='Product',
+        comodel_name='product.product',
+        required=True,
+        index=True,
+        ondelete='restrict')
+
     @api.depends('invoiceline_ids',
                  'invoiceline_ids.price_subtotal')
     def _compute_sum_price_subtotal(self):
