@@ -6,6 +6,7 @@ from odoo import models, fields, api
 
 DEFAULT_STANDARD_APPLICATION_EFFICIENCY = 0.95
 DEFAULT_CONTROL_PERIODICITY = 7
+PERIOD_START_DAY = 1
 DEFAULT_KC_NDVI_A = 0.0
 DEFAULT_KC_NDVI_B = 1.44
 DEFAULT_KC_NDVI_C = -0.1
@@ -39,6 +40,21 @@ class WuaConfiguration(models.TransientModel):
         default=DEFAULT_CONTROL_PERIODICITY,
         required=True,
         help='Number of days in each control period',
+    )
+
+    period_start_day = fields.Selection(
+        string='Period Start Day',
+        selection=[
+            (1, 'Monday'),
+            (2, 'Tuesday'),
+            (3, 'Wednesday'),
+            (4, 'Thursday'),
+            (5, 'Friday'),
+            (6, 'Saturday'),
+            (7, 'Sunday')
+        ],
+        default=PERIOD_START_DAY,
+        help='If the periodicity is weekly, start day of the periods',
     )
 
     default_kc_ndvi_a = fields.Float(
@@ -205,6 +221,9 @@ class WuaConfiguration(models.TransientModel):
         values.set_default('wua.configuration',
                            'default_control_periodicity',
                            self.default_control_periodicity)
+        values.set_default('wua.configuration',
+                           'period_start_day',
+                           self.period_start_day)
         values.set_default('wua.configuration',
                            'default_kc_ndvi_a',
                            self.default_kc_ndvi_a)

@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_agriculturalseason_view_form" model="ir.ui.view">
+        <field name="name">wua.agriculturalseason.view.form</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="priority" eval="10"/>
+        <field name="arch" type="xml">
+            <form duplicate="false">
+                <field name="id" invisible="1"/>
+                <header>
+                    <button name="activate"
+                            type="object" string="Activate"
+                            icon="fa-toggle-on"
+                            attrs="{'invisible': ['|', ('state_active', '=', '02_active'), ('id', '=', False)]}"
+                            groups="base_wua.group_wua_manager"
+                            confirm="⚠️ Please confirm the operation."/>
+                    <button name="deactivate"
+                            type="object" string="Deactivate"
+                            icon="fa-toggle-off"
+                            attrs="{'invisible': ['|', ('state_active', '=', '01_inactive'), ('id', '=', False)]}"
+                            groups="base_wua.group_wua_manager"
+                            confirm="⚠️ Please confirm the operation."/>
+                    <field name="state_active" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_get_monitoringperiods"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-calendar-check-o">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_text">
+                                    Monitoring
+                                </span>
+                                <span class="o_stat_text">
+                                    Periods
+                                </span>
+                            </div>
+                        </button>
+                        <button name="action_get_cropunits"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-pagelines">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_text">
+                                    Crop
+                                </span>
+                                <span class="o_stat_text">
+                                    Units
+                                </span>
+                            </div>
+                        </button>
+                        <button name="action_get_hydricneeds"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-calculator">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_text">
+                                    Recommen-
+                                </span>
+                                <span class="o_stat_text">
+                                    dations
+                                </span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title" colspan="2">
+                        <h2>
+                            <div>
+                                <field name="initial_date_title" class="oe_inline"/>
+                                <span class="oe_inline"> - </span>
+                                <field name="end_date_title" class="oe_inline"/>
+                            </div>
+                        </h2>
+                    </div>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <label for="initial_date_title"/>
+                            <div>
+                                <field name="initial_date" class="oe_inline"/>
+                                <span class="oe_inline"> - </span>
+                                <field name="end_date" class="oe_inline"/>
+                            </div>
+                            <field name="description" string="Description"/>
+                            <field name="number_of_calculated_monitoringperiods"
+                                   string="Calculated Periods"/>
+                            <field name="number_of_cropunits"
+                                   string="Crop Units"/>
+                            <field name="number_of_hydricneeds"
+                                   string="Recommendations"/>
+                        </group>
+                        <group name="master_data_right">
+                            <div name="section_sum_total_gin_title" colspan="2" class="text-center">
+                                <p>Gross Irrigation Needs :</p>
+                            </div>
+                            <div name="section_sum_total_gin"
+                                 colspan="2" class="text-center panel-body"
+                                 style="border-color:#cccccc;border-width:1px;border-style:solid;height:50px;margin-top:5px;margin-left:25%;margin-right:25%">
+                                <b><span class="oe_inline">Total = </span>
+                                <field name="sum_total_gin" class="oe_inline"/>
+                                <span class="oe_inline"> m³</span></b>
+                            </div>
+                        </group>
+                    </group>
+                    <div style="width: 100%; margin:0 auto;">
+                        <field name="gin_graph"
+                         widget="bokeh_chart" nolabel="1"/>
+                    </div>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="page_notes" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"
+                           widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids"
+                           widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_agriculturalseason_view_tree" model="ir.ui.view">
+        <field name="name">wua.agriculturalseason.view.tree</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_hydric_estimation_agriculturalseason_view_tree"
+                  colors="green:active_agriculturalseason==True;"
+                  default_order="initial_date">
+                <field name="active_agriculturalseason" invisible="1"/>
+                <field name="initial_date" string="Initial Date"/>
+                <field name="end_date" string="End Date"/>
+                <field name="description" string="Description"/>
+                <field name="number_of_calculated_monitoringperiods" string="No. calculated periods"/>
+                <field name="number_of_cropunits" string="No. crop units"/>
+                <field name="number_of_hydricneeds" string="No. estimations"/>
+                <field name="sum_total_gin" string="Gross Irrig. Needs" sum="Total"/>
+                <field name="state_active" string="State"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_agriculturalseason_view_search" model="ir.ui.view">
+        <field name="name">wua.agriculturalseason.view.search</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="initial_date" string="Initial Date"/>
+                <field name="description" string="Description"/>
+                <filter string="Active agricultural season"
+                        name="active_agriculturalseason_yes"
+                        domain="[('active_agriculturalseason', '=', True)]"/>
+                <separator/>
+                <filter string="State: Active Season"
+                        name="state_active"
+                        domain="[('active_agriculturalseason', '=', True)]"/>
+                <filter string="State: Inactive Season"
+                        name="state_inactive"
+                        domain="[('active_agriculturalseason', '=', False)]"/>
+                <separator/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_agriculturalseason_view_kanban" model="ir.ui.view">
+        <field name="name">wua.agriculturalseason.view.kanban</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="arch" type="xml">
+            <kanban create="false"
+                    group_create="false"
+                    group_delete="false"
+                    default_order="name desc">
+                <field name="id"/>
+                <field name="initial_date"/>
+                <field name="end_date"/>
+                <field name="description"/>
+                <field name="active_agriculturalseason"/>
+                <field name="sum_total_gin"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="oe_kanban_details">
+                                <div class="text-center">
+                                    <strong><field name="description"/></strong><br/>
+                                    <strong><field name="initial_date"/> - <field name="end_date"/></strong><br/>
+                                    <t t-if="record.active_agriculturalseason.raw_value">
+                                        <span class="text-success"><strong>(ACTIVE SEASON)</strong></span>
+                                    </t>
+                                </div>
+                                <div class="text-center" style="margin-top:10px">
+                                    <h1><field name="sum_total_gin"/> m³</h1>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="wua_agriculturalseason_action"
+            model="ir.actions.act_window">
+        <field name="name">Agricultural Seasons</field>
+        <field name="res_model">wua.agriculturalseason</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_agriculturalseason_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('wua_agriculturalseason_view_form')}),
+                (0, 0, {'view_mode': 'kanban',
+                        'view_id': ref('wua_agriculturalseason_view_kanban')})]"/>
+        <field name="search_view_id" ref="wua_agriculturalseason_view_search"/>
+        <field name="context">
+            {'upper_description_agriculturalseason': True}
+        </field>
+    </record>
+
+    <menuitem id="wua_agriculturalseason_menu"
+              name="Agricultural Seasons"
+              parent="base_wua_census_calculation_menu"
+              action="wua_agriculturalseason_action"
+              sequence="10"/>
+
+</odoo>

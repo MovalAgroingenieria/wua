@@ -30,7 +30,7 @@
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <button name="action_get_hydric_estimations"
+                        <button name="action_get_hydricneeds"
                                 type="object"
                                 class="oe_stat_button"
                                 icon="fa-calculator">
@@ -60,7 +60,7 @@
                                    string="Agricultural Season"
                                    options="{'no_create_edit':True}"
                                    attrs="{'invisible': [('id', '>', 0)]}"/>
-                            <label for="initial_date"/>
+                            <label for="initial_date_title"/>
                             <div>
                                 <field name="initial_date" class="oe_inline"/>
                                 <span class="oe_inline"> - </span>
@@ -71,7 +71,7 @@
                         </group>
                         <group name="master_data_right">
                             <div name="section_sum_total_gin_title" colspan="2" class="text-center">
-                                <p>Gross Irrigation Need :</p>
+                                <p>Gross Irrigation Needs :</p>
                             </div>
                             <div name="section_sum_total_gin"
                                  colspan="2" class="text-center panel-body"
@@ -112,7 +112,7 @@
                 <field name="end_date" string="End Date"/>
                 <field name="agriculturalseason_id" string="Agricultural Season"/>
                 <field name="number_of_hydricneeds" string="No. estimations"/>
-                <field name="sum_total_gin" string="Gross Irrig. Need"/>
+                <field name="sum_total_gin" string="Gross Irrig. Needs" sum="Total"/>
                 <field name="state" string="State"/>
             </tree>
         </field>
@@ -144,6 +144,9 @@
                     <filter string="Agricultural Season"
                             name="grouped_agriculturalseason"
                      context="{'group_by':'agriculturalseason_id'}"/>
+                    <filter string="Date"
+                            name="grouped_initial_date"
+                     context="{'group_by':'initial_date'}"/>
                 </group>
             </search>
         </field>
@@ -162,6 +165,7 @@
                 <field name="end_date"/>
                 <field name="is_current_controlperiod"/>
                 <field name="state"/>
+                <field name="sum_total_gin"/>
                 <templates>
                     <t t-name="kanban-box">
                         <div class="oe_kanban_global_click">
@@ -230,7 +234,7 @@
         <field name="name">Control Periods</field>
         <field name="res_model">wua.monitoringperiod</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form,kanban</field>
+        <field name="view_mode">tree,form,kanban,graph,pivot</field>
         <field name="view_ids"
          eval="[(5, 0),
                 (0, 0, {'view_mode': 'tree',

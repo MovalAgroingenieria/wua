@@ -11,6 +11,9 @@ import requests
 from PIL import Image
 from pyproj import Proj, transform
 from unidecode import unidecode
+from bokeh.plotting import figure
+from bokeh.embed import components
+from bokeh.models import ColumnDataSource, HoverTool, HelpTool
 
 from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import DEFAULT_STANDARD_APPLICATION_EFFICIENCY
 from odoo import models, fields, api, exceptions, _
@@ -245,13 +248,13 @@ class WuaCropunit(models.Model):
     )
 
     current_controlperiod_nin = fields.Float(
-        string='Net Irrig. Need',
+        string='Net Irrig. Needs',
         digits=(32, 2),
         compute='_compute_current_controlperiod_nin',
     )
 
     current_controlperiod_gin = fields.Float(
-        string='Gross Irrig. Need',
+        string='Gross Irrig. Needs',
         digits=(32, 2),
         compute='_compute_current_controlperiod_gin',
     )
@@ -267,6 +270,11 @@ class WuaCropunit(models.Model):
         compute='_compute_mapped_to_active_agriculturalseason',
         search='_search_mapped_to_active_agriculturalseason',
     )
+
+    hydricneed_ids = fields.One2many(
+        string='Associated hydric estimations',
+        comodel_name='wua.hydricneed',
+        inverse_name='cropunit_id')
 
     notes = fields.Html(
         string='Notes',
@@ -329,6 +337,10 @@ class WuaCropunit(models.Model):
     html_frame_googlemaps = fields.Char(
         string='GIS preview with google maps viewer',
         compute='_compute_html_frame_googlemaps')
+
+    gin_graph = fields.Text(
+        string='GIN Graph',
+        compute='_compute_gin_graph')
 
     _sql_constraints = [
         ('name_unique',
@@ -870,6 +882,81 @@ class WuaCropunit(models.Model):
                     '</iframe></p>'
             record.html_frame_googlemaps = html_frame_googlemaps
 
+    @api.multi
+    def _compute_gin_graph(self):
+        model_transform = self.env['wua.parcel']
+        for record in self:
+            gin_graph = None
+            agriculturalseason_id = record.agriculturalseason_id.id
+            cropunit_id = record.id
+            cropunit_name = record.name
+            number_of_monitoringperiods = 0
+            self.env.cr.execute(
+                '(SELECT COUNT(*) FROM wua_monitoringperiod WHERE '
+                'agriculturalseason_id = %s)', (agriculturalseason_id,))
+            query_results = self.env.cr.dictfetchall()
+            if (query_results and
+                    query_results[0].get('count') is not None):
+                number_of_monitoringperiods = query_results[0].get('count')
+            if number_of_monitoringperiods:
+                monitoringperiods = []
+                self.env.cr.execute(
+                    '(SELECT initial_date FROM wua_monitoringperiod WHERE '
+                    'agriculturalseason_id = %s ORDER BY '
+                    'initial_date)', (agriculturalseason_id,))
+                sql_resp = self.env.cr.fetchall()
+                if sql_resp:
+                    for item in sql_resp:
+                        monitoringperiods.append(item[0])
+                if monitoringperiods:
+                    x_values = []
+                    y_values = []
+                    for monitoringperiod in monitoringperiods:
+                        x_values.append(model_transform.transform_date_to_locale(
+                            monitoringperiod)[:5])
+                        y_value = 0.0
+                        self.env.cr.execute(
+                            '(SELECT hn.total_gin FROM wua_hydricneed hn '
+                            'INNER JOIN wua_monitoringperiod mp '
+                            'ON hn.monitoringperiod_id = mp.id '
+                            'WHERE mp.initial_date = %s AND '
+                            'hn.cropunit_id = %s)', (monitoringperiod, cropunit_id))
+                        query_results = self.env.cr.dictfetchall()
+                        if (query_results and
+                                query_results[0].get('total_gin') is not None):
+                            y_value = query_results[0].get('total_gin')
+                        y_values.append(y_value)
+                    source = ColumnDataSource(data=dict(
+                        x=x_values, y=y_values,))
+                    initial_date = model_transform.transform_date_to_locale(
+                        monitoringperiods[0])
+                    end_date = model_transform.transform_date_to_locale(
+                        monitoringperiods[number_of_monitoringperiods - 1])
+                    title = _('Gross Irrigation Needs') + '  (' + \
+                        initial_date + ' - ' + end_date + ',  ' + \
+                        cropunit_name + ')'
+                    p = figure(x_range=x_values,
+                               y_range=(0, max(y_values) + 1),
+                               sizing_mode='scale_width',
+                               height=150, title=title,
+                               x_axis_label=_('Control Periods'),
+                               y_axis_label=_('m³'),)
+                    hover = HoverTool(tooltips=[
+                        (_('Control Period'), '@x'),
+                        (_('Value (m³)'), '@y{0.00}'),
+                    ])
+                    p.add_tools(hover)
+                    for tool in p.tools:
+                        if isinstance(tool, HelpTool):
+                            p.tools.remove(tool)
+                            break
+                    p.toolbar.logo = None
+                    p.vbar(x='x', top='y', source=source, width=0.1, color='navy')
+                    script, div = components(p)
+                    if script and div:
+                        gin_graph = '%s%s' % (div, script)
+            record.gin_graph = gin_graph
+
     @api.constrains('cultivation_id',
                     'cultivation_id.suitable_hydric_estimation')
     def _check_cultivation_suitable(self):
@@ -1132,6 +1219,7 @@ class WuaCropunit(models.Model):
                 image_height_final = image_height_pixels
         return bbox_final, image_width_final, image_height_final
 
+    @api.multi
     def get_aerial_image(self,
                          wms='https://www.ign.es/wms-inspire/pnoa-ma',
                          layers='OI.OrthoimageCoverage',
@@ -1209,7 +1297,19 @@ class WuaCropunit(models.Model):
                 record._compute_aerial_image_shown()
 
     @api.multi
-    def action_get_hydric_estimations(self):
+    def action_get_hydricneeds(self):
         self.ensure_one()
-        # TODO (provisional)
-        print 'action_get_hydric_estimations (from crop unit)...'
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Irrigation Recommendations'),
+            'res_model': 'wua.hydricneed',
+            'view_type': 'form',
+            'view_mode': 'tree,form,kanban,graph,pivot',
+            'target': 'current',
+            'domain': [('id', 'in', self.hydricneed_ids.ids)],
+            'context': {'search_default_mapped_to_active_'
+                        'agriculturalseason_yes': True,
+                        'search_default_is_occurred_or_'
+                        'current_controlperiod_yes': True},
+        }
+        return act_window

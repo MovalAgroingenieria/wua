@@ -14,7 +14,7 @@
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <button name="action_get_hydric_estimations"
+                        <button name="action_get_hydricneeds"
                                 type="object"
                                 class="oe_stat_button"
                                 icon="fa-calculator">
@@ -141,12 +141,12 @@
                                 <span class="oe_inline">) = </span>
                                 <field name="current_controlperiod_kc" class="oe_inline"/>
                             </div>
-                            <!-- <label for="current_controlperiod_nin"
+                            <label for="current_controlperiod_nin"
                                    attrs="{'invisible': [('exists_current_recommendation', '=', False)]}"/>
                             <div attrs="{'invisible': [('exists_current_recommendation', '=', False)]}">
                                 <field name="current_controlperiod_nin" class="oe_inline"/>
                                 <span class="oe_inline"> m³/ha</span>
-                            </div> -->
+                            </div>
                             <label for="current_controlperiod_gin"
                                    attrs="{'invisible': [('exists_current_recommendation', '=', False)]}"/>
                             <div attrs="{'invisible': [('exists_current_recommendation', '=', False)]}">
@@ -169,6 +169,10 @@
                             </div>
                         </group>
                     </group>
+                    <div style="width: 100%; margin:0 auto;">
+                        <field name="gin_graph"
+                         widget="bokeh_chart" nolabel="1"/>
+                    </div>
                     <group name="slave_data">
                         <notebook name="slave_data_notebook">
                             <page name="page_notes" string="Notes">
@@ -279,6 +283,8 @@
                 <field name="exists_current_recommendation"/>
                 <field name="initial_date"/>
                 <field name="end_date"/>
+                <field name="current_controlperiod_initial_date"/>
+                <field name="current_controlperiod_end_date"/>
                 <field name="current_controlperiod_total_gin"/>
                 <templates>
                     <t t-name="kanban-box">
@@ -309,7 +315,7 @@
                                         </div>
                                         <t t-if="record.exists_current_recommendation.value">
                                             <div name="div_content_04_01" style="margin-top:10px">
-                                                <i class="fa fa-calculator fa-lg" style="margin-right:6px"/> <field name="initial_date"/> - <field name="end_date"/> : <strong><field name="current_controlperiod_total_gin"/> m³</strong>
+                                                <i class="fa fa-calculator fa-lg" style="margin-right:6px"/> <field name="current_controlperiod_initial_date"/> - <field name="current_controlperiod_end_date"/> : <strong><field name="current_controlperiod_total_gin"/> m³</strong>
                                             </div>
                                         </t>
                                         <t t-else="">

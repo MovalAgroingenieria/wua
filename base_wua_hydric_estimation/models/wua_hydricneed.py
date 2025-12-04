@@ -9,7 +9,7 @@ from odoo import models, fields, api, exceptions, _
 class WuaHydricneed(models.Model):
     _name = 'wua.hydricneed'
     _description = 'Hydric needs of the crop units'
-    _order = 'name desc'
+    _order = 'initial_date desc, name'
 
     cropunit_id = fields.Many2one(
         string='Crop Unit',
@@ -41,7 +41,7 @@ class WuaHydricneed(models.Model):
         index=True)
 
     accumulated_et0 = fields.Float(
-        string='Accumulated ET0',
+        string='Accumulated ETo',
         digits=(32, 4),
         default=0,
         required=True,
@@ -83,7 +83,7 @@ class WuaHydricneed(models.Model):
     )
 
     area_gis_ha = fields.Float(
-        string='Crop Unit Area',
+        string='Crop Unit Area (ha)',
         digits=(32, 4),
         store=True,
         index=True,
@@ -137,6 +137,14 @@ class WuaHydricneed(models.Model):
         compute='_compute_cultivation_id',
     )
 
+    cropfamily_id = fields.Many2one(
+        string='Crop Family',
+        comodel_name='wua.cropfamily',
+        store=True,
+        index=True,
+        compute='_compute_cropfamily_id',
+    )
+
     order_number = fields.Integer(
         string='Order Number',
         store=True,
@@ -159,6 +167,36 @@ class WuaHydricneed(models.Model):
         string='Occurred or current control period (y/n)',
         compute='_compute_is_occurred_or_current_controlperiod',
         search='_search_is_occurred_or_current_controlperiod',
+    )
+
+    kc_function = fields.Char(
+        string='Kc(ndvi)',
+        compute='_compute_kc_function',
+    )
+
+    etc_function = fields.Char(
+        string='ETc(Kc,ETo)',
+        compute='_compute_etc_function',
+    )
+
+    nin_function = fields.Char(
+        string='NIN(ETc,Pe)',
+        compute='_compute_nin_function',
+    )
+
+    standard_application_efficiency = fields.Float(
+        string='Standard Application Efficiency',
+        compute='_compute_standard_application_efficiency',
+    )
+
+    gin_function = fields.Char(
+        string='GIN(ETc,Pe)',
+        compute='_compute_gin_function',
+    )
+
+    total_gin_function = fields.Char(
+        string='Total GIN(GIN,A)',
+        compute='_compute_total_gin_function',
     )
 
     _sql_constraints = [
@@ -275,6 +313,14 @@ class WuaHydricneed(models.Model):
                 cultivation_id = record.cropunit_id.cultivation_id
             record.cultivation_id = cultivation_id
 
+    @api.depends('cultivation_id', 'cultivation_id.cropfamily_id')
+    def _compute_cropfamily_id(self):
+        for record in self:
+            cropfamily_id = None
+            if record.cultivation_id and record.cultivation_id.cropfamily_id:
+                cropfamily_id = record.cultivation_id.cropfamily_id
+            record.cropfamily_id = cropfamily_id
+
     @api.depends('cropunit_id')
     def _compute_order_number(self):
         for record in self:
@@ -346,6 +392,99 @@ class WuaHydricneed(models.Model):
             for item in sql_resp:
                 hydricneed_ids.append(item[0])
         return [('id', filter_operator, hydricneed_ids)]
+
+    @api.multi
+    def _compute_kc_function(self):
+        model_transform = self.env['wua.parcel']
+        for record in self:
+            kc_function = ''
+            if record.mean_ndvi and record.cropfamily_id:
+                mean_ndvi_str = model_transform.transform_float_to_locale(
+                    record.mean_ndvi, 4)
+                kc_a_str = model_transform.transform_float_to_locale(
+                    record.cropfamily_id.kc_a, 4)
+                kc_b_str = model_transform.transform_float_to_locale(
+                    record.cropfamily_id.kc_b, 4)
+                kc_c_str = model_transform.transform_float_to_locale(
+                    record.cropfamily_id.kc_c, 4)
+                kc_str = model_transform.transform_float_to_locale(
+                    record.kc, 4)
+                kc_function = \
+                    _('Kc(NDVI)') + ' = ' + \
+                    kc_a_str + u' · ' + mean_ndvi_str + u' ² + ' + \
+                    kc_b_str + u' · ' + mean_ndvi_str + ' + ' + \
+                    kc_c_str + ' = ' + kc_str
+            record.kc_function = kc_function
+
+    @api.multi
+    def _compute_etc_function(self):
+        model_transform = self.env['wua.parcel']
+        for record in self:
+            accumulated_et0_str = model_transform.transform_float_to_locale(
+                record.accumulated_et0, 4)
+            kc_str = model_transform.transform_float_to_locale(
+                record.kc, 4)
+            accumulated_etc_str = model_transform.transform_float_to_locale(
+                record.accumulated_etc, 4)
+            record.etc_function = \
+                _('ETc(Kc, ETo)') + ' = ' + \
+                kc_str + u' · ' + accumulated_et0_str + ' = ' + \
+                accumulated_etc_str
+
+    @api.multi
+    def _compute_nin_function(self):
+        model_transform = self.env['wua.parcel']
+        for record in self:
+            accumulated_etc_str = model_transform.transform_float_to_locale(
+                record.accumulated_etc, 4)
+            accumulated_pe_str = model_transform.transform_float_to_locale(
+                record.accumulated_pe, 4)
+            nin_str = model_transform.transform_float_to_locale(
+                record.nin, 2)
+            record.nin_function = \
+                _('NIN(ETc, Pe)') + ' = 10' + u' · ' + \
+                '(' + accumulated_etc_str + ' - ' + \
+                accumulated_pe_str + ')' + ' = ' + \
+                nin_str
+
+    @api.multi
+    def _compute_standard_application_efficiency(self):
+        for record in self:
+            standard_application_efficiency = 1
+            if (record.cropunit_id and
+               record.cropunit_id.standard_application_efficiency > 0):
+                standard_application_efficiency = \
+                    record.cropunit_id.standard_application_efficiency
+            record.standard_application_efficiency = \
+                standard_application_efficiency * 100
+
+    @api.multi
+    def _compute_gin_function(self):
+        model_transform = self.env['wua.parcel']
+        for record in self:
+            nin_str = model_transform.transform_float_to_locale(
+                record.nin, 2)
+            sae_str = model_transform.transform_float_to_locale(
+                record.standard_application_efficiency / 100, 2)
+            gin_str = model_transform.transform_float_to_locale(
+                record.gin, 2)
+            record.gin_function = \
+                _('GIN(NIN, SAE)') + ' = ' + nin_str + ' / ' + \
+                sae_str + ' = ' + gin_str
+
+    @api.multi
+    def _compute_total_gin_function(self):
+        model_transform = self.env['wua.parcel']
+        for record in self:
+            gin_str = model_transform.transform_float_to_locale(
+                record.gin, 2)
+            area_gis_ha_str = model_transform.transform_float_to_locale(
+                record.area_gis_ha, 4)
+            total_gin_str = model_transform.transform_float_to_locale(
+                record.total_gin, 2)
+            record.total_gin_function = \
+                _('Total GIN(GIN, A)') + ' = ' + gin_str + u' · ' + \
+                area_gis_ha_str + ' = ' + total_gin_str
 
     @api.multi
     def name_get(self):

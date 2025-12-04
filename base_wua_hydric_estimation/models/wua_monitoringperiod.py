@@ -31,7 +31,7 @@ class WuaMonitoringperiod(models.Model):
     )
 
     initial_date = fields.Date(
-        string='Control period dates',
+        string='Initial Date',
         required=True,
         index=True,
     )
@@ -84,7 +84,7 @@ class WuaMonitoringperiod(models.Model):
     )
 
     initial_date_title = fields.Date(
-        string='Initial date (title)',
+        string='Control period dates',
         related='initial_date',
         readonly=True,
     )
@@ -288,10 +288,18 @@ class WuaMonitoringperiod(models.Model):
         return result
 
     @api.multi
-    def action_get_hydric_estimations(self):
+    def action_get_hydricneeds(self):
         self.ensure_one()
-        # TODO (provisional)
-        print 'action_get_hydric_estimations (from monitoring period)...'
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Irrigation Recommendations'),
+            'res_model': 'wua.hydricneed',
+            'view_type': 'form',
+            'view_mode': 'tree,form,kanban,graph,pivot',
+            'target': 'current',
+            'domain': [('id', 'in', self.hydricneed_ids.ids)],
+        }
+        return act_window
 
     @api.multi
     def calculate(self, update_state=True):

@@ -4,6 +4,7 @@
 
 from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import DEFAULT_STANDARD_APPLICATION_EFFICIENCY
 from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import DEFAULT_CONTROL_PERIODICITY
+from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import PERIOD_START_DAY
 from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import DEFAULT_KC_NDVI_A
 from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import DEFAULT_KC_NDVI_B
 from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import DEFAULT_KC_NDVI_C
@@ -45,6 +46,9 @@ def _update_parameters(env):
     values.set_default('wua.configuration',
                        'default_control_periodicity',
                        DEFAULT_CONTROL_PERIODICITY)
+    values.set_default('wua.configuration',
+                       'period_start_day',
+                       PERIOD_START_DAY),
     values.set_default('wua.configuration',
                        'default_kc_ndvi_a',
                        DEFAULT_KC_NDVI_A)
@@ -220,6 +224,7 @@ def _delete_parameters(env):
             WHERE model='wua.configuration' AND
             (name = 'default_standard_application_efficiency' OR
              name = 'default_control_periodicity' OR
+             name = 'period_start_day' OR
              name = 'default_kc_ndvi_a' OR
              name = 'default_kc_ndvi_b' OR
              name = 'default_kc_ndvi_c' OR
