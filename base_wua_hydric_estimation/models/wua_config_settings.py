@@ -5,13 +5,13 @@
 from odoo import models, fields, api
 
 DEFAULT_STANDARD_APPLICATION_EFFICIENCY = 0.95
-DEFAULT_CONTROL_PERIODICITY = 7
+CONTROL_PERIODICITY = 7
 PERIOD_START_DAY = 1
+AUTOMATIC_CALCULATION = True
 DEFAULT_KC_NDVI_A = 0.0
 DEFAULT_KC_NDVI_B = 1.44
 DEFAULT_KC_NDVI_C = -0.1
 MAX_OFFSET_ALTERNATIVE_NDVI = 14
-# AERIAL_IMAGE_LAYERS = 'pnoa,cropunit_perimeter'
 AERIAL_IMAGE_LAYERS = 'catastro,parcel_dark_perimeter_dotted,'\
                       'cropunit_dark_perimeter'
 AERIAL_IMAGE_WIDTH = 0
@@ -35,9 +35,9 @@ class WuaConfiguration(models.TransientModel):
              'net requirements',
     )
 
-    default_control_periodicity = fields.Integer(
-        string='Default Control Periodicity',
-        default=DEFAULT_CONTROL_PERIODICITY,
+    control_periodicity = fields.Integer(
+        string='Control Periodicity',
+        default=CONTROL_PERIODICITY,
         required=True,
         help='Number of days in each control period',
     )
@@ -54,7 +54,15 @@ class WuaConfiguration(models.TransientModel):
             (7, 'Sunday')
         ],
         default=PERIOD_START_DAY,
+        required=True,
         help='If the periodicity is weekly, start day of the periods',
+    )
+
+    automatic_calculation = fields.Boolean(
+        string='Automatic Calculation',
+        default=AUTOMATIC_CALCULATION,
+        help='Automatic calculation of hydric estimations when new '
+             'agroclimatic data is available on the start day of the period',
     )
 
     default_kc_ndvi_a = fields.Float(
@@ -189,8 +197,8 @@ class WuaConfiguration(models.TransientModel):
          'and default_standard_application_efficiency <= 1)',
          'The default standard application efficiency must be a value greater '
          'than 0 and less than or equal to 1.'),
-        ('valid_default_control_periodicity',
-         'CHECK (default_control_periodicity > 0)',
+        ('valid_control_periodicity',
+         'CHECK (control_periodicity > 0)',
          'The number of days in each control period must be a '
          'strictly positive value.'),
         ('valid_max_offset_alternative_ndvi',
@@ -219,11 +227,14 @@ class WuaConfiguration(models.TransientModel):
                            'default_standard_application_efficiency',
                            self.default_standard_application_efficiency)
         values.set_default('wua.configuration',
-                           'default_control_periodicity',
-                           self.default_control_periodicity)
+                           'control_periodicity',
+                           self.control_periodicity)
         values.set_default('wua.configuration',
                            'period_start_day',
                            self.period_start_day)
+        values.set_default('wua.configuration',
+                           'automatic_calculation',
+                           self.automatic_calculation)
         values.set_default('wua.configuration',
                            'default_kc_ndvi_a',
                            self.default_kc_ndvi_a)

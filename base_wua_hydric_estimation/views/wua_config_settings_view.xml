@@ -11,13 +11,16 @@
                     <field name="default_standard_application_efficiency"
                            string="Application Efficiency (default)"
                            style="width:100px"/>
-                    <field name="default_control_periodicity"
+                    <field name="control_periodicity"
                            string="Control Periodicity (default)"
                            style="width:100px"/>
                     <field name="period_start_day"
                            string="Period Start Day"
                            style="width:100px"
-                           attrs="{'invisible': [('default_control_periodicity', '!=', 7)]}"/>
+                           attrs="{'invisible': [('control_periodicity', '!=', 7)]}"/>
+                    <field name="automatic_calculation"
+                           string="Automatic Calculation"
+                           attrs="{'invisible': [('control_periodicity', '!=', 7)]}"/>
                     <field name="default_kc_ndvi_a"
                            string="Coefficient a for Kc (default)"
                            style="width:100px"/>

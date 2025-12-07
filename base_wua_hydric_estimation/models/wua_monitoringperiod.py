@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
+import logging
 
 from odoo import models, fields, api, exceptions, _
 
@@ -232,11 +233,11 @@ class WuaMonitoringperiod(models.Model):
                     'end_date')
     def _check_dates(self):
         control_periodicity = 7
-        default_control_periodicity = \
+        param_control_periodicity = \
             self.env['ir.values'].get_default(
-                'wua.configuration', 'default_control_periodicity')
-        if default_control_periodicity:
-            control_periodicity = default_control_periodicity
+                'wua.configuration', 'control_periodicity')
+        if param_control_periodicity:
+            control_periodicity = param_control_periodicity
         for record in self:
             agriculturalseason_id = record.agriculturalseason_id
             initial_date = record.initial_date
@@ -252,9 +253,6 @@ class WuaMonitoringperiod(models.Model):
                 end_date = \
                     datetime.datetime.strptime(str(end_date), '%Y-%m-%d')
                 number_of_days = (end_date - initial_date).days + 1
-                # TODO (uncomment).
-                # if agriculturalseason_id.control_periodicity:
-                #     control_periodicity = agriculturalseason_id.control_periodicity
                 if number_of_days > control_periodicity:
                     raise exceptions.ValidationError(
                         _('The duration of the control period exceeds the '
@@ -330,6 +328,10 @@ class WuaMonitoringperiod(models.Model):
                 _('Calculation executed successfully, total gross irrigation '
                   'needs') + ' = {:.2f}'.format(self.sum_total_gin) +
                 ' ' + 'm3')
+            logging.getLogger(__name__).info(
+                'Calculation executed successfully. Control Period: ' +
+                self.name + '. Total gross irrigation needs = '
+                '{:.2f}'.format(self.sum_total_gin) + ' ' + 'm3')
 
     @api.multi
     def reset(self, update_state=True):
@@ -378,6 +380,33 @@ class WuaMonitoringperiod(models.Model):
     def exec_multiple_refresh(self):
         for record in self:
             record.refresh()
+
+    @api.model
+    def calculate_uncalculated_monitoringperiods(self):
+        current_date = datetime.date.today().strftime('%Y-%m-%d')
+        uncalculated_monitoringperiods = \
+            self.get_uncalculated_monitoringperiods(max_end_date=current_date)
+        if uncalculated_monitoringperiods:
+            for monitoringperiod in uncalculated_monitoringperiods:
+                monitoringperiod.calculate()
+
+    @api.model
+    def get_uncalculated_monitoringperiods(self, max_end_date=None):
+        resp = None
+        active_agriculturalseason = \
+            self.env['wua.agriculturalseason'].search(
+                [('active_agriculturalseason', '=', True)])
+        if active_agriculturalseason:
+            conditions = \
+                [('agriculturalseason_id', '=', active_agriculturalseason.id),
+                 ('state', '=', '01_uncalculated')]
+            if max_end_date:
+                conditions.append(('end_date', '<', max_end_date))
+            uncalculated_monitoringperiods = self.search(conditions,
+                                                         order='initial_date')
+            if uncalculated_monitoringperiods:
+                resp = uncalculated_monitoringperiods
+        return resp
 
     @api.multi
     def get_aggregated_values(self):
