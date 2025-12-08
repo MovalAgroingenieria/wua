@@ -41,6 +41,11 @@ class WuaAgriculturalseason(models.Model):
         compute='_compute_state_active',
     )
 
+    number_of_monitoringperiods = fields.Integer(
+        string='Number of control periods',
+        compute='_compute_number_of_monitoringperiods',
+    )
+
     number_of_calculated_monitoringperiods = fields.Integer(
         string='Number of calculated control periods',
         compute='_compute_number_of_calculated_monitoringperiods',
@@ -87,6 +92,21 @@ class WuaAgriculturalseason(models.Model):
             if record.active_agriculturalseason:
                 state_active = '02_active'
             record.state_active = state_active
+
+    @api.multi
+    def _compute_number_of_monitoringperiods(self):
+        for record in self:
+            number_of_monitoringperiods = 0
+            self.env.cr.execute(
+                ('SELECT count(*) FROM wua_monitoringperiod '
+                 'WHERE agriculturalseason_id = %s'), (record.id,))
+            query_results = self.env.cr.dictfetchall()
+            if (query_results and
+                    query_results[0].get('count') is not None):
+                number_of_monitoringperiods = \
+                    query_results[0].get('count')
+            record.number_of_monitoringperiods = \
+                number_of_monitoringperiods
 
     @api.multi
     def _compute_number_of_calculated_monitoringperiods(self):
@@ -152,14 +172,7 @@ class WuaAgriculturalseason(models.Model):
             gin_graph = None
             agriculturalseason_id = record.id
             agriculturalseason_name = record.description
-            number_of_monitoringperiods = 0
-            self.env.cr.execute(
-                '(SELECT COUNT(*) FROM wua_monitoringperiod WHERE '
-                'agriculturalseason_id = %s)', (agriculturalseason_id,))
-            query_results = self.env.cr.dictfetchall()
-            if (query_results and
-                    query_results[0].get('count') is not None):
-                number_of_monitoringperiods = query_results[0].get('count')
+            number_of_monitoringperiods = record.number_of_monitoringperiods
             if number_of_monitoringperiods:
                 monitoringperiods = []
                 self.env.cr.execute(
@@ -230,15 +243,14 @@ class WuaAgriculturalseason(models.Model):
     def activate(self):
         self.ensure_one()
         if not self.active_agriculturalseason:
-            previous_active_seasons = self.search(
-                [('active_agriculturalseason', '=', True)])
-            for agriculturalseason in (previous_active_seasons or []):
-                agriculturalseason.deactivate()
-            self.write({'active_agriculturalseason': True})
-            if self.number_of_monitoringperiods == 0:
-                # TODO: Wizard to generate the control periods and the crop units.
-                # (provisional)
-                print 'zero control periods, wizard...'
+            return {
+                    'type': 'ir.actions.act_window',
+                    'name': _('Activate season'),
+                    'res_model': 'wizard.activate.season',
+                    'src_model': 'wua.agriculturalseason',
+                    'view_mode': 'form',
+                    'target': 'new'
+                }
 
     @api.multi
     def deactivate(self):

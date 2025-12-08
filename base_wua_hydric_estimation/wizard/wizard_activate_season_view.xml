@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wizard_activate_season_view_form" model="ir.ui.view">
+        <field name="name">wizard.activate.season.view.form</field>
+        <field name="model">wizard.activate.season</field>
+        <field name="arch" type="xml">
+            <form string="Activate season">
+                <field name="is_periodicity_weekly" invisible="1"/>
+                <field name="number_of_monitoringperiods" invisible="1"/>
+                <field name="number_of_cropunits" invisible="1"/>
+                <script>
+                    $(document).ready(function(){
+                        $('.modal-dialog').css({'width': '560px'});
+                    });
+                </script>
+                <div style="text-align:center">
+                    <h4 style="margin-bottom:20px"><field name="agriculturalseason_id"
+                         readonly="1"/></h4>
+                    <h5 style="margin-bottom:20px">Are you sure you want to activate this season?</h5>
+                </div>
+                <div attrs="{'invisible': ['|', ('is_periodicity_weekly', '=', False), ('number_of_monitoringperiods', '>', 0)]}">
+                    <group name="group_option_create_monitoringperiods">
+                        <field name="option_create_monitoringperiods" widget="radio"
+                               string="Control Periods"/>
+                    </group>
+                </div>
+                <div attrs="{'invisible': [('number_of_cropunits', '>', 0)]}">
+                    <group name="group_option_create_cropunits">
+                        <field name="option_create_cropunits" widget="radio"
+                               string="Crop Units"/>
+                    </group>
+                </div>
+                <footer>
+                    <button name="activate_agriculturalseason"
+                            type="object"
+                            string="Apply"
+                            class="btn-primary"/>
+                    <button string="Cancel"
+                            class="btn-default"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>
