@@ -37,6 +37,32 @@ class WuaWatertransfer(models.Model):
         index=True,
         ondelete='restrict')
 
+    invoiceset_id = fields.Many2one(
+        string='Invoice Set',
+        comodel_name='wua.invoiceset',
+        compute='_compute_invoiceset_id',
+        store=True,
+        index=True,
+        readonly=True,
+        help='Main invoice set. If the water transfer is in multiple '
+             'invoice sets, this field shows the most recent one.')
+
+    @api.depends('invoiceline_ids',
+                 'invoiceline_ids.invoiceset_id')
+    def _compute_invoiceset_id(self):
+        for record in self:
+            invoiceset_id = False
+            if record.invoiceline_ids:
+                # Get all unique invoiceset_ids
+                invoiceset_ids = record.invoiceline_ids.mapped(
+                    'invoiceset_id')
+                if invoiceset_ids:
+                    # Get the most recent invoiceset (by date_invoiceset)
+                    invoiceset_id = invoiceset_ids.sorted(
+                        key=lambda x: x.date_invoiceset,
+                        reverse=True)[0].id
+            record.invoiceset_id = invoiceset_id
+
     @api.depends('invoiceline_ids',
                  'invoiceline_ids.price_subtotal')
     def _compute_sum_price_subtotal(self):

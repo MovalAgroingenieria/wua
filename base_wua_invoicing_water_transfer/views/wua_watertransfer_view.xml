@@ -7,6 +7,9 @@
         <field name="inherit_id" ref="base_wua_quota_management_water_transfer.wua_watertransfer_view_search"/>
         <field name="arch" type="xml">
           <xpath expr="//filter[@name='grouped_partner']" position="after">
+              <filter string="Invoice Set"
+                      name="grouped_invoiceset"
+                      context="{'group_by':'invoiceset_id'}"/>
               <separator/>
               <filter string="Invoiced" name="invoiced"
                    domain="[('invoiced','=',True)]"/>
