@@ -347,7 +347,7 @@ class WuaCropunit(models.Model):
          'UNIQUE (name)',
          'Existing crop unit.'),
         ('dates_ok',
-         'CHECK (initial_date < end_date)',
+         'CHECK (initial_date <= end_date)',
          'The end date of the crop cycle must be later than the start date.'),
         ('order_number_ok',
          'CHECK (order_number > 0)',
@@ -941,6 +941,8 @@ class WuaCropunit(models.Model):
                                height=150, title=title,
                                x_axis_label=_('Control Periods'),
                                y_axis_label=_('m³'),)
+                    if len(x_values) > 12:
+                        p.xaxis[0].major_label_orientation = 0.785
                     hover = HoverTool(tooltips=[
                         (_('Control Period'), '@x'),
                         (_('Value (m³)'), '@y{0.00}'),
@@ -1084,6 +1086,23 @@ class WuaCropunit(models.Model):
             self.env.cr.commit()
         except Exception:
             self.env.cr.rollback()
+
+    @api.multi
+    def unlink(self):
+        gis_cropunits_to_delete = []
+        for record in self:
+            gis_cropunits_to_delete.append(record.name)
+        resp = super(WuaCropunit, self).unlink()
+        for gis_cropunit_to_delete in gis_cropunits_to_delete:
+            try:
+                self.env.cr.savepoint()
+                self.env.cr.execute(
+                    'DELETE FROM wua_gis_cropunit '
+                    'WHERE NAME = %s', (gis_cropunit_to_delete,))
+                self.env.cr.commit()
+            except Exception:
+                self.env.cr.rollback()
+        return resp
 
     def geom_ok(self):
         resp = False

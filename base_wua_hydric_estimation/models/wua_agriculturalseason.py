@@ -2,6 +2,8 @@
 # Copyright 2025 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import datetime
+
 from bokeh.plotting import figure
 from bokeh.embed import components
 from bokeh.models import ColumnDataSource, HoverTool, HelpTool
@@ -213,6 +215,8 @@ class WuaAgriculturalseason(models.Model):
                                height=150, title=title,
                                x_axis_label=_('Control Periods'),
                                y_axis_label=_('m³'),)
+                    if len(x_values) > 12:
+                        p.xaxis[0].major_label_orientation = 0.785
                     hover = HoverTool(tooltips=[
                         (_('Control Period'), '@x'),
                         (_('Value (m³)'), '@y{0.00}'),
@@ -301,3 +305,212 @@ class WuaAgriculturalseason(models.Model):
             'domain': [('id', 'in', self.hydricneed_ids.ids)],
         }
         return act_window
+
+    @api.multi
+    def generate_weekly_periods(self):
+        self.ensure_one()
+        season = self
+        if season.number_of_monitoringperiods > 0:
+            return
+        model_wua_monitoringperiod = self.env['wua.monitoringperiod']
+        initial_date = datetime.datetime.strptime(
+            str(season.initial_date), '%Y-%m-%d')
+        end_date = datetime.datetime.strptime(
+            str(season.end_date), '%Y-%m-%d')
+        initial_date_for_loop = initial_date
+        end_date_for_loop = end_date
+        initial_date_first_mp = None
+        end_date_first_mp = None
+        initial_date_last_mp = None
+        end_date_last_mp = None
+        initial_date_day_number = initial_date.isoweekday()
+        end_date_day_number = end_date.isoweekday()
+        if initial_date_day_number != 1:
+            initial_date_first_mp = initial_date
+            end_date_first_mp = initial_date + datetime.timedelta(
+                days=7-initial_date_day_number)
+            initial_date_for_loop = end_date_first_mp + datetime.timedelta(
+                days=1)
+        if end_date_day_number != 7:
+            initial_date_last_mp = end_date - datetime.timedelta(
+                days=end_date_day_number - 1)
+            end_date_last_mp = end_date
+            end_date_for_loop = initial_date_last_mp - datetime.timedelta(
+                days=1)
+        if initial_date_first_mp:
+            model_wua_monitoringperiod.create({
+                'agriculturalseason_id': season.id,
+                'initial_date': initial_date_first_mp.strftime('%Y-%m-%d'),
+                'end_date': end_date_first_mp.strftime('%Y-%m-%d')
+            })
+        current_initial_date = initial_date_for_loop
+        while current_initial_date < end_date_for_loop:
+            current_end_date = current_initial_date + datetime.timedelta(
+                days=6)
+            model_wua_monitoringperiod.create({
+                'agriculturalseason_id': season.id,
+                'initial_date': current_initial_date.strftime('%Y-%m-%d'),
+                'end_date': current_end_date.strftime('%Y-%m-%d'),
+            })
+            current_initial_date = current_end_date + datetime.timedelta(
+                days=1)
+        if initial_date_last_mp:
+            model_wua_monitoringperiod.create({
+                'agriculturalseason_id': season.id,
+                'initial_date': initial_date_last_mp.strftime('%Y-%m-%d'),
+                'end_date': end_date_last_mp.strftime('%Y-%m-%d')
+            })
+
+    @api.multi
+    def generate_cropunits_from_prev_season(self):
+        self.ensure_one()
+        season = self
+        if season.number_of_cropunits > 0:
+            return
+        prev_season = self.search([('name', '<', season.name)],
+                                  order='name desc', limit=1)
+        if not prev_season or prev_season.number_of_cropunits == 0:
+            return
+        model_wua_cropunit = self.env['wua.cropunit']
+        copied_cropunits = {}
+        prev_season_initial_date = datetime.datetime.strptime(
+            str(prev_season.initial_date), '%Y-%m-%d')
+        season_initial_date = datetime.datetime.strptime(
+            str(season.initial_date), '%Y-%m-%d')
+        for prev_cropunit in prev_season.cropunit_ids:
+            prev_cropunit_initial_date = datetime.datetime.strptime(
+                str(prev_cropunit.initial_date), '%Y-%m-%d')
+            prev_cropunit_end_date = datetime.datetime.strptime(
+                str(prev_cropunit.end_date), '%Y-%m-%d')
+            days_from_prev_season_to_initial_date = (
+                (prev_cropunit_initial_date - prev_season_initial_date).days)
+            days_from_prev_season_to_end_date = (
+                (prev_cropunit_end_date - prev_season_initial_date).days)
+            initial_date = season_initial_date + datetime.timedelta(
+                days=days_from_prev_season_to_initial_date)
+            end_date = season_initial_date + datetime.timedelta(
+                days=days_from_prev_season_to_end_date)
+            vals = {
+                'agriculturalseason_id': season.id,
+                'parcel_id': prev_cropunit.parcel_id.id,
+                'cultivation_id': prev_cropunit.cultivation_id.id,
+                'initial_date': initial_date,
+                'end_date': end_date,
+                'order_number': prev_cropunit.order_number,
+            }
+            if prev_cropunit.variety_id:
+                vals['variety_id'] = prev_cropunit.variety_id.id
+            if prev_cropunit.irrigationsystem_id:
+                vals['irrigationsystem_id'] = prev_cropunit.irrigationsystem_id.id
+            if prev_cropunit.standard_application_efficiency:
+                vals['standard_application_efficiency'] = (
+                    prev_cropunit.standard_application_efficiency)
+            new_cropunit = model_wua_cropunit.create(vals)
+            copied_cropunits[prev_cropunit.name] = new_cropunit.name
+        for prev_cropunit_code, new_cropunit_code in (
+                copied_cropunits.items() or []):
+            geom = None
+            self.env.cr.execute(
+                'SELECT geom FROM wua_gis_cropunit WHERE '
+                'name = %s', (prev_cropunit_code,))
+            query_results = self.env.cr.dictfetchall()
+            if (query_results and
+               query_results[0].get('geom') is not None):
+                geom = query_results[0].get('geom')
+            if geom:
+                try:
+                    self.env.cr.savepoint()
+                    self.env.cr.execute(
+                        'INSERT INTO wua_gis_cropunit (name, geom) '
+                        'VALUES (%s, %s)', (new_cropunit_code, geom))
+                    self.env.cr.commit()
+                except Exception:
+                    self.env.cr.rollback()
+
+    @api.multi
+    def generate_cropunits_from_sigpac_enclosures(self):
+        self.ensure_one()
+        season = self
+        if season.number_of_cropunits > 0:
+            return
+        self.env.cr.execute(
+            'SELECT parcel_id, geom FROM wua_parcel_sigpaclink '
+            'ORDER BY parcel_id, id')
+        sql_resp = self.env.cr.fetchall()
+        if not sql_resp:
+            return
+        model_wua_cropunit = self.env['wua.cropunit']
+        fallow_cultivation = self.env.ref('base_wua.cultivation_019')
+        cropunits_geom = {}
+        current_parcel_id = 0
+        order_number = 0
+        for item in sql_resp:
+            parcel_id = item[0]
+            geom = item[1]
+            if parcel_id != current_parcel_id:
+                current_parcel_id = parcel_id
+                order_number = 1
+            else:
+                order_number = order_number + 1
+            new_cropunit = model_wua_cropunit.create({
+                'agriculturalseason_id': season.id,
+                'parcel_id': parcel_id,
+                'cultivation_id': fallow_cultivation.id,
+                'initial_date': season.initial_date,
+                'end_date': season.end_date,
+                'order_number': order_number,
+            })
+            cropunits_geom[new_cropunit.name] = geom
+        for new_cropunit_code, geom in (cropunits_geom.items() or []):
+            try:
+                self.env.cr.savepoint()
+                self.env.cr.execute(
+                    'INSERT INTO wua_gis_cropunit (name, geom) '
+                    'VALUES (%s, %s)', (new_cropunit_code, geom))
+                self.env.cr.commit()
+            except Exception:
+                self.env.cr.rollback()
+
+    @api.multi
+    def generate_cropunits_from_parcels(self):
+        self.ensure_one()
+        season = self
+        if season.number_of_cropunits > 0:
+            return
+        model_wua_parcel = self.env['wua.parcel']
+        parcels = model_wua_parcel.search([], order='name')
+        if not parcels:
+            return
+        parcels_geom = {}
+        self.env.cr.execute(
+            'SELECT name, geom FROM wua_gis_parcel '
+            'ORDER BY name')
+        sql_resp = self.env.cr.fetchall()
+        for item in (sql_resp or []):
+            parcel_name = item[0]
+            geom = item[1]
+            parcels_geom[parcel_name] = geom
+        model_wua_cropunit = self.env['wua.cropunit']
+        fallow_cultivation = self.env.ref('base_wua.cultivation_019')
+        cropunit_names = {}
+        for parcel in parcels:
+            new_cropunit = model_wua_cropunit.create({
+                'agriculturalseason_id': season.id,
+                'parcel_id': parcel.id,
+                'cultivation_id': fallow_cultivation.id,
+                'initial_date': season.initial_date,
+                'end_date': season.end_date,
+                'order_number': 1,
+            })
+            cropunit_names[parcel.name] = new_cropunit.name
+        for parcel_name, geom in (parcels_geom.items() or []):
+            if parcel_name in cropunit_names:
+                new_cropunit_code = cropunit_names[parcel_name]
+                try:
+                    self.env.cr.savepoint()
+                    self.env.cr.execute(
+                        'INSERT INTO wua_gis_cropunit (name, geom) '
+                        'VALUES (%s, %s)', (new_cropunit_code, geom))
+                    self.env.cr.commit()
+                except Exception:
+                    self.env.cr.rollback()

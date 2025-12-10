@@ -126,7 +126,7 @@ class WuaMonitoringperiod(models.Model):
          'UNIQUE (name)',
          'Existing control period.'),
         ('dates_ok',
-         'CHECK (initial_date < end_date)',
+         'CHECK (initial_date <= end_date)',
          'The end date of the control period must be later than the start date.'),
     ]
 

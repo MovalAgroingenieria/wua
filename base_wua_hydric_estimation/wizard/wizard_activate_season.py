@@ -14,6 +14,10 @@ class WizardActivateSeason(models.TransientModel):
         string='Agricultural Season',
         comodel_name='wua.agriculturalseason')
 
+    agriculturalseason_description = fields.Char(
+        string='Description of the agricultural season',
+    )
+
     is_periodicity_weekly = fields.Boolean(
         string='Weekly Periodicity (y/n)',
     )
@@ -38,7 +42,7 @@ class WizardActivateSeason(models.TransientModel):
         string='Options for bulk creation of crop units',
         selection=[
             ('01_previous_season', 'Create them from the previous season'),
-            ('02_sigpac_plots', 'Create them from SIGPAC plots'),
+            ('02_sigpac_enclosures', 'Create them from SIGPAC enclosures'),
             ('03_parcels', 'Create them from parcels'),
             ('04_none', 'Do not create any crop unit')
         ],
@@ -75,6 +79,7 @@ class WizardActivateSeason(models.TransientModel):
     @api.model
     def default_get(self, var_fields):
         agriculturalseason_id = None
+        agriculturalseason_description = ''
         is_periodicity_weekly = True
         number_of_monitoringperiods = 0
         number_of_cropunits = 0
@@ -86,6 +91,8 @@ class WizardActivateSeason(models.TransientModel):
                 active_id)
             if agriculturalseason:
                 agriculturalseason_id = agriculturalseason.id
+                agriculturalseason_description = \
+                    agriculturalseason.description.upper()
                 control_periodicity = self.env['ir.values'].get_default(
                     'wua.configuration', 'control_periodicity')
                 if control_periodicity and control_periodicity != 7:
@@ -98,6 +105,7 @@ class WizardActivateSeason(models.TransientModel):
                     option_create_monitoringperiods = '01_automatic'
         return {
             'agriculturalseason_id': agriculturalseason_id,
+            'agriculturalseason_description': agriculturalseason_description,
             'is_periodicity_weekly': is_periodicity_weekly,
             'number_of_monitoringperiods': number_of_monitoringperiods,
             'number_of_cropunits': number_of_cropunits,
@@ -107,15 +115,21 @@ class WizardActivateSeason(models.TransientModel):
 
     def activate_agriculturalseason(self):
         if self.agriculturalseason_id:
-            # TODO (provisional)
-            print self.agriculturalseason_id
+            season = self.agriculturalseason_id
             model_wua_agriculturalseason = self.env['wua.agriculturalseason']
             previous_active_seasons = model_wua_agriculturalseason.search(
                 [('active_agriculturalseason', '=', True)])
-            for agriculturalseason in (previous_active_seasons or []):
-                agriculturalseason.deactivate()
-            self.agriculturalseason_id.write(
-                {'active_agriculturalseason': True})
+            for previous_active_season in (previous_active_seasons or []):
+                previous_active_season.deactivate()
+            season.write({'active_agriculturalseason': True})
+            if self.option_create_monitoringperiods == '01_automatic':
+                season.generate_weekly_periods()
+            if self.option_create_cropunits == '01_previous_season':
+                season.generate_cropunits_from_prev_season()
+            elif self.option_create_cropunits == '02_sigpac_enclosures':
+                season.generate_cropunits_from_sigpac_enclosures()
+            elif self.option_create_cropunits == '03_parcels':
+                season.generate_cropunits_from_parcels()
             return {
                 'type': 'ir.actions.client',
                 'tag': 'reload'
