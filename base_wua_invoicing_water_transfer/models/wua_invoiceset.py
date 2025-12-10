@@ -137,8 +137,9 @@ class WuaInvoicesetLine(models.Model):
 
     def populate_items_select_watertransfer(self, product_id):
         watertransfers = self.env['wua.watertransfer'].search(
-            [('number_of_invoicing_processes', '=', 0)]
-        )
+            [('number_of_invoicing_processes', '=', 0),
+             ('watertransfer_state', '=', '01_validated')],
+            )
         if len(watertransfers) > 0:
             user_id = self.env.user.id
             invoicesetline_id = self.id
@@ -163,7 +164,8 @@ class WuaInvoicesetLine(models.Model):
                         e.number_of_invoicing_processes,
                         e.sum_price_subtotal
                     FROM wua_watertransfer e
-                    WHERE e.number_of_invoicing_processes = 0
+                    WHERE e.number_of_invoicing_processes = 0 and
+                    e.watertransfer_state = '01_validated'
                 """, (user_id, user_id, invoicesetline_id))
                 self.env.cr.commit()
                 self.env.invalidate_all()
