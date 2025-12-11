@@ -300,9 +300,9 @@ class WuaMonitoringperiod(models.Model):
         return act_window
 
     @api.multi
-    def calculate(self, update_state=True):
+    def calculate(self, update_state=True, force=False):
         self.ensure_one()
-        if self.state == '01_uncalculated' or (not update_state):
+        if self.state == '01_uncalculated' or force or (not update_state):
             if not self.env.user.has_group('base_wua.group_wua_manager'):
                 raise exceptions.ValidationError(_(
                     'Operation not allowed.'))
@@ -310,11 +310,13 @@ class WuaMonitoringperiod(models.Model):
             cropunits_to_calculate = self.env['wua.cropunit'].search(
                 [('end_date', '>=', self.initial_date),
                  ('initial_date', '<=', self.end_date)])
-            for cropunit_to_calculate in (cropunits_to_calculate or []):
-                self.env['wua.hydricneed'].create({
-                    'cropunit_id': cropunit_to_calculate.id,
-                    'monitoringperiod_id': self.id,
-                })
+            if cropunits_to_calculate:
+                cropunits_to_calculate._compute_area_gis()
+                for cropunit_to_calculate in cropunits_to_calculate:
+                    self.env['wua.hydricneed'].create({
+                        'cropunit_id': cropunit_to_calculate.id,
+                        'monitoringperiod_id': self.id,
+                    })
             number_of_hydricneeds, sum_total_gin = \
                 self.get_aggregated_values()
             vals = {
@@ -398,10 +400,15 @@ class WuaMonitoringperiod(models.Model):
                 [('active_agriculturalseason', '=', True)])
         if active_agriculturalseason:
             conditions = \
-                [('agriculturalseason_id', '=', active_agriculturalseason.id),
-                 ('state', '=', '01_uncalculated')]
+                [('agriculturalseason_id', '=', active_agriculturalseason.id)]
             if max_end_date:
+                last_period_end_date = datetime.datetime.strptime(
+                    max_end_date, '%Y-%m-%d') - datetime.timedelta(days=1)
+                last_period_end_date = last_period_end_date.strftime('%Y-%m-%d')
                 conditions.append(('end_date', '<', max_end_date))
+                conditions.append('|')
+                conditions.append(('state', '=', '01_uncalculated'))
+                conditions.append(('end_date', '=', last_period_end_date))
             uncalculated_monitoringperiods = self.search(conditions,
                                                          order='initial_date')
             if uncalculated_monitoringperiods:

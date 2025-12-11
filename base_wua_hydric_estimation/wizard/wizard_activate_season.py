@@ -54,7 +54,6 @@ class WizardActivateSeason(models.TransientModel):
             'wua.configuration', 'control_periodicity')
         if not control_periodicity:
             control_periodicity = 7
-        print control_periodicity
         for record in self:
             record.is_periodicity_weekly = (control_periodicity == 7)
 

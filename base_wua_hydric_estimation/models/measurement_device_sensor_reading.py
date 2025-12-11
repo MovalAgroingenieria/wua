@@ -27,7 +27,7 @@ class MeasurementDeviceSensorReading(models.Model):
                     max_end_date=current_date))
             if uncalculated_monitoringperiods:
                 for monitoringperiod in uncalculated_monitoringperiods:
-                    monitoringperiod.sudo().calculate()
+                    monitoringperiod.sudo().calculate(force=True)
         return new_reading
 
     def new_monitoringperiod_detected(self, new_reading):
@@ -89,9 +89,11 @@ class MeasurementDeviceSensorReading(models.Model):
                             if current_day == period_start_day:
                                 new_reading_date = \
                                     str(new_reading.measurement_time)[:10]
+                                # We subtract two days because the time is in
+                                # the database in UTC.
                                 yesterday_date = \
                                     (datetime.date.today() -
-                                     datetime.timedelta(days=1)).strftime(
+                                     datetime.timedelta(days=2)).strftime(
                                         '%Y-%m-%d')
                                 if new_reading_date >= yesterday_date:
                                     device_id = new_reading.device_id.id

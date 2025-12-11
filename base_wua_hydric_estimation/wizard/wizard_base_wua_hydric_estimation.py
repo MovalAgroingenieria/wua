@@ -17,18 +17,9 @@ class WizardBaseWuaHydricEstimation(models.TransientModel):
 
     @api.multi
     def execute_for_parcels(self):
+        res = super(WizardBaseWuaHydricEstimation, self).execute()
         self.create_cropunits_from_parcels()
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'reload',
-        }
-
-    @api.multi
-    def skip_cropunits(self):
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'reload',
-        }
+        return res
 
     @api.model
     def create_cropunits_from_sigpac_enclosures(self):
