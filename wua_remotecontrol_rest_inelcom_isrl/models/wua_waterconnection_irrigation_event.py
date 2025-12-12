@@ -102,6 +102,11 @@ class WuaWaterconnectionIrrigationEvent(models.Model):
                                     start_irr_date, '%d-%m-%y %H:%M')
                                 end_irr_date = datetime.datetime.strptime(
                                     end_irr_date, '%d-%m-%y %H:%M')
+                                # If end time is before start time, event
+                                # crosses midnight - add 1 day to end date
+                                if end_irr_date < start_irr_date:
+                                    end_irr_date = end_irr_date + \
+                                        datetime.timedelta(days=1)
                                 # Localize to UTC from ES
                                 start_irr_date = spain_tz.localize(
                                     start_irr_date).astimezone(pytz.utc).\
