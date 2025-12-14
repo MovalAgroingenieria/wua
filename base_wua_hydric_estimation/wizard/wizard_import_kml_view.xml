@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wizard_import_kml_view_form" model="ir.ui.view">
+        <field name="name">wizard.import.kml.view.form</field>
+        <field name="model">wizard.import.kml</field>
+        <field name="arch" type="xml">
+            <form string="Import KML">
+                <script>
+                    $(document).ready(function(){
+                        $('.modal-dialog').css({'width': '560px'});
+                    });
+                </script>
+                <field name="filename" invisible="1"/>
+                <div style="text-align:center;margin-bottom:20px">
+                    <h4><field name="cropunit_description" readonly="1"/></h4>
+                </div>
+                <div style="margin-bottom:20px">
+                    <h5>To enter the geometry of the crop unit, you must first specify the KML file that contains the geometry, and if that KML file includes multiple crop units, you must then select one of them.</h5>
+                </div>
+                <div>
+                    <group>
+                        <field name="kml_file" filename="filename"
+                               widget="binary" required="True"/>
+                        <field name="placemark_id"
+                               options="{'no_create': True}"/>
+                    </group>
+                </div>
+                <footer>
+                    <button name="import_kml"
+                            type="object"
+                            string="Apply"
+                            class="btn-primary"/>
+                    <button string="Cancel"
+                            class="btn-default"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

@@ -9,7 +9,13 @@
                 <field name="id" invisible="1"/>
                 <field name="mapped_to_polygon" invisible="1"/>
                 <field name="exists_current_recommendation" invisible="1"/>
+                <field name="parcel_mapped_to_polygon" invisible="1"/>
                 <header>
+                    <button name="action_upload_geometry"
+                            type="object" string="Geometry"
+                            icon="fa-map-o"
+                            attrs="{'invisible': [('parcel_mapped_to_polygon', '=', False)]}"
+                            groups="base_wua.group_wua_manager"/>
                     <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>

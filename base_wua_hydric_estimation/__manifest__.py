@@ -25,6 +25,7 @@
         "data/wua_monitoringperiod_calculation_cron.xml",
         "wizard/wizard_activate_season_view.xml",
         "wizard/wizard_base_wua_hydric_estimation.xml",
+        "wizard/wizard_import_kml_view.xml",
         "views/resources.xml",
         "views/base_wua_hydric_estimation_menus.xml",
         "views/wua_config_settings_view.xml",

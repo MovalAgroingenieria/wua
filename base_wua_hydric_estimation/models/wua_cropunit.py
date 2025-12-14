@@ -342,6 +342,11 @@ class WuaCropunit(models.Model):
         string='GIN Graph',
         compute='_compute_gin_graph')
 
+    parcel_mapped_to_polygon = fields.Boolean(
+        string='Parcel mapped to polygon',
+        related='parcel_id.mapped_to_polygon',
+    )
+
     _sql_constraints = [
         ('name_unique',
          'UNIQUE (name)',
@@ -1332,3 +1337,15 @@ class WuaCropunit(models.Model):
                         'current_controlperiod_yes': True},
         }
         return act_window
+
+    @api.multi
+    def action_upload_geometry(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Import KML'),
+            'res_model': 'wizard.import.kml',
+            'src_model': 'wua.cropunit',
+            'view_mode': 'form',
+            'target': 'new'
+        }
