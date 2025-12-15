@@ -1341,11 +1341,25 @@ class WuaCropunit(models.Model):
     @api.multi
     def action_upload_geometry(self):
         self.ensure_one()
+        # Clear the wizard's combo.
+        session_key = str(self.env.user.id) + '-' + self.name
+        try:
+            self.env.cr.savepoint()
+            self.env.cr.execute(
+                'DELETE FROM wizard_kml_placemark_option WHERE '
+                'session_key = %s', (session_key,))
+            self.env.cr.commit()
+        except Exception:
+            self.env.cr.rollback()
+        # Call the wizard.
         return {
             'type': 'ir.actions.act_window',
             'name': _('Import KML'),
             'res_model': 'wizard.import.kml',
             'src_model': 'wua.cropunit',
             'view_mode': 'form',
-            'target': 'new'
+            'target': 'new',
+            'context': {
+                'session_key': session_key,
+            }
         }

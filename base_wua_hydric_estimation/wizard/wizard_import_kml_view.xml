@@ -12,6 +12,7 @@
                     });
                 </script>
                 <field name="filename" invisible="1"/>
+                <field name="session_key" invisible="1"/>
                 <div style="text-align:center;margin-bottom:20px">
                     <h4><field name="cropunit_description" readonly="1"/></h4>
                 </div>
@@ -21,9 +22,9 @@
                 <div>
                     <group>
                         <field name="kml_file" filename="filename"
-                               widget="binary" required="True"/>
+                               widget="binary" options="{'no_create': True}" required="1"/>
                         <field name="placemark_id"
-                               options="{'no_create': True}"/>
+                               options="{'no_create': True, 'no_open': True}"/>
                     </group>
                 </div>
                 <footer>

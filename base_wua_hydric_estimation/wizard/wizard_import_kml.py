@@ -13,10 +13,8 @@ class WizardKmlPlacemarkOption(models.TransientModel):
     _name = 'wizard.kml.placemark.option'
     _description = 'Placemark options detected in KML'
 
-    wizard_id = fields.Many2one(
-        string='Related Wizard',
-        comodel_name='wizard.import.kml',
-        ondelete='cascade',
+    session_key = fields.Char(
+        string='Session Identifier',
     )
 
     name = fields.Char(
@@ -29,6 +27,17 @@ class WizardImportKml(models.TransientModel):
     _description = 'Wizard to import the geometry of a crop unit'
 
     KML_NAMESPACE = 'http://www.opengis.net/kml/2.2'
+
+    def _get_placemark_id_domain(self):
+        resp = None
+        session_key = self.env.context.get('session_key', False)
+        if session_key:
+            return [('session_key', '=', session_key)]
+        return resp
+
+    session_key = fields.Char(
+        string='Session Key',
+    )
 
     cropunit_id = fields.Many2one(
         string='Crop Unit',
@@ -50,53 +59,83 @@ class WizardImportKml(models.TransientModel):
     placemark_id = fields.Many2one(
         string='Polygon Identifier',
         comodel_name='wizard.kml.placemark.option',
+        domain=_get_placemark_id_domain,
+        ondelete='set null',
     )
 
     @api.model
     def default_get(self, var_fields):
         cropunit_id = None
         cropunit_description = ''
+        session_key = self.env.context.get('session_key', False)
         active_id = self.env.context['active_id']
         if active_id:
             cropunit = self.env['wua.cropunit'].browse(active_id)
             if cropunit:
                 cropunit_id = cropunit.id
                 cropunit_description = cropunit.name
+                # Remove the previous options assigned to this user and this
+                # cultivation unit.
+                if not session_key:
+                    session_key = str(self.env.user.id) + '-' + cropunit.name
+                # DO NOT uncomment! -> Foreign key error -> Solution: do this
+                # from the caller (problem: "default_gets" is called twice, the
+                # last time after clicking the "Apply" button).
+                # prev_options = self.env['wizard.kml.placemark.option'].search(
+                #     [('session_key', '=', session_key)])
+                # if prev_options:
+                #     prev_options.unlink()
         return {
             'cropunit_id': cropunit_id,
             'cropunit_description': cropunit_description,
+            'session_key': session_key,
         }
 
     @api.onchange('kml_file')
-    def _onchange_file(self):
-        self.placemark_id = False
-        self.env['wizard.kml.placemark.option'].search([]).unlink()
+    def _onchange_kml_file(self):
         if self.kml_file:
             try:
                 kml_data = base64.b64decode(self.kml_file)
                 root = etree.fromstring(kml_data)
             except Exception:
+                self._drop_options(self.session_key)
                 raise exceptions.UserError(_('The file is not a valid KML.'))
             ns = {'kml': self.KML_NAMESPACE}
             placemarks = root.findall('.//kml:Placemark', namespaces=ns)
             if not placemarks:
+                self._drop_options(self.session_key)
                 raise exceptions.UserError(_('The KML file does not contain '
                                              'geometries.'))
-            options = []
-            for pm in placemarks:
-                name = pm.findtext('kml:name', default=_('unnamed'),
-                                   namespaces=ns)
-                options.append((0, 0, {'name': name}))
-            self.write({'placemark_id': False})
-            for vals in (options or []):
-                self.env['wizard.kml.placemark.option'].create({
-                    'wizard_id': self.id,
-                    'name': vals[2]['name'],
-                })
-            if options:
-                self.placemark_id = \
-                    self.env['wizard.kml.placemark.option'].search(
-                        [('wizard_id', '=', self.id)], limit=1)
+            placemark_names = []
+            for placemark in placemarks:
+                name = placemark.findtext('kml:name', default=_('unnamed'),
+                                          namespaces=ns)
+                placemark_names.append(name)
+            model_placemark_option = self.env['wizard.kml.placemark.option']
+            prev_options = model_placemark_option.search(
+                [('session_key', '=', self.session_key)])
+            self._drop_options(self.session_key)
+            if placemark_names:
+                for name in placemark_names:
+                    new_option = model_placemark_option.create({
+                        'session_key': self.session_key,
+                        'name': name,
+                    })
+                first_option = model_placemark_option.search(
+                    [('session_key', '=', self.session_key)], limit=1)
+                if first_option:
+                    self.placemark_id = first_option.id
+
+    @api.model
+    def _drop_options(self, session_key):
+        try:
+            self.env.cr.savepoint()
+            self.env.cr.execute(
+                'DELETE FROM wizard_kml_placemark_option '
+                'WHERE session_key = %s', (session_key,))
+            self.env.cr.commit()
+        except Exception:
+            self.env.cr.rollback()
 
     def import_kml(self):
         if not self.cropunit_id:
@@ -107,8 +146,14 @@ class WizardImportKml(models.TransientModel):
             raise exceptions.UserError(
                 _('The parcel to which the crop unit belongs has no '
                   'geometry.'))
+        if (not self.kml_file) or (not self.placemark_id):
+            raise exceptions.UserError(
+                _('Polygon not found.'))
         import_ok = True
         # TODO (process...)
+        print self.cropunit_id
+        print self.filename
+        print self.placemark_id
         if import_ok:
             # Provisional
             # self.cropunit_id.refresh_aerial_img()
