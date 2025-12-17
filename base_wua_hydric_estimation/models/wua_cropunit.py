@@ -14,6 +14,7 @@ from unidecode import unidecode
 from bokeh.plotting import figure
 from bokeh.embed import components
 from bokeh.models import ColumnDataSource, HoverTool, HelpTool
+from lxml import etree
 
 from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import DEFAULT_STANDARD_APPLICATION_EFFICIENCY
 from odoo import models, fields, api, exceptions, _
@@ -31,9 +32,10 @@ class WuaCropunit(models.Model):
     _link_field = 'name'
     _url_googlemaps = 'https://maps.google.com/maps?t=h&q=loc:ycval+xcval'
 
-    # Timeout for getmap requests.
+    # Constants.
     OGC_TIMEOUT = 15
     DEFAULT_AERIAL_IMAGE_SIZE = 320
+    KML_NAMESPACE = 'http://www.opengis.net/kml/2.2'
 
     def _default_agriculturalseason_id(self):
         resp = None
@@ -1033,6 +1035,7 @@ class WuaCropunit(models.Model):
             prev_parcel_id = 0
             prev_cultivation_id = 0
             prev_order_number = 0
+            update_estimations = False
             if (('agriculturalseason_id' in vals and vals['agriculturalseason_id']) or
                ('parcel_id' in vals and vals['parcel_id']) or
                ('cultivation_id' in vals and vals['cultivation_id']) or
@@ -1046,6 +1049,8 @@ class WuaCropunit(models.Model):
                    prev_parcel_id and prev_cultivation_id and
                    prev_order_number):
                     update_gis = True
+            if 'initial_date' in vals or 'end_date' in vals:
+                update_estimations = True
             updated_cropunits = super(WuaCropunit, self).write(vals)
             if update_gis:
                 agriculturalseason_id = prev_agriculturalseason_id
@@ -1077,6 +1082,8 @@ class WuaCropunit(models.Model):
                                     unidecode(cultivation.name[:3]).upper() + '-' +
                                     str(order_number).rjust(3, '0'))
                         self.update_wua_gis_cropunit(prev_code, new_code)
+            if update_estimations:
+                self.calculate()
         else:
             updated_cropunits = super(WuaCropunit, self).write(vals)
         return updated_cropunits
@@ -1363,3 +1370,143 @@ class WuaCropunit(models.Model):
                 'session_key': session_key,
             }
         }
+
+    @api.model
+    def create_polygon(self, placemark_name, kml_file,
+                       polygon_code, gis_table, intersection_geom=None):
+        # Extract WKT geometry from KML.
+        try:
+            kml_data = base64.b64decode(kml_file)
+            root = etree.fromstring(kml_data)
+        except Exception:
+            return False, _('Invalid KML file.')
+        ns = {'kml': self.KML_NAMESPACE}
+        placemarks = root.findall('.//kml:Placemark', namespaces=ns)
+        wkt_4326 = None
+        for placemark in placemarks:
+            name = placemark.findtext('kml:name', namespaces=ns)
+            if name != placemark_name:
+                continue
+            coords_text = placemark.findtext(
+                './/kml:Polygon//kml:coordinates', namespaces=ns)
+            if not coords_text:
+                return False, _('Selected placemark is not a polygon.')
+            coords = []
+            for coord in coords_text.strip().split():
+                lon, lat = coord.split(',')[:2]
+                coords.append('%s %s' % (lon, lat))
+            if len(coords) < 4:
+                return False, _('Invalid polygon geometry.')
+            wkt_4326 = 'POLYGON((%s))' % ','.join(coords)
+        if not wkt_4326:
+            return False, _('Placemark "%s" not found '
+                            'in KML.') % placemark_name
+        # Get the EPSG code.
+        epsg_code = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_epsg_code')
+        if not epsg_code:
+            epsg_code = 25830
+        # Is there an intersection?
+        if intersection_geom:
+            self.env.cr.execute(
+                """
+                SELECT postgis.ST_Intersects(
+                    postgis.ST_Transform(
+                        postgis.ST_SetSRID(
+                            postgis.ST_GeomFromText(%s),
+                            4326
+                        ),
+                        %s
+                    ),
+                    postgis.ST_GeomFromEWKT(%s)
+                )
+                """,
+                (wkt_4326, epsg_code, intersection_geom)
+            )
+            intersects = self.env.cr.fetchone()[0]
+            if not intersects:
+                return False, _('The imported geometry does not intersect the '
+                                'reference polygon.')
+        # Reprojection to EPSG:25830.
+        self.env.cr.execute(
+            """
+            SELECT postgis.ST_AsEWKT(
+                postgis.ST_Transform(
+                    postgis.ST_SetSRID(
+                        postgis.ST_GeomFromText(%s),
+                        4326
+                    ),
+                    %s
+                )
+            )
+            """,
+            (wkt_4326, epsg_code)
+        )
+        ewkt_25830 = self.env.cr.fetchone()[0]
+        if not ewkt_25830:
+            return False, _('The geometry has not been found.')
+        # If it exists, delete the previous polygon.
+        gid = 0
+        sql_statement = 'SELECT gid FROM %s WHERE name = %%s' % gis_table
+        self.env.cr.execute(sql_statement, (polygon_code,))
+        query_results = self.env.cr.dictfetchall()
+        if query_results and query_results[0].get('gid') is not None:
+            gid = query_results[0].get('gid')
+        if gid:
+            sql_statement = 'DELETE FROM %s WHERE gid = %%s' % gis_table
+            try:
+                self.env.cr.savepoint()
+                self.env.cr.execute(sql_statement, (gid,))
+                self.env.cr.commit()
+            except Exception:
+                self.env.cr.rollback()
+                return False, _('It has not been possible to remove the '
+                                'pre-existing polygon.')
+        # Create the new record in the GIS table.
+        try:
+            self.env.cr.savepoint()
+            self.env.cr.execute(
+                """
+                INSERT INTO wua_gis_cropunit (name, geom)
+                VALUES (%s, postgis.ST_GeomFromEWKT(%s))            
+                """,
+                (polygon_code, ewkt_25830)
+            )
+            self.env.cr.commit()
+        except Exception:
+            self.env.cr.rollback()
+            return False, _('It has not been possible to create the '
+                            'new polygon.')
+        return True, ''
+
+    @api.multi
+    def calculate(self):
+        self.ensure_one()
+        active_agriculturalseason = \
+            self.env['wua.agriculturalseason'].search(
+                [('active_agriculturalseason', '=', True)])
+        if active_agriculturalseason:
+            try:
+                self.env.cr.savepoint()
+                self.env.cr.execute(
+                    ('DELETE FROM wua_hydricneed WHERE '
+                     'agriculturalseason_id = %s AND '
+                     'cropunit_id = %s' % (active_agriculturalseason.id,
+                                           self.id)))
+                self.env.cr.commit()
+            except (Exception,):
+                self.env.cr.rollback()
+            calculated_monitoringperiods = \
+                self.env['wua.monitoringperiod'].search(
+                    [('agriculturalseason_id', '=',
+                      active_agriculturalseason.id),
+                     ('state', '=', '02_calculated')], order='name')
+            for monitoringperiod in (calculated_monitoringperiods or []):
+                cropunit_out = \
+                    (self.initial_date > monitoringperiod.end_date or
+                     self.end_date < monitoringperiod.initial_date)
+                if not cropunit_out:
+                    self.env['wua.hydricneed'].create({
+                        'cropunit_id': self.id,
+                        'monitoringperiod_id': monitoringperiod.id,
+                    })

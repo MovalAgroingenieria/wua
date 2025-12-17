@@ -141,23 +141,25 @@ class WizardImportKml(models.TransientModel):
         if not self.cropunit_id:
             raise exceptions.UserError(
                 _('There is no crop unit.'))
-        parcel_id = self.cropunit_id.parcel_id
-        if not parcel_id.mapped_to_polygon:
+        parcel = self.cropunit_id.parcel_id
+        if not parcel.mapped_to_polygon:
             raise exceptions.UserError(
                 _('The parcel to which the crop unit belongs has no '
                   'geometry.'))
         if (not self.kml_file) or (not self.placemark_id):
             raise exceptions.UserError(
                 _('Polygon not found.'))
-        import_ok = True
-        # TODO (process...)
-        print self.cropunit_id
-        print self.filename
-        print self.placemark_id
+        model_cropunit = self.env['wua.cropunit']
+        gis_table = model_cropunit.__class__._name.replace(
+            '.', '_').replace('wua_', 'wua_gis_')
+        import_ok, message_error = model_cropunit.create_polygon(
+            self.placemark_id.name, self.kml_file,
+            self.cropunit_id.name, gis_table, parcel.geom_ewkt)
         if import_ok:
-            # Provisional
-            # self.cropunit_id.refresh_aerial_img()
-            pass
+            self.cropunit_id.calculate()
+            self.cropunit_id.refresh_aerial_img()
+        else:
+            raise exceptions.UserError(message_error)
         return {
             'type': 'ir.actions.client',
             'tag': 'reload'

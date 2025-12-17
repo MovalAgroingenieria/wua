@@ -313,10 +313,14 @@ class WuaMonitoringperiod(models.Model):
             if cropunits_to_calculate:
                 cropunits_to_calculate._compute_area_gis()
                 for cropunit_to_calculate in cropunits_to_calculate:
-                    self.env['wua.hydricneed'].create({
-                        'cropunit_id': cropunit_to_calculate.id,
-                        'monitoringperiod_id': self.id,
-                    })
+                    cropunit_out = \
+                        (cropunit_to_calculate.initial_date > self.end_date or
+                         cropunit_to_calculate.end_date < self.initial_date)
+                    if not cropunit_out:
+                        self.env['wua.hydricneed'].create({
+                            'cropunit_id': cropunit_to_calculate.id,
+                            'monitoringperiod_id': self.id,
+                        })
             number_of_hydricneeds, sum_total_gin = \
                 self.get_aggregated_values()
             vals = {
