@@ -47,14 +47,27 @@ class MdmSensorReadingTransformTemplate(models.Model):
 
     @api.model
     def cron_transform_reservoir_readings(self):
-        """Transform pressure sensor readings to reservoir readings."""
-        # Get reservoir reading template
-        reservoir_template = self.env.ref(
+        """Transform reservoir sensor readings (m.c.a and m³) to
+            reservoir readings."""
+        # Get template for readings in m.c.a
+        template_mca = self.env.ref(
             'base_wua_reservoir_mdm.'
             'transform_template_sensor_to_reservoirreading',
             raise_if_not_found=False,
         )
-        # Transform reservoir readings
-        if reservoir_template:
-            wizard = self._create_wizard_from_template(reservoir_template)
+        # Get template for readings in m³
+        template_m3 = self.env.ref(
+            'base_wua_reservoir_mdm.'
+            'transform_template_reservoir_reading_m3',
+            raise_if_not_found=False,
+        )
+
+        # Transform readings in m.c.a
+        if template_mca:
+            wizard = self._create_wizard_from_template(template_mca)
+            wizard.action_transform()
+
+        # Transform readings in m³
+        if template_m3:
+            wizard = self._create_wizard_from_template(template_m3)
             wizard.action_transform()

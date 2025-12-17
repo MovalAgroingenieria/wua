@@ -1,16 +1,15 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-# 	* base_wua_reservoir_mdm
+#	* base_wua_reservoir_mdm
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-30 16:00:00+0000\n"
-"PO-Revision-Date: 2025-10-30 16:00:00+0000\n"
+"POT-Creation-Date: 2025-12-17 12:49+0000\n"
+"PO-Revision-Date: 2025-12-17 12:49+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
-"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -19,7 +18,7 @@ msgstr ""
 #. module: base_wua_reservoir_mdm
 #: model:mdm.sensor.reading.transform.template,name:base_wua_reservoir_mdm.transform_template_sensor_to_reservoirreading
 msgid "MDM Sensor to Reservoir Reading"
-msgstr "Sensor a lectura de balsa"
+msgstr "Sensor a lectura de balsa (m.c.a)"
 
 #. module: base_wua_reservoir_mdm
 #: model:ir.model,name:base_wua_reservoir_mdm.model_mdm_measurement_device_sensor
@@ -27,19 +26,35 @@ msgid "Measurement Device Sensor"
 msgstr "Sensor del dispositivo de medición"
 
 #. module: base_wua_reservoir_mdm
-#: model:mdm.measurement.device.sensor.type,name:base_wua_reservoir_mdm.mdm_sensor_type_pressure_mca
-msgid "Reservoir Level (m.c.a)"
-msgstr "Nivel de balsa (m.c.a)"
-
-#. module: base_wua_reservoir_mdm
+#: model:ir.model,name:base_wua_reservoir_mdm.model_wua_reservoir
 #: model:ir.model.fields,field_description:base_wua_reservoir_mdm.field_mdm_measurement_device_sensor_reservoir_id
 msgid "Reservoir"
 msgstr "Balsa"
 
 #. module: base_wua_reservoir_mdm
-#: model:ir.model,name:base_wua_reservoir_mdm.model_wua_reservoir
-msgid "Reservoir"
-msgstr "Balsa"
+#: model:mdm.measurement.device.sensor.type,name:base_wua_reservoir_mdm.mdm_sensor_type_pressure_mca
+msgid "Reservoir Level (m.c.a)"
+msgstr "Nivel de balsa (m.c.a)"
+
+#. module: base_wua_reservoir_mdm
+#: model:mdm.sensor.reading.transform.template,name:base_wua_reservoir_mdm.transform_template_reservoir_reading_m3
+msgid "Reservoir Reading (m³)"
+msgstr "Sensor a lectura de balsa (m³)"
+
+#. module: base_wua_reservoir_mdm
+#: model:mdm.measurement.device.sensor.type,name:base_wua_reservoir_mdm.mdm_sensor_type_volume_m3
+msgid "Reservoir Volume (m³)"
+msgstr "Volumen de balsa (m³)"
+
+#. module: base_wua_reservoir_mdm
+#: model:ir.ui.view,arch_db:base_wua_reservoir_mdm.wua_reservoir_view_form
+msgid "Sensor"
+msgstr "Sensor"
+
+#. module: base_wua_reservoir_mdm
+#: model:ir.model,name:base_wua_reservoir_mdm.model_mdm_sensor_reading_transform_template
+msgid "Sensor Reading Transform Template"
+msgstr "Plantilla de transformación de lecturas de sensor"
 
 #. module: base_wua_reservoir_mdm
 #: model:ir.model.fields,field_description:base_wua_reservoir_mdm.field_wua_reservoir_sensor_ids
@@ -48,16 +63,12 @@ msgid "Sensors"
 msgstr "Sensores"
 
 #. module: base_wua_reservoir_mdm
-#: model:ir.model,name:base_wua_reservoir_mdm.model_mdm_sensor_reading_transform_template
-msgid "Sensor Reading Transform Template"
-msgstr "Plantilla de transformación de lecturas de sensor"
-
-#. module: base_wua_reservoir_mdm
 #: model:mdm.sensor.reading.transform.template,description:base_wua_reservoir_mdm.transform_template_sensor_to_reservoirreading
 msgid "Transform pressure sensor readings to wua.reservoirreading"
 msgstr "Transformar lecturas de sensor de presión a lecturas de balsa"
 
 #. module: base_wua_reservoir_mdm
-#: model:ir.cron,name:base_wua_reservoir_mdm.cron_transform_reservoir_readings
-msgid "Transform Reservoir Sensor Readinsgs"
-msgstr "Transformar lecturas de sensor de balsa"
+#: model:mdm.sensor.reading.transform.template,description:base_wua_reservoir_mdm.transform_template_reservoir_reading_m3
+msgid "Transform sensor readings in m³ to wua.reservoirreading"
+msgstr "Transformar lecturas de sensor en m³ a lecturas de balsa"
+

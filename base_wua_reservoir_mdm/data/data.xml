@@ -29,5 +29,33 @@
             <field name="readonly" eval="True"/>
         </record>
 
+
+        <!-- Sensor Type: Volume (m³) -->
+        <record id="mdm_sensor_type_volume_m3" model="mdm.measurement.device.sensor.type">
+            <field name="name">Reservoir Volume (m³)</field>
+            <field name="description">Volume sensor measuring cubic meters for reservoirs</field>
+            <field name="uom_id" ref="mdm_sensor_management.mdm_sensor_uom_m3"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <!-- Transform Template: Reservoir Readings in m³ -->
+        <record id="transform_template_reservoir_reading_m3" model="mdm.sensor.reading.transform.template">
+            <field name="name">Reservoir Reading (m³)</field>
+            <field name="description">Transform sensor readings in m³ to wua.reservoirreading</field>
+            <field name="target_model_id" ref="base_wua_reservoir.model_wua_reservoirreading"/>
+            <field name="use_all_sensors" eval="True"/>
+            <field name="selection_mode">closest_reading</field>
+            <field name="sensor_domain_filter">[('type_id', '=', env.ref('base_wua_reservoir_mdm.mdm_sensor_type_volume_m3').id), ('reservoir_id', '!=', None)]</field>
+            <field name="field_mapping_json"><![CDATA[{
+    "reservoir_id": "$sensor_id.reservoir_id.id",
+    "reading_time": "$now",
+    "height": 0,
+    "volume_entered": "$value"
+}]]></field>
+            <field name="detect_negative_readings" eval="False"/>
+            <field name="active" eval="True"/>
+            <field name="readonly" eval="True"/>
+        </record>
+
     </data>
 </odoo>
