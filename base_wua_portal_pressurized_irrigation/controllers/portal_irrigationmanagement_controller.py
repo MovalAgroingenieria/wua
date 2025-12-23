@@ -26,8 +26,13 @@ class PortalIrrigationManagement(http.Controller):
             request.env['wua.presconsumption'].search_count([
                 ('waterconnection_id', 'in', waterconnections)
             ])
+        irrigationevents_count = \
+            request.env['wua.waterconnection.irrigation.event'].search_count([
+                ('waterconnection_id', 'in', waterconnections)
+            ])
         values.update({
             'readings_count': readings_count,
             'presconsumptions_count': presconsumptions_count,
+            'irrigationevents_count': irrigationevents_count,
         })
         return values

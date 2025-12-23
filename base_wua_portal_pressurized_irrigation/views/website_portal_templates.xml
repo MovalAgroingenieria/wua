@@ -246,12 +246,27 @@
                 <div class="container mb64">
                 <div class="col-md-12">
                     <h3 class="page-header">Your irrigationevents</h3>
+
+                    <div class="mb-3">
+                        <div class="btn-group" role="group">
+                            <a t-attf-href="/my/irrigationevents?date_filter=week"
+                               t-att-class="'btn btn-default' + (' active' if date_filter == 'week' else '')">
+                                Last 7 Days
+                            </a>
+                            <a t-attf-href="/my/irrigationevents?date_filter=all"
+                               t-att-class="'btn btn-default' + (' active' if date_filter == 'all' else '')">
+                                All Events
+                            </a>
+                        </div>
+                    </div>
+
                     <t t-if="not irrigationevents">
                     <p>There are currently no irrigationevents for your account.</p>
                     </t>
 
                     <t t-if="irrigationevents">
                     <form action="/my/irrigationevents" method="get" class="mb-3">
+                        <input type="hidden" name="date_filter" t-att-value="date_filter or 'week'"/>
                         <div class="row">
                         <div class="col-md-2">
                             <select id="search_field" name="search_field" class="form-control">

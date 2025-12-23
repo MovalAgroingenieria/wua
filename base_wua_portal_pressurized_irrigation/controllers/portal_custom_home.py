@@ -173,8 +173,9 @@ class website_account(website_account):
                  '/my/irrigationevents/page/<int:page>'],
                 type='http', auth="user", website=True)
     def portal_my_irrigationevents(self, page=1, search=None,
-                                   search_field=None, selected_columns=None,
-                                   **kw):
+                                   search_field=None, date_filter=None,
+                                   selected_columns=None, **kw):
+        from datetime import datetime, timedelta
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
         partner = partner.parent_id or partner
@@ -195,6 +196,14 @@ class website_account(website_account):
         irrigationevents_domain = [
             ('waterconnection_id', 'in', waterconnections.ids)
         ]
+        if date_filter is None:
+            date_filter = 'week'
+        today = datetime.now().date()
+        if date_filter == 'week':
+            week_start = today - timedelta(days=7)
+            irrigationevents_domain.append(
+                ('irrigation_end_date', '>=', week_start.strftime('%Y-%m-%d')))
+
         if search and search_field:
             field_map = {
                 'waterconnection': 'waterconnection_id.name',
@@ -222,18 +231,21 @@ class website_account(website_account):
             url_args={
                 'search': search,
                 'search_field': search_field,
+                'date_filter': date_filter,
             },
         )
         offset = (page - 1) * items_per_page
         irrigationevents = \
             request.env['wua.waterconnection.irrigation.event'].search(
-                irrigationevents_domain, limit=items_per_page, offset=offset)
+                irrigationevents_domain, limit=items_per_page, offset=offset,
+                order='irrigation_end_date desc')
         values.update({
             'irrigationevents': irrigationevents,
             'waterconnections': waterconnections,
             'pager': pager,
             'search_query': search,
             'search_field': search_field,
+            'date_filter': date_filter,
             'default_url': '/my/irrigationevents',
         })
         portal_view = \
