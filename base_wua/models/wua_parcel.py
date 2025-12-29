@@ -956,9 +956,14 @@ class WuaParcel(models.Model):
                         record.aerial_img_date_current = date
                         record.aerial_img_bbox_current = \
                             ','.join(map(str, list(bbox)))
-                    except Exception:
+                    except Exception as e:
                         _logger = logging.getLogger(self.__class__.__name__)
-                        _logger.exception('Aerial IMG')
+                        _logger.error(
+                            'Aerial IMG Error for parcel %s: %s',
+                            record.name, str(e))
+                        _logger.error(
+                            'WMS URL: %s | WFS URL: %s',
+                            url_gis_viewer_wms, url_gis_viewer_wfs)
                         pass
 
     @api.multi
@@ -1938,9 +1943,16 @@ class WuaParcel(models.Model):
                                       fields.Datetime.now(),
                                       'aerial_img_bbox':
                                       ','.join(map(str, list(bbox)))})
-                    except Exception:
+                    except Exception as e:
                         _logger = logging.getLogger(self.__class__.__name__)
-                        _logger.exception('Aerial IMG Regeneration')
+                        _logger.error(
+                            'Aerial IMG Regeneration Error for parcel %s: %s',
+                            record.name, str(e))
+                        _logger.error(
+                            'WMS URL: %s | WFS URL: %s',
+                            url_gis_viewer_wms, url_gis_viewer_wfs)
+                        if 'bbox' in locals():
+                            _logger.error('BBOX: %s', bbox)
                         pass
 
     @api.multi
