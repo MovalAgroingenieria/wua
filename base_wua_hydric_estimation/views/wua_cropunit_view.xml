@@ -89,7 +89,7 @@
                                    domain="[('cultivation_id', '=', cultivation_id)]"
                                    options="{'no_create_edit':True}"/>
                             <field name="order_number"
-                                   string="Order Number"
+                                   string="Order N."
                                    style="width:100px"/>
                             <label for="initial_date"/>
                             <div>
@@ -223,7 +223,7 @@
         <field name="arch" type="xml">
             <search>
                 <field name="name" string="Crop Unit"/>
-                <field name="partner_id" string="Partner"/>
+                <field name="partner_id" string="C.U. Partner"/>
                 <field name="cultivation_id" string="Cultivation"/>
                 <field name="initial_date" string="Crop cycle initial date"/>
                 <field name="end_date" string="Crop cycle end date"/>
@@ -253,7 +253,7 @@
                     <filter string="Agricultural Season"
                             name="grouped_agriculturalseason"
                      context="{'group_by':'agriculturalseason_id'}"/>
-                    <filter string="Partner"
+                    <filter string="C.U. Partner"
                             name="grouped_partner"
                      context="{'group_by':'partner_id'}"/>
                     <filter string="Parcel"

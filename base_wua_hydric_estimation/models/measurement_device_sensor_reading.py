@@ -13,7 +13,10 @@ class MeasurementDeviceSensorReading(models.Model):
     @api.model
     def create(self, vals):
         new_reading = super(MeasurementDeviceSensorReading, self).create(vals)
-        if self.sudo().new_monitoringperiod_detected(new_reading):
+        disable_test_create_reading = self.env.context.get(
+            'disable_test_create_reading', False)
+        if ((not disable_test_create_reading) and
+           self.sudo().new_monitoringperiod_detected(new_reading)):
             current_date = datetime.date.today().strftime('%Y-%m-%d')
             (self.env['wua.parcel'].
              sudo().get_all_ndvi_values())

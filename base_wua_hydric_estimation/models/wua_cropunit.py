@@ -125,7 +125,7 @@ class WuaCropunit(models.Model):
     )
 
     order_number = fields.Integer(
-        string='Order Number',
+        string='Order N.',
         default=1,
         required=True,
         track_visibility='onchange',
@@ -966,8 +966,7 @@ class WuaCropunit(models.Model):
                         gin_graph = '%s%s' % (div, script)
             record.gin_graph = gin_graph
 
-    @api.constrains('cultivation_id',
-                    'cultivation_id.suitable_hydric_estimation')
+    @api.constrains('cultivation_id')
     def _check_cultivation_suitable(self):
         for record in self:
             if (record.cultivation_id and

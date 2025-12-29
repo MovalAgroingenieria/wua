@@ -439,3 +439,28 @@ class WuaMonitoringperiod(models.Model):
                 query_results[0].get('sum') is not None):
             sum_total_gin = query_results[0].get('sum')
         return number_of_hydricneeds, sum_total_gin
+
+    @api.model
+    def fetch_data_and_calculate_uncalculated_monitoringperiods(self):
+        remotecontrol_siar = self.env.ref(
+            'remotecontrol_siar.remotecontrol_siar')
+        devices_siar = self.env['mdm.measurement.device'].search(
+            [('remotecontrol_id', '=', remotecontrol_siar.id)])
+        if devices_siar:
+            for device in devices_siar:
+                procedure = device.readings_procedure_id
+                if procedure:
+                    procedure.with_context(
+                        selected_device_ids=device.ids,
+                        disable_test_create_reading=True,
+                    ).run()
+            current_date = datetime.date.today().strftime('%Y-%m-%d')
+            self.env['wua.parcel'].get_all_ndvi_values()
+            self.env['wua.parcel.sensor.reading'].refresh_materialized_view()
+            self.env['res.partner.sensor.reading'].refresh_materialized_view()
+            uncalculated_monitoringperiods = \
+                self.get_uncalculated_monitoringperiods(
+                    max_end_date=current_date)
+            if uncalculated_monitoringperiods:
+                for monitoringperiod in uncalculated_monitoringperiods:
+                    monitoringperiod.calculate(force=True)

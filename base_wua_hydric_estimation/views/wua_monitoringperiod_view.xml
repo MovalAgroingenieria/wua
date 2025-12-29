@@ -199,7 +199,7 @@
             <calendar date_start="initial_date"
                       date_stop="end_date"
                       mode="month"
-                      display="Gross Irrigation Need = [sum_total_gin] m³">
+                      display="[sum_total_gin] m³">
                 <field name="initial_date"/>
                 <field name="end_date"/>
                 <field name="sum_total_gin"/>
@@ -310,5 +310,18 @@
         <field name="key2">client_action_multi</field>
         <field name="value" eval="'ir.actions.server,' + str(ref('wua_monitoringperiod_refresh'))"/>
     </record>
+
+    <record id="wua_technical_calculate_monitoringperiods_action" model="ir.actions.server">
+        <field name="name">Calculate pending irrigation recommendations</field>
+        <field name="model_id" ref="base_wua_hydric_estimation.model_wua_monitoringperiod"/>
+        <field name="code">action = env["wua.monitoringperiod"].fetch_data_and_calculate_uncalculated_monitoringperiods()</field>
+    </record>
+
+    <menuitem id="wua_technical_calculate_monitoringperiods_menu"
+              name="Calculate pending irrigation recommendations"
+              parent="base_wua.base_wua_technical_menu"
+              action="wua_technical_calculate_monitoringperiods_action"
+              sequence="10"
+              groups="base.group_system"/>
 
 </odoo>

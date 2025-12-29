@@ -146,7 +146,7 @@ class WuaHydricneed(models.Model):
     )
 
     order_number = fields.Integer(
-        string='Order Number',
+        string='Order N.',
         store=True,
         index=True,
         compute='_compute_order_number',
