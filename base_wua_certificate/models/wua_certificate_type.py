@@ -214,6 +214,7 @@ class WuaCertificateType(models.Model):
                 'domain': [('id', 'in', self.certificate_ids.ids)],
                 }
             return act_window
+
     @api.model
     def _compute_area_measurement_name(self, official_area):
 
