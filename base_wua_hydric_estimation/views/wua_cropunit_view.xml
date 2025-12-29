@@ -9,12 +9,18 @@
                 <field name="id" invisible="1"/>
                 <field name="mapped_to_polygon" invisible="1"/>
                 <field name="exists_current_recommendation" invisible="1"/>
+                <field name="parcel_mapped_to_polygon" invisible="1"/>
                 <header>
+                    <button name="action_upload_geometry"
+                            type="object" string="Geometry"
+                            icon="fa-map-o"
+                            attrs="{'invisible': [('parcel_mapped_to_polygon', '=', False)]}"
+                            groups="base_wua.group_wua_manager"/>
                     <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <button name="action_get_hydric_estimations"
+                        <button name="action_get_hydricneeds"
                                 type="object"
                                 class="oe_stat_button"
                                 icon="fa-calculator">
@@ -77,8 +83,13 @@
                                    string="Cultivation"
                                    style="width:250px"
                                    options="{'no_create_edit':True}"/>
+                            <field name="variety_id"
+                                   string="Variety"
+                                   style="width:250px"
+                                   domain="[('cultivation_id', '=', cultivation_id)]"
+                                   options="{'no_create_edit':True}"/>
                             <field name="order_number"
-                                   string="Order Number"
+                                   string="Order N."
                                    style="width:100px"/>
                             <label for="initial_date"/>
                             <div>
@@ -136,12 +147,12 @@
                                 <span class="oe_inline">) = </span>
                                 <field name="current_controlperiod_kc" class="oe_inline"/>
                             </div>
-                            <!-- <label for="current_controlperiod_nin"
+                            <label for="current_controlperiod_nin"
                                    attrs="{'invisible': [('exists_current_recommendation', '=', False)]}"/>
                             <div attrs="{'invisible': [('exists_current_recommendation', '=', False)]}">
                                 <field name="current_controlperiod_nin" class="oe_inline"/>
                                 <span class="oe_inline"> m³/ha</span>
-                            </div> -->
+                            </div>
                             <label for="current_controlperiod_gin"
                                    attrs="{'invisible': [('exists_current_recommendation', '=', False)]}"/>
                             <div attrs="{'invisible': [('exists_current_recommendation', '=', False)]}">
@@ -164,6 +175,10 @@
                             </div>
                         </group>
                     </group>
+                    <div style="width: 100%; margin:0 auto;">
+                        <field name="gin_graph"
+                         widget="bokeh_chart" nolabel="1"/>
+                    </div>
                     <group name="slave_data">
                         <notebook name="slave_data_notebook">
                             <page name="page_notes" string="Notes">
@@ -208,7 +223,7 @@
         <field name="arch" type="xml">
             <search>
                 <field name="name" string="Crop Unit"/>
-                <field name="partner_id" string="Partner"/>
+                <field name="partner_id" string="C.U. Partner"/>
                 <field name="cultivation_id" string="Cultivation"/>
                 <field name="initial_date" string="Crop cycle initial date"/>
                 <field name="end_date" string="Crop cycle end date"/>
@@ -238,7 +253,7 @@
                     <filter string="Agricultural Season"
                             name="grouped_agriculturalseason"
                      context="{'group_by':'agriculturalseason_id'}"/>
-                    <filter string="Partner"
+                    <filter string="C.U. Partner"
                             name="grouped_partner"
                      context="{'group_by':'partner_id'}"/>
                     <filter string="Parcel"
@@ -247,6 +262,9 @@
                     <filter string="Cultivation"
                             name="grouped_cultivation"
                      context="{'group_by':'cultivation_id'}"/>
+                    <filter string="Variety"
+                            name="grouped_variety"
+                     context="{'group_by':'variety_id'}"/>
                 </group>
             </search>
         </field>
@@ -271,6 +289,8 @@
                 <field name="exists_current_recommendation"/>
                 <field name="initial_date"/>
                 <field name="end_date"/>
+                <field name="current_controlperiod_initial_date"/>
+                <field name="current_controlperiod_end_date"/>
                 <field name="current_controlperiod_total_gin"/>
                 <templates>
                     <t t-name="kanban-box">
@@ -301,7 +321,7 @@
                                         </div>
                                         <t t-if="record.exists_current_recommendation.value">
                                             <div name="div_content_04_01" style="margin-top:10px">
-                                                <i class="fa fa-calculator fa-lg" style="margin-right:6px"/> <field name="initial_date"/> - <field name="end_date"/> : <strong><field name="current_controlperiod_total_gin"/> m³</strong>
+                                                <i class="fa fa-calculator fa-lg" style="margin-right:6px"/> <field name="current_controlperiod_initial_date"/> - <field name="current_controlperiod_end_date"/> : <strong><field name="current_controlperiod_total_gin"/> m³</strong>
                                             </div>
                                         </t>
                                         <t t-else="">

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wizard_base_wua_hydric_estimation_view_form" model="ir.ui.view">
+        <field name="name">wizard.base.wua.hydric.estimation.view.form</field>
+        <field name="model">wizard.base.wua.hydric.estimation</field>
+        <field name="inherit_id" ref="base.res_config_installer"/>
+        <field name="arch" type="xml">
+            <form position="attributes">
+                <attribute name="string">Crop unit initialization</attribute>
+            </form>
+            <separator position="replace">
+                <group>
+                    <p colspan="4">If there is an active season at this time, this wizard will create and initialize its crop units and the weekly monitoring periods.</p>
+                    <p colspan="4">You must choose one of the following options to generate the crop units:</p>
+                    <ul>
+                        <li>From SIGPAC enclosures.</li>
+                        <li>From parcels.</li>
+                        <li>Do not generate anything (they can be generated later from the seasons form).</li>
+                    </ul>
+                </group>
+            </separator>
+            <button name="action_next" position="attributes">
+                <attribute name="string">From SIGPAC enclosures</attribute>
+            </button>
+            <xpath expr="//button[@name='action_next']" position="after">
+                <button name="execute_for_parcels"
+                        type="object"
+                        string="From parcels"
+                        class="btn-default"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_base_wua_hydric_estimation_cropunits" model="ir.actions.act_window">
+        <field name="name">Crop unit initialization</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">wizard.base.wua.hydric.estimation</field>
+        <field name="view_id" ref="wizard_base_wua_hydric_estimation_view_form"/>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="config_wizard_base_wua_hydric_estimation" model="ir.actions.todo">
+        <field name="name">Crop unit initialization</field>
+        <field name="action_id" ref="action_base_wua_hydric_estimation_cropunits"/>
+        <field name="sequence">20</field>
+        <field name="type">automatic</field>
+    </record>
+
+</odoo>

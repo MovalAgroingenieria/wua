@@ -11,6 +11,10 @@ import requests
 from PIL import Image
 from pyproj import Proj, transform
 from unidecode import unidecode
+from bokeh.plotting import figure
+from bokeh.embed import components
+from bokeh.models import ColumnDataSource, HoverTool, HelpTool
+from lxml import etree
 
 from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import DEFAULT_STANDARD_APPLICATION_EFFICIENCY
 from odoo import models, fields, api, exceptions, _
@@ -28,9 +32,10 @@ class WuaCropunit(models.Model):
     _link_field = 'name'
     _url_googlemaps = 'https://maps.google.com/maps?t=h&q=loc:ycval+xcval'
 
-    # Timeout for getmap requests.
+    # Constants.
     OGC_TIMEOUT = 15
     DEFAULT_AERIAL_IMAGE_SIZE = 320
+    KML_NAMESPACE = 'http://www.opengis.net/kml/2.2'
 
     def _default_agriculturalseason_id(self):
         resp = None
@@ -74,6 +79,7 @@ class WuaCropunit(models.Model):
         default=_default_agriculturalseason_id,
         index=True,
         required=True,
+        ondelete='restrict',
     )
 
     parcel_id = fields.Many2one(
@@ -81,6 +87,7 @@ class WuaCropunit(models.Model):
         comodel_name='wua.parcel',
         index=True,
         required=True,
+        ondelete='restrict',
     )
 
     cultivation_id = fields.Many2one(
@@ -89,6 +96,15 @@ class WuaCropunit(models.Model):
         domain=[('suitable_hydric_estimation', '=', True)],
         index=True,
         required=True,
+        ondelete='restrict',
+        track_visibility='onchange',
+    )
+
+    variety_id = fields.Many2one(
+        string='Variety',
+        comodel_name='wua.cultivation.variety',
+        index=True,
+        ondelete='restrict',
         track_visibility='onchange',
     )
 
@@ -109,7 +125,7 @@ class WuaCropunit(models.Model):
     )
 
     order_number = fields.Integer(
-        string='Order Number',
+        string='Order N.',
         default=1,
         required=True,
         track_visibility='onchange',
@@ -127,6 +143,7 @@ class WuaCropunit(models.Model):
         comodel_name='res.partner',
         store=True,
         index=True,
+        ondelete='restrict',
         compute='_compute_partner_id',
     )
 
@@ -163,6 +180,7 @@ class WuaCropunit(models.Model):
         string='Irrigation System',
         comodel_name='wua.irrigationsystem',
         index=True,
+        ondelete='restrict',
         track_visibility='onchange',
     )
 
@@ -172,6 +190,18 @@ class WuaCropunit(models.Model):
         digits=(32, 2),
         required=True,
         track_visibility='onchange',
+    )
+
+    current_monitoringperiod_id = fields.Many2one(
+        string='Current control period',
+        comodel_name='wua.monitoringperiod',
+        compute='_compute_current_monitoringperiod_id',
+    )
+
+    previous_calculated_monitoringperiod_id = fields.Many2one(
+        string='Previous calculated control period',
+        comodel_name='wua.monitoringperiod',
+        compute='_compute_previous_calculated_monitoringperiod_id',
     )
 
     exists_current_recommendation = fields.Boolean(
@@ -187,6 +217,12 @@ class WuaCropunit(models.Model):
     current_controlperiod_end_date = fields.Date(
         string='End date of current control period',
         compute='_compute_current_controlperiod_end_date',
+    )
+
+    previous_hydricneed_id = fields.Many2one(
+        string='Previous Hydric Need',
+        comodel_name='wua.hydricneed',
+        compute='_compute_previous_hydricneed_id',
     )
 
     current_controlperiod_kc = fields.Float(
@@ -214,13 +250,13 @@ class WuaCropunit(models.Model):
     )
 
     current_controlperiod_nin = fields.Float(
-        string='Net Irrig. Need',
+        string='Net Irrig. Needs',
         digits=(32, 2),
         compute='_compute_current_controlperiod_nin',
     )
 
     current_controlperiod_gin = fields.Float(
-        string='Gross Irrig. Need',
+        string='Gross Irrig. Needs',
         digits=(32, 2),
         compute='_compute_current_controlperiod_gin',
     )
@@ -236,6 +272,11 @@ class WuaCropunit(models.Model):
         compute='_compute_mapped_to_active_agriculturalseason',
         search='_search_mapped_to_active_agriculturalseason',
     )
+
+    hydricneed_ids = fields.One2many(
+        string='Associated hydric estimations',
+        comodel_name='wua.hydricneed',
+        inverse_name='cropunit_id')
 
     notes = fields.Html(
         string='Notes',
@@ -299,21 +340,30 @@ class WuaCropunit(models.Model):
         string='GIS preview with google maps viewer',
         compute='_compute_html_frame_googlemaps')
 
+    gin_graph = fields.Text(
+        string='GIN Graph',
+        compute='_compute_gin_graph')
+
+    parcel_mapped_to_polygon = fields.Boolean(
+        string='Parcel mapped to polygon',
+        related='parcel_id.mapped_to_polygon',
+    )
+
     _sql_constraints = [
         ('name_unique',
          'UNIQUE (name)',
          'Existing crop unit.'),
         ('dates_ok',
-         'CHECK (initial_date < end_date)',
+         'CHECK (initial_date <= end_date)',
          'The end date of the crop cycle must be later than the start date.'),
         ('order_number_ok',
          'CHECK (order_number > 0)',
          'The order number must be a positive value.'),
         ('valid_standard_application_efficiency',
-         'CHECK (standard_application_efficiency >= 0 '
+         'CHECK (standard_application_efficiency > 0 '
          'and standard_application_efficiency <= 1)',
-         'The standard application efficiency must be a value between '
-         '0 and 1.'),
+         'The default standard application efficiency must be a value greater '
+         'than 0 and less than or equal to 1.'),
     ]
 
     @api.depends('agriculturalseason_id', 'parcel_id', 'cultivation_id',
@@ -388,36 +438,78 @@ class WuaCropunit(models.Model):
         return [('id', filter_operator, cropunit_ids)]
 
     @api.multi
+    def _compute_current_monitoringperiod_id(self):
+        for record in self:
+            current_monitoringperiod_id = 0
+            current_date = datetime.date.today().strftime('%Y-%m-%d')
+            sql_statement_current_mp = \
+                ('SELECT id FROM wua_monitoringperiod '
+                 'WHERE initial_date <= \'%s\' AND '
+                 'end_date >= \'%s\'' % (current_date, current_date,))
+            self.env.cr.execute(sql_statement_current_mp)
+            query_results = self.env.cr.dictfetchall()
+            if (query_results and
+               query_results[0].get('id') is not None):
+                current_monitoringperiod_id = query_results[0].get('id')
+            record.current_monitoringperiod_id = current_monitoringperiod_id
+
+    @api.multi
+    def _compute_previous_calculated_monitoringperiod_id(self):
+        for record in self:
+            previous_calculated_monitoringperiod_id = 0
+            if record.state == '02_active':
+                current_mp_initial_date = None
+                current_date = datetime.date.today().strftime('%Y-%m-%d')
+                sql_statement_current_mp = \
+                    ('SELECT initial_date FROM wua_monitoringperiod '
+                     'WHERE initial_date <= \'%s\' AND '
+                     'end_date >= \'%s\'' % (current_date, current_date,))
+                self.env.cr.execute(sql_statement_current_mp)
+                query_results = self.env.cr.dictfetchall()
+                if (query_results and
+                   query_results[0].get('initial_date') is not None):
+                    current_mp_initial_date = query_results[0].get('initial_date')
+                if current_mp_initial_date:
+                    current_mp_initial_date = datetime.datetime.strptime(
+                        str(current_mp_initial_date), '%Y-%m-%d')
+                    previous_mp_end_date = (
+                            current_mp_initial_date -
+                            datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+                    sql_statement_previous_mp = \
+                        ('SELECT id FROM wua_monitoringperiod '
+                         'WHERE end_date = \'%s\' AND '
+                         'state = \'02_calculated\'' % (previous_mp_end_date,))
+                    self.env.cr.execute(sql_statement_previous_mp)
+                    query_results = self.env.cr.dictfetchall()
+                    if (query_results and
+                       query_results[0].get('id') is not None):
+                        previous_calculated_monitoringperiod_id = \
+                            query_results[0].get('id')
+            record.previous_calculated_monitoringperiod_id = \
+                previous_calculated_monitoringperiod_id
+
+    @api.multi
     def _compute_exists_current_recommendation(self):
         for record in self:
-            exists_current_recommendation = record.state == '02_active'
-            if exists_current_recommendation:
-                # TODO (provisional)
-                # Con SQL:
-                # · Comprobar si en la fecha actual hay algún período de
-                #   control.
-                # · Si lo hubiere, comprobar si existe el período de
-                #   control anterior, y, en su caso, constatar que está
-                #   "calculado".
-                # · Si no se cumple la anterior condición, tornar
-                #   exists_current_recommendation a "False".
-                pass
             record.exists_current_recommendation = \
-                exists_current_recommendation
+                record.previous_calculated_monitoringperiod_id.id > 0
 
     @api.multi
     def _compute_current_controlperiod_initial_date(self):
         for record in self:
             current_controlperiod_initial_date = None
-            if record.exists_current_recommendation:
-                # TODO (provisional)
-                # Con SQL:
-                # · Obtener el período de control en el que se encuentra
-                #   la fecha actual.
-                # · Instanciar "current_controlperiod_initial_date" con la
-                #   fecha de inicio de ese período de control
-                current_controlperiod_initial_date = \
-                    record.agriculturalseason_id.initial_date
+            current_monitoringperiod_id = \
+                record.current_monitoringperiod_id.id
+            if current_monitoringperiod_id > 0:
+                sql_statement_current_mp = \
+                    ('SELECT initial_date FROM wua_monitoringperiod '
+                     'WHERE id = \'%s\'' % (current_monitoringperiod_id,))
+                self.env.cr.execute(sql_statement_current_mp)
+                query_results = self.env.cr.dictfetchall()
+                if (query_results and
+                        query_results[0].get('initial_date') is not None):
+                    current_controlperiod_initial_date = \
+                        query_results[0].get('initial_date')
             record.current_controlperiod_initial_date = \
                 current_controlperiod_initial_date
 
@@ -425,88 +517,97 @@ class WuaCropunit(models.Model):
     def _compute_current_controlperiod_end_date(self):
         for record in self:
             current_controlperiod_end_date = None
-            if record.exists_current_recommendation:
-                # TODO (provisional)
-                # Con SQL:
-                # · Obtener el período de control en el que se encuentra
-                #   la fecha actual.
-                # · Instanciar "current_controlperiod_end_date" con la
-                #   fecha de finalización de ese período de control
-                current_controlperiod_end_date = \
-                    record.agriculturalseason_id.end_date
+            current_monitoringperiod_id = \
+                record.current_monitoringperiod_id.id
+            if current_monitoringperiod_id > 0:
+                sql_statement_current_mp = \
+                    ('SELECT end_date FROM wua_monitoringperiod '
+                     'WHERE id = \'%s\'' % (current_monitoringperiod_id,))
+                self.env.cr.execute(sql_statement_current_mp)
+                query_results = self.env.cr.dictfetchall()
+                if (query_results and
+                        query_results[0].get('end_date') is not None):
+                    current_controlperiod_end_date = \
+                        query_results[0].get('end_date')
             record.current_controlperiod_end_date = \
                 current_controlperiod_end_date
+
+    @api.multi
+    def _compute_previous_hydricneed_id(self):
+        for record in self:
+            previous_hydricneed_id = 0
+            previous_calculated_monitoringperiod_id = \
+                record.previous_calculated_monitoringperiod_id
+            if previous_calculated_monitoringperiod_id.id > 0:
+                sql_statement_previous_hn = \
+                    ('SELECT id FROM wua_hydricneed WHERE '
+                     'monitoringperiod_id = %s AND cropunit_id = '
+                     '%s' % (previous_calculated_monitoringperiod_id.id,
+                             record.id))
+                self.env.cr.execute(sql_statement_previous_hn)
+                query_results = self.env.cr.dictfetchall()
+                if (query_results and
+                        query_results[0].get('id') is not None):
+                    previous_hydricneed_id = \
+                        query_results[0].get('id')
+            record.previous_hydricneed_id = previous_hydricneed_id
 
     @api.multi
     def _compute_current_controlperiod_kc(self):
         for record in self:
             current_controlperiod_kc = 0
-            # TODO (provisional)
-            # Con SQL:
-            # · Coger el valor del período de control previo al actual
-            #   (si lo hubiere, considerar el mismo criterio que para el
-            #   campo "exists_current_recommendation").
-            current_controlperiod_kc = 0.47
+            previous_hydricneed_id = record.previous_hydricneed_id
+            if previous_hydricneed_id.id > 0:
+                current_controlperiod_kc = previous_hydricneed_id.kc
             record.current_controlperiod_kc = current_controlperiod_kc
 
     @api.multi
     def _compute_current_controlperiod_ndvi(self):
         for record in self:
             current_controlperiod_ndvi = 0
-            # TODO (provisional)
-            # Con SQL:
-            # · Coger el valor del período de control previo al actual
-            #   (si lo hubiere, considerar el mismo criterio que para el
-            #   campo "exists_current_recommendation").
-            current_controlperiod_ndvi = 0.4603
+            previous_hydricneed_id = record.previous_hydricneed_id
+            if previous_hydricneed_id.id > 0:
+                current_controlperiod_ndvi = previous_hydricneed_id.mean_ndvi
             record.current_controlperiod_ndvi = current_controlperiod_ndvi
 
     @api.multi
     def _compute_current_controlperiod_et0(self):
         for record in self:
             current_controlperiod_et0 = 0
-            # TODO (provisional)
-            # Con SQL:
-            # · Coger el valor del período de control previo al actual
-            #   (si lo hubiere, considerar el mismo criterio que para el
-            #   campo "exists_current_recommendation").
-            current_controlperiod_et0 = 2.2066
+            previous_hydricneed_id = record.previous_hydricneed_id
+            if previous_hydricneed_id.id > 0:
+                current_controlperiod_et0 = \
+                    previous_hydricneed_id.accumulated_et0
             record.current_controlperiod_et0 = current_controlperiod_et0
 
     @api.multi
     def _compute_current_controlperiod_pe(self):
         for record in self:
             current_controlperiod_pe = 0
-            # TODO (provisional)
-            # Con SQL:
-            # · Coger el valor del período de control previo al actual
-            #   (si lo hubiere, considerar el mismo criterio que para el
-            #   campo "exists_current_recommendation").
-            current_controlperiod_pe = 0.0000
+            previous_hydricneed_id = record.previous_hydricneed_id
+            if previous_hydricneed_id.id > 0:
+                current_controlperiod_pe = \
+                    previous_hydricneed_id.accumulated_pe
             record.current_controlperiod_pe = current_controlperiod_pe
 
     @api.multi
     def _compute_current_controlperiod_nin(self):
         for record in self:
             current_controlperiod_nin = 0
-            # TODO (provisional)
-            # Con SQL:
-            # · Coger el valor del período de control previo al actual
-            #   (si lo hubiere, considerar el mismo criterio que para el
-            #   campo "exists_current_recommendation").
-            current_controlperiod_nin = 10.37
+            previous_hydricneed_id = record.previous_hydricneed_id
+            if previous_hydricneed_id.id > 0:
+                current_controlperiod_nin = \
+                    previous_hydricneed_id.nin
             record.current_controlperiod_nin = current_controlperiod_nin
 
     @api.multi
     def _compute_current_controlperiod_gin(self):
         for record in self:
             current_controlperiod_gin = 0
-            # TODO (provisional)
-            # Con SQL:
-            # · Coger el valor del período de control previo al actual
-            #   (si lo hubiere, considerar el mismo criterio que para el
-            #   campo "exists_current_recommendation").
-            current_controlperiod_gin = 10.92
+            previous_hydricneed_id = record.previous_hydricneed_id
+            if previous_hydricneed_id.id > 0:
+                current_controlperiod_gin = \
+                    previous_hydricneed_id.gin
             record.current_controlperiod_gin = current_controlperiod_gin
 
     @api.multi
@@ -788,14 +889,99 @@ class WuaCropunit(models.Model):
                     '</iframe></p>'
             record.html_frame_googlemaps = html_frame_googlemaps
 
-    @api.constrains('cultivation_id',
-                    'cultivation_id.suitable_hydric_estimation')
+    @api.multi
+    def _compute_gin_graph(self):
+        model_transform = self.env['wua.parcel']
+        for record in self:
+            gin_graph = None
+            agriculturalseason_id = record.agriculturalseason_id.id
+            cropunit_id = record.id
+            cropunit_name = record.name
+            number_of_monitoringperiods = 0
+            self.env.cr.execute(
+                '(SELECT COUNT(*) FROM wua_monitoringperiod WHERE '
+                'agriculturalseason_id = %s)', (agriculturalseason_id,))
+            query_results = self.env.cr.dictfetchall()
+            if (query_results and
+                    query_results[0].get('count') is not None):
+                number_of_monitoringperiods = query_results[0].get('count')
+            if number_of_monitoringperiods:
+                monitoringperiods = []
+                self.env.cr.execute(
+                    '(SELECT initial_date FROM wua_monitoringperiod WHERE '
+                    'agriculturalseason_id = %s ORDER BY '
+                    'initial_date)', (agriculturalseason_id,))
+                sql_resp = self.env.cr.fetchall()
+                if sql_resp:
+                    for item in sql_resp:
+                        monitoringperiods.append(item[0])
+                if monitoringperiods:
+                    x_values = []
+                    y_values = []
+                    for monitoringperiod in monitoringperiods:
+                        x_values.append(model_transform.transform_date_to_locale(
+                            monitoringperiod)[:5])
+                        y_value = 0.0
+                        self.env.cr.execute(
+                            '(SELECT hn.total_gin FROM wua_hydricneed hn '
+                            'INNER JOIN wua_monitoringperiod mp '
+                            'ON hn.monitoringperiod_id = mp.id '
+                            'WHERE mp.initial_date = %s AND '
+                            'hn.cropunit_id = %s)', (monitoringperiod, cropunit_id))
+                        query_results = self.env.cr.dictfetchall()
+                        if (query_results and
+                                query_results[0].get('total_gin') is not None):
+                            y_value = query_results[0].get('total_gin')
+                        y_values.append(y_value)
+                    source = ColumnDataSource(data=dict(
+                        x=x_values, y=y_values,))
+                    initial_date = model_transform.transform_date_to_locale(
+                        monitoringperiods[0])
+                    end_date = model_transform.transform_date_to_locale(
+                        monitoringperiods[number_of_monitoringperiods - 1])
+                    title = _('Gross Irrigation Needs') + '  (' + \
+                        initial_date + ' - ' + end_date + ',  ' + \
+                        cropunit_name + ')'
+                    p = figure(x_range=x_values,
+                               y_range=(0, max(y_values) + 1),
+                               sizing_mode='scale_width',
+                               height=150, title=title,
+                               x_axis_label=_('Control Periods'),
+                               y_axis_label=_('m³'),)
+                    if len(x_values) > 12:
+                        p.xaxis[0].major_label_orientation = 0.785
+                    hover = HoverTool(tooltips=[
+                        (_('Control Period'), '@x'),
+                        (_('Value (m³)'), '@y{0.00}'),
+                    ])
+                    p.add_tools(hover)
+                    for tool in p.tools:
+                        if isinstance(tool, HelpTool):
+                            p.tools.remove(tool)
+                            break
+                    p.toolbar.logo = None
+                    p.vbar(x='x', top='y', source=source, width=0.1, color='navy')
+                    script, div = components(p)
+                    if script and div:
+                        gin_graph = '%s%s' % (div, script)
+            record.gin_graph = gin_graph
+
+    @api.constrains('cultivation_id')
     def _check_cultivation_suitable(self):
         for record in self:
             if (record.cultivation_id and
                (not record.cultivation_id.suitable_hydric_estimation)):
                 raise exceptions.ValidationError(
                     _('Not suitable for irrigation recommendations.'))
+
+    @api.constrains('cultivation_id', 'variety_id')
+    def _check_variety(self):
+        for record in self:
+            if record.variety_id:
+                if ((not record.cultivation_id) or
+                   (record.variety_id.cultivation_id != record.cultivation_id)):
+                    raise exceptions.ValidationError(
+                        _('Incorrect variety.'))
 
     @api.constrains('initial_date',
                     'end_date')
@@ -848,6 +1034,7 @@ class WuaCropunit(models.Model):
             prev_parcel_id = 0
             prev_cultivation_id = 0
             prev_order_number = 0
+            update_estimations = False
             if (('agriculturalseason_id' in vals and vals['agriculturalseason_id']) or
                ('parcel_id' in vals and vals['parcel_id']) or
                ('cultivation_id' in vals and vals['cultivation_id']) or
@@ -861,6 +1048,8 @@ class WuaCropunit(models.Model):
                    prev_parcel_id and prev_cultivation_id and
                    prev_order_number):
                     update_gis = True
+            if 'initial_date' in vals or 'end_date' in vals:
+                update_estimations = True
             updated_cropunits = super(WuaCropunit, self).write(vals)
             if update_gis:
                 agriculturalseason_id = prev_agriculturalseason_id
@@ -892,6 +1081,8 @@ class WuaCropunit(models.Model):
                                     unidecode(cultivation.name[:3]).upper() + '-' +
                                     str(order_number).rjust(3, '0'))
                         self.update_wua_gis_cropunit(prev_code, new_code)
+            if update_estimations:
+                self.calculate()
         else:
             updated_cropunits = super(WuaCropunit, self).write(vals)
         return updated_cropunits
@@ -906,6 +1097,23 @@ class WuaCropunit(models.Model):
             self.env.cr.commit()
         except Exception:
             self.env.cr.rollback()
+
+    @api.multi
+    def unlink(self):
+        gis_cropunits_to_delete = []
+        for record in self:
+            gis_cropunits_to_delete.append(record.name)
+        resp = super(WuaCropunit, self).unlink()
+        for gis_cropunit_to_delete in gis_cropunits_to_delete:
+            try:
+                self.env.cr.savepoint()
+                self.env.cr.execute(
+                    'DELETE FROM wua_gis_cropunit '
+                    'WHERE NAME = %s', (gis_cropunit_to_delete,))
+                self.env.cr.commit()
+            except Exception:
+                self.env.cr.rollback()
+        return resp
 
     def geom_ok(self):
         resp = False
@@ -1041,6 +1249,7 @@ class WuaCropunit(models.Model):
                 image_height_final = image_height_pixels
         return bbox_final, image_width_final, image_height_final
 
+    @api.multi
     def get_aerial_image(self,
                          wms='https://www.ign.es/wms-inspire/pnoa-ma',
                          layers='OI.OrthoimageCoverage',
@@ -1118,7 +1327,185 @@ class WuaCropunit(models.Model):
                 record._compute_aerial_image_shown()
 
     @api.multi
-    def action_get_hydric_estimations(self):
+    def action_get_hydricneeds(self):
         self.ensure_one()
-        # TODO (provisional)
-        print 'action_get_hydric_estimations (from crop unit)...'
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Irrigation Recommendations'),
+            'res_model': 'wua.hydricneed',
+            'view_type': 'form',
+            'view_mode': 'tree,form,kanban,graph,pivot',
+            'target': 'current',
+            'domain': [('id', 'in', self.hydricneed_ids.ids)],
+            'context': {'search_default_mapped_to_active_'
+                        'agriculturalseason_yes': True,
+                        'search_default_is_occurred_or_'
+                        'current_controlperiod_yes': True},
+        }
+        return act_window
+
+    @api.multi
+    def action_upload_geometry(self):
+        self.ensure_one()
+        # Clear the wizard's combo.
+        session_key = str(self.env.user.id) + '-' + self.name
+        try:
+            self.env.cr.savepoint()
+            self.env.cr.execute(
+                'DELETE FROM wizard_kml_placemark_option WHERE '
+                'session_key = %s', (session_key,))
+            self.env.cr.commit()
+        except Exception:
+            self.env.cr.rollback()
+        # Call the wizard.
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Import KML'),
+            'res_model': 'wizard.import.kml',
+            'src_model': 'wua.cropunit',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'session_key': session_key,
+            }
+        }
+
+    @api.model
+    def create_polygon(self, placemark_name, kml_file,
+                       polygon_code, gis_table, intersection_geom=None):
+        # Extract WKT geometry from KML.
+        try:
+            kml_data = base64.b64decode(kml_file)
+            root = etree.fromstring(kml_data)
+        except Exception:
+            return False, _('Invalid KML file.')
+        ns = {'kml': self.KML_NAMESPACE}
+        placemarks = root.findall('.//kml:Placemark', namespaces=ns)
+        wkt_4326 = None
+        for placemark in placemarks:
+            name = placemark.findtext('kml:name', namespaces=ns)
+            if name != placemark_name:
+                continue
+            coords_text = placemark.findtext(
+                './/kml:Polygon//kml:coordinates', namespaces=ns)
+            if not coords_text:
+                return False, _('Selected placemark is not a polygon.')
+            coords = []
+            for coord in coords_text.strip().split():
+                lon, lat = coord.split(',')[:2]
+                coords.append('%s %s' % (lon, lat))
+            if len(coords) < 4:
+                return False, _('Invalid polygon geometry.')
+            wkt_4326 = 'POLYGON((%s))' % ','.join(coords)
+        if not wkt_4326:
+            return False, _('Placemark "%s" not found '
+                            'in KML.') % placemark_name
+        # Get the EPSG code.
+        epsg_code = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_epsg_code')
+        if not epsg_code:
+            epsg_code = 25830
+        # Is there an intersection?
+        if intersection_geom:
+            self.env.cr.execute(
+                """
+                SELECT postgis.ST_Intersects(
+                    postgis.ST_Transform(
+                        postgis.ST_SetSRID(
+                            postgis.ST_GeomFromText(%s),
+                            4326
+                        ),
+                        %s
+                    ),
+                    postgis.ST_GeomFromEWKT(%s)
+                )
+                """,
+                (wkt_4326, epsg_code, intersection_geom)
+            )
+            intersects = self.env.cr.fetchone()[0]
+            if not intersects:
+                return False, _('The imported geometry does not intersect the '
+                                'reference polygon.')
+        # Reprojection to EPSG:25830.
+        self.env.cr.execute(
+            """
+            SELECT postgis.ST_AsEWKT(
+                postgis.ST_Transform(
+                    postgis.ST_SetSRID(
+                        postgis.ST_GeomFromText(%s),
+                        4326
+                    ),
+                    %s
+                )
+            )
+            """,
+            (wkt_4326, epsg_code)
+        )
+        ewkt_25830 = self.env.cr.fetchone()[0]
+        if not ewkt_25830:
+            return False, _('The geometry has not been found.')
+        # If it exists, delete the previous polygon.
+        gid = 0
+        sql_statement = 'SELECT gid FROM %s WHERE name = %%s' % gis_table
+        self.env.cr.execute(sql_statement, (polygon_code,))
+        query_results = self.env.cr.dictfetchall()
+        if query_results and query_results[0].get('gid') is not None:
+            gid = query_results[0].get('gid')
+        if gid:
+            sql_statement = 'DELETE FROM %s WHERE gid = %%s' % gis_table
+            try:
+                self.env.cr.savepoint()
+                self.env.cr.execute(sql_statement, (gid,))
+                self.env.cr.commit()
+            except Exception:
+                self.env.cr.rollback()
+                return False, _('It has not been possible to remove the '
+                                'pre-existing polygon.')
+        # Create the new record in the GIS table.
+        try:
+            self.env.cr.savepoint()
+            self.env.cr.execute(
+                """
+                INSERT INTO wua_gis_cropunit (name, geom)
+                VALUES (%s, postgis.ST_GeomFromEWKT(%s))            
+                """,
+                (polygon_code, ewkt_25830)
+            )
+            self.env.cr.commit()
+        except Exception:
+            self.env.cr.rollback()
+            return False, _('It has not been possible to create the '
+                            'new polygon.')
+        return True, ''
+
+    @api.multi
+    def calculate(self):
+        self.ensure_one()
+        active_agriculturalseason = \
+            self.env['wua.agriculturalseason'].search(
+                [('active_agriculturalseason', '=', True)])
+        if active_agriculturalseason:
+            try:
+                self.env.cr.savepoint()
+                self.env.cr.execute(
+                    ('DELETE FROM wua_hydricneed WHERE '
+                     'agriculturalseason_id = %s AND '
+                     'cropunit_id = %s' % (active_agriculturalseason.id,
+                                           self.id)))
+                self.env.cr.commit()
+            except (Exception,):
+                self.env.cr.rollback()
+            calculated_monitoringperiods = \
+                self.env['wua.monitoringperiod'].search(
+                    [('agriculturalseason_id', '=',
+                      active_agriculturalseason.id),
+                     ('state', '=', '02_calculated')], order='name')
+            for monitoringperiod in (calculated_monitoringperiods or []):
+                cropunit_out = \
+                    (self.initial_date > monitoringperiod.end_date or
+                     self.end_date < monitoringperiod.initial_date)
+                if not cropunit_out:
+                    self.env['wua.hydricneed'].create({
+                        'cropunit_id': self.id,
+                        'monitoringperiod_id': monitoringperiod.id,
+                    })

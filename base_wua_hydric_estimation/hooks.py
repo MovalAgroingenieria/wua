@@ -3,7 +3,9 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import DEFAULT_STANDARD_APPLICATION_EFFICIENCY
-from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import DEFAULT_CONTROL_PERIODICITY
+from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import CONTROL_PERIODICITY
+from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import PERIOD_START_DAY
+from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import AUTOMATIC_CALCULATION
 from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import DEFAULT_KC_NDVI_A
 from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import DEFAULT_KC_NDVI_B
 from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import DEFAULT_KC_NDVI_C
@@ -43,8 +45,14 @@ def _update_parameters(env):
                        'default_standard_application_efficiency',
                        DEFAULT_STANDARD_APPLICATION_EFFICIENCY)
     values.set_default('wua.configuration',
-                       'default_control_periodicity',
-                       DEFAULT_CONTROL_PERIODICITY)
+                       'control_periodicity',
+                       CONTROL_PERIODICITY)
+    values.set_default('wua.configuration',
+                       'period_start_day',
+                       PERIOD_START_DAY),
+    values.set_default('wua.configuration',
+                       'automatic_calculation',
+                       AUTOMATIC_CALCULATION),
     values.set_default('wua.configuration',
                        'default_kc_ndvi_a',
                        DEFAULT_KC_NDVI_A)
@@ -219,7 +227,9 @@ def _delete_parameters(env):
             DELETE FROM ir_values
             WHERE model='wua.configuration' AND
             (name = 'default_standard_application_efficiency' OR
-             name = 'default_control_periodicity' OR
+             name = 'control_periodicity' OR
+             name = 'period_start_day' OR
+             name = 'automatic_calculation' OR
              name = 'default_kc_ndvi_a' OR
              name = 'default_kc_ndvi_b' OR
              name = 'default_kc_ndvi_c' OR

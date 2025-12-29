@@ -9,3 +9,6 @@ from . import wua_cultivation
 from . import wua_cropunit
 from . import wua_monitoringperiod
 from . import wua_agriculturalseason
+from . import wua_hydricneed
+from . import wua_parcel
+from . import measurement_device_sensor_reading

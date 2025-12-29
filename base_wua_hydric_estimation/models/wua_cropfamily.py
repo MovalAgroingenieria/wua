@@ -87,6 +87,11 @@ class WuaCropfamily(models.Model):
         compute='_compute_kc_function'
     )
 
+    hydricneed_ids = fields.One2many(
+        string='Associated hydric estimations',
+        comodel_name='wua.hydricneed',
+        inverse_name='cropfamily_id')
+
     notes = fields.Text(
         string='Notes',
     )
@@ -115,7 +120,9 @@ class WuaCropfamily(models.Model):
                 ' · ndvi + ' + str(record.kc_c)
 
     # Possible "hook" for other specializations.
+    @api.multi
     def calculate_kc(self, ndvi=0.0):
+        self.ensure_one()
         kc_lower_saturation = self.env['ir.values'].get_default(
             'wua.configuration', 'kc_lower_saturation')
         if not kc_lower_saturation:
@@ -156,4 +163,22 @@ class WuaCropfamily(models.Model):
             'domain': [('cropfamily_id', '=', current_cropfamily.id)],
             'context': custom_context,
             }
+        return act_window
+
+    @api.multi
+    def action_get_hydricneeds(self):
+        self.ensure_one()
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Irrigation Recommendations'),
+            'res_model': 'wua.hydricneed',
+            'view_type': 'form',
+            'view_mode': 'tree,form,kanban,graph,pivot',
+            'target': 'current',
+            'domain': [('id', 'in', self.hydricneed_ids.ids)],
+            'context': {'search_default_mapped_to_active_'
+                        'agriculturalseason_yes': True,
+                        'search_default_is_occurred_or_'
+                        'current_controlperiod_yes': True},
+        }
         return act_window

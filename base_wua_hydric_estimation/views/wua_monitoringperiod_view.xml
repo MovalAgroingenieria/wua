@@ -8,11 +8,29 @@
             <form duplicate="false">
                 <field name="id" invisible="1"/>
                 <header>
+                    <button name="calculate"
+                            type="object" string="Calculate"
+                            icon="fa-calculator"
+                            states="01_uncalculated"
+                            groups="base_wua.group_wua_manager"
+                            confirm="⚠️ Please confirm the operation."/>
+                    <button name="reset"
+                            type="object" string="Reset"
+                            icon="fa-eraser"
+                            states="02_calculated"
+                            groups="base_wua.group_wua_manager"
+                            confirm="⚠️ Please confirm the operation."/>
+                    <button name="refresh"
+                            type="object" string="Refresh"
+                            icon="fa-refresh"
+                            states="02_calculated"
+                            groups="base_wua.group_wua_manager"
+                            confirm="⚠️ Please confirm the operation."/>
                     <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <button name="action_get_hydric_estimations"
+                        <button name="action_get_hydricneeds"
                                 type="object"
                                 class="oe_stat_button"
                                 icon="fa-calculator">
@@ -42,30 +60,22 @@
                                    string="Agricultural Season"
                                    options="{'no_create_edit':True}"
                                    attrs="{'invisible': [('id', '>', 0)]}"/>
-                            <label for="initial_date"/>
+                            <label for="initial_date_title"/>
                             <div>
                                 <field name="initial_date" class="oe_inline"/>
                                 <span class="oe_inline"> - </span>
                                 <field name="end_date" class="oe_inline"/>
                             </div>
-                            <field name="number_of_cropunits"
-                                   string="Crop units"/>
-                            <field name="number_of_hydricestimations"
+                            <field name="number_of_hydricneeds"
                                    string="Recommendations"/>
                         </group>
                         <group name="master_data_right">
-                            <div name="section_sum_total_gin_no_value" colspan="2" class="text-center"
-                                 attrs="{'invisible': [('sum_total_gin', '>', 0)]}">
-                                <p>(No recommendations are available for the control period)</p>
-                            </div>
-                            <div name="section_sum_total_gin_title" colspan="2" class="text-center"
-                                 attrs="{'invisible': [('sum_total_gin', '=', 0)]}">
-                                <p>Gross Irrigation Need :</p>
+                            <div name="section_sum_total_gin_title" colspan="2" class="text-center">
+                                <p>Gross Irrigation Needs :</p>
                             </div>
                             <div name="section_sum_total_gin"
                                  colspan="2" class="text-center panel-body"
-                                 style="border-color:#cccccc;border-width:1px;border-style:solid;height:50px;margin-top:5px;margin-left:25%;margin-right:25%"
-                                 attrs="{'invisible': [('sum_total_gin', '=', 0)]}">
+                                 style="border-color:#cccccc;border-width:1px;border-style:solid;height:50px;margin-top:5px;margin-left:25%;margin-right:25%">
                                 <b><span class="oe_inline">Total = </span>
                                 <field name="sum_total_gin" class="oe_inline"/>
                                 <span class="oe_inline"> m³</span></b>
@@ -101,9 +111,8 @@
                 <field name="initial_date" string="Initial Date"/>
                 <field name="end_date" string="End Date"/>
                 <field name="agriculturalseason_id" string="Agricultural Season"/>
-                <field name="number_of_cropunits" string="No. crop units"/>
-                <field name="number_of_hydricestimations" string="No. estimations"/>
-                <field name="sum_total_gin" string="Gross Irrig. Need"/>
+                <field name="number_of_hydricneeds" string="No. estimations"/>
+                <field name="sum_total_gin" string="Gross Irrig. Needs" sum="Total"/>
                 <field name="state" string="State"/>
             </tree>
         </field>
@@ -120,6 +129,10 @@
                         name="mapped_to_active_agriculturalseason_yes"
                         domain="[('mapped_to_active_agriculturalseason', '=', True)]"/>
                 <separator/>
+                <filter string="Current or past control period"
+                        name="is_occurred_or_current_controlperiod_yes"
+                        domain="[('is_occurred_or_current_controlperiod', '=', True)]"/>
+                <separator/>
                 <filter string="State: Uncalculated"
                         name="state_uncalculated"
                         domain="[('state', '=', '01_uncalculated')]"/>
@@ -131,6 +144,9 @@
                     <filter string="Agricultural Season"
                             name="grouped_agriculturalseason"
                      context="{'group_by':'agriculturalseason_id'}"/>
+                    <filter string="Date"
+                            name="grouped_initial_date"
+                     context="{'group_by':'initial_date'}"/>
                 </group>
             </search>
         </field>
@@ -148,8 +164,8 @@
                 <field name="initial_date"/>
                 <field name="end_date"/>
                 <field name="is_current_controlperiod"/>
-                <field name="number_of_cropunits"/>
-                <field name="number_of_hydricestimations"/>
+                <field name="state"/>
+                <field name="sum_total_gin"/>
                 <templates>
                     <t t-name="kanban-box">
                         <div class="oe_kanban_global_click">
@@ -161,22 +177,12 @@
                                     </t>
                                 </div>
                                 <div class="text-center" style="margin-top:10px">
-                                    <t t-if="record.sum_total_gin.raw_value">
+                                    <t t-if="record.state.raw_value == '02_calculated'">
                                         <h1><field name="sum_total_gin"/> m³</h1>
                                     </t>
                                     <t t-else="">
-                                        <span>No recommendations available</span>
+                                        <span>(uncalculated)</span>
                                     </t>
-                                </div>
-                                <div class="container" style="margin-top:10px">
-                                    <div name="div_content" class="row">
-                                        <div name="div_content_01">
-                                            <field name="number_of_cropunits"/> crop units
-                                        </div>
-                                        <div name="div_content_01">
-                                            <field name="number_of_hydricestimations"/> irrigation recommendations
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -193,7 +199,7 @@
             <calendar date_start="initial_date"
                       date_stop="end_date"
                       mode="month"
-                      display="Gross Irrigation Need = [sum_total_gin] m³">
+                      display="[sum_total_gin] m³">
                 <field name="initial_date"/>
                 <field name="end_date"/>
                 <field name="sum_total_gin"/>
@@ -217,7 +223,7 @@
         <field name="model">wua.monitoringperiod</field>
         <field name="arch" type="xml">
             <pivot string="Agregated Values" display_quantity="true">
-                <field name="agriculturalseason_id" type="row"/>
+                <field name="initial_date" type="row"/>
                 <field name="sum_total_gin" type="measure"/>
             </pivot>
         </field>
@@ -228,7 +234,7 @@
         <field name="name">Control Periods</field>
         <field name="res_model">wua.monitoringperiod</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form,kanban</field>
+        <field name="view_mode">tree,form,kanban,graph,pivot</field>
         <field name="view_ids"
          eval="[(5, 0),
                 (0, 0, {'view_mode': 'tree',
@@ -246,7 +252,8 @@
         <field name="search_view_id" ref="wua_monitoringperiod_view_search"/>
         <field name="context">
             {'upper_description_agriculturalseason': True,
-             'search_default_mapped_to_active_agriculturalseason_yes': True}
+             'search_default_mapped_to_active_agriculturalseason_yes': True,
+             'search_default_is_occurred_or_current_controlperiod_yes': True}
         </field>
     </record>
 
@@ -255,5 +262,66 @@
               parent="base_wua_census_calculation_menu"
               action="wua_monitoringperiod_action"
               sequence="20"/>
+
+    <record id="wua_monitoringperiod_calculate" model="ir.actions.server">
+        <field name="name">Calculate</field>
+        <field name="model_id" ref="base_wua_hydric_estimation.model_wua_monitoringperiod"/>
+        <field name="code">
+            action =  env['wua.monitoringperiod'].browse(context['active_ids']).exec_multiple_calculate()
+        </field>
+    </record>
+
+    <record id="wua_monitoringperiod_action_calculate" model="ir.values">
+        <field name="name">Calculate</field>
+        <field name="model">wua.monitoringperiod</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_monitoringperiod_calculate'))"/>
+    </record>
+
+    <record id="wua_monitoringperiod_reset" model="ir.actions.server">
+        <field name="name">Reset</field>
+        <field name="model_id" ref="base_wua_hydric_estimation.model_wua_monitoringperiod"/>
+        <field name="code">
+            action =  env['wua.monitoringperiod'].browse(context['active_ids']).exec_multiple_reset()
+        </field>
+    </record>
+
+    <record id="wua_monitoringperiod_action_reset" model="ir.values">
+        <field name="name">Reset</field>
+        <field name="model">wua.monitoringperiod</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_monitoringperiod_reset'))"/>
+    </record>
+
+    <record id="wua_monitoringperiod_refresh" model="ir.actions.server">
+        <field name="name">Refresh</field>
+        <field name="model_id" ref="base_wua_hydric_estimation.model_wua_monitoringperiod"/>
+        <field name="code">
+            action =  env['wua.monitoringperiod'].browse(context['active_ids']).exec_multiple_refresh()
+        </field>
+    </record>
+
+    <record id="wua_monitoringperiod_action_refresh" model="ir.values">
+        <field name="name">Refresh</field>
+        <field name="model">wua.monitoringperiod</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_monitoringperiod_refresh'))"/>
+    </record>
+
+    <record id="wua_technical_calculate_monitoringperiods_action" model="ir.actions.server">
+        <field name="name">Calculate pending irrigation recommendations</field>
+        <field name="model_id" ref="base_wua_hydric_estimation.model_wua_monitoringperiod"/>
+        <field name="code">action = env["wua.monitoringperiod"].fetch_data_and_calculate_uncalculated_monitoringperiods()</field>
+    </record>
+
+    <menuitem id="wua_technical_calculate_monitoringperiods_menu"
+              name="Calculate pending irrigation recommendations"
+              parent="base_wua.base_wua_technical_menu"
+              action="wua_technical_calculate_monitoringperiods_action"
+              sequence="10"
+              groups="base.group_system"/>
 
 </odoo>

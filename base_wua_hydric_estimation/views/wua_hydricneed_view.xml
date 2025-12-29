@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_hydricneed_view_form" model="ir.ui.view">
+        <field name="name">wua.hydricneed.view.form</field>
+        <field name="model">wua.hydricneed</field>
+        <field name="arch" type="xml">
+            <form string="Parcels (NDVI)"
+                  duplicate="false" create="false" edit="false" delete="false">
+                <div class="panel-body" style="background:#fbfbfb;border-color:#696969;border-width:1px;border-style:solid">
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="agriculturalseason_id"
+                                   string="Agricultural Season"/>
+                            <field name="monitoringperiod_id"
+                                   string="Control Period"/>
+                            <field name="cropunit_id"
+                                   string="Crop Unit"/>
+                            <field name="parcel_id"
+                                   string="Parcel"/>
+                            <field name="cropfamily_id"
+                                   string="Crop Family"/>
+                            <field name="cultivation_id"
+                                   string="Cultivation"/>
+                            <field name="order_number"
+                                   string="Order N."/>
+                        </group>
+                        <group name="master_data_right">
+                            <div colspan="2">
+                                <span class="oe_inline">NDVI = </span>
+                                <field name="mean_ndvi" class="oe_inline"/>
+                            </div>
+                            <div colspan="2">
+                                <field name="kc_function" class="oe_inline"/>
+                            </div>
+                            <div colspan="2">
+                                <span class="oe_inline">ETo = </span>
+                                <field name="accumulated_et0" class="oe_inline"/>
+                                <span class="oe_inline"> mm</span>
+                            </div>
+                            <div colspan="2">
+                                <field name="etc_function" class="oe_inline"/>
+                                <span class="oe_inline"> mm</span>
+                            </div>
+                            <div colspan="2">
+                                <span class="oe_inline">Pe = </span>
+                                <field name="accumulated_pe" class="oe_inline"/>
+                                <span class="oe_inline"> mm</span>
+                            </div>
+                            <div colspan="2">
+                                <field name="nin_function" class="oe_inline"/>
+                                <span class="oe_inline"> m³/ha</span>
+                            </div>
+                            <div colspan="2">
+                                <span class="oe_inline">SAE = </span>
+                                <field name="standard_application_efficiency" class="oe_inline"/>
+                                <span class="oe_inline"> %</span>
+                            </div>
+                            <div colspan="2">
+                                <field name="gin_function" class="oe_inline"/>
+                                <span class="oe_inline"> m³/ha</span>
+                            </div>
+                            <div colspan="2">
+                                <span class="oe_inline">A = </span>
+                                <field name="area_gis_ha" class="oe_inline"/>
+                                <span class="oe_inline"> ha</span>
+                            </div>
+                            <div colspan="2">
+                                <field name="total_gin_function" class="oe_inline"/>
+                                <span class="oe_inline"> m³</span>
+                            </div>
+                        </group>
+                    </group>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_hydricneed_view_tree" model="ir.ui.view">
+        <field name="name">wua.hydricneed.view.tree</field>
+        <field name="model">wua.hydricneed</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_hydric_estimation_hydricneed_view_tree"
+                  create="false" edit="false" delete="false"
+                  colors="green:is_current_controlperiod==True;"
+                  default_order="initial_date desc, name">
+                <field name="is_current_controlperiod" invisible="1"/>
+                <field name="initial_date" string="Initial Date"/>
+                <field name="end_date" string="End Date"/>
+                <field name="parcel_id" string="Parcel"/>
+                <field name="cultivation_id" string="Cultivation"/>
+                <field name="order_number" string="Order N."/>
+                <field name="accumulated_et0" string="ETo (mm)"/>
+                <field name="accumulated_pe" string="Pe (mm)"/>
+                <field name="mean_ndvi" string="NDVI [-1,1]"/>
+                <field name="nin" string="NIN (m³/ha)"/>
+                <field name="gin" string="GIN (m³/ha)"/>
+                <field name="area_gis_ha" string="Area (ha)" sum="Total"/>
+                <field name="total_gin" string="Total GIN (m³)" sum="Total"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_hydricneed_view_search" model="ir.ui.view">
+        <field name="name">wua.hydricneed.view.search</field>
+        <field name="model">wua.hydricneed</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="initial_date" string="Initial Date"/>
+                <field name="parcel_id" string="Parcel"/>
+                <field name="cultivation_id" string="Cultivation"/>
+                <filter string="Active agricultural season"
+                        name="mapped_to_active_agriculturalseason_yes"
+                        domain="[('mapped_to_active_agriculturalseason', '=', True)]"/>
+                <separator/>
+                <filter string="Current or past control period"
+                        name="is_occurred_or_current_controlperiod_yes"
+                        domain="[('is_occurred_or_current_controlperiod', '=', True)]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Agricultural Season"
+                            name="grouped_agriculturalseason"
+                     context="{'group_by':'agriculturalseason_id'}"/>
+                    <filter string="Control Period"
+                            name="grouped_monitoringperiod"
+                     context="{'group_by':'monitoringperiod_id'}"/>
+                    <filter string="Date"
+                            name="grouped_initial_date"
+                     context="{'group_by':'initial_date'}"/>
+                    <filter string="Parcel"
+                            name="grouped_parcel"
+                     context="{'group_by':'parcel_id'}"/>
+                    <filter string="Crop Family"
+                            name="grouped_cropfamily"
+                     context="{'group_by':'cropfamily_id'}"/>
+                    <filter string="Cultivation"
+                            name="grouped_cultivation"
+                     context="{'group_by':'cultivation_id'}"/>
+                    <filter string="Crop Unit"
+                            name="grouped_cropunit"
+                     context="{'group_by':'cropunit_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_hydricneed_view_kanban" model="ir.ui.view">
+        <field name="name">wua.hydricneed.view.kanban</field>
+        <field name="model">wua.hydricneed</field>
+        <field name="arch" type="xml">
+            <kanban create="false"
+                    group_create="false"
+                    group_delete="false"
+                    default_order="initial_date desc, parcel_id, cultivation_id, order_number">
+                <field name="id"/>
+                <field name="initial_date"/>
+                <field name="end_date"/>
+                <field name="cropunit_id"/>
+                <field name="is_current_controlperiod"/>
+                <field name="total_gin"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="oe_kanban_details">
+                                <div class="text-center">
+                                    <strong><field name="initial_date"/> - <field name="end_date"/></strong><br/>
+                                    <t t-if="record.is_current_controlperiod.raw_value">
+                                        <span class="text-success"><strong>(CURRENT PERIOD)</strong></span><br/>
+                                    </t>
+                                    <strong><field name="cropunit_id"/></strong>
+                                </div>
+                                <div class="text-center" style="margin-top:10px">
+                                    <h1><field name="total_gin"/> m³</h1>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="wua_hydricneed_view_graph" model="ir.ui.view">
+        <field name="name">wua.hydricneed.view.graph</field>
+        <field name="model">wua.hydricneed</field>
+        <field name="arch" type="xml">
+            <graph string="Gross Irrigation Need (m³)" stacked="False">
+                <field name="initial_date"/>
+                <field name="total_gin" type='measure'/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="wua_hydricneed_view_pivot" model="ir.ui.view">
+        <field name="name">wua.hydricneed.view.pivot</field>
+        <field name="model">wua.hydricneed</field>
+        <field name="arch" type="xml">
+            <pivot string="Agregated Values" display_quantity="true">
+                <field name="initial_date" type="row"/>
+                <field name="total_gin" type="measure"/>
+                <field name="area_gis_ha" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="wua_hydricneed_action"
+            model="ir.actions.act_window">
+        <field name="name">Irrigation Recommendations</field>
+        <field name="res_model">wua.hydricneed</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,kanban,graph,pivot</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_hydricneed_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('wua_hydricneed_view_form')}),
+                (0, 0, {'view_mode': 'kanban',
+                        'view_id': ref('wua_hydricneed_view_kanban')}),
+                (0, 0, {'view_mode': 'graph',
+                        'view_id': ref('wua_hydricneed_view_graph')}),
+                (0, 0, {'view_mode': 'pivot',
+                        'view_id': ref('wua_hydricneed_view_pivot')})]"/>
+        <field name="search_view_id" ref="wua_hydricneed_view_search"/>
+        <field name="context">
+            {'search_default_mapped_to_active_agriculturalseason_yes': True,
+             'search_default_is_occurred_or_current_controlperiod_yes': True}
+        </field>
+    </record>
+
+    <menuitem id="wua_hydricneed_menu"
+              name="Irrigation Recommendations"
+              parent="base_wua_census_calculation_menu"
+              action="wua_hydricneed_action"
+              sequence="30"/>
+
+</odoo>
