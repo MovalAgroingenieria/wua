@@ -24,77 +24,78 @@ class WuaFlowmeter(models.Model):
         message = ""
         url_salz, user_salz, passwd_salz = self._connection_params_salz()
         salz_flowmeters = self._get_salz_flowmeters()
+        total_inserted = 0
         if salz_flowmeters:
             for salz_flowmeter in (salz_flowmeters or []):
                 if salz_flowmeter.id == self.id:
-                    time, flow = self._get_telecontrol_data(
-                        url_salz, user_salz, passwd_salz, salz_flowmeter)
-                    if time:
-                        # Check if new data is newer than newest data in db
-                        date_last_flowdata = ''
-                        flowmeter_flowdata = self.env['wua.flowdata'].search(
-                            [('flowmeter_id', '=', salz_flowmeter.id)],
-                            order="time DESC", limit=1)
-                        if flowmeter_flowdata:
-                            date_last_flowdata = datetime.datetime.strptime(
-                                flowmeter_flowdata[0].time,
-                                "%Y-%m-%d %H:%M:%S")
-                            time = datetime.datetime.strptime(
-                                time.split('.')[0], "%Y-%m-%dT%H:%M:%S")
-                            local_timezone = pytz.timezone(self.env.user.tz)
-                            offset = local_timezone.utcoffset(time)
-                            time = time - offset
-                            if date_last_flowdata < time:
+                    # Get last record to determine start date
+                    flowmeter_flowdata = self.env['wua.flowdata'].search(
+                        [('flowmeter_id', '=', salz_flowmeter.id)],
+                        order="time DESC", limit=1)
+                    start_date = None
+                    date_last_flowdata = None
+                    if flowmeter_flowdata:
+                        date_last_flowdata = datetime.datetime.strptime(
+                            flowmeter_flowdata[0].time,
+                            "%Y-%m-%d %H:%M:%S")
+                        # Convert UTC to Madrid time and add 1 second
+                        madrid_tz = pytz.timezone('Europe/Madrid')
+                        date_last_utc = pytz.UTC.localize(date_last_flowdata)
+                        date_last_madrid = date_last_utc.astimezone(madrid_tz)
+                        date_last_madrid = date_last_madrid + \
+                            datetime.timedelta(seconds=1)
+                        start_date = date_last_madrid.strftime(
+                            '%Y-%m-%d %H:%M:%S')
+                    readings = self._get_telecontrol_data(
+                        url_salz, user_salz, passwd_salz, salz_flowmeter,
+                        start_date)
+                    if readings:
+                        # API data always comes in Europe/Madrid timezone
+                        madrid_tz = pytz.timezone('Europe/Madrid')
+                        for reading in readings:
+                            time_str = reading['time'].split('.')[0]
+                            time_str = time_str.replace('T', ' ')
+                            time_naive = datetime.datetime.strptime(
+                                time_str, "%Y-%m-%d %H:%M:%S")
+                            # Localize to Madrid time (is_dst=False handles
+                            # ambiguous times during DST transitions)
+                            time_local = madrid_tz.localize(
+                                time_naive, is_dst=False)
+                            time = time_local.astimezone(pytz.UTC)
+                            time = time.replace(tzinfo=None)
+                            if (not date_last_flowdata or
+                                    date_last_flowdata < time):
                                 self._create_record(
-                                    salz_flowmeter.id, time, flow)
+                                    salz_flowmeter.id, time, reading['flow'])
+                                total_inserted += 1
                                 _logger.info(
                                     'Flowdata inserting data: %s, %s, %s' %
-                                    (salz_flowmeter.name, time, flow))
-                                flow_str = str(round(flow, 4))
-                                time_str = datetime.datetime.strftime(
-                                    time, '%d/%m/%Y %H:%M:%S')
-                                message_01 = \
-                                    _('Flow data from %s') % \
-                                    salz_flowmeter.name
-                                message_02 = _('Time')
-                                message_03 = _('Flow')
-                                message = '<center>' + message_01 + \
-                                    '</center><br>' + message_02 + ': ' + \
-                                    '<b>' + time_str + '</b><br>' + \
-                                    message_03 + ': ' + '<b>' + flow_str + \
-                                    ' l/s' + '<b>'
-                            else:
-                                message_01 = _('Repeated or older data')
-                                message_02 = \
-                                    _('The data obtained is not more recent '
-                                      'than the last record in the database.')
-                                message = \
-                                    '<center>' + \
-                                    '<span style="color:orange;">' + \
-                                    message_01 + '</span>' + '</center><br>' \
-                                    + message_02
-                        else:
-                            # First record
-                            self._create_record(salz_flowmeter.id, time, flow)
-                            _logger.info(
-                                'Flowdata inserting data: %s, %s, %s' %
-                                (salz_flowmeter.name, time, flow))
+                                    (salz_flowmeter.name, time,
+                                     reading['flow']))
+                        if total_inserted > 0:
                             message_01 = _('Flow data from %s') % \
                                 salz_flowmeter.name
-                            message_02 = _('Time')
-                            message_03 = _('Flow')
                             message = '<center>' + message_01 + \
-                                '</center><br>' + message_02 + ': ' + \
-                                '<b>' + time + '</b><br>' + \
-                                message_03 + ': ' + '<b>' + str(flow) + \
-                                ' l/s' + '<b>'
+                                '</center><br>' + \
+                                _('Total records inserted: %s') % \
+                                total_inserted
+                        else:
+                            message_01 = _('Repeated or older data')
+                            message_02 = \
+                                _('The data obtained is not more recent '
+                                  'than the last record in the database.')
+                            message = \
+                                '<center>' + \
+                                '<span style="color:orange;">' + \
+                                message_01 + '</span>' + '</center><br>' \
+                                + message_02
             act_window = {
                 'type': 'ir.actions.act_window.message',
                 'title': _('Get last flow data'),
                 'message': message,
                 'is_html_message': True,
                 'close_button_title': False,
-                'buttons': buttons
+                'buttons': buttons,
                 }
             return act_window
 
@@ -107,34 +108,49 @@ class WuaFlowmeter(models.Model):
             for salz_flowmeter in (salz_flowmeters or []):
                 _logger.info('Flowdata getting data from flowmeter %s' %
                              salz_flowmeter.name)
-                time, flow = self._get_telecontrol_data(
-                    url_salz, user_salz, passwd_salz, salz_flowmeter)
-                if time:
-                    # Check if new data is newer than newest data in db
-                    date_last_flowdata = ''
-                    flowmeter_flowdata = self.env['wua.flowdata'].search(
-                        [('flowmeter_id', '=', salz_flowmeter.id)],
-                        order="time DESC", limit=1)
-                    if flowmeter_flowdata:
-                        date_last_flowdata = datetime.datetime.strptime(
-                            flowmeter_flowdata[0].time,
-                            "%Y-%m-%d %H:%M:%S")
-                        time = datetime.datetime.strptime(
-                            time.split('.')[0], "%Y-%m-%dT%H:%M:%S")
-                        if self.env.user.tz:
-                            local_timezone = pytz.timezone(self.env.user.tz)
-                        else:
-                            local_timezone = pytz.timezone('Europe/Madrid')
-                        offset = local_timezone.utcoffset(time)
-                        time = time - offset
-                        if date_last_flowdata < time:
+                # Get last record to determine start date
+                flowmeter_flowdata = self.env['wua.flowdata'].search(
+                    [('flowmeter_id', '=', salz_flowmeter.id)],
+                    order="time DESC", limit=1)
+                start_date = None
+                date_last_flowdata = None
+                if flowmeter_flowdata:
+                    date_last_flowdata = datetime.datetime.strptime(
+                        flowmeter_flowdata[0].time,
+                        "%Y-%m-%d %H:%M:%S")
+                    # Convert UTC to Madrid time and add 1 second
+                    madrid_tz = pytz.timezone('Europe/Madrid')
+                    date_last_utc = pytz.UTC.localize(date_last_flowdata)
+                    date_last_madrid = date_last_utc.astimezone(madrid_tz)
+                    date_last_madrid = date_last_madrid + \
+                        datetime.timedelta(seconds=1)
+                    start_date = date_last_madrid.strftime(
+                        '%Y-%m-%d %H:%M:%S')
+                readings = self._get_telecontrol_data(
+                    url_salz, user_salz, passwd_salz, salz_flowmeter,
+                    start_date)
+                if readings:
+                    # API data always comes in Europe/Madrid timezone
+                    madrid_tz = pytz.timezone('Europe/Madrid')
+                    for reading in readings:
+                        time_str = reading['time'].split('.')[0]
+                        time_str = time_str.replace('T', ' ')
+                        time_naive = datetime.datetime.strptime(
+                            time_str, "%Y-%m-%d %H:%M:%S")
+                        # Localize to Madrid time (is_dst=False handles
+                        # ambiguous times during DST transitions)
+                        time_local = madrid_tz.localize(
+                            time_naive, is_dst=False)
+                        time = time_local.astimezone(pytz.UTC)
+                        time = time.replace(tzinfo=None)
+                        if (not date_last_flowdata or
+                                date_last_flowdata < time):
                             self._create_record(
-                                salz_flowmeter.id, time, flow)
-                    else:
-                        # First record
-                        self._create_record(salz_flowmeter.id, time, flow)
-                    _logger.info('Flowdata inserting data: %s, %s, %s' %
-                                 (salz_flowmeter.name, time, flow))
+                                salz_flowmeter.id, time, reading['flow'])
+                            _logger.info(
+                                'Flowdata inserting data: %s, %s, %s' %
+                                (salz_flowmeter.name, time,
+                                 reading['flow']))
 
     def _connection_params_salz(self):
         url_salz = self.env['ir.values'].get_default(
@@ -150,58 +166,75 @@ class WuaFlowmeter(models.Model):
                 _('The remote control connection parameters are not '
                   'configured.'))
         else:
-            passwd_salz = hashlib.md5(passwd_salz).hexdigest()
+            passwd_salz = hashlib.md5(
+                passwd_salz.encode('utf-8')).hexdigest().upper()
         return (url_salz, user_salz, passwd_salz)
 
     def _get_salz_flowmeters(self):
         salz_flowmeters = []
         current_flowmeters = self.env['wua.flowmeter'].search([])
         for flowmeter in current_flowmeters:
-            if flowmeter.flowmeter_salz_id and flowmeter.flowmeter_salz_gid \
-                    and flowmeter.state == 'active':
+            if flowmeter.flowmeter_salz_id and flowmeter.state == 'active':
                 salz_flowmeters.append(flowmeter)
         return salz_flowmeters
 
     def _get_telecontrol_data(
-            self, url_salz, user_salz, passwd_salz, salz_flowmeter):
+            self, url_salz, user_salz, passwd_salz, salz_flowmeter,
+            start_date=None):
         salz_flowmeter_id = salz_flowmeter.flowmeter_salz_id
-        salz_flowmeter_gid = salz_flowmeter.flowmeter_salz_gid
-        flow_direction = salz_flowmeter.flow_direction
-        time = flow = False
-
-        if salz_flowmeter_id and salz_flowmeter_gid:
+        readings_list = []
+        if salz_flowmeter_id:
             res_raw = res_json = False
-            url_open_session = url_salz
+            url_endpoint = url_salz + '/wm-rest.php'
+            if not start_date:
+                # Default: last 7 days if no start date provided
+                start_date_str = (
+                    datetime.datetime.now() - datetime.timedelta(days=7)
+                ).strftime('%Y-%m-%d %H:%M:%S')
+            else:
+                start_date_str = start_date
             post_data = {
-                'idgrupo': salz_flowmeter_gid,
-                'idpropio': salz_flowmeter_id,
-                'idusuario': 0,
-                'password': passwd_salz,
-                'usuario': user_salz, }
-            headers_data = {'content-type': 'application/json', }
-            res_raw = requests.post(
-                url_open_session, data=json.dumps(post_data),
-                headers=headers_data)
-            if res_raw:
-                res_json = json.loads(res_raw.content)
-            if res_json and flow_direction != 'bidirectional':
-                number_of_vars = \
-                    len(res_json['placas'][0]['variablesplaca'])
-                for i in range(0, number_of_vars):
-                    for key in res_json['placas'][0]['variablesplaca'][i]:
-                        value = res_json['placas'][0]['variablesplaca'][i][key]
-                        if key == 'descripcion' and value == 'Caudal':
-                            time = res_json['placas'][0]['variablesplaca'][i][
-                                'fecha']
-                            flow = res_json['placas'][0]['variablesplaca'][i][
-                                'valor']
-        return time, flow
+                'comando': 'consultaHistoricos',
+                'correo': user_salz,
+                'contrasenya': passwd_salz,
+                'variables': [salz_flowmeter_id],
+                'fechaIni': start_date_str,
+            }
+            headers_data = {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            }
+            try:
+                res_raw = requests.post(
+                    url_endpoint, data=json.dumps(post_data),
+                    headers=headers_data, timeout=60)
+                if res_raw and res_raw.status_code == 200:
+                    res_json = json.loads(res_raw.content)
+                    historicos = res_json.get('historicos', {}) or {}
+                    readings = historicos.get(str(salz_flowmeter_id)) or []
+                    # Process all readings
+                    for reading in readings:
+                        time = reading.get('fecha')
+                        flow_value = reading.get('valor')
+                        if time and flow_value is not None:
+                            try:
+                                flow = float(flow_value)
+                                readings_list.append({
+                                    'time': time,
+                                    'flow': flow,
+                                })
+                            except (ValueError, TypeError):
+                                pass
+            except Exception as e:
+                _logger = logging.getLogger(self.__class__.__name__)
+                _logger.error('Error getting data from Salz API: %s' % str(e))
+        return readings_list
 
     def _create_record(self, flowmeter_id, time, flow):
         if flowmeter_id and time:
             flowdata = {
                 'flowmeter_id': flowmeter_id,
                 'time': time,
-                'flow': flow
+                'flow': flow,
             }
             self.env['wua.flowdata'].create(flowdata)

@@ -837,6 +837,7 @@ class WuaCertificate(models.Model):
     def _allowed_signature(self, certificate):
         return True
 
+
 class WuaCertificateParcel(models.Model):
     _name = 'wua.certificate.parcel'
     _description = 'Parcel of a certificate'
