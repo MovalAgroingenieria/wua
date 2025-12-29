@@ -2,6 +2,7 @@
 # 2025 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+from datetime import datetime, timedelta
 from odoo import http
 from odoo.http import request
 from odoo.addons.website_portal.controllers.main import website_account
@@ -22,11 +23,11 @@ class website_account(website_account):
         waterconnections = waterconnection.search(
             [('partner_id', '=', partner.id)]).mapped('waterconnection_id').ids
         readings_count = request.env['wua.reading'].search_count([
-            ('waterconnection_id', 'in', waterconnections)
+            ('waterconnection_id', 'in', waterconnections),
         ])
         presconsumptions_count = \
             request.env['wua.presconsumption'].search_count([
-                ('waterconnection_id', 'in', waterconnections)
+                ('waterconnection_id', 'in', waterconnections),
             ])
         response.qcontext.update({
             'readings_count': readings_count,
@@ -85,7 +86,7 @@ class website_account(website_account):
             'pager': pager,
             'search_query': search,
             'search_field': search_field,
-            'default_url': '/my/readings'
+            'default_url': '/my/readings',
         })
         return request.render(
             "base_wua_portal_pressurized_irrigation.portal_my_readings",
@@ -117,7 +118,7 @@ class website_account(website_account):
                 'waterconnection_id')
         presconsumptions_domain = [
             ('waterconnection_id', 'in', waterconnections.ids),
-            ('reading_id.validated', '=', True)
+            ('reading_id.validated', '=', True),
         ]
         if search and search_field:
             field_map = {
@@ -175,7 +176,6 @@ class website_account(website_account):
     def portal_my_irrigationevents(self, page=1, search=None,
                                    search_field=None, date_filter=None,
                                    selected_columns=None, **kw):
-        from datetime import datetime, timedelta
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
         partner = partner.parent_id or partner
@@ -194,7 +194,7 @@ class website_account(website_account):
             waterconnection_partnerlink_model.search(domain).mapped(
                 'waterconnection_id')
         irrigationevents_domain = [
-            ('waterconnection_id', 'in', waterconnections.ids)
+            ('waterconnection_id', 'in', waterconnections.ids),
         ]
         if date_filter is None:
             date_filter = 'week'
