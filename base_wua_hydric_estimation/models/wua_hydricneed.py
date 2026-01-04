@@ -33,6 +33,15 @@ class WuaHydricneed(models.Model):
         index=True,
         compute='_compute_name', )
 
+    partner_id = fields.Many2one(
+        string='Irrigation Partner',
+        comodel_name='res.partner',
+        store=True,
+        index=True,
+        ondelete='restrict',
+        compute='_compute_partner_id',
+    )
+
     mean_ndvi = fields.Float(
         string='Mean NDVI',
         digits=(32, 4),
@@ -223,6 +232,14 @@ class WuaHydricneed(models.Model):
                 name = record.monitoringperiod_id.name + '-' + \
                        record.cropunit_id.name
             record.name = name
+
+    @api.depends('cropunit_id')
+    def _compute_partner_id(self):
+        for record in self:
+            partner_id = None
+            if record.cropunit_id and record.cropunit_id.partner_id:
+                partner_id = record.cropunit_id.partner_id
+            record.partner_id = partner_id
 
     @api.multi
     def _compute_kc(self):

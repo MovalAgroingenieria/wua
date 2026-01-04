@@ -18,6 +18,8 @@
                                    string="Crop Unit"/>
                             <field name="parcel_id"
                                    string="Parcel"/>
+                            <field name="partner_id"
+                                   string="Irrigation Partner"/>
                             <field name="cropfamily_id"
                                    string="Crop Family"/>
                             <field name="cultivation_id"
@@ -88,12 +90,12 @@
                 <field name="initial_date" string="Initial Date"/>
                 <field name="end_date" string="End Date"/>
                 <field name="parcel_id" string="Parcel"/>
+                <field name="partner_id" string="Irrigation Partner"/>
                 <field name="cultivation_id" string="Cultivation"/>
                 <field name="order_number" string="Order N."/>
                 <field name="accumulated_et0" string="ETo (mm)"/>
                 <field name="accumulated_pe" string="Pe (mm)"/>
                 <field name="mean_ndvi" string="NDVI [-1,1]"/>
-                <field name="nin" string="NIN (m³/ha)"/>
                 <field name="gin" string="GIN (m³/ha)"/>
                 <field name="area_gis_ha" string="Area (ha)" sum="Total"/>
                 <field name="total_gin" string="Total GIN (m³)" sum="Total"/>
@@ -127,6 +129,9 @@
                     <filter string="Date"
                             name="grouped_initial_date"
                      context="{'group_by':'initial_date'}"/>
+                    <filter string="C.U. Partner"
+                            name="grouped_partner"
+                     context="{'group_by':'partner_id'}"/>
                     <filter string="Parcel"
                             name="grouped_parcel"
                      context="{'group_by':'parcel_id'}"/>
@@ -167,7 +172,8 @@
                                     <t t-if="record.is_current_controlperiod.raw_value">
                                         <span class="text-success"><strong>(CURRENT PERIOD)</strong></span><br/>
                                     </t>
-                                    <strong><field name="cropunit_id"/></strong>
+                                    <strong><field name="cropunit_id"/></strong><br/>
+                                    <field name="partner_id"/>
                                 </div>
                                 <div class="text-center" style="margin-top:10px">
                                     <h1><field name="total_gin"/> m³</h1>

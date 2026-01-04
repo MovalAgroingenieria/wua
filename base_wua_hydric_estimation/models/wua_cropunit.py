@@ -278,6 +278,14 @@ class WuaCropunit(models.Model):
         comodel_name='wua.hydricneed',
         inverse_name='cropunit_id')
 
+    sum_total_gin = fields.Float(
+        string='Total Gross Irrig. Need',
+        digits=(32, 2),
+        store=True,
+        index=True,
+        compute='_compute_sum_total_gin',
+    )
+
     notes = fields.Html(
         string='Notes',
     )
@@ -615,6 +623,19 @@ class WuaCropunit(models.Model):
         for record in self:
             record.current_controlperiod_total_gin = \
                 record.current_controlperiod_gin * record.area_gis_ha
+
+    @api.depends('hydricneed_ids', 'hydricneed_ids.total_gin')
+    def _compute_sum_total_gin(self):
+        for record in self:
+            sum_total_gin = 0
+            self.env.cr.execute(
+                ('SELECT sum(total_gin) FROM wua_hydricneed '
+                 'WHERE cropunit_id = %s'), (record.id,))
+            query_results = self.env.cr.dictfetchall()
+            if (query_results and
+                    query_results[0].get('sum') is not None):
+                sum_total_gin = query_results[0].get('sum')
+            record.sum_total_gin = sum_total_gin
 
     @api.multi
     def _compute_mapped_to_active_agriculturalseason(self):

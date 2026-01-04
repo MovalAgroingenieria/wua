@@ -346,8 +346,16 @@ class WuaMonitoringperiod(models.Model):
             if not self.env.user.has_group('base_wua.group_wua_manager'):
                 raise exceptions.ValidationError(_(
                     'Operation not allowed.'))
+            cropunit_to_update_ids = []
             try:
                 self.env.cr.savepoint()
+                self.env.cr.execute(
+                    ('SELECT cropunit_id FROM wua_hydricneed WHERE '
+                     'monitoringperiod_id = %s' % (self.id,)))
+                sql_resp = self.env.cr.fetchall()
+                if sql_resp:
+                    for item in sql_resp:
+                        cropunit_to_update_ids.append(item[0])
                 self.env.cr.execute(
                     ('DELETE FROM wua_hydricneed WHERE '
                      'monitoringperiod_id = %s' % (self.id,)))
@@ -356,6 +364,9 @@ class WuaMonitoringperiod(models.Model):
                 self.env.cr.rollback()
                 raise exceptions.UserError(_(
                     'It has not been possible to reset the control periods.'))
+            if cropunit_to_update_ids:
+                self.env['wua.cropunit'].browse(
+                    cropunit_to_update_ids)._compute_sum_total_gin()
             if update_state:
                 self.write({
                     'number_of_hydricneeds': 0,
