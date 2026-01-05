@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="portal_my_home_wua"
+              inherit_id="base_wua_portal.portal_my_home_wua"
+              name="Crop units and irrigation recommendations">
+
+        <xpath expr="//div[contains(@class,'o_my_home_content')]" position="inside">
+            <h3 class="page-header" style="order: 18;">
+                <a href="/my/cropunits">
+                    <i class="fa fa-fw fa-pagelines"></i>
+                    Crop Units
+                    <small class="ml8">
+                        <t t-if="cropunit_count">
+                            <span class='badge pull-right'><t t-esc="cropunit_count"/></span>
+                        </t>
+                        <t t-else="">
+                            There are currently no crop units for your account.
+                        </t>
+                    </small>
+                </a>
+            </h3>
+            <h3 class="page-header" style="order: 19;">
+                <a href="/my/hydricneeds">
+                    <i class="fa fa-fw fa-calculator"></i>
+                    Irrigation Recommendations
+                    <small class="ml8">
+                        <t t-if="hydricneed_count">
+                            <span class='badge pull-right'><t t-esc="hydricneed_count"/></span>
+                        </t>
+                        <t t-else="">
+                            There are currently no hydric needs for your account.
+                        </t>
+                    </small>
+                </a>
+            </h3>
+        </xpath>
+
+    </template>
+
+    <template id="portal_my_cropunits" name="My crop units">
+        <t t-call="website.layout">
+            <div class="container mt16">
+                <div class="navbar navbar-default">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="/my/home">My Account</a>
+                    </div>
+                    <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
+                        <ul class="nav navbar-nav o_portal_submenu">
+                            <li><a href="/my/invoices">Invoices</a></li>
+                            <li><a href="/my/parcels">Parcels</a></li>
+                            <li><a href="/my/cropunits" class="active">Crop Units</a></li>
+                            <li><a href="/my/hydricneeds">Hydric Needs</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div id="wrap">
+                <div class="container mb64" style="max-width: 1200px;">
+                    <div class="col-md-12">
+                        <h3 class="page-header" style="margin-top: 0;">Your crop units</h3>
+                        <t t-if="cropunits_page">
+                            <table class="table table-hover o_my_status_table" style="table-layout: fixed; width: 100%; margin-top: 20px;">
+                                <thead>
+                                    <tr class="active">
+                                        <th style="text-align: left">Code</th>
+                                        <th style="text-align: left">Parcel</th>
+                                        <th style="text-align: right">Area (ha)</th>
+                                        <th style="text-align: right">GIN (m³/ha)</th>
+                                    </tr>
+                                    <tbody>
+                                        <tr t-foreach="cropunits_page" t-as="cropunit">
+                                            <td style="text-align: left; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;">
+                                                <a t-attf-href="/my/cropunits/#{cropunit.id}?{{ keep_query() }}">
+                                                    <t t-esc="cropunit.name"/>
+                                                </a>
+                                            </td>
+                                            <td style="text-align: left; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;">
+                                                <a t-attf-href="/my/parcels/#{cropunit.parcel_id.id}?{{ keep_query() }}">
+                                                    <t t-esc="cropunit.parcel_id.name"/>
+                                                </a>
+                                            </td>
+                                            <td style="text-align: right; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;">
+                                                <span t-field="cropunit.area_gis_ha"/>
+                                            </td>
+                                            <td style="text-align: right; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;">
+                                                <span t-field="cropunit.sum_total_gin"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </thead>
+                            </table>
+                        </t>
+                        <t t-else="">
+                            <div class="alert alert-warning mt-2" role="alert">
+                                No crop units have been entered yet, or there are no crop units that match the search criteria.
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>
