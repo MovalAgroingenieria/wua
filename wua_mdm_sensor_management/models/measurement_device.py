@@ -13,7 +13,8 @@ class MeasurementDevice(models.Model):
         string='Subparcel',
         comodel_name='wua.parcel.subparcel',
         index=True,
-        ondelete='restrict',
+        track_visibility='onchange',
+        ondelete='set null',
     )
 
     parcel_id = fields.Many2one(
@@ -22,7 +23,7 @@ class MeasurementDevice(models.Model):
         compute='_compute_parcel_id',
         store=True,
         index=True,
-        ondelete='restrict',
+        ondelete='set null',
     )
 
     partner_id = fields.Many2one(
