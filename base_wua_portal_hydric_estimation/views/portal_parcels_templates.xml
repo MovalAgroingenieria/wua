@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="parcels_followup"
+              inherit_id="base_wua_portal.parcels_followup"
+              name="Parcel with crop units">
+        <xpath expr="//h4/a[2]" position="after">
+            <a t-att-href="'/my/cropunits?search=' + parcel.name" class="ml8" title="Crop Units">
+                <i class="fa fa-pagelines"/>
+            </a>
+            <a t-att-href="'/my/hydricneeds?search=' + parcel.name" class="ml8" title="Irrigation Recommendations">
+                <i class="fa fa-calculator"/>
+            </a>
+        </xpath>
+    </template>
+
+</odoo>

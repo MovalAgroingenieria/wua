@@ -4,7 +4,6 @@
     <template id="portal_my_home_wua"
               inherit_id="base_wua_portal.portal_my_home_wua"
               name="Crop units and irrigation recommendations">
-
         <xpath expr="//div[contains(@class,'o_my_home_content')]" position="inside">
             <h3 class="page-header" style="order: 18;">
                 <a href="/my/cropunits">
@@ -35,7 +34,6 @@
                 </a>
             </h3>
         </xpath>
-
     </template>
 
     <template id="portal_my_cropunits" name="My crop units">
@@ -59,44 +57,266 @@
                 <div class="container mb64" style="max-width: 1200px;">
                     <div class="col-md-12">
                         <h3 class="page-header" style="margin-top: 0;">Your crop units</h3>
+                        <div class="row mb-4">
+                            <div class="col-md-2">
+                                <form action="/new_cropunit" method="post" autocomplete="off">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <button type="submit" class="btn btn-primary btn-block">Create</button>
+                                </form>
+                            </div>
+                            <div class="col-md-10">
+                                <form action="/my/cropunits" method="get">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <select id="input_filterby" name="filterby" class="form-control" onchange="this.form.submit()">
+                                                <option value="active_season" t-att-selected="'active_season' == filterby">Active Season</option>
+                                                <option value="all_seasons" t-att-selected="'all_seasons' == filterby">All seasons</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="input-group">
+                                                <span class="input-group-btn">
+                                                    <select id="input_search_in" name="search_in" class="form-control" onchange="this.form.submit()">
+                                                        <option value="cropunit" t-att-selected="'cropunit' == search_in">By code</option>
+                                                        <option value="cultivation" t-att-selected="'cultivation' == search_in">By crop</option>
+                                                    </select>
+                                                </span>
+                                                <input id="input_search" name="search" type="text" class="form-control" placeholder="Search crop units..." t-att-value="search or ''"/>
+                                                <span class="input-group-btn">
+                                                    <button type="submit" class="btn btn-primary" title="Search">
+                                                        <span class="glyphicon glyphicon-search" aria-hidden="true"/>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <select id="input_sortby" name="sortby" class="form-control" onchange="this.form.submit()">
+                                                <option value="name" t-att-selected="'name' == sortby">Order by code</option>
+                                                <option value="area_gis_ha" t-att-selected="'area_gis_ha' == sortby">Order by area</option>
+                                                <option value="sum_total_gin" t-att-selected="'sum_total_gin' == sortby">Order by gross needs</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                         <t t-if="cropunits_page">
                             <table class="table table-hover o_my_status_table" style="table-layout: fixed; width: 100%; margin-top: 20px;">
                                 <thead>
                                     <tr class="active">
-                                        <th style="text-align: left">Code</th>
-                                        <th style="text-align: left">Parcel</th>
-                                        <th style="text-align: right">Area (ha)</th>
-                                        <th style="text-align: right">GIN (m³/ha)</th>
+                                        <th style="text-align: left;width:34%">Code</th>
+                                        <th style="text-align: left;width:20%">Parcel</th>
+                                        <th style="text-align: left;width:24%">Crop</th>
+                                        <th style="text-align: right;width:11%">Area (ha)</th>
+                                        <th style="text-align: right;width:11%">GIN (m³)</th>
                                     </tr>
-                                    <tbody>
-                                        <tr t-foreach="cropunits_page" t-as="cropunit">
-                                            <td style="text-align: left; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;">
-                                                <a t-attf-href="/my/cropunits/#{cropunit.id}?{{ keep_query() }}">
-                                                    <t t-esc="cropunit.name"/>
-                                                </a>
-                                            </td>
-                                            <td style="text-align: left; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;">
-                                                <a t-attf-href="/my/parcels/#{cropunit.parcel_id.id}?{{ keep_query() }}">
-                                                    <t t-esc="cropunit.parcel_id.name"/>
-                                                </a>
-                                            </td>
-                                            <td style="text-align: right; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;">
-                                                <span t-field="cropunit.area_gis_ha"/>
-                                            </td>
-                                            <td style="text-align: right; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;">
-                                                <span t-field="cropunit.sum_total_gin"/>
-                                            </td>
-                                        </tr>
-                                    </tbody>
                                 </thead>
+                                <tbody>
+                                    <tr t-foreach="cropunits_page" t-as="cropunit">
+                                        <td style="text-align: left; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;">
+                                            <a t-attf-href="/my/cropunits/#{cropunit.id}?{{ keep_query() }}">
+                                                <t t-esc="cropunit.name"/>
+                                            </a>
+                                        </td>
+                                        <td style="text-align: left; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;">
+                                            <a t-attf-href="/my/parcels/#{cropunit.parcel_id.id}?{{ keep_query() }}">
+                                                <t t-esc="cropunit.parcel_id.name"/>
+                                            </a>
+                                        </td>
+                                        <td style="text-align: left; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;">
+                                            <span t-field="cropunit.cultivation_id"/>
+                                        </td>
+                                        <td style="text-align: right; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;">
+                                            <span t-field="cropunit.area_gis_ha"/>
+                                        </td>
+                                        <td style="text-align: right; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;">
+                                            <span t-field="cropunit.sum_total_gin"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
                             </table>
+                            <div t-if="pager" class="o_portal_pager text-center" style="margin: 0; padding: 0; line-height: 1;">
+                                <t t-call="website.pager"/>
+                            </div>
                         </t>
                         <t t-else="">
-                            <div class="alert alert-warning mt-2" role="alert">
+                            <div class="alert alert-warning" style="margin-top: 20px;" role="alert">
                                 No crop units have been entered yet, or there are no crop units that match the search criteria.
                             </div>
                         </t>
                     </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_my_hydricneeds" name="My hydric needs">
+        <t t-call="website.layout">
+            <div class="container mt16">
+                <div class="navbar navbar-default">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="/my/home">My Account</a>
+                    </div>
+                    <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
+                        <ul class="nav navbar-nav o_portal_submenu">
+                            <li><a href="/my/invoices">Invoices</a></li>
+                            <li><a href="/my/parcels">Parcels</a></li>
+                            <li><a href="/my/cropunits">Crop Units</a></li>
+                            <li><a href="/my/hydricneeds" class="active">Hydric Needs</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div id="wrap">
+                <div class="container mb64" style="max-width: 1200px;">
+                    <div class="col-md-12">
+                        <h3 class="page-header" style="margin-top: 0;">Your irrigation recommendations</h3>
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <form action="/my/hydricneeds" method="get">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <select id="input_filterby" name="filterby" class="form-control" onchange="this.form.submit()">
+                                                <option value="active_season" t-att-selected="'active_season' == filterby">Active Season</option>
+                                                <option value="all_seasons" t-att-selected="'all_seasons' == filterby">All seasons</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="input-group">
+                                                <span class="input-group-btn">
+                                                    <select id="input_search_in" name="search_in" class="form-control" onchange="this.form.submit()">
+                                                        <option value="cropunit" t-att-selected="'cropunit' == search_in">By crop unit</option>
+                                                        <option value="cultivation" t-att-selected="'cultivation' == search_in">By crop</option>
+                                                    </select>
+                                                </span>
+                                                <input id="input_search" name="search" type="text" class="form-control" placeholder="Search irrigation recommendations..." t-att-value="search or ''"/>
+                                                <span class="input-group-btn">
+                                                    <button type="submit" class="btn btn-primary" title="Search">
+                                                        <span class="glyphicon glyphicon-search" aria-hidden="true"/>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <select id="input_sortby" name="sortby" class="form-control" onchange="this.form.submit()">
+                                                <option value="name_desc" t-att-selected="'name_desc' == sortby">Reverse chronological order</option>
+                                                <option value="name_asc" t-att-selected="'name_asc' == sortby">Chronological order</option>
+                                                <option value="area_gis_ha" t-att-selected="'area_gis_ha' == sortby">Order by area</option>
+                                                <option value="total_gin" t-att-selected="'total_gin' == sortby">Order by gross needs</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <t t-if="hydricneeds_page">
+                            <table class="table table-hover o_my_status_table" style="table-layout: fixed; width: 100%; margin-top: 20px;">
+                                <thead>
+                                    <tr class="active">
+                                        <th style="text-align: left;width:10%">Initial Date</th>
+                                        <th style="text-align: left;width:10%">End Date</th>
+                                        <th style="text-align: left;width:25%">Crop Unit</th>
+                                        <th style="text-align: left;width:15%">Parcel</th>
+                                        <th style="text-align: left;width:13%">Crop</th>
+                                        <th style="text-align: right;width:9%">Area (ha)</th>
+                                        <th style="text-align: right;width:6%">m³/ha</th>
+                                        <th style="text-align: right;width:8%">GIN (m³)</th>
+                                        <th style="text-align: right;width:4%"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="hydricneeds_page" t-as="hydricneed">
+                                        <td style="text-align: left; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;">
+                                            <span t-field="hydricneed.initial_date"/>
+                                        </td>
+                                        <td style="text-align: left; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;">
+                                            <span t-field="hydricneed.end_date"/>
+                                        </td>
+                                        <td style="text-align: left; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;">
+                                            <a t-attf-href="/my/cropunits/#{hydricneed.cropunit_id.id}?{{ keep_query() }}">
+                                                <t t-esc="hydricneed.cropunit_id.name"/>
+                                            </a>
+                                        </td>
+                                        <td style="text-align: left; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;">
+                                            <a t-attf-href="/my/parcels/#{hydricneed.parcel_id.id}?{{ keep_query() }}">
+                                                <t t-esc="hydricneed.parcel_id.name"/>
+                                            </a>
+                                        </td>
+                                        <td style="text-align: left; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;">
+                                            <span t-field="hydricneed.cultivation_id"/>
+                                        </td>
+                                        <td style="text-align: right; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;">
+                                            <span t-field="hydricneed.area_gis_ha"/>
+                                        </td>
+                                        <td style="text-align: right; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;">
+                                            <span t-field="hydricneed.gin"/>
+                                        </td>
+                                        <td style="text-align: right; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;">
+                                            <span t-field="hydricneed.total_gin"/>
+                                        </td>
+                                        <td style="text-align: right; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;">
+                                            <a t-attf-href="/my/hydricneeds/#{hydricneed.id}?{{ keep_query() }}">
+                                                <i class="fa fa-calculator"/>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div t-if="pager" class="o_portal_pager text-center" style="margin: 0; padding: 0; line-height: 1;">
+                                <t t-call="website.pager"/>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <div class="alert alert-warning" style="margin-top: 20px;" role="alert">
+                                No irrigation recommendations have been generated, or there are no irrigation recommendations that match the search criteria.
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_new_cropunit" name="New crop unit">
+        <t t-call="website.layout">
+            <div class="container mt16">
+                <div class="navbar navbar-default">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="/my/home">My Account</a>
+                    </div>
+                    <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
+                        <ul class="nav navbar-nav o_portal_submenu">
+                            <li><a href="/my/invoices">Invoices</a></li>
+                            <li><a href="/my/parcels">Parcels</a></li>
+                            <li><a href="/my/cropunits" class="active">Crop Units</a></li>
+                            <li><a href="/my/hydricneeds">Hydric Needs</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div id="wrap">
+                <div class="container mb64" style="max-width: 1200px;">
+                    <h3 class="page-header" style="margin-top: 0;">New crop unit</h3>
+                    <t t-if="active_season_id">
+                        <form role="form" action="/confirm" method="post" autocomplete="off" enctype="multipart/form-data">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Parcel</label>
+                                        <input name="parcel_code" type="text" class="form-control" required="true"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                </div>
+                            </div>
+                        </form>
+                    </t>
+                    <t t-else="">
+                        <div class="alert alert-warning" style="margin-top: 20px;" role="alert">
+                            There are currently no active agricultural seasons.
+                        </div>
+                    </t>
                 </div>
             </div>
         </t>

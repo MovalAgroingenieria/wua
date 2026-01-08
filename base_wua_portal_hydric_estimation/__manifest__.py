@@ -18,8 +18,10 @@
     ],
     "data": [
         "security/security.xml",
+        "views/resources.xml",
         "security/ir.model.access.csv",
         "views/base_wua_portal_hydric_estimation_templates.xml",
+        "views/portal_parcels_templates.xml",
     ],
     "installable": True,
     "application": False,
