@@ -303,11 +303,47 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>Parcel</label>
+                                        <label>Parcel (*)</label>
                                         <input name="parcel_code" type="text" class="form-control" required="true"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Crop (*)</label>
+                                        <input name="cultivation_name" type="text" class="form-control" required="true"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Variety</label>
+                                        <input name="variety_name" type="text" class="form-control"/>
+                                    </div>
+                                    <div class="form-group">
+                                        (*) Required Data
                                     </div>
                                 </div>
                                 <div class="col-md-6">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Initial Date (*)</label>
+                                                <input name="initial_date" type="date" class="form-control" required="true"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>End Date (*)</label>
+                                                <input name="end_date" type="date" class="form-control" required="true"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12" style="margin-top:20px;margin-bottom:20px">
+                                            After confirming the crop unit data, you will be offered the possibility to enter its georeferenced geometric shape by uploading a KML file.
+                                        </div>
+                                        <div class="col-md-12">
+                                            If you do not perform this upload, it will not be possible to calculate irrigation recommendations for the new crop unit.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 text-center">
+                                    <button type="submit" class="btn btn-primary mt-3">Confirm</button>
                                 </div>
                             </div>
                         </form>

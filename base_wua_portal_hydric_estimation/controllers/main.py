@@ -207,7 +207,8 @@ class WebsiteAccountHydricEstimation(website_account):
             values,
         )
 
-    @http.route('/new_cropunit', type='http', auth="user", website=True)
+    @http.route('/new_cropunit', type='http', auth="user", website=True,
+                methods=['POST'])
     def request_new_observation(self):
         values = self._prepare_portal_layout_values()
         # TODO (provisional)
@@ -215,3 +216,13 @@ class WebsiteAccountHydricEstimation(website_account):
             'base_wua_portal_hydric_estimation.portal_new_cropunit',
             values,
         )
+
+    @http.route('/confirm', type='http', auth="user", website=True,
+                methods=['POST'])
+    def request_confirm_cropunit(self, **kwargs):
+        initial_date = kwargs.get('initial_date', '')
+        end_date = kwargs.get('end_date', '')
+        # TODO (provisional)
+        print initial_date
+        print end_date
+        return request.redirect('/my/cropunits')
