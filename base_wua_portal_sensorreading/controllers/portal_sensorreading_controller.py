@@ -134,7 +134,6 @@ class website_sensorreadings(website_account):
             'search_field': search_field,
             'sortby': sortby,
             'default_url': '/my/sensorreadings',
-            'view': view,
         })
         return request.render(
             "base_wua_portal_sensorreading.portal_my_sensorreadings", values,
