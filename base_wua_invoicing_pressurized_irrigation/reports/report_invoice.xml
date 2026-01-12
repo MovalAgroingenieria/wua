@@ -81,21 +81,22 @@
                                                 <t t-set="other_names" t-value="other_names + [line.name]"/>
                                             </t>
                                         </t>
+                                        <t t-set="sign" t-value="invoice.type in ('out_refund', 'in_refund') and -1 or 1"/>
                                         <tr>
                                             <td name="invoice_number"><span t-field="invoice.number"/></td>
                                             <td name="invoice_date"><span t-field="invoice.date_invoice"/></td>
                                             <td name="invoiceset"><span t-field="invoice.invoiceset_id"/></td>
                                             <td name="invoice_state"><span t-field="invoice.state"/></td>
-                                            <td name="total_lines_quantity_td"><span t-esc="wizard.env['wua.parcel'].transform_float_to_locale(total_lines_quantity,2)"/></td>
-                                            <td name="total_invoice_td"><span t-field="invoice.amount_total"/></td>
+                                            <td name="total_lines_quantity_td"><span t-esc="wizard.env['wua.parcel'].transform_float_to_locale(total_lines_quantity * sign, 2)"/></td>
+                                            <td name="total_invoice_td"><span t-esc="wizard.env['wua.parcel'].transform_float_to_locale(invoice.amount_total * sign, 2)"/></td>
                                             <td name="other_invoice_lines_td">
                                                 <t t-foreach="other_names" t-as="name">
                                                     <span><t t-esc="name"/></span><br/>
                                                 </t>
                                             </td>
                                         </tr>
-                                        <t t-set="total_lines_quantity_sum" t-value="total_lines_quantity_sum + total_lines_quantity"/>
-                                        <t t-set="amount_total_sum" t-value="amount_total_sum + invoice.amount_total"/>
+                                        <t t-set="total_lines_quantity_sum" t-value="total_lines_quantity_sum + (total_lines_quantity * sign)"/>
+                                        <t t-set="amount_total_sum" t-value="amount_total_sum + (invoice.amount_total * sign)"/>
                                     </t>
                                     <tr>
                                         <td colspan="4" class="text-right"><strong>Total:</strong></td>
