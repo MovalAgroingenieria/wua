@@ -3403,6 +3403,13 @@ class WuaParcelPartnerlink(models.Model):
         index=True,
     )
 
+    leased_from = fields.Date(
+        string='Date From',
+        store=True,
+        related='parcel_id.leased_from',
+        index=True,
+    )
+
     close_to_end_lease = fields.Boolean(
         string='Lease is close to end',
         related='parcel_id.close_to_end_lease',
@@ -3815,6 +3822,9 @@ class WuaParcelPartnerlink(models.Model):
                     node.set('invisible', '1')
                     node.set('modifiers', '{"tree_invisible": true}')
                 for node in doc.xpath("//field[@name='leased_to']"):
+                    node.set('invisible', '1')
+                    node.set('modifiers', '{"tree_invisible": true}')
+                for node in doc.xpath("//field[@name='leased_from']"):
                     node.set('invisible', '1')
                     node.set('modifiers', '{"tree_invisible": true}')
             area_measurement_type = self.env['ir.values'].get_default(
