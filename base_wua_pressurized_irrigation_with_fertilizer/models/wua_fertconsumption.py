@@ -103,16 +103,6 @@ class WuaFertconsumption(models.Model):
 
     @api.constrains('amount')
     def _check_amount(self):
-        """
-        Validate amount based on configuration setting.
-        
-        This constraint checks if negative values are allowed by reading
-        the 'allow_negative_fertconsumption' configuration parameter.
-        
-        Raises:
-            ValidationError: When amount is negative and configuration
-                           does not allow negative values.
-        """
         allow_negative = self.env['ir.values'].sudo().get_default(
             'wua.irrigation.configuration',
             'allow_negative_fertconsumption'
