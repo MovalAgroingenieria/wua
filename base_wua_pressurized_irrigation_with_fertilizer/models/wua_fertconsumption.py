@@ -99,10 +99,33 @@ class WuaFertconsumption(models.Model):
          'CHECK (reading_end_time >= reading_initial_time)',
          'The reading end time must be greather than or equal to '
          'reading initial time.'),
-        ('valid_amount',
-         'CHECK (amount >= 0)',
-         'The consumption amount can not be a negative value.'),
-        ]
+    ]
+
+    @api.constrains('amount')
+    def _check_amount(self):
+        """
+        Validate amount based on configuration setting.
+        
+        This constraint checks if negative values are allowed by reading
+        the 'allow_negative_fertconsumption' configuration parameter.
+        
+        Raises:
+            ValidationError: When amount is negative and configuration
+                           does not allow negative values.
+        """
+        allow_negative = self.env['ir.values'].sudo().get_default(
+            'wua.irrigation.configuration',
+            'allow_negative_fertconsumption'
+        )
+        if not allow_negative:
+            for record in self:
+                if record.amount < 0:
+                    raise exceptions.ValidationError(
+                        _('The consumption amount cannot be a negative value. '
+                          'To allow negative values, enable the option in '
+                          'Settings > Parameters > '
+                          'Allow negative values in fertilizer consumption.')
+                    )
 
     @api.depends('reading_end_time', 'waterconnection_id')
     def _compute_name(self):
