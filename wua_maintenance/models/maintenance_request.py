@@ -4,6 +4,7 @@
 
 from jinja2 import Template, TemplateError
 from datetime import datetime
+import json
 from odoo import models, fields, api, _
 from bs4 import BeautifulSoup
 
@@ -582,6 +583,30 @@ class MaintenanceRequest(models.Model):
                 })
             data['extra_info'] = self.related_element_extradata
         return data
+
+    @api.multi
+    def get_equipment_coordinates(self):
+        """
+        Extract and format coordinates from equipment's geojson_geom field.
+        Returns a formatted string like "X: 644865, Y: 4233260"
+        """
+        self.ensure_one()
+        if not self.equipment_id or not self.equipment_id.geojson_geom:
+            return ''
+
+        try:
+            geojson_data = json.loads(self.equipment_id.geojson_geom)
+            if 'coordinates' in geojson_data:
+                coordinates = geojson_data['coordinates']
+                if isinstance(coordinates, list) and len(coordinates) >= 2:
+                    # Truncate to integer (remove decimals)
+                    x_coord = int(coordinates[0])
+                    y_coord = int(coordinates[1])
+                    return 'X: %s, Y: %s' % (x_coord, y_coord)
+        except (ValueError, TypeError, KeyError):
+            pass
+
+        return ''
 
 
 class MaintenanceRequestAttachment(models.Model):

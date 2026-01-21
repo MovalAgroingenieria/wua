@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Maintenance request report (droplist menu) -->
-    <report id="maintenance_request_report"
-        string="Maintenance Request Report"
+    <!-- Maintenance request report PERTE (droplist menu) -->
+    <report id="maintenance_request_report_perte"
+        string="Maintenance Request Report PERTE"
         model="maintenance.request"
         report_type="qweb-pdf"
-        file="wua_maintenance.maintenance_request_report_document"
-        name="wua_maintenance.maintenance_request_report_document"/>
+        file="wua_maintenance.maintenance_request_report_perte_document"
+        name="wua_maintenance.maintenance_request_report_perte_document"/>
 
-    <!-- Maintenance Request report -->
-    <template id="maintenance_request_report_document">
+    <!-- Maintenance Request report PERTE (without request_date and close_date) -->
+    <template id="maintenance_request_report_perte_document">
         <t t-call="report.html_container">
             <t t-foreach="docs" t-as="o">
                 <t t-call="base_wua_report.wua_external_layout">
@@ -19,7 +19,7 @@
                         <t t-set="report_style" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
                         <!-- Title -->
                         <div name="title" class="text-center">
-                            <h4><b>Maintenance request report</b></h4>
+                            <h4><b>Maintenance request report PERTE</b></h4>
                             <span>[<span t-field="o.name"></span>]</span>
                         </div>
                         <!-- Maintenance request data -->
@@ -69,27 +69,11 @@
                                                         </td>
                                                     </tr>
                                                 </t>
-                                                <t t-if="o.request_date">
-                                                    <tr name="tr_request_date">
-                                                        <td><span><b>Request Date</b></span></td>
-                                                        <td class="text-right">
-                                                            <span t-field="o.request_date"/>
-                                                        </td>
-                                                    </tr>
-                                                </t>
                                                 <t t-if="o.schedule_date">
                                                     <tr name="tr_schedule_date">
                                                         <td><span><b>Scheduled Date</b></span></td>
                                                         <td class="text-right">
                                                             <span t-field="o.schedule_date"/>
-                                                        </td>
-                                                    </tr>
-                                                </t>
-                                                <t t-if="o.close_date">
-                                                    <tr name="tr_close_date">
-                                                        <td><span><b>Close Date</b></span></td>
-                                                        <td class="text-right">
-                                                            <span t-field="o.close_date"/>
                                                         </td>
                                                     </tr>
                                                 </t>
@@ -170,11 +154,6 @@
                                                             <span class="fa fa-star"/>
                                                             <span class="fa fa-star"/>
                                                         </t>
-                                                        <!--
-                                                        <span>&amp;nbsp;(</span>
-                                                        <span t-field="o.priority"/>
-                                                        <span>)</span>
-                                                        -->
                                                     </td>
                                                 </tr>
                                             </tbody>

@@ -51,6 +51,7 @@
         "views/menuitems.xml",
         "views/resources.xml",
         "reports/maintenance_request_report.xml",
+        "reports/maintenance_request_report_perte.xml",
     ],
     "installable": True,
     "post_init_hook": "post_init_hook",
