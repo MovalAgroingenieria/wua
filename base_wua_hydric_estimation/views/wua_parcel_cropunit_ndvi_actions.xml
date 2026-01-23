@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Server Action: Get NDVI for Parcels + Crop Units -->
+    <record id="wua_get_ndvi_values_with_cropunits" model="ir.actions.server">
+        <field name="name">Get NDVI values (Parcels + Crop Units)</field>
+        <field name="model_id" ref="base_wua.model_wua_parcel"/>
+        <field name="state">code</field>
+        <field name="code">
+if context.get('active_ids'):
+    action = env['wua.parcel'].get_ndvi_values_with_cropunits(context['active_ids'])
+else:
+    # If no active_ids, get all parcels from active agricultural season
+    parcels = env['wua.parcel'].search([
+        ('agriculturalseason_id.active_agriculturalseason', '=', True)
+    ])
+    if parcels:
+        action = parcels[0].get_ndvi_values_with_cropunits(parcels.ids)
+    else:
+        raise UserError('No parcels found in active agricultural season')
+        </field>
+    </record>
+
+    <record id="wua_action_get_ndvi_values_with_cropunits" model="ir.values">
+        <field name="name">Get NDVI values (Parcels + Crop Units)</field>
+        <field name="model">wua.parcel</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_get_ndvi_values_with_cropunits'))"/>
+    </record>
+
+    <!-- Menu item in Technical menu for Parcels + Crop Units -->
+    <menuitem id="technical_get_ndvi_parcels_cropunits_menu"
+              name="Calculation: NDVI (Parcels + Crop Units)"
+              parent="base_wua_remotesensing_sentinelhub.technical_menu"
+              action="wua_get_ndvi_values_with_cropunits"
+              sequence="20"
+              groups="base.group_system"/>
+
+    <!-- Server Action: Get NDVI for Crop Units only -->
+    <record id="wua_get_ndvi_values_cropunits" model="ir.actions.server">
+        <field name="name">Get NDVI values (Crop Units)</field>
+        <field name="model_id" ref="model_wua_cropunit"/>
+        <field name="state">code</field>
+        <field name="code">
+if context.get('active_ids'):
+    action = env['wua.cropunit'].get_ndvi_values_for_cropunits(context['active_ids'])
+else:
+    # If no active_ids, get all cropunits from active agricultural season
+    cropunits = env['wua.cropunit'].search([
+        ('agriculturalseason_id.active_agriculturalseason', '=', True)
+    ])
+    if cropunits:
+        action = cropunits.get_ndvi_values_for_cropunits(cropunits.ids)
+    else:
+        raise UserError('No crop units found in active agricultural season')
+        </field>
+    </record>
+
+    <record id="wua_action_get_ndvi_values_cropunits" model="ir.values">
+        <field name="name">Get NDVI values (Crop Units)</field>
+        <field name="model">wua.cropunit</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_get_ndvi_values_cropunits'))"/>
+    </record>
+
+    <!-- Menu item in Technical menu for Crop Units only -->
+    <menuitem id="technical_get_ndvi_cropunits_menu"
+              name="Calculation: NDVI (Crop Units)"
+              parent="base_wua_remotesensing_sentinelhub.technical_menu"
+              action="wua_get_ndvi_values_cropunits"
+              sequence="30"
+              groups="base.group_system"/>
+
+</odoo>

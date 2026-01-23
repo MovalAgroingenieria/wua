@@ -23,13 +23,26 @@
                         <button name="action_get_hydricneeds"
                                 type="object"
                                 class="oe_stat_button"
-                                icon="fa-calculator">
+                                icon="fa-moval-hydric-estimation">
                             <div class="o_form_field o_stat_info">
                                 <span class="o_stat_text">
                                     Recommen-
                                 </span>
                                 <span class="o_stat_text">
                                     dations
+                                </span>
+                            </div>
+                        </button>
+                        <button name="action_get_ndvi_values"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-leaf">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="number_of_ndvi"/>
+                                </span>
+                                <span class="o_stat_text">
+                                    NDVI
                                 </span>
                             </div>
                         </button>
@@ -390,8 +403,50 @@
 
     <menuitem id="wua_cropunit_menu"
               name="Crop Units"
+              parent="base_wua_hydric_estimation_data_menu"
+              action="wua_cropunit_action"
+              sequence="30"/>
+
+    <menuitem id="wua_cropunit_menu_census"
+              name="Crop Units"
               parent="base_wua.base_wua_census_landparcels_menu"
               action="wua_cropunit_action"
               sequence="25"/>
+
+    <record id="wua_cropunit_ndvi_view_form" model="ir.ui.view">
+        <field name="name">Crop Units with NDVI values (form view)</field>
+        <field name="model">wua.cropunit</field>
+        <field name="priority" eval="100"/>
+        <field name="arch" type="xml">
+            <form string="Crop Units (NDVI)"
+                  duplicate="false" create="false" edit="false" delete="false">
+                <div class="panel-body text-center" style="background:#ededed;border-color:#696969;border-width:1px;border-style:solid;padding-top:7px;padding-bottom:0px;margin-bottom:5px">
+                    <h4>
+                        <span class="o_stat_text">
+                            <field name="cropunit_title_ndvi"/>
+                        </span>
+                    </h4>
+                </div>
+                <group name="master_data">
+                    <group name="master_data_left">
+                        <div style="width: 90%; margin:0 auto;">
+                            <field name="ndvi_graph_maximum_range"
+                                   widget="bokeh_chart" nolabel="1"/>
+                        </div>
+                    </group>
+                    <group name="master_data_right">
+                        <div style="width: 90%; margin:0 auto;">
+                            <field name="ndvi_graph_detail"
+                                   widget="bokeh_chart" nolabel="1"/>
+                        </div>
+                    </group>
+                </group>
+                <div class="panel-body text-center" style="background:#ededed;border-color:#696969;border-width:1px;border-style:solid">
+                    <field name="active_agriculturalsason_ndvi_ids"
+                           context="{'tree_view_ref':'base_wua_hydric_estimation.wua_cropunit_vegetationindex_ndvi_simple_view_tree'}"/>
+                </div>
+            </form>
+        </field>
+    </record>
 
 </odoo>

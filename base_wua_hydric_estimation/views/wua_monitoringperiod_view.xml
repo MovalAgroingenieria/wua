@@ -33,7 +33,7 @@
                         <button name="action_get_hydricneeds"
                                 type="object"
                                 class="oe_stat_button"
-                                icon="fa-calculator">
+                                icon="fa-moval-hydric-estimation">
                             <div class="o_form_field o_stat_info">
                                 <span class="o_stat_text">
                                     Recommen-
@@ -259,9 +259,9 @@
 
     <menuitem id="wua_monitoringperiod_menu"
               name="Control Periods"
-              parent="base_wua_census_calculation_menu"
+              parent="base_wua_hydric_estimation_config_menu"
               action="wua_monitoringperiod_action"
-              sequence="20"/>
+              sequence="10"/>
 
     <record id="wua_monitoringperiod_calculate" model="ir.actions.server">
         <field name="name">Calculate</field>
@@ -319,7 +319,7 @@
 
     <menuitem id="wua_technical_calculate_monitoringperiods_menu"
               name="Calculate pending irrigation recommendations"
-              parent="base_wua.base_wua_technical_menu"
+              parent="base_wua_hydric_estimation_technical_menu"
               action="wua_technical_calculate_monitoringperiods_action"
               sequence="10"
               groups="base.group_system"/>

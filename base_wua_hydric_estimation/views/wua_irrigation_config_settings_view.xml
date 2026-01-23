@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_config_settings_view_form_hydric_estimation"
+            model="ir.ui.view">
+        <field name="name">Parameters - Hydric Estimation</field>
+        <field name="model">wua.configuration</field>
+        <field name="inherit_id"
+               ref="base_wua.wua_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[last()]"
+                   position="after">
+                <group name="hydric_estimation_general" string="Hydric Estimation - General Settings">
+                    <field name="default_standard_application_efficiency"/>
+                    <field name="control_periodicity"/>
+                    <field name="period_start_day"
+                           attrs="{'invisible': [('control_periodicity', '!=', 7)]}"/>
+                    <field name="automatic_calculation"
+                           attrs="{'invisible': [('control_periodicity', '!=', 7)]}"/>
+                </group>
+                <group name="hydric_estimation_kc" string="Hydric Estimation - Kc Calculation Settings">
+                    <field name="default_kc_ndvi_a"/>
+                    <field name="default_kc_ndvi_b"/>
+                    <field name="default_kc_ndvi_c"/>
+                    <field name="kc_lower_saturation"/>
+                    <field name="kc_upper_saturation"/>
+                </group>
+                <group name="hydric_estimation_sources" string="Hydric Estimation - Data Sources">
+                    <field name="max_offset_alternative_ndvi"/>
+                    <field name="hydric_est_ndvi_model"/>
+                    <field name="hydric_est_et0_sensor_type"
+                           options="{'no_create_edit':True}"/>
+                    <field name="hydric_est_pe_sensor_type"
+                           options="{'no_create_edit':True}"/>
+                </group>
+                <group name="hydric_estimation_aerial" string="Hydric Estimation - Aerial Images Settings">
+                    <field name="aerial_image_wms"/>
+                    <field name="aerial_image_layers"/>
+                    <field name="aerial_image_width"/>
+                    <field name="aerial_image_height"/>
+                    <field name="aerial_image_zoom"/>
+                    <field name="aerial_image_format"/>
+                </group>
+                <group name="hydric_estimation_notifications" string="Hydric Estimation - Email Notifications">
+                    <field name="notification_emails"
+                           placeholder="email1@example.com,email2@example.com"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

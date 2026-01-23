@@ -1,6 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <menuitem id="base_wua_hydric_estimation_main_menu"
+              name="Hydric Estimations"
+              web_icon="base_wua_hydric_estimation,static/description/icon.png"
+              sequence="-35"
+              groups="base_wua.group_wua_user"/>
+
+    <menuitem id="base_wua_hydric_estimation_data_menu"
+              name="Data"
+              parent="base_wua_hydric_estimation_main_menu"
+              sequence="10"
+              groups="base_wua.group_wua_user"/>
+
+    <menuitem id="base_wua_hydric_estimation_config_menu"
+              name="Configuration"
+              parent="base_wua_hydric_estimation_main_menu"
+              sequence="20"
+              groups="base_wua.group_wua_user"/>
+
+    <menuitem id="base_wua_hydric_estimation_technical_menu"
+              name="Technical"
+              parent="base_wua_hydric_estimation_main_menu"
+              sequence="30"
+              groups="base.group_system"/>
+
     <menuitem id="base_wua_census_calculation_menu"
               name="Calculation"
               parent="base_wua.base_wua_census_menu"
@@ -12,5 +36,20 @@
               parent="base_wua.base_wua_census_menu"
               sequence="4"
               groups="base_wua.group_wua_user"/>
+
+    <record id="wua_configuration_action_hydric_estimation" model="ir.actions.act_window">
+        <field name="name">Configure Hydric Estimations</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">wua.configuration</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+    </record>
+
+    <menuitem id="wua_configuration_menu_hydric_estimation"
+              name="Parameters"
+              parent="base_wua_hydric_estimation_config_menu"
+              action="wua_configuration_action_hydric_estimation"
+              sequence="1"
+              groups="base.group_system"/>
 
 </odoo>

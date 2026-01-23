@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="email_template_irrigation_recommendation" model="mail.template">
+        <field name="name">Irrigation Recommendation</field>
+        <field name="model_id" ref="model_wua_hydricneed"/>
+        <field name="subject">Irrigation Recommendation - ${object.cropunit_id.name} - ${object.monitoringperiod_id.name}</field>
+        <field name="email_from">${(object.cropunit_id.parcel_id.wua_id.email or user.email)|safe}</field>
+        <field name="email_to">${object.partner_id.email|safe}</field>
+        <field name="lang">${object.partner_id.lang}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="body_html"><![CDATA[
+<div style="margin: 0px; padding: 0px;">
+    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+        Dear ${object.partner_id.name or ''},
+        <br/><br/>
+        Please find attached the irrigation recommendation report for your crop unit <strong>${object.cropunit_id.name}</strong>.
+        <br/><br/>
+        <strong>Summary:</strong>
+        <ul>
+            <li>Parcel: ${object.parcel_id.name}</li>
+            <li>Cultivation: ${object.cultivation_id.name}</li>
+            <li>Application Period: ${object.initial_date} - ${object.end_date}</li>
+            <li>Recommended Volume: ${object.total_gin} m³</li>
+            <li>Dotation: ${object.gin} m³/ha</li>
+        </ul>
+        <br/>
+        For more details, please review the attached PDF report.
+        <br/><br/>
+        Best regards,
+        <br/>
+        ${user.name}
+    </p>
+</div>
+        ]]></field>
+        <field name="report_template" ref="wua_hydricneed_report"/>
+        <field name="report_name">Irrigation_Recommendation_${object.cropunit_id.name.replace('/','_')}_${object.monitoringperiod_id.name.replace('/','_')}</field>
+    </record>
+
+    <record id="action_send_irrigation_recommendations" model="ir.actions.server">
+        <field name="name">Send Irrigation Recommendations by Email</field>
+        <field name="model_id" ref="model_wua_hydricneed"/>
+        <field name="state">code</field>
+        <field name="code"><![CDATA[
+# Get the email template
+template = env.ref('base_wua_hydric_estimation.email_template_irrigation_recommendation')
+
+# Send email for each selected hydricneed record
+for record in records:
+    if record.partner_id and record.partner_id.email:
+        template.send_mail(record.id, force_send=False)
+    else:
+        # Log warning if partner has no email
+        pass
+]]></field>
+    </record>
+
+    <record id="ir_values_send_irrigation_recommendations" model="ir.values">
+        <field name="name">Send Irrigation Recommendations by Email</field>
+        <field name="model">wua.hydricneed</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('action_send_irrigation_recommendations'))"/>
+    </record>
+
+    <record id="action_send_irrigation_recommendations" model="ir.actions.server">
+        <field name="active" eval="False"/>
+    </record>
+
+</odoo>
