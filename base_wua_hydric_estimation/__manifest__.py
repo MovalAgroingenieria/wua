@@ -30,7 +30,6 @@
         "views/resources.xml",
         "views/base_wua_hydric_estimation_menus.xml",
         "views/wua_cultivation_menu_duplicate.xml",
-        "views/wua_config_settings_view.xml",
         "views/wua_irrigation_config_settings_view.xml",
         "views/wua_irrigationsystem_view.xml",
         "views/wua_cropfamily_view.xml",
