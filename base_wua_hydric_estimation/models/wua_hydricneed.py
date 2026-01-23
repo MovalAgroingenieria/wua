@@ -27,6 +27,13 @@ class WuaHydricneed(models.Model):
         ondelete='cascade',
     )
 
+    recommendationperiod_id = fields.Many2one(
+        string='Recommendation Period',
+        comodel_name='wua.recommendationperiod',
+        index=True,
+        ondelete='set null',
+    )
+
     name = fields.Char(
         string='Code',
         store=True,
@@ -542,7 +549,8 @@ class WuaHydricneed(models.Model):
                 vals['monitoringperiod_id'])
             if cropunit and monitoringperiod:
                 accumulated_et0, accumulated_pe, mean_ndvi = \
-                    self.get_parcel_data(cropunit.parcel_id, monitoringperiod)
+                    self.get_parcel_data(cropunit.parcel_id, monitoringperiod,
+                                         cropunit)
                 vals['accumulated_et0'] = accumulated_et0
                 vals['accumulated_pe'] = accumulated_pe
                 vals['mean_ndvi'] = mean_ndvi
@@ -553,7 +561,7 @@ class WuaHydricneed(models.Model):
         new_hydricneed = super(WuaHydricneed, self).create(vals)
         return new_hydricneed
 
-    def get_parcel_data(self, parcel, monitoringperiod):
+    def get_parcel_data(self, parcel, monitoringperiod, cropunit=None):
         accumulated_et0 = 0.0
         accumulated_pe = 0.0
         mean_ndvi = 0.0
@@ -567,7 +575,6 @@ class WuaHydricneed(models.Model):
             max_offset_alternative_ndvi = 0
         if et0_sensor_type_id and pe_sensor_type_id:
             model_sensor_reading = self.env['wua.parcel.sensor.reading']
-            model_ndvi = self.env['wua.parcel.vegetationindex.ndvi']
             initial_date = str(monitoringperiod.initial_date)
             initial_datetime = initial_date + ' 00:00:00'
             end_date = str(monitoringperiod.end_date)
@@ -586,20 +593,43 @@ class WuaHydricneed(models.Model):
                  ('measurement_time', '<=', end_datetime)])
             for pe_sensor_reading in (pe_sensor_readings or []):
                 accumulated_pe = accumulated_pe + pe_sensor_reading.value
-            ndvi_values = model_ndvi.search(
-                [('parcel_id', '=', parcel.id),
-                 ('data_date', '>=', initial_date),
-                 ('data_date', '<=', end_date)])
-            if not ndvi_values and max_offset_alternative_ndvi > 0:
-                initial_date_as_datetime = \
-                    (datetime.datetime.strptime(str(initial_date), '%Y-%m-%d') -
-                     datetime.timedelta(days=max_offset_alternative_ndvi))
-                initial_date = datetime.datetime.strftime(
-                    initial_date_as_datetime, '%Y-%m-%d')
+
+            # Get NDVI values from cropunit model
+            ndvi_values = None
+            if cropunit:
+                model_cropunit_ndvi = self.env['wua.cropunit.vegetationindex.ndvi']
+                ndvi_values = model_cropunit_ndvi.search(
+                    [('cropunit_id', '=', cropunit.id),
+                     ('data_date', '>=', initial_date),
+                     ('data_date', '<=', end_date)])
+                if not ndvi_values and max_offset_alternative_ndvi > 0:
+                    initial_date_as_datetime = \
+                        (datetime.datetime.strptime(str(initial_date), '%Y-%m-%d') -
+                         datetime.timedelta(days=max_offset_alternative_ndvi))
+                    initial_date_alt = datetime.datetime.strftime(
+                        initial_date_as_datetime, '%Y-%m-%d')
+                    ndvi_values = model_cropunit_ndvi.search(
+                        [('cropunit_id', '=', cropunit.id),
+                         ('data_date', '>=', initial_date_alt),
+                         ('data_date', '<=', end_date)])
+
+            if not ndvi_values:
+                model_ndvi = self.env['wua.parcel.vegetationindex.ndvi']
                 ndvi_values = model_ndvi.search(
                     [('parcel_id', '=', parcel.id),
                      ('data_date', '>=', initial_date),
                      ('data_date', '<=', end_date)])
+                if not ndvi_values and max_offset_alternative_ndvi > 0:
+                    initial_date_as_datetime = \
+                        (datetime.datetime.strptime(str(initial_date), '%Y-%m-%d') -
+                         datetime.timedelta(days=max_offset_alternative_ndvi))
+                    initial_date_alt = datetime.datetime.strftime(
+                        initial_date_as_datetime, '%Y-%m-%d')
+                    ndvi_values = model_ndvi.search(
+                        [('parcel_id', '=', parcel.id),
+                         ('data_date', '>=', initial_date_alt),
+                         ('data_date', '<=', end_date)])
+
             if ndvi_values:
                 accumulated_ndvi_value = 0
                 for ndvi_value in ndvi_values:

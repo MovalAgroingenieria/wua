@@ -144,6 +144,12 @@ class WuaConfiguration(models.TransientModel):
              'the parameter value.',
     )
 
+    notification_emails = fields.Char(
+        string='Notification Emails',
+        help='Email addresses to notify when irrigation recommendations are '
+             'calculated. Separate multiple emails with commas.',
+    )
+
     aerial_image_wms = fields.Char(
         string='WMS service for aerial image',
         size=255,
@@ -280,3 +286,6 @@ class WuaConfiguration(models.TransientModel):
         values.set_default('wua.configuration',
                            'aerial_image_format',
                            self.aerial_image_format)
+        values.set_default('wua.configuration',
+                           'notification_emails',
+                           self.notification_emails)

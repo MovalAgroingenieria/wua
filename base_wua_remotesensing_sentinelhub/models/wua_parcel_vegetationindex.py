@@ -240,6 +240,7 @@ class WuaParcelVegetationindex(models.AbstractModel):
                                 '&width=' + str(image_width_pixels) + \
                                 '&height=' + str(image_height_pixels) + \
                                 '&layers=' + layer_for_parcel_perimeter + \
+                                '&styles=' + \
                                 '&transparent=true' + \
                                 '&format=image/png'
                             request_ok = True

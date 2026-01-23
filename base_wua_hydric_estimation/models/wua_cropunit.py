@@ -5,8 +5,11 @@
 import base64
 import datetime
 import io
+import json
 import re
 import requests
+import numpy
+import logging
 
 from PIL import Image
 from pyproj import Proj, transform
@@ -14,6 +17,7 @@ from unidecode import unidecode
 from bokeh.plotting import figure
 from bokeh.embed import components
 from bokeh.models import ColumnDataSource, HoverTool, HelpTool
+from bokeh.models.formatters import DatetimeTickFormatter
 from lxml import etree
 
 from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import DEFAULT_STANDARD_APPLICATION_EFFICIENCY
@@ -36,6 +40,11 @@ class WuaCropunit(models.Model):
     OGC_TIMEOUT = 15
     DEFAULT_AERIAL_IMAGE_SIZE = 320
     KML_NAMESPACE = 'http://www.opengis.net/kml/2.2'
+
+    # Constants for NDVI graphs
+    MARGIN_FOR_GRAPH_RANGE = 0.15
+    MAX_DAYS = 10
+    NO_DATA = -9999
 
     def _default_agriculturalseason_id(self):
         resp = None
@@ -351,6 +360,37 @@ class WuaCropunit(models.Model):
     gin_graph = fields.Text(
         string='GIN Graph',
         compute='_compute_gin_graph')
+
+    ndvi_ids = fields.One2many(
+        string='NDVI Values',
+        comodel_name='wua.cropunit.vegetationindex.ndvi',
+        inverse_name='cropunit_id')
+
+    active_agriculturalsason_ndvi_ids = fields.One2many(
+        string='NDVI Values of the active agricultural season',
+        comodel_name='wua.cropunit.vegetationindex.ndvi',
+        inverse_name='cropunit_id',
+        domain=[('of_active_agriculturalseason', '=', True)])
+
+    number_of_ndvi = fields.Integer(
+        string='N. of NDVI values (in active agricultural season)',
+        compute='_compute_number_of_ndvi')
+
+    last_ndvi_date = fields.Date(
+        string='Last date of NDVI value',
+        compute='_compute_last_ndvi_date')
+
+    cropunit_title_ndvi = fields.Char(
+        string='Crop Unit Title for NDVI values',
+        compute='_compute_cropunit_title_ndvi')
+
+    ndvi_graph_maximum_range = fields.Text(
+        string='NDVI Graph (active agricultural season, maximum range)',
+        compute='_compute_ndvi_graph_maximum_range')
+
+    ndvi_graph_detail = fields.Text(
+        string='NDVI Graph (active agricultural season, detail)',
+        compute='_compute_ndvi_graph_detail')
 
     parcel_mapped_to_polygon = fields.Boolean(
         string='Parcel mapped to polygon',
@@ -987,6 +1027,236 @@ class WuaCropunit(models.Model):
                         gin_graph = '%s%s' % (div, script)
             record.gin_graph = gin_graph
 
+    @api.multi
+    def _compute_number_of_ndvi(self):
+        model_wua_cropunit_vegetationindex_ndvi = \
+            self.env['wua.cropunit.vegetationindex.ndvi']
+        for record in self:
+            number_of_ndvi = 0
+            ndvi_of_active_agriculturalseason = \
+                model_wua_cropunit_vegetationindex_ndvi.search(
+                    [('cropunit_id', '=', record.id),
+                     ('of_active_agriculturalseason', '=', True)])
+            if ndvi_of_active_agriculturalseason:
+                number_of_ndvi = \
+                    len(ndvi_of_active_agriculturalseason)
+            record.number_of_ndvi = number_of_ndvi
+
+    @api.multi
+    def _compute_last_ndvi_date(self):
+        for record in self:
+            last_ndvi_date = None
+            if record.ndvi_ids:
+                ndvi_of_record = \
+                    self.env['wua.cropunit.vegetationindex.ndvi'].search(
+                        [('cropunit_id', '=', record.id)],
+                        limit=1, order='data_date desc')
+                if ndvi_of_record:
+                    last_ndvi_date = ndvi_of_record[0].data_date
+            record.last_ndvi_date = last_ndvi_date
+
+    @api.multi
+    def _compute_cropunit_title_ndvi(self):
+        for record in self:
+            cropunit_title_ndvi = \
+                _('CROP UNIT') + ': ' + record.name + ', ' + \
+                _('NDVI VALUES')
+            if record.partner_id:
+                cropunit_title_ndvi = cropunit_title_ndvi + '. ' + _('PARTNER') + \
+                    ': ' + record.partner_id.display_name + ' [' + \
+                    str(record.partner_id.partner_code) + ']'
+            record.cropunit_title_ndvi = cropunit_title_ndvi
+
+    @api.multi
+    def _compute_ndvi_graph_maximum_range(self):
+        for record in self:
+            ndvi_values = self.env['wua.cropunit.vegetationindex.ndvi'].search(
+                [('cropunit_id', '=', record.id),
+                 ('of_active_agriculturalseason', '=', True)],
+                order='data_date')
+            if ndvi_values:
+                x_values = []
+                y_values = []
+                y_values_previous = []
+                ndvi_values_previous = \
+                    self._get_ndvi_data_of_prev_agriculturalseason(
+                        record, ndvi_values[0].agriculturalseason_id)
+                for ndvi_value in ndvi_values:
+                    date_of_ndvi = numpy.datetime64(ndvi_value.data_date)
+                    x_values.append(date_of_ndvi)
+                    y_values.append(ndvi_value.mean_value)
+                    possible_value_previous = self.NO_DATA
+                    if ndvi_values_previous:
+                        possible_value_previous = \
+                            self._get_closest_ndvi_value_from_prev_year(
+                                ndvi_value.data_date, ndvi_values_previous)
+                        if (possible_value_previous == self.NO_DATA and
+                           y_values_previous):
+                            possible_value_previous = \
+                                y_values_previous[-1]
+                    y_values_previous.append(possible_value_previous)
+                p = figure(sizing_mode='scale_width', plot_height=400,
+                           x_axis_type='datetime', toolbar_location=None,
+                           y_range=(-1, 1))
+                if (self.NO_DATA not in y_values_previous):
+                    x_values_previous = x_values[:]
+                    x_values_previous, y_values_previous = \
+                        self._get_interpolated_daily_values(
+                            x_values_previous, y_values_previous)
+                    p.line(x_values_previous, y_values_previous,
+                           color='mediumspringgreen',
+                           line_width=2, legend=_('Previous year'))
+                x_values, y_values = \
+                    self._get_interpolated_daily_values(x_values, y_values)
+                p.line(x_values, y_values, color='darkgreen',
+                       line_width=2, legend=_('Active ag. season'))
+                p.xaxis.axis_label = _('Date of the value')
+                p.yaxis.axis_label = _('NDVI (maximum range)')
+                p.grid.grid_line_alpha = 0
+                p.ygrid.band_fill_color = "olive"
+                p.ygrid.band_fill_alpha = 0.2
+                p.xaxis.formatter = DatetimeTickFormatter(months='%m/%y',
+                                                          days='%d/%m',
+                                                          hours='%H',
+                                                          minutes='%H:%M')
+                script, div = components(p)
+                if script and div:
+                    record.ndvi_graph_maximum_range = '%s%s' % (div, script)
+
+    @api.multi
+    def _compute_ndvi_graph_detail(self):
+        for record in self:
+            ndvi_values = self.env['wua.cropunit.vegetationindex.ndvi'].search(
+                [('cropunit_id', '=', record.id),
+                 ('of_active_agriculturalseason', '=', True)],
+                order='data_date')
+            if ndvi_values:
+                x_values = []
+                y_values = []
+                y_values_previous = []
+                ndvi_values_previous = \
+                    self._get_ndvi_data_of_prev_agriculturalseason(
+                        record, ndvi_values[0].agriculturalseason_id)
+                min_y = 1
+                max_y = -1
+                for ndvi_value in ndvi_values:
+                    if ndvi_value.mean_value < min_y:
+                        min_y = ndvi_value.mean_value
+                    if ndvi_value.mean_value > max_y:
+                        max_y = ndvi_value.mean_value
+                min_y = min_y - self.MARGIN_FOR_GRAPH_RANGE
+                max_y = max_y + self.MARGIN_FOR_GRAPH_RANGE
+                if min_y < -1:
+                    min_y = -1
+                if max_y > 1:
+                    max_y = 1
+                for ndvi_value in ndvi_values:
+                    date_of_ndvi = numpy.datetime64(ndvi_value.data_date)
+                    x_values.append(date_of_ndvi)
+                    y_values.append(ndvi_value.mean_value)
+                    possible_value_previous = self.NO_DATA
+                    if ndvi_values_previous:
+                        possible_value_previous = \
+                            self._get_closest_ndvi_value_from_prev_year(
+                                ndvi_value.data_date, ndvi_values_previous)
+                        if (possible_value_previous == self.NO_DATA and
+                           y_values_previous):
+                            possible_value_previous = \
+                                y_values_previous[-1]
+                    y_values_previous.append(possible_value_previous)
+                p = figure(sizing_mode='scale_width', plot_height=400,
+                           x_axis_type='datetime', toolbar_location=None,
+                           y_range=(min_y, max_y))
+                if (self.NO_DATA not in y_values_previous):
+                    x_values_previous = x_values[:]
+                    x_values_previous, y_values_previous = \
+                        self._get_interpolated_daily_values(
+                            x_values_previous, y_values_previous)
+                    p.line(x_values_previous, y_values_previous,
+                           color='mediumspringgreen',
+                           line_width=2, legend=_('Previous year'))
+                x_values, y_values = \
+                    self._get_interpolated_daily_values(x_values, y_values)
+                p.line(x_values, y_values, color='darkgreen',
+                       line_width=2, legend=_('Active ag. season'))
+                p.xaxis.axis_label = _('Date of the value')
+                p.yaxis.axis_label = _('NDVI (detail)')
+                p.grid.grid_line_alpha = 0
+                p.ygrid.band_fill_color = "olive"
+                p.ygrid.band_fill_alpha = 0.2
+                p.xaxis.formatter = DatetimeTickFormatter(months='%m/%y',
+                                                          days='%d/%m',
+                                                          hours='%H',
+                                                          minutes='%H:%M')
+                script, div = components(p)
+                if script and div:
+                    record.ndvi_graph_detail = '%s%s' % (div, script)
+
+    def _get_ndvi_data_of_prev_agriculturalseason(
+            self, cropunit, current_agriculturalseason):
+        resp = None
+        date_limit = current_agriculturalseason.initial_date
+        prev_agriculturalseason = \
+            self.env['wua.agriculturalseason'].search(
+                [('initial_date', '<', date_limit)],
+                limit=1, order='initial_date desc')
+        if prev_agriculturalseason:
+            resp = self.env['wua.cropunit.vegetationindex.ndvi'].search(
+                [('cropunit_id', '=', cropunit.id),
+                 ('agriculturalseason_id', '=', prev_agriculturalseason.id)])
+        return resp
+
+    def _get_closest_ndvi_value_from_prev_year(
+            self, reference_date, ndvi_values_previous):
+        resp = self.NO_DATA
+        difference_of_days = self.MAX_DAYS
+        reference_date = \
+            (datetime.datetime.strptime(reference_date, '%Y-%m-%d') -
+             datetime.timedelta(days=365))
+        for ndvi_value_previous in ndvi_values_previous:
+            date_to_process = datetime.datetime.strptime(
+                ndvi_value_previous.data_date, '%Y-%m-%d')
+            difference = abs((reference_date - date_to_process).days)
+            if difference <= difference_of_days:
+                difference_of_days = difference
+                resp = ndvi_value_previous.mean_value
+        return resp
+
+    def _get_interpolated_daily_values(self, x_values, y_values):
+        if not x_values or len(x_values) < 2:
+            return x_values, y_values
+
+        x_values_interpolated = []
+        y_values_interpolated = []
+
+        for i in range(len(x_values) - 1):
+            x_start = x_values[i]
+            y_start = y_values[i]
+            x_end = x_values[i + 1]
+            y_end = y_values[i + 1]
+
+            # Add the start point
+            x_values_interpolated.append(x_start)
+            y_values_interpolated.append(y_start)
+
+            # Calculate days between points
+            days_diff = (x_end.astype('datetime64[D]') - x_start.astype('datetime64[D]')).astype(int)
+
+            # Interpolate daily values
+            if days_diff > 1:
+                for day in range(1, days_diff):
+                    fraction = float(day) / days_diff
+                    x_interpolated = x_start + numpy.timedelta64(day, 'D')
+                    y_interpolated = y_start + (y_end - y_start) * fraction
+                    x_values_interpolated.append(x_interpolated)
+                    y_values_interpolated.append(y_interpolated)
+
+        # Add the last point
+        x_values_interpolated.append(x_values[-1])
+        y_values_interpolated.append(y_values[-1])
+
+        return x_values_interpolated, y_values_interpolated
+
     @api.constrains('cultivation_id')
     def _check_cultivation_suitable(self):
         for record in self:
@@ -1366,6 +1636,23 @@ class WuaCropunit(models.Model):
         return act_window
 
     @api.multi
+    def action_get_ndvi_values(self):
+        self.ensure_one()
+        id_form_view = self.env.ref(
+            'base_wua_hydric_estimation.wua_cropunit_ndvi_view_form').id
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('NDVI values'),
+            'res_model': 'wua.cropunit',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'views': [(id_form_view, 'form')],
+            'target': 'current',
+            'res_id': self.id,
+        }
+        return act_window
+
+    @api.multi
     def action_upload_geometry(self):
         self.ensure_one()
         # Clear the wizard's combo.
@@ -1488,7 +1775,7 @@ class WuaCropunit(models.Model):
             self.env.cr.execute(
                 """
                 INSERT INTO wua_gis_cropunit (name, geom)
-                VALUES (%s, postgis.ST_GeomFromEWKT(%s))            
+                VALUES (%s, postgis.ST_GeomFromEWKT(%s))
                 """,
                 (polygon_code, ewkt_25830)
             )
@@ -1530,3 +1817,310 @@ class WuaCropunit(models.Model):
                         'cropunit_id': self.id,
                         'monitoringperiod_id': monitoringperiod.id,
                     })
+
+    @api.multi
+    def get_ndvi_values_for_cropunits(self, cropunit_ids, show_dialog=True):
+        _logger = logging.getLogger(__name__)
+        _logger.info('=== START get_ndvi_values_for_cropunits ===')
+        _logger.info('cropunit_ids: %s' % cropunit_ids)
+        _logger.info('show_dialog: %s' % show_dialog)
+
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            _logger.error('User does not have permission')
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+
+        _logger.info('Getting configuration values...')
+        model_ir_values = self.env['ir.values']
+        enable_remotesensing = model_ir_values.get_default(
+            'wua.vegetationindex.configuration', 'enable_remotesensing')
+        _logger.info('enable_remotesensing: %s' % enable_remotesensing)
+
+        if (not enable_remotesensing):
+            _logger.error('Remote sensing is not enabled')
+            raise exceptions.UserError(_(
+                'The remote sensing is not enabled.'))
+
+        layer_ndvi = model_ir_values.get_default(
+            'wua.vegetationindex.configuration', 'layer_ndvi')
+        band_ndvi = model_ir_values.get_default(
+            'wua.vegetationindex.configuration', 'band_ndvi')
+        max_cloud_cover_ndvi = model_ir_values.get_default(
+            'wua.vegetationindex.configuration', 'max_cloud_cover_ndvi')
+        resolution_ndvi = model_ir_values.get_default(
+            'wua.vegetationindex.configuration', 'resolution_ndvi')
+
+        _logger.info('layer_ndvi: %s' % layer_ndvi)
+        _logger.info('band_ndvi: %s' % band_ndvi)
+        _logger.info('max_cloud_cover_ndvi: %s' % max_cloud_cover_ndvi)
+        _logger.info('resolution_ndvi: %s' % resolution_ndvi)
+
+        if layer_ndvi and band_ndvi:
+            _logger.info('Browsing cropunits...')
+            cropunits = self.env['wua.cropunit'].browse(cropunit_ids)
+            _logger.info('Found %s cropunits' % len(cropunits))
+
+            if cropunits:
+                _logger.info('Calling _get_cropunit_index_values...')
+                number_of_records_ok, number_of_errors = \
+                    cropunits._get_cropunit_index_values(
+                        layer_ndvi, band_ndvi,
+                        max_cloud_cover_ndvi, resolution_ndvi,
+                        'ndvi')
+
+                _logger.info('Results: records_ok=%s, errors=%s' % (number_of_records_ok, number_of_errors))
+                _logger.info('Results: records_ok=%s, errors=%s' % (number_of_records_ok, number_of_errors))
+
+                if show_dialog:
+                    _logger.info('Preparing dialog...')
+                    buttons = [{'type': 'ir.actions.act_window_close',
+                                'name': _('Close')}]
+                    if len(cropunit_ids) == 1:
+                        _logger.info('Single cropunit - adding form view button')
+                        buttons.append({
+                            'type': 'ir.actions.act_window',
+                            'name': _('NDVI values'),
+                            'res_model': 'wua.cropunit',
+                            'view_mode': 'form',
+                            'view_type': 'form',
+                            'res_id': cropunit_ids[0],
+                            'classes': 'btn-primary'})
+                    else:
+                        _logger.info('Multiple cropunits - adding tree view button')
+                        id_form_view = self.env.ref(
+                            'base_wua_hydric_estimation.'
+                            'wua_cropunit_vegetationindex_ndvi_view_form').id
+                        id_tree_view = self.env.ref(
+                            'base_wua_hydric_estimation.'
+                            'wua_cropunit_vegetationindex_ndvi_view_tree').id
+                        buttons.append({
+                            'type': 'ir.actions.act_window',
+                            'name': _('NDVI values'),
+                            'res_model': 'wua.cropunit.vegetationindex.ndvi',
+                            'view_mode': 'tree',
+                            'view_type': 'form',
+                            'views': [[id_tree_view, 'list'],
+                                      [id_form_view, 'form']],
+                            'context': {'search_default_active_agriculturalseason':
+                                        True},
+                            'classes': 'btn-primary'})
+
+                    message_01 = _('OPERATION COMPLETED')
+                    message_02 = _('Number of imported values')
+                    message_03 = _('Number of errors')
+                    message = '<center>' + message_01 + '</center><br>' + \
+                        message_02 + ': ' + '<b>' + str(number_of_records_ok) + \
+                        '</b><br>' + \
+                        message_03 + ': ' + '<b>' + str(number_of_errors) + '<b>'
+
+                    _logger.info('Creating dialog window...')
+                    act_window = {
+                        'type': 'ir.actions.act_window.message',
+                        'title': _('Import last NDVI values for Crop Units'),
+                        'message': message,
+                        'is_html_message': True,
+                        'close_button_title': False,
+                        'buttons': buttons
+                        }
+                    _logger.info('=== END get_ndvi_values_for_cropunits (with dialog) ===')
+                    return act_window
+        else:
+            _logger.warning('layer_ndvi or band_ndvi not configured!')
+        _logger.info('=== END get_ndvi_values_for_cropunits (no dialog) ===')
+
+    @api.multi
+    def _get_cropunit_index_values(self, layer, band, max_cloud_cover=10,
+                                    resolution=10, index_name=''):
+        _logger = logging.getLogger(__name__)
+        _logger.info('=== START _get_cropunit_index_values ===')
+        _logger.info('layer: %s, band: %s, max_cloud_cover: %s, resolution: %s, index_name: %s' %
+                    (layer, band, max_cloud_cover, resolution, index_name))
+        number_of_records_ok = 0
+        number_of_errors = 0
+        model_ir_values = self.env['ir.values']
+        enable_remotesensing = model_ir_values.get_default(
+            'wua.vegetationindex.configuration', 'enable_remotesensing')
+        _logger.info('enable_remotesensing: %s' % enable_remotesensing)
+        if enable_remotesensing:
+            prefix_messages = _('Import data from Sentinel-Hub for Crop Units')
+            _logger = logging.getLogger(self.__class__.__name__)
+            _logger.info(prefix_messages + ': ' +
+                         _('start of operation. Layer:') + ' ' + layer + '.')
+
+            remotesensing_key = model_ir_values.get_default(
+                'wua.vegetationindex.configuration', 'remotesensing_key')
+            url_api_fis = model_ir_values.get_default(
+                'wua.vegetationindex.configuration', 'url_api_fis')
+            default_initial_date = model_ir_values.get_default(
+                'wua.vegetationindex.configuration', 'initial_date')
+            _logger.info('remotesensing_key: %s' % (remotesensing_key[:10] + '...' if remotesensing_key else 'None'))
+            _logger.info('url_api_fis: %s' % url_api_fis)
+            _logger.info('default_initial_date: %s' % default_initial_date)
+            if url_api_fis[-1] != '/':
+                url_api_fis = url_api_fis + '/'
+            url_api_fis = url_api_fis + remotesensing_key
+            end_date = datetime.datetime.today().strftime('%Y-%m-%d')
+            model_parcel = self.env['wua.parcel']
+            _logger.info('Processing %s cropunits...' % len(self))
+            for idx, cropunit in enumerate(self):
+                _logger.info('--- Processing cropunit %s/%s: %s (ID: %s)' %
+                           (idx + 1, len(self), cropunit.name, cropunit.id))
+                # Get last measurement date for this cropunit
+                initial_date = self._get_date_last_cropunit_measurement(
+                    cropunit, index_name)
+                _logger.info('Last measurement date: %s' % initial_date)
+                if not initial_date:
+                    initial_date = default_initial_date
+                    _logger.info('Using default initial date: %s' % initial_date)
+                else:
+                    initial_date_plus_one_day = datetime.datetime.strptime(
+                        initial_date, '%Y-%m-%d') + datetime.timedelta(days=1)
+                    initial_date = datetime.datetime.strftime(
+                        initial_date_plus_one_day, '%Y-%m-%d')
+                    _logger.info('Using date + 1 day: %s' % initial_date)
+                _logger.info('Date range: %s to %s' % (initial_date, end_date))
+                _logger.info('Has geometry: %s' % bool(cropunit.geom_ewkt))
+
+                if initial_date <= end_date and cropunit.geom_ewkt:
+                    _logger.info('Extracting coordinates from geometry...')
+                    srid, coordinates = model_parcel.extract_coordinates(
+                        cropunit.geom_ewkt)
+                    _logger.info('SRID: %s, Coordinates length: %s' % (srid, len(coordinates)))
+                    url = url_api_fis + '?' + \
+                        'LAYER=' + layer + \
+                        '&CRS=EPSG:' + srid + \
+                        '&TIME=' + initial_date + '/' + end_date + \
+                        '&GEOMETRY=' + coordinates + \
+                        '&RESOLUTION=' + str(resolution) + \
+                        '&MAXCC=' + str(max_cloud_cover)
+                    _logger.info('Requesting Sentinel Hub API...')
+                    _logger.info('URL: %s' % url[:200] + '...')
+                    request_ok = True
+                    try:
+                        resp = requests.get(url)
+                        _logger.info('Response status: %s' % resp.status_code)
+                    except Exception as e:
+                        _logger.error('Request failed: %s' % str(e))
+                        request_ok = False
+                    if (request_ok and resp.status_code == 200 and
+                       resp.text.find('Exception') == -1):
+                        _logger.info('Response OK. Parsing JSON...')
+                        _logger.info('Response text length: %s' % len(resp.text))
+                        if resp.text != '{}':
+                            request_ok = True
+                            values = None
+                            try:
+                                values = json.loads(resp.text)[band]
+                                _logger.info('Found %s measurements' % (len(values) if values else 0))
+                            except Exception as e:
+                                _logger.error('JSON parsing error: %s' % str(e))
+                                request_ok = False
+                            if request_ok:
+                                for measurement in (values or []):
+                                    record_ok = True
+                                    data_date = measurement['date']
+                                    min_value = \
+                                        str(measurement['basicStats']['min'])
+                                    mean_value = \
+                                        str(measurement['basicStats']['mean'])
+                                    max_value = \
+                                        str(measurement['basicStats']['max'])
+                                    stdev_value = \
+                                        str(measurement['basicStats']['stDev'])
+                                    _logger.info('Measurement date %s: min=%s, mean=%s, max=%s' %
+                                               (data_date, min_value, mean_value, max_value))
+                                    if (min_value.lower() == 'nan' or
+                                       mean_value.lower() == 'nan' or
+                                       max_value.lower() == 'nan' or
+                                       stdev_value.lower() == 'nan'):
+                                        _logger.warning('Skipping NaN values for date %s' % data_date)
+                                        continue
+                                    try:
+                                        min_value = float(min_value)
+                                        mean_value = float(mean_value)
+                                        max_value = float(max_value)
+                                        stdev_value = float(stdev_value)
+                                        _logger.info('Saving values to database...')
+                                        self._save_cropunit_values(
+                                            cropunit, data_date, min_value,
+                                            mean_value, max_value, stdev_value,
+                                            index_name)
+                                        number_of_records_ok += 1
+                                        _logger.info('Successfully saved measurement for date %s' % data_date)
+                                    except Exception as exception_error:
+                                        _logger.warning(
+                                            prefix_messages + ': ' +
+                                            _('error when saving values.') +
+                                            ' ' + str(exception_error))
+                                        number_of_errors += 1
+                                        record_ok = False
+                        else:
+                            _logger.warning('Empty response from Sentinel Hub')
+                    else:
+                        if not request_ok:
+                            _logger.warning('Request failed')
+                        elif resp.status_code != 200:
+                            _logger.warning('Bad status code: %s' % resp.status_code)
+                        else:
+                            _logger.warning('Exception in response: %s' % resp.text[:500])
+                        number_of_errors += 1
+                else:
+                    if initial_date > end_date:
+                        _logger.info('Skipping - initial_date > end_date')
+                    else:
+                        _logger.warning('Skipping - no geometry for cropunit')
+            _logger.info(prefix_messages + ': ' + _('end of operation.'))
+            _logger.info('=== SUMMARY: records_ok=%s, errors=%s ===' % (number_of_records_ok, number_of_errors))
+        else:
+            _logger.warning('Remote sensing is not enabled!')
+        _logger.info('=== END _get_cropunit_index_values ===')
+        return number_of_records_ok, number_of_errors
+
+    def _get_date_last_cropunit_measurement(self, cropunit, index_name):
+        date_last_measurement = ''
+        if index_name == 'ndvi':
+            if cropunit:
+                model_ndvi = self.env['wua.cropunit.vegetationindex.ndvi']
+                ndvi_values = model_ndvi.search(
+                    [('cropunit_id', '=', cropunit.id)],
+                    order='data_date desc',
+                    limit=1)
+                if ndvi_values:
+                    date_last_measurement = ndvi_values[0].data_date
+        return date_last_measurement
+
+    def _save_cropunit_values(self, cropunit, data_date, min_value,
+                               mean_value, max_value, stdev_value,
+                               index_name):
+        if index_name == 'ndvi':
+            model_ndvi = self.env['wua.cropunit.vegetationindex.ndvi']
+            # Check if already exists
+            existing = model_ndvi.search([
+                ('cropunit_id', '=', cropunit.id),
+                ('data_date', '=', data_date)
+            ])
+            if not existing:
+                # Get parcel from cropunit's parcel_id
+                parcel_id = cropunit.parcel_id.id if cropunit.parcel_id else False
+                model_ndvi.create({
+                    'cropunit_id': cropunit.id,
+                    'parcel_id': parcel_id,
+                    'data_date': data_date,
+                    'min_value': min_value,
+                    'mean_value': mean_value,
+                    'max_value': max_value,
+                    'stdev_value': stdev_value,
+                })
+
+    @api.model
+    def get_all_cropunit_ndvi_values(self):
+        cropunit_ids = []
+        cropunits = self.env['wua.cropunit'].search([
+            ('agriculturalseason_id.active_agriculturalseason', '=', True)
+        ])
+        for cropunit in (cropunits or []):
+            cropunit_ids.append(cropunit.id)
+        for cropunit_id in cropunit_ids:
+            self.get_ndvi_values_for_cropunits([cropunit_id], show_dialog=False)
+            self.env.cr.commit()
+

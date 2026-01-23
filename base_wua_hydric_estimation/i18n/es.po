@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-04 18:02+0000\n"
-"PO-Revision-Date: 2026-01-04 18:02+0000\n"
+"POT-Creation-Date: 2026-01-23 12:21+0000\n"
+"PO-Revision-Date: 2026-01-23 12:21+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,9 +16,149 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: base_wua_hydric_estimation
+#: model:mail.template,body_html:base_wua_hydric_estimation.email_template_calculation_notification
+msgid "\n"
+"<div style=\"font-family: 'Lucida Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: #FFF; \">\n"
+"\n"
+"    <p>Dear Administrator,</p>\n"
+"\n"
+"    <p>The irrigation recommendations have been successfully calculated for the control period:</p>\n"
+"\n"
+"    <table style=\"width: 100%; border-collapse: collapse; margin: 15px 0;\">\n"
+"        <tr>\n"
+"            <td style=\"padding: 8px; font-weight: bold; width: 200px;\">Control Period:</td>\n"
+"            <td style=\"padding: 8px;\">${object.name}</td>\n"
+"        </tr>\n"
+"        <tr style=\"background-color: #f5f5f5;\">\n"
+"            <td style=\"padding: 8px; font-weight: bold;\">Initial Date:</td>\n"
+"            <td style=\"padding: 8px;\">${object.initial_date}</td>\n"
+"        </tr>\n"
+"        <tr>\n"
+"            <td style=\"padding: 8px; font-weight: bold;\">End Date:</td>\n"
+"            <td style=\"padding: 8px;\">${object.end_date}</td>\n"
+"        </tr>\n"
+"        <tr style=\"background-color: #f5f5f5;\">\n"
+"            <td style=\"padding: 8px; font-weight: bold;\">Number of Recommendations:</td>\n"
+"            <td style=\"padding: 8px;\">${object.number_of_hydricneeds}</td>\n"
+"        </tr>\n"
+"        <tr>\n"
+"            <td style=\"padding: 8px; font-weight: bold;\">Total Gross Irrigation Needs:</td>\n"
+"            <td style=\"padding: 8px;\">${'{:.2f}'.format(object.sum_total_gin or 0)} m³</td>\n"
+"        </tr>\n"
+"    </table>\n"
+"\n"
+"    <p>You can access the recommendations from the control period form or send individual recommendations to partners.</p>\n"
+"\n"
+"</div>\n"
+"        "
+msgstr "\n"
+"<div style=\"font-family: 'Lucida Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: #FFF; \">\n"
+"\n"
+"    <p>Dear Administrator,</p>\n"
+"\n"
+"    <p>The irrigation recommendations have been successfully calculated for the control period:</p>\n"
+"\n"
+"    <table style=\"width: 100%; border-collapse: collapse; margin: 15px 0;\">\n"
+"        <tr>\n"
+"            <td style=\"padding: 8px; font-weight: bold; width: 200px;\">Control Period:</td>\n"
+"            <td style=\"padding: 8px;\">${object.name}</td>\n"
+"        </tr>\n"
+"        <tr style=\"background-color: #f5f5f5;\">\n"
+"            <td style=\"padding: 8px; font-weight: bold;\">Initial Date:</td>\n"
+"            <td style=\"padding: 8px;\">${object.initial_date}</td>\n"
+"        </tr>\n"
+"        <tr>\n"
+"            <td style=\"padding: 8px; font-weight: bold;\">End Date:</td>\n"
+"            <td style=\"padding: 8px;\">${object.end_date}</td>\n"
+"        </tr>\n"
+"        <tr style=\"background-color: #f5f5f5;\">\n"
+"            <td style=\"padding: 8px; font-weight: bold;\">Number of Recommendations:</td>\n"
+"            <td style=\"padding: 8px;\">${object.number_of_hydricneeds}</td>\n"
+"        </tr>\n"
+"        <tr>\n"
+"            <td style=\"padding: 8px; font-weight: bold;\">Total Gross Irrigation Needs:</td>\n"
+"            <td style=\"padding: 8px;\">${'{:.2f}'.format(object.sum_total_gin or 0)} m³</td>\n"
+"        </tr>\n"
+"    </table>\n"
+"\n"
+"    <p>You can access the recommendations from the control period form or send individual recommendations to partners.</p>\n"
+"\n"
+"</div>\n"
+"        "
+
+#. module: base_wua_hydric_estimation
+#: model:mail.template,body_html:base_wua_hydric_estimation.email_template_irrigation_recommendation
+msgid "\n"
+"<div style=\"margin: 0px; padding: 0px;\">\n"
+"    <p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
+"        Dear ${object.partner_id.name or ''},\n"
+"        <br/><br/>\n"
+"        Please find attached the irrigation recommendation report for your crop unit <strong>${object.cropunit_id.name}</strong>.\n"
+"        <br/><br/>\n"
+"        <strong>Summary:</strong>\n"
+"        <ul>\n"
+"            <li>Parcel: ${object.parcel_id.name}</li>\n"
+"            <li>Cultivation: ${object.cultivation_id.name}</li>\n"
+"            <li>Application Period: ${object.initial_date} - ${object.end_date}</li>\n"
+"            <li>Recommended Volume: ${object.total_gin} m³</li>\n"
+"            <li>Dotation: ${object.gin} m³/ha</li>\n"
+"        </ul>\n"
+"        <br/>\n"
+"        For more details, please review the attached PDF report.\n"
+"        <br/><br/>\n"
+"        Best regards,\n"
+"        <br/>\n"
+"        ${user.name}\n"
+"    </p>\n"
+"</div>\n"
+"        "
+msgstr "\n"
+"<div style=\"margin: 0px; padding: 0px;\">\n"
+"    <p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
+"        Dear ${object.partner_id.name or ''},\n"
+"        <br/><br/>\n"
+"        Please find attached the irrigation recommendation report for your crop unit <strong>${object.cropunit_id.name}</strong>.\n"
+"        <br/><br/>\n"
+"        <strong>Summary:</strong>\n"
+"        <ul>\n"
+"            <li>Parcel: ${object.parcel_id.name}</li>\n"
+"            <li>Cultivation: ${object.cultivation_id.name}</li>\n"
+"            <li>Application Period: ${object.initial_date} - ${object.end_date}</li>\n"
+"            <li>Recommended Volume: ${object.total_gin} m³</li>\n"
+"            <li>Dotation: ${object.gin} m³/ha</li>\n"
+"        </ul>\n"
+"        <br/>\n"
+"        For more details, please review the attached PDF report.\n"
+"        <br/><br/>\n"
+"        Best regards,\n"
+"        <br/>\n"
+"        ${user.name}\n"
+"    </p>\n"
+"</div>\n"
+"        "
+
+#. module: base_wua_hydric_estimation
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_view_form
 msgid "(No recommendations are available for the current date)"
 msgstr "(no hay recomendaciones disponibles para la fecha actual)"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_parcel.py:149
+#, python-format
+msgid "- %s crop unit(s)"
+msgstr "- %s unidad(es) de cultivo"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_parcel.py:148
+#, python-format
+msgid "- %s parcel(s)"
+msgstr "- %s parcela(s)"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_parcel.py:149
+#, python-format
+msgid "- 0 crop units"
+msgstr "- 0 unidades de cultivo"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_agriculturalseason_view_form
@@ -48,6 +188,30 @@ msgstr "<span class=\"o_stat_text\">\n"
 "                                </span>\n"
 "                                <span class=\"o_stat_text\">\n"
 "                                    de control\n"
+"                                </span>"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_view_form
+msgid "<span class=\"o_stat_text\">\n"
+"                                    NDVI\n"
+"                                </span>"
+msgstr "<span class=\"o_stat_text\">\n"
+"                                    NDVI\n"
+"                                </span>"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_agriculturalseason_view_form
+msgid "<span class=\"o_stat_text\">\n"
+"                                    Recommen-\n"
+"                                </span>\n"
+"                                <span class=\"o_stat_text\">\n"
+"                                    dation Periods\n"
+"                                </span>"
+msgstr "<span class=\"o_stat_text\">\n"
+"                                    Períodos\n"
+"                                </span>\n"
+"                                <span class=\"o_stat_text\">\n"
+"                                    de recomendación \n"
 "                                </span>"
 
 #. module: base_wua_hydric_estimation
@@ -104,6 +268,13 @@ msgid "<span class=\"o_stat_text\">Cultivations</span>"
 msgstr "<span class=\"o_stat_text\">Cultivos</span>"
 
 #. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_recommendationperiod_view_form
+msgid "<span class=\"o_stat_text\">Reco-</span>\n"
+"                                <span class=\"o_stat_text\">mmendation</span>"
+msgstr "<span class=\"o_stat_text\">Reco-</span>\n"
+"                                <span class=\"o_stat_text\">mendación</span>"
+
+#. module: base_wua_hydric_estimation
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_view_form
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_view_form
 msgid "<span class=\"oe_inline\"> ha</span>"
@@ -155,6 +326,7 @@ msgstr "<span class=\"oe_inline\">EA = </span>"
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_agriculturalseason_view_form
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_view_form
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_monitoringperiod_view_form
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_recommendationperiod_view_form
 msgid "<span class=\"oe_inline\">Total = </span>"
 msgstr "<span class=\"oe_inline\">Total = </span>"
 
@@ -174,6 +346,11 @@ msgid "<span class=\"text-success\"><strong>(CURRENT PERIOD)</strong></span><br/
 msgstr "<span class=\"text-success\"><strong>(PERÍODO ACTUAL)</strong></span><br/>"
 
 #. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_report_document
+msgid "<span style=\"color: #999;\">No aerial image available</span>"
+msgstr "<span style=\"color: #999;\">Imagen aérea no disponible</span>"
+
+#. module: base_wua_hydric_estimation
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropfamily_view_form
 msgid "<span style=\"display:inline\">Kc(0.0) = </span>"
 msgstr "<span style=\"display:inline\">Kc(0.0) = </span>"
@@ -189,6 +366,15 @@ msgid "<span style=\"display:inline\">Kc(1.0) = </span>"
 msgstr "<span style=\"display:inline\">Kc(1.0) = </span>"
 
 #. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_vegetationindex_ndvi_view_form
+msgid "<span style=\"font-weight:bold;\">\n"
+"                            N O T E S\n"
+"                            </span>"
+msgstr "<span style=\"font-weight:bold;\">\n"
+"                            N O T A S\n"
+"                            </span>"
+
+#. module: base_wua_hydric_estimation
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_view_kanban
 msgid "<span>(no irrigation recommendations)</span>"
 msgstr "<span>(sin recomendaciones de riego)</span>"
@@ -197,6 +383,41 @@ msgstr "<span>(sin recomendaciones de riego)</span>"
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_monitoringperiod_view_kanban
 msgid "<span>(uncalculated)</span>"
 msgstr "<span>(pendiente de calcular)</span>"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_vegetationindex_ndvi_view_form
+msgid "<span>NDVI</span>"
+msgstr "<span>NDVI</span>"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_vegetationindex_ndvi_view_form
+msgid "<span>PNOA</span>"
+msgstr "<span>PNOA</span>"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_report_document
+msgid "<strong>Agronomic Data</strong>"
+msgstr "<strong>Datos agronómicos</strong>"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_report_document
+msgid "<strong>General Data</strong>"
+msgstr "<strong>Datos generales</strong>"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_report_document
+msgid "<strong>Irrigation Recommendation Report</strong>"
+msgstr "<strong>Informe de recomendaciones de riego</strong>"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_report_document
+msgid "<strong>Irrigation Recommendation</strong>"
+msgstr "<strong>Recomendaciones de riego</strong>"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_report_document
+msgid "<strong>Maps</strong>"
+msgstr "<strong>Mapas</strong>"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_hydricneed_accumulated_etc
@@ -219,11 +440,16 @@ msgid "Activate"
 msgstr "Activar"
 
 #. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_agriculturalseason.py:252
+#: code:addons/base_wua_hydric_estimation/models/wua_agriculturalseason.py:257
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wizard_activate_season_view_form
 #, python-format
 msgid "Activate season"
 msgstr "Activar campaña"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_vegetationindex_ndvi_view_search
+msgid "Active Agricultural Season"
+msgstr "Campaña activa"
 
 #. module: base_wua_hydric_estimation
 #: selection:wua.cropunit,state:0
@@ -236,12 +462,25 @@ msgid "Active Season"
 msgstr "Campaña activa"
 
 #. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1112
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1181
+#, python-format
+msgid "Active ag. season"
+msgstr "Campaña activa"
+
+#. module: base_wua_hydric_estimation
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_agriculturalseason_view_search
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_view_search
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_view_search
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_monitoringperiod_view_search
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_recommendationperiod_view_search
 msgid "Active agricultural season"
 msgstr "Campaña activa"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_report_document
+msgid "Adjusted Kc:"
+msgstr "Kc ajustada:"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_aerial_image
@@ -297,9 +536,12 @@ msgstr "Valores agregados"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_activate_season_agriculturalseason_id
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_generate_monitoringperiods_agriculturalseason_name
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_agriculturalseason_id
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_hydricneed_agriculturalseason_id
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_monitoringperiod_agriculturalseason_id
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_recommendationperiod_agriculturalseason_id
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_vegetationindex_ndvi_view_search
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_view_form
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_view_search
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_view_form
@@ -307,6 +549,7 @@ msgstr "Valores agregados"
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_monitoringperiod_view_form
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_monitoringperiod_view_search
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_monitoringperiod_view_tree
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_recommendationperiod_view_search
 msgid "Agricultural Season"
 msgstr "Campaña"
 
@@ -314,6 +557,11 @@ msgstr "Campaña"
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_monitoringperiod_agriculturalseason_id_title
 msgid "Agricultural Season (title)"
 msgstr "Campaña (título)"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_report_document
+msgid "Agricultural Season:"
+msgstr "Campaña:"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.actions.act_window,name:base_wua_hydric_estimation.wua_agriculturalseason_action
@@ -336,6 +584,11 @@ msgstr "Eficiencia de aplicación"
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_config_settings_view_form
 msgid "Application Efficiency (default)"
 msgstr "Eficiencia de aplicación (por defecto)"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_report_document
+msgid "Application Period:"
+msgstr "Período de aplicación:"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wizard_activate_season_view_form
@@ -372,7 +625,7 @@ msgstr "Cálculo automático"
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,help:base_wua_hydric_estimation.field_wua_configuration_automatic_calculation
 msgid "Automatic calculation of hydric estimations when new agroclimatic data is available on the start day of the period"
-msgstr "Ejecutar un cálculo automático de las recomendaciones de riego cuando en el primer día del período de control actual haya constancia de nuevos datos agroclimáticos"
+msgstr "Ejecutar un cálculo automático de las recomendaciones de riego cuando en el primer día del período de cálculo actual haya constancia de nuevos datos agroclimáticos"
 
 #. module: base_wua_hydric_estimation
 #: model:wua.cropfamily,name:base_wua_hydric_estimation.cropfamily_021
@@ -384,6 +637,12 @@ msgstr "Frutillas y bayas"
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_view_search
 msgid "C.U. Partner"
 msgstr "Socio"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1062
+#, python-format
+msgid "CROP UNIT"
+msgstr "UNIDAD DE CULTIVO"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_view_form
@@ -423,13 +682,24 @@ msgid "Calculation"
 msgstr "Cálculo"
 
 #. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_monitoringperiod.py:334
+#: code:addons/base_wua_hydric_estimation/models/wua_monitoringperiod.py:346
 #, python-format
 msgid "Calculation executed successfully, total gross irrigation needs"
 msgstr "Cálculo ejecutado satisfactoriamente, total necesidades de riego brutas"
 
 #. module: base_wua_hydric_estimation
+#: model:ir.ui.menu,name:base_wua_hydric_estimation.technical_get_ndvi_cropunits_menu
+msgid "Calculation: NDVI (Crop Units)"
+msgstr "Cálculo: NDVI (Unidades de cultivo)"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.menu,name:base_wua_hydric_estimation.technical_get_ndvi_parcels_cropunits_menu
+msgid "Calculation: NDVI (Parcels + Crop Units)"
+msgstr "Cálculo: NDVI (Parcelas + Unidades de cultivo)"
+
+#. module: base_wua_hydric_estimation
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wizard_activate_season_view_form
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wizard_generate_monitoringperiods_view_form
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wizard_import_kml_view_form
 msgid "Cancel"
 msgstr "Cancelar"
@@ -445,6 +715,19 @@ msgid "Citrus"
 msgstr "Cítricos"
 
 #. module: base_wua_hydric_estimation
+#: model:ir.actions.act_window,help:base_wua_hydric_estimation.wua_recommendationperiod_action
+msgid "Click to create a new recommendation period."
+msgstr "Click para crear un nuevo período de recomendación"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1877
+#: code:addons/base_wua_hydric_estimation/models/wua_parcel.py:111
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wizard_cropunit_creation_summary_view_form
+#, python-format
+msgid "Close"
+msgstr "Cerrar"
+
+#. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_hydricneed_name
 msgid "Code"
 msgstr "Código"
@@ -457,7 +740,7 @@ msgstr "Código de unidad de cultivo"
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_monitoringperiod_name
 msgid "Code of monitoring period"
-msgstr "Código de período de control"
+msgstr "Código de período de cálculo"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_config_settings_view_form
@@ -513,19 +796,31 @@ msgid "Coefficient 𝒄"
 msgstr "Coeficiente 𝒄"
 
 #. module: base_wua_hydric_estimation
+#: model:ir.ui.menu,name:base_wua_hydric_estimation.base_wua_hydric_estimation_config_menu
+msgid "Configuration"
+msgstr "Configuración"
+
+#. module: base_wua_hydric_estimation
 #: model:ir.model,name:base_wua_hydric_estimation.model_wua_configuration
 msgid "Configuration of base_wua module"
 msgstr "Configuración del  módulo base_wua"
 
 #. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_agriculturalseason.py:221
-#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:975
+#: model:ir.actions.act_window,name:base_wua_hydric_estimation.wua_configuration_action_hydric_estimation
+msgid "Configure Hydric Estimations"
+msgstr "Configurar estimaciones hídricas"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_agriculturalseason.py:226
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1015
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_hydricneed_monitoringperiod_id
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_recommendationperiod_monitoringperiod_id
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_view_form
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_view_search
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_recommendationperiod_view_search
 #, python-format
 msgid "Control Period"
-msgstr "Período de control"
+msgstr "Período de cálculo"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_configuration_control_periodicity
@@ -538,16 +833,16 @@ msgid "Control Periodicity (default)"
 msgstr "Periodicidad de control (por defecto)"
 
 #. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_agriculturalseason.py:216
-#: code:addons/base_wua_hydric_estimation/models/wua_agriculturalseason.py:269
-#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:970
+#: code:addons/base_wua_hydric_estimation/models/wua_agriculturalseason.py:221
+#: code:addons/base_wua_hydric_estimation/models/wua_agriculturalseason.py:274
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1010
 #: model:ir.actions.act_window,name:base_wua_hydric_estimation.wua_monitoringperiod_action
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_agriculturalseason_monitoringperiod_ids
 #: model:ir.ui.menu,name:base_wua_hydric_estimation.wua_monitoringperiod_menu
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wizard_activate_season_view_form
 #, python-format
 msgid "Control Periods"
-msgstr "Períodos de control"
+msgstr "Períodos de cálculo"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_hydricneed_initial_date
@@ -556,9 +851,20 @@ msgid "Control period dates"
 msgstr "Fechas límite"
 
 #. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/wizard/wizard_generate_monitoringperiods.py:57
+#, python-format
+msgid "Control periods already exist for this season. Please delete them first if you want to regenerate."
+msgstr "Períodos de calculo ya existen para esta campaña. Elimínelos si quiere regenerarlos"
+
+#. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_county_id
 msgid "County"
 msgstr "Municipio"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.actions.server,name:base_wua_hydric_estimation.wua_sigpaclink_create_cropunits
+msgid "Create Crop Units from SIGPAC Enclosures"
+msgstr "Creadas las unidades de cultivo a partir de recintos SIGPAC"
 
 #. module: base_wua_hydric_estimation
 #: selection:wizard.activate.season,option_create_cropunits:0
@@ -583,26 +889,42 @@ msgstr "Crear períodos de control semanales"
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_activate_season_create_uid
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_base_wua_hydric_estimation_create_uid
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_cropunit_creation_summary_create_uid
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_generate_monitoringperiods_create_uid
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_import_kml_create_uid
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_kml_placemark_option_create_uid
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropfamily_create_uid
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_create_uid
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_vegetationindex_ndvi_create_uid
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_hydricneed_create_uid
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_monitoringperiod_create_uid
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_recommendationperiod_create_uid
 msgid "Created by"
 msgstr "Creado por"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_activate_season_create_date
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_base_wua_hydric_estimation_create_date
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_cropunit_creation_summary_create_date
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_generate_monitoringperiods_create_date
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_import_kml_create_date
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_kml_placemark_option_create_date
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropfamily_create_date
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_create_date
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_vegetationindex_ndvi_create_date
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_hydricneed_create_date
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_monitoringperiod_create_date
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_recommendationperiod_create_date
 msgid "Created on"
 msgstr "Creado el"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_parcel_sigpaclink.py:81
+#, python-format
+msgid "Created: %d crop unit(s)\n"
+""
+msgstr "Created: %d crop unit(s)\n"
+""
 
 #. module: base_wua_hydric_estimation
 #: model:ir.actions.act_window,name:base_wua_hydric_estimation.wua_cropfamily_action
@@ -629,13 +951,20 @@ msgstr "Familia de cultivo"
 #. module: base_wua_hydric_estimation
 #: model:ir.model,name:base_wua_hydric_estimation.model_wua_cropunit
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_import_kml_cropunit_id
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_vegetationindex_ndvi_cropunit_id
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_hydricneed_cropunit_id
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_vegetationindex_ndvi_view_search
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_view_search
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_view_tree
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_view_form
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_view_search
 msgid "Crop Unit"
 msgstr "Unidad de cultivo"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_vegetationindex_ndvi_view_form
+msgid "Crop Unit (NDVI values)"
+msgstr "Unidades de cultivo (Valores NDVI)"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_area_gis_ha
@@ -648,15 +977,53 @@ msgid "Crop Unit Area (ha)"
 msgstr "Área u. cultivo (ha)"
 
 #. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_agriculturalseason.py:286
+#: model:ir.model,name:base_wua_hydric_estimation.model_wizard_cropunit_creation_summary
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wizard_cropunit_creation_summary_view_form
+msgid "Crop Unit Creation Summary"
+msgstr "Resumen de la creación de unidades de cultivo"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_cropunit_title_ndvi
+msgid "Crop Unit Title for NDVI values"
+msgstr "Título de la unidad de cultivo para los valores NDVI"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_report_document
+msgid "Crop Unit:"
+msgstr "Unidad de cultivo:"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_agriculturalseason.py:291
 #: model:ir.actions.act_window,name:base_wua_hydric_estimation.wua_cropunit_action
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_agriculturalseason_cropunit_ids
 #: model:ir.ui.menu,name:base_wua_hydric_estimation.wua_cropunit_menu
+#: model:ir.ui.menu,name:base_wua_hydric_estimation.wua_cropunit_menu_census
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wizard_activate_season_view_form
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_agriculturalseason_view_form
 #, python-format
 msgid "Crop Units"
 msgstr "Unidades de cultivo"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_ndvi_view_form
+msgid "Crop Units (NDVI)"
+msgstr "Unidades de cultivo (NDVI)"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_parcel_sigpaclink.py:99
+#, python-format
+msgid "Crop Units Created"
+msgstr "Unidades de cultivo creadas"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_parcel_sigpaclink.py:80
+#, python-format
+msgid "Crop Units Creation Summary\n"
+"\n"
+""
+msgstr "Resumen de creación de unidades de cultivo\n"
+"\n"
+""
 
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_end_date
@@ -681,6 +1048,11 @@ msgid "Crop not started"
 msgstr "Cultivo no iniciado"
 
 #. module: base_wua_hydric_estimation
+#: model:ir.model.fields,help:base_wua_hydric_estimation.field_wua_cropunit_vegetationindex_ndvi_cropunit_id
+msgid "Crop unit for which this NDVI value was captured."
+msgstr "Unidad de cultivo para la que se toma el valor NDVI."
+
+#. module: base_wua_hydric_estimation
 #: model:ir.actions.act_window,name:base_wua_hydric_estimation.action_base_wua_hydric_estimation_cropunits
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wizard_base_wua_hydric_estimation_view_form
 msgid "Crop unit initialization"
@@ -699,8 +1071,14 @@ msgid "Cultivation"
 msgstr "Cultivo"
 
 #. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_report_document
+msgid "Cultivation:"
+msgstr "Cultivo:"
+
+#. module: base_wua_hydric_estimation
 #: code:addons/base_wua_hydric_estimation/models/wua_cropfamily.py:156
 #: model:ir.model,name:base_wua_hydric_estimation.model_wua_cultivation
+#: model:ir.ui.menu,name:base_wua_hydric_estimation.wua_cultivation_menu_hydric
 #, python-format
 msgid "Cultivations"
 msgstr "Cultivos"
@@ -709,7 +1087,7 @@ msgstr "Cultivos"
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_hydricneed_is_current_controlperiod
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_monitoringperiod_is_current_controlperiod
 msgid "Current Control Period (y/n)"
-msgstr "Período de control actual (s/n)"
+msgstr "Período de cálculo actual (s/n)"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_current_controlperiod_initial_date
@@ -724,23 +1102,41 @@ msgstr "Recomendación actual (m³)"
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_current_monitoringperiod_id
 msgid "Current control period"
-msgstr "Período de control actual"
+msgstr "Período de cálculo actual"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_view_search
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_monitoringperiod_view_search
 msgid "Current or past control period"
-msgstr "Período de control actual o pasado"
+msgstr "Período de cálculo actual o pasado"
 
 #. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_recommendationperiod_view_search
+msgid "Current or past recommendation period"
+msgstr "Current or past recommendation period"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.menu,name:base_wua_hydric_estimation.base_wua_hydric_estimation_data_menu
+msgid "Data"
+msgstr "Datos"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_vegetationindex_ndvi_view_search
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_view_search
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_monitoringperiod_view_search
 msgid "Date"
 msgstr "Fecha"
 
 #. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1019
-#: code:addons/base_wua_hydric_estimation/models/wua_monitoringperiod.py:250
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1113
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1182
+#, python-format
+msgid "Date of the value"
+msgstr "Fecha del valor"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1289
+#: code:addons/base_wua_hydric_estimation/models/wua_monitoringperiod.py:255
 #, python-format
 msgid "Dates outside the agricultural season."
 msgstr "Fechas fuera de la campaña."
@@ -791,21 +1187,30 @@ msgid "Description of the crop unit"
 msgstr "Descripción de la unidad de cultivo"
 
 #. module: base_wua_hydric_estimation
+#: model:ir.model,name:base_wua_hydric_estimation.model_wizard_generate_monitoringperiods
+msgid "Dialog box to generate control periods"
+msgstr "Asistente para generar períodos de cálculo"
+
+#. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_activate_season_display_name
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_base_wua_hydric_estimation_display_name
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_cropunit_creation_summary_display_name
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_generate_monitoringperiods_display_name
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_import_kml_display_name
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_kml_placemark_option_display_name
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropfamily_display_name
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_display_name
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_vegetationindex_ndvi_display_name
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_hydricneed_display_name
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_monitoringperiod_display_name
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_recommendationperiod_display_name
 msgid "Display Name"
 msgstr "Nombre a mostrar"
 
 #. module: base_wua_hydric_estimation
 #: selection:wizard.activate.season,option_create_monitoringperiods:0
 msgid "Do not create any control period"
-msgstr "No crear ningún período de control"
+msgstr "No crear ningún período de cálculo"
 
 #. module: base_wua_hydric_estimation
 #: selection:wizard.activate.season,option_create_cropunits:0
@@ -818,7 +1223,17 @@ msgid "Do not generate anything (they can be generated later from the seasons fo
 msgstr "No hacer nada (unidades de cultivo y períodos de control se podrán crear después desde el formulario de campaña)."
 
 #. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_hydricneed.py:447
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_report_document
+msgid "Dotation:"
+msgstr "Dotación:"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_report_document
+msgid "ET0 Period:"
+msgstr "Período ET0:"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_hydricneed.py:454
 #, python-format
 msgid "ETc(Kc, ETo)"
 msgstr "ETc(Kc, ETo)"
@@ -827,6 +1242,11 @@ msgstr "ETc(Kc, ETo)"
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_hydricneed_etc_function
 msgid "ETc(Kc,ETo)"
 msgstr "ETc(Kc,ETo)"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_report_document
+msgid "ETc:"
+msgstr "ETc:"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_view_tree
@@ -854,6 +1274,13 @@ msgid "EWKT Geometry"
 msgstr "Geometría EWKT"
 
 #. module: base_wua_hydric_estimation
+#: model:ir.model.fields,help:base_wua_hydric_estimation.field_wua_configuration_notification_emails
+msgid "Email addresses to notify when irrigation recommendations are calculated. Separate multiple emails with commas."
+msgstr "Direcciones de correo para notificar cuando se calculan las recomendaciones de riego. Emails separados por comas para múltiples envíos."
+
+#. module: base_wua_hydric_estimation
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_generate_monitoringperiods_end_date
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_recommendationperiod_end_date
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_agriculturalseason_view_tree
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_view_tree
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_monitoringperiod_view_tree
@@ -876,7 +1303,7 @@ msgstr "Fecha final (título)"
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_current_controlperiod_end_date
 msgid "End date of current control period"
-msgstr "Fecha final del período de control actual"
+msgstr "Fecha final del período de cálculo actual"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.model,name:base_wua_hydric_estimation.model_wua_agriculturalseason
@@ -891,7 +1318,7 @@ msgstr "Elemento (parcela)"
 #. module: base_wua_hydric_estimation
 #: sql_constraint:wua.monitoringperiod:0
 msgid "Existing control period."
-msgstr "Período de control existente."
+msgstr "Período de cálculo existente."
 
 #. module: base_wua_hydric_estimation
 #: sql_constraint:wua.cropunit:0
@@ -960,7 +1387,7 @@ msgid "GIN(ETc,Pe)"
 msgstr "NRB(ETc,Pe)"
 
 #. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_hydricneed.py:489
+#: code:addons/base_wua_hydric_estimation/models/wua_hydricneed.py:496
 #, python-format
 msgid "GIN(NIN, SAE)"
 msgstr "NRB(NRN, EA)"
@@ -976,9 +1403,30 @@ msgid "GIS preview with google maps viewer"
 msgstr "Previsualización con Google Maps"
 
 #. module: base_wua_hydric_estimation
+#: model:ir.actions.act_window,name:base_wua_hydric_estimation.action_wizard_generate_monitoringperiods
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wizard_generate_monitoringperiods_view_form
+msgid "Generate Control Periods"
+msgstr "Generar períodos de cálculo"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wizard_generate_monitoringperiods_view_form
+msgid "Generate Periods"
+msgstr "Generar períodos"
+
+#. module: base_wua_hydric_estimation
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_view_form
 msgid "Geometry"
-msgstr "Geometría"
+msgstr "Geometria"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.actions.server,name:base_wua_hydric_estimation.wua_get_ndvi_values_cropunits
+msgid "Get NDVI values (Crop Units)"
+msgstr "Obtener valores NDVI (unidades de cultivo)"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.actions.server,name:base_wua_hydric_estimation.wua_get_ndvi_values_with_cropunits
+msgid "Get NDVI values (Parcels + Crop Units)"
+msgstr "Obtener valores NDVI (unidades de cultivo + parcelas)"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_googlemaps_link
@@ -1019,8 +1467,8 @@ msgid "Gross Irrigation Need (m³)"
 msgstr "Necesidades de riego brutas (m³)"
 
 #. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_agriculturalseason.py:209
-#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:963
+#: code:addons/base_wua_hydric_estimation/models/wua_agriculturalseason.py:214
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1003
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_hydricneed_gin
 #, python-format
 msgid "Gross Irrigation Needs"
@@ -1033,10 +1481,17 @@ msgid "Gross Irrigation Needs :"
 msgstr "Necesidades de riego brutas :"
 
 #. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_recommendationperiod_view_form
+msgid "Gross Irrigation Needs:"
+msgstr "Necesidades de riego brutas:"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_vegetationindex_ndvi_view_search
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_view_search
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cultivation_view_search
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_view_search
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_monitoringperiod_view_search
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_recommendationperiod_view_search
 msgid "Group By"
 msgstr "Agrupar por"
 
@@ -1049,6 +1504,31 @@ msgstr "Altura, en píxeles, de la imagen aérea"
 #: model:ir.model.fields,help:base_wua_hydric_estimation.field_wua_configuration_aerial_image_height
 msgid "Height, in pixels, of the aerial image; if its value is 0, the image height will be auto-adjusted to maintain the proportions"
 msgstr "Altura, en píxeles, de la imagen aérea; si su valor es 0, la altura de la imagen será autoajustada de forma que se conserven sus proporciones"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_config_settings_view_form_hydric_estimation
+msgid "Hydric Estimation - Aerial Images Settings"
+msgstr "Hydric Estimation - Aerial Images Settings"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_config_settings_view_form_hydric_estimation
+msgid "Hydric Estimation - Data Sources"
+msgstr "Hydric Estimation - Data Sources"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_config_settings_view_form_hydric_estimation
+msgid "Hydric Estimation - Email Notifications"
+msgstr "Hydric Estimation - Email Notifications"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_config_settings_view_form_hydric_estimation
+msgid "Hydric Estimation - General Settings"
+msgstr "Hydric Estimation - General Settings"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_config_settings_view_form_hydric_estimation
+msgid "Hydric Estimation - Kc Calculation Settings"
+msgstr "Hydric Estimation - Kc Calculation Settings"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_config_settings_view_form
@@ -1066,6 +1546,11 @@ msgid "Hydric Estimation: Sensor type for Pe"
 msgstr "Estimación hídrica: Tipo de sensor para Pe"
 
 #. module: base_wua_hydric_estimation
+#: model:ir.ui.menu,name:base_wua_hydric_estimation.base_wua_hydric_estimation_main_menu
+msgid "Hydric Estimations"
+msgstr "Estimaciones de riego"
+
+#. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_agriculturalseason_hydricneed_ids
 msgid "Hydric Needs"
 msgstr "Necesidades hídricas"
@@ -1078,12 +1563,16 @@ msgstr "Necesidades hídricas de las unidades de cultivo"
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_activate_season_id
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_base_wua_hydric_estimation_id
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_cropunit_creation_summary_id
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_generate_monitoringperiods_id
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_import_kml_id
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_kml_placemark_option_id
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropfamily_id
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_id
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_vegetationindex_ndvi_id
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_hydricneed_id
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_monitoringperiod_id
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_recommendationperiod_id
 msgid "ID"
 msgstr "ID"
 
@@ -1108,11 +1597,29 @@ msgid "If there is an active season at this time, this wizard will create and in
 msgstr "Si en este momento hay una campaña activa, este asistente creará e inicializará las unidades de cultivo y los períodos de control semanales."
 
 #. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1384
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1671
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wizard_import_kml_view_form
 #, python-format
 msgid "Import KML"
 msgstr "Importar KML"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_parcel.py:154
+#, python-format
+msgid "Import NDVI values (Parcels + Crop Units)"
+msgstr "Importar valores NDVI (Parcelas + Unidades de cultivo)"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1945
+#, python-format
+msgid "Import data from Sentinel-Hub for Crop Units"
+msgstr "Importar datos de Sentinel-Hub para unidades de cultivo"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1919
+#, python-format
+msgid "Import last NDVI values for Crop Units"
+msgstr "Importar los últimos valores NDVI para unidades de cultivo"
 
 #. module: base_wua_hydric_estimation
 #: selection:wua.agriculturalseason,state_active:0
@@ -1125,7 +1632,13 @@ msgid "Incorrect Kc saturation values."
 msgstr "Valores incorrectos de saturación de Kc."
 
 #. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1005
+#: code:addons/base_wua_hydric_estimation/wizard/wizard_generate_monitoringperiods.py:51
+#, python-format
+msgid "Incorrect dates."
+msgstr "Fechas incorrectas."
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1275
 #, python-format
 msgid "Incorrect variety."
 msgstr "Variedad incorrecta."
@@ -1136,13 +1649,16 @@ msgid "Industrial crops"
 msgstr "Cultivos industriales"
 
 #. module: base_wua_hydric_estimation
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_generate_monitoringperiods_initial_date
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_monitoringperiod_initial_date
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_recommendationperiod_initial_date
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_agriculturalseason_view_search
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_agriculturalseason_view_tree
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_view_search
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_view_tree
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_monitoringperiod_view_search
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_monitoringperiod_view_tree
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_recommendationperiod_view_search
 msgid "Initial Date"
 msgstr "Fecha inicio"
 
@@ -1152,16 +1668,21 @@ msgid "Initial date"
 msgstr "Fecha inicio"
 
 #. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1402
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1689
 #, python-format
 msgid "Invalid KML file."
 msgstr "Fichero KML no válido."
 
 #. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1419
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1706
 #, python-format
 msgid "Invalid polygon geometry."
 msgstr "Geometría poligonal no válida."
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_report_document
+msgid "Irrigation Efficiency:"
+msgstr "Eficiencia:"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_partner_id
@@ -1174,17 +1695,38 @@ msgid "Irrigation Partner"
 msgstr "Regante"
 
 #. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_agriculturalseason.py:300
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_report_document
+msgid "Irrigation Partner:"
+msgstr "Regante:"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.actions.report.xml,name:base_wua_hydric_estimation.wua_hydricneed_report
+msgid "Irrigation Recommendation"
+msgstr "Recomendación de riego"
+
+#. module: base_wua_hydric_estimation
+#: model:mail.template,subject:base_wua_hydric_estimation.email_template_irrigation_recommendation
+msgid "Irrigation Recommendation - ${object.cropunit_id.name} - ${object.monitoringperiod_id.name}"
+msgstr "Recomendación de riego - ${object.cropunit_id.name} - ${object.monitoringperiod_id.name}"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_agriculturalseason.py:305
 #: code:addons/base_wua_hydric_estimation/models/wua_cropfamily.py:173
-#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1355
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1625
 #: code:addons/base_wua_hydric_estimation/models/wua_cultivation.py:75
-#: code:addons/base_wua_hydric_estimation/models/wua_monitoringperiod.py:293
+#: code:addons/base_wua_hydric_estimation/models/wua_monitoringperiod.py:298
 #: code:addons/base_wua_hydric_estimation/models/wua_parcel.py:80
 #: model:ir.actions.act_window,name:base_wua_hydric_estimation.wua_hydricneed_action
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_recommendationperiod_hydricneed_ids
 #: model:ir.ui.menu,name:base_wua_hydric_estimation.wua_hydricneed_menu
 #, python-format
 msgid "Irrigation Recommendations"
 msgstr "Recomendaciones de riego"
+
+#. module: base_wua_hydric_estimation
+#: model:mail.template,subject:base_wua_hydric_estimation.email_template_calculation_notification
+msgid "Irrigation Recommendations Calculated - ${object.name}"
+msgstr "Recimendaciones de riego calculadas - ${object.name}"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_config_settings_view_form
@@ -1198,27 +1740,41 @@ msgid "Irrigation System"
 msgstr "Sistema de riego"
 
 #. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_report_document
+msgid "Irrigation System:"
+msgstr "Sistema de riego:"
+
+#. module: base_wua_hydric_estimation
 #: model:ir.model,name:base_wua_hydric_estimation.model_wua_irrigationsystem
 msgid "Irrigation Systems"
 msgstr "Sistemas de riego"
 
 #. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1498
+#: model:mail.template,report_name:base_wua_hydric_estimation.email_template_irrigation_recommendation
+msgid "Irrigation_Recommendation_${object.cropunit_id.name.replace('/','_')}_${object.monitoringperiod_id.name.replace('/','_')}"
+msgstr "Irrigation_Recommendation_${object.cropunit_id.name.replace('/','_')}_${object.monitoringperiod_id.name.replace('/','_')}"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_recommendationperiod_is_current_recommendationperiod
+msgid "Is Current Recommendation Period"
+msgstr "Período de recomendación actual"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_recommendationperiod_is_occurred_or_current_recommendationperiod
+msgid "Is Occurred or Current Recommendation Period"
+msgstr "Período de cálculo actual o pasado"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1785
 #, python-format
 msgid "It has not been possible to create the new polygon."
 msgstr "No ha sido posible crear el nuevo polígono."
 
 #. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1483
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1770
 #, python-format
 msgid "It has not been possible to remove the pre-existing polygon."
 msgstr "No ha sido posible eliminar el polígono preexistente."
-
-#. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_monitoringperiod.py:365
-#, python-format
-msgid "It has not been possible to reset the control periods."
-msgstr "No ha sido posible reiniciar los períodos de control."
 
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_import_kml_kml_file
@@ -1251,7 +1807,7 @@ msgid "Kc(1.0)"
 msgstr "Kc(1.0)"
 
 #. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_hydricneed.py:430
+#: code:addons/base_wua_hydric_estimation/models/wua_hydricneed.py:437
 #, python-format
 msgid "Kc(NDVI)"
 msgstr "Kc(NDVI)"
@@ -1285,38 +1841,55 @@ msgstr "Kc: Saturación superior"
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_activate_season___last_update
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_base_wua_hydric_estimation___last_update
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_cropunit_creation_summary___last_update
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_generate_monitoringperiods___last_update
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_import_kml___last_update
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_kml_placemark_option___last_update
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropfamily___last_update
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit___last_update
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_vegetationindex_ndvi___last_update
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_hydricneed___last_update
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_monitoringperiod___last_update
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_recommendationperiod___last_update
 msgid "Last Modified on"
 msgstr "Última modificación en"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_activate_season_write_uid
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_base_wua_hydric_estimation_write_uid
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_cropunit_creation_summary_write_uid
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_generate_monitoringperiods_write_uid
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_import_kml_write_uid
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_kml_placemark_option_write_uid
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropfamily_write_uid
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_vegetationindex_ndvi_write_uid
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_write_uid
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_hydricneed_write_uid
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_monitoringperiod_write_uid
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_recommendationperiod_write_uid
 msgid "Last Updated by"
 msgstr "Última actualización por"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_activate_season_write_date
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_base_wua_hydric_estimation_write_date
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_cropunit_creation_summary_write_date
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_generate_monitoringperiods_write_date
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_import_kml_write_date
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_kml_placemark_option_write_date
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropfamily_write_date
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_vegetationindex_ndvi_write_date
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_write_date
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_hydricneed_write_date
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_monitoringperiod_write_date
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_recommendationperiod_write_date
 msgid "Last Updated on"
 msgstr "Última actualización el"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_last_ndvi_date
+msgid "Last date of NDVI value"
+msgstr "Fecha del último valor NDVI importado"
 
 #. module: base_wua_hydric_estimation
 #: model:wua.cropfamily,name:base_wua_hydric_estimation.cropfamily_008
@@ -1327,6 +1900,11 @@ msgstr "Leguminosas de grano"
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_configuration_kc_lower_saturation
 msgid "Lower saturation for Kc"
 msgstr "Saturación inferior para Kc"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_recommendationperiod_mapped_to_active_agriculturalseason
+msgid "Mapped to Active Agricultural Season"
+msgstr "Enlazado a campaña activa"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_mapped_to_polygon
@@ -1344,7 +1922,7 @@ msgstr "Vinculación con la campaña activa"
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,help:base_wua_hydric_estimation.field_wua_configuration_max_offset_alternative_ndvi
 msgid "Maximum delay to find an alternative NDVI if it is not found within the control period."
-msgstr "En caso de no encontrar ningún índice NDVI en el período de control, retraso máximo (en días) para encontrar un NDVI alternativo."
+msgstr "En caso de no encontrar ningún índice NDVI en el período de cálculo, retraso máximo (en días) para encontrar un NDVI alternativo."
 
 #. module: base_wua_hydric_estimation
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_config_settings_view_form
@@ -1360,6 +1938,11 @@ msgstr "Máximo desfase temporal para encontrar un índice NDVI alternativo"
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_hydricneed_mean_ndvi
 msgid "Mean NDVI"
 msgstr "Valor medio de NDVI"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_report_document
+msgid "Mean NDVI:"
+msgstr "Media NDVI:"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.model,name:base_wua_hydric_estimation.model_mdm_measurement_device_sensor_reading
@@ -1379,7 +1962,7 @@ msgstr "Lunes"
 #. module: base_wua_hydric_estimation
 #: model:ir.model,name:base_wua_hydric_estimation.model_wua_monitoringperiod
 msgid "Monitoring Period"
-msgstr "Período de control"
+msgstr "Período de cálculo"
 
 #. module: base_wua_hydric_estimation
 #: model:wua.cropfamily,name:base_wua_hydric_estimation.cropfamily_016
@@ -1387,9 +1970,71 @@ msgid "Mushrooms"
 msgstr "Hongos"
 
 #. module: base_wua_hydric_estimation
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_number_of_ndvi
+msgid "N. of NDVI values (in active agricultural season)"
+msgstr "N. de valores NDVI (en la campaña activa)"
+
+#. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_current_controlperiod_ndvi
 msgid "NDVI"
 msgstr "NDVI"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1183
+#, python-format
+msgid "NDVI (detail)"
+msgstr "NDVI (detalle)"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1114
+#, python-format
+msgid "NDVI (maximum range)"
+msgstr "NDVI (máximo rango)"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_parcel.py:137
+#: model:ir.actions.act_window,name:base_wua_hydric_estimation.wua_cropunit_vegetationindex_ndvi_action
+#: model:ir.ui.menu,name:base_wua_hydric_estimation.cropunit_vegetationindex_ndvi_menu
+#, python-format
+msgid "NDVI Crop Units"
+msgstr "Unidades de cultivo NDVI"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_ndvi_graph_detail
+msgid "NDVI Graph (active agricultural season, detail)"
+msgstr "Gráfico NDVI (campaña activa, detalle)"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_ndvi_graph_maximum_range
+msgid "NDVI Graph (active agricultural season, maximum range)"
+msgstr "Gráfico NDVI (campaña activa, rango máximo)"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_vegetationindex_ndvi_vegetationindex_img
+msgid "NDVI Image"
+msgstr "Imagen NDVI"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_parcel.py:120
+#, python-format
+msgid "NDVI Parcels"
+msgstr "PARCELAS NDVI"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1063
+#, python-format
+msgid "NDVI VALUES"
+msgstr "VALORES NDVI"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_ndvi_ids
+msgid "NDVI Values"
+msgstr "Valores NDVI"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_active_agriculturalsason_ndvi_ids
+msgid "NDVI Values of the active agricultural season"
+msgstr "Valores NDVI de la campaña activa"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_view_tree
@@ -1397,7 +2042,26 @@ msgid "NDVI [-1,1]"
 msgstr "NDVI [-1,1]"
 
 #. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_hydricneed.py:462
+#: model:ir.model,name:base_wua_hydric_estimation.model_wua_cropunit_vegetationindex_ndvi
+msgid "NDVI for Crop Units"
+msgstr "NDVI en unidades de cultivo
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1645
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1882
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1898
+#, python-format
+msgid "NDVI values"
+msgstr "Valores NDVI"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_parcel.py:147
+#, python-format
+msgid "NDVI values captured for:"
+msgstr "Valores NDVI capturados para:"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_hydricneed.py:469
 #, python-format
 msgid "NIN(ETc, Pe)"
 msgstr "NRN(ETc, Pe)"
@@ -1408,6 +2072,16 @@ msgid "NIN(ETc,Pe)"
 msgstr "NRN(ETc,Pe)"
 
 #. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_vegetationindex_ndvi_simple_view_tree
+msgid "NOTES"
+msgstr "NOTAS"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_recommendationperiod_name
+msgid "Name"
+msgstr "Nombre"
+
+#. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_current_controlperiod_nin
 msgid "Net Irrig. Needs"
 msgstr "Necesidades de riego netas"
@@ -1416,6 +2090,23 @@ msgstr "Necesidades de riego netas"
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_hydricneed_nin
 msgid "Net Irrigation Needs"
 msgstr "Necesidades de riego netas"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_report_document
+msgid "Net Irrigation Needs:"
+msgstr "Necesidades de riego netas:"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_parcel_sigpaclink.py:20
+#, python-format
+msgid "No active agricultural season found."
+msgstr "No hay campaña activa."
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/wizard/wizard_generate_monitoringperiods.py:46
+#, python-format
+msgid "No agricultural season selected."
+msgstr "No hay campaña seleccionada."
 
 #. module: base_wua_hydric_estimation
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_agriculturalseason_view_tree
@@ -1439,7 +2130,7 @@ msgid "Not suitable for irrigation recommendations"
 msgstr "No apto para recomendaciones de riego"
 
 #. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:996
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1266
 #, python-format
 msgid "Not suitable for irrigation recommendations."
 msgstr "No apto para recomendaciones de riego."
@@ -1454,6 +2145,21 @@ msgstr "No apto para recomendaciones de riego."
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_monitoringperiod_view_form
 msgid "Notes"
 msgstr "Notas"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_configuration_notification_emails
+msgid "Notification Emails"
+msgstr "Emails de notificación"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_config_settings_view_form
+msgid "Notification emails"
+msgstr "Emails de notificación"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_recommendationperiod_hydricneed_count
+msgid "Number of Recommendations"
+msgstr "Nº de recomendaciones"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_agriculturalseason_number_of_calculated_monitoringperiods
@@ -1478,10 +2184,29 @@ msgid "Number of days in each control period"
 msgstr "Número de días de los períodos de control"
 
 #. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1910
+#, python-format
+msgid "Number of errors"
+msgstr "Nº de errores"
+
+#. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_agriculturalseason_number_of_hydricneeds
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_monitoringperiod_number_of_hydricneeds
 msgid "Number of hydric estimations"
 msgstr "Nº estimaciones hídricas"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1909
+#, python-format
+msgid "Number of imported values"
+msgstr "Nº de valores importados"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1908
+#: code:addons/base_wua_hydric_estimation/models/wua_parcel.py:146
+#, python-format
+msgid "OPERATION COMPLETED"
+msgstr "OPERACIÓN COMPLETADA"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_hydricneed_is_occurred_or_current_controlperiod
@@ -1495,9 +2220,15 @@ msgid "Oilseeds and Industrial"
 msgstr "Oleaginosas e industriales"
 
 #. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_monitoringperiod.py:307
-#: code:addons/base_wua_hydric_estimation/models/wua_monitoringperiod.py:347
-#: code:addons/base_wua_hydric_estimation/models/wua_monitoringperiod.py:382
+#: code:addons/base_wua_hydric_estimation/wizard/wizard_generate_monitoringperiods.py:41
+#, python-format
+msgid "Operation not allowed for multiple records."
+msgstr "Operación no permitida para varios elementos."
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_monitoringperiod.py:312
+#: code:addons/base_wua_hydric_estimation/models/wua_monitoringperiod.py:376
+#: code:addons/base_wua_hydric_estimation/models/wua_monitoringperiod.py:404
 #, python-format
 msgid "Operation not allowed."
 msgstr "Operación no permitida."
@@ -1538,13 +2269,27 @@ msgid "Other"
 msgstr "Otros"
 
 #. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1065
+#, python-format
+msgid "PARTNER"
+msgstr "SOCIO"
+
+#. module: base_wua_hydric_estimation
 #: model:wua.cropfamily,name:base_wua_hydric_estimation.cropfamily_020
 msgid "Palm/Date"
 msgstr "Palma y dátil"
 
 #. module: base_wua_hydric_estimation
+#: model:ir.ui.menu,name:base_wua_hydric_estimation.wua_configuration_menu_hydric_estimation
+msgid "Parameters"
+msgstr "Parámetros"
+
+#. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_parcel_id
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_vegetationindex_ndvi_parcel_id
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_hydricneed_parcel_id
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_vegetationindex_ndvi_view_form
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_vegetationindex_ndvi_view_search
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_view_form
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_view_search
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_view_tree
@@ -1560,14 +2305,29 @@ msgid "Parcel Type"
 msgstr "Tipo de parcela"
 
 #. module: base_wua_hydric_estimation
+#: model:ir.model.fields,help:base_wua_hydric_estimation.field_wua_cropunit_vegetationindex_ndvi_parcel_id
+msgid "Parcel is not used for cropunit NDVI values."
+msgstr "La parcela no está siendo usada para los valores NDVI de la unidad de cultivo."
+
+#. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_parcel_mapped_to_polygon
 msgid "Parcel mapped to polygon"
 msgstr "Parcela asociada a polígono"
 
 #. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_report_document
+msgid "Parcel:"
+msgstr "Parcela:"
+
+#. module: base_wua_hydric_estimation
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_view_form
 msgid "Parcels (NDVI)"
 msgstr "Parcelas (NDVI)"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_vegetationindex_ndvi_view_search
+msgid "Partner"
+msgstr "Empresa"
 
 #. module: base_wua_hydric_estimation
 #: model:wua.cropfamily,name:base_wua_hydric_estimation.cropfamily_013
@@ -1585,13 +2345,18 @@ msgid "Pe (mm)"
 msgstr "Pe (mm)"
 
 #. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_recommendationperiod_view_form
+msgid "Period Information"
+msgstr "Información del período"
+
+#. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_configuration_period_start_day
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_config_settings_view_form
 msgid "Period Start Day"
 msgstr "Día de inicio de los períodos"
 
 #. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1422
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1709
 #, python-format
 msgid "Placemark \"%s\" not found in KML."
 msgstr "Marca \"%s\" no encontrada en el fichero KML."
@@ -1607,6 +2372,12 @@ msgid "Placemark options detected in KML"
 msgstr "Opciones de marca detectadas en el KML"
 
 #. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_parcel_sigpaclink.py:15
+#, python-format
+msgid "Please select at least one SIGPAC enclosure."
+msgstr "Por favor seleccione al menos un recinto SIGPAC."
+
+#. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_import_kml_placemark_id
 msgid "Polygon Identifier"
 msgstr "Identificador de polígono"
@@ -1616,6 +2387,11 @@ msgstr "Identificador de polígono"
 #, python-format
 msgid "Polygon not found."
 msgstr "Polígono no encontrado."
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_report_document
+msgid "Precipitation:"
+msgstr "Precipitation:"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_previous_hydricneed_id
@@ -1628,10 +2404,60 @@ msgid "Previous calculated control period"
 msgstr "Anterior período de control calculado"
 
 #. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1108
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1177
+#, python-format
+msgid "Previous year"
+msgstr "Año previo"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_report_document
+msgid "Printing date:"
+msgstr "Fecha impresión:"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_hydricneed_recommendationperiod_id
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_monitoringperiod_recommendationperiod_id
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_view_form
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_recommendationperiod_view_form
+msgid "Recommendation Period"
+msgstr "Período de recomendación"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.model,name:base_wua_hydric_estimation.model_wua_recommendationperiod
+msgid "Recommendation Period for Irrigation"
+msgstr "Período de recomendación de riego"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_agriculturalseason.py:319
+#: model:ir.actions.act_window,name:base_wua_hydric_estimation.wua_recommendationperiod_action
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_agriculturalseason_recommendationperiod_ids
+#: model:ir.ui.menu,name:base_wua_hydric_estimation.wua_recommendationperiod_menu
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_recommendationperiod_view_search
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_recommendationperiod_view_tree
+#, python-format
+msgid "Recommendation Periods"
+msgstr "Período de recomendación"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.actions.act_window,help:base_wua_hydric_estimation.wua_recommendationperiod_action
+msgid "Recommendation periods represent the week when irrigation recommendations\n"
+"                should be applied. Each recommendation period is based on a control period\n"
+"                (monitoring period) and represents the following week."
+msgstr "Los períodos de recomendación representan la semana en la que las recomendaciones de riego\n"
+"                deben ser aplicadas. Cada período de recomendación está basado en un período de cálculo\n"
+"                y representa la semana siguiente."
+
+#. module: base_wua_hydric_estimation
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_agriculturalseason_view_form
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_monitoringperiod_view_form
 msgid "Recommendations"
 msgstr "Recomendaciones"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_report_document
+msgid "Recommended Volume:"
+msgstr "Volumen recomendado:"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.actions.server,name:base_wua_hydric_estimation.wua_monitoringperiod_refresh
@@ -1651,6 +2477,11 @@ msgid "Reset"
 msgstr "Reiniciar"
 
 #. module: base_wua_hydric_estimation
+#: model:ir.model,name:base_wua_hydric_estimation.model_wua_parcel_sigpaclink
+msgid "SIGPAC link of a parcel"
+msgstr "Enlace SIGPAC de parcela"
+
+#. module: base_wua_hydric_estimation
 #: selection:wua.configuration,period_start_day:0
 msgid "Saturday"
 msgstr "Sábado"
@@ -1661,10 +2492,15 @@ msgid "Season dates"
 msgstr "Fechas límite"
 
 #. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1413
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1700
 #, python-format
 msgid "Selected placemark is not a polygon."
 msgstr "La marca seleccionada no es un polígono."
+
+#. module: base_wua_hydric_estimation
+#: model:ir.actions.server,name:base_wua_hydric_estimation.action_send_irrigation_recommendations
+msgid "Send Irrigation Recommendations by Email"
+msgstr "Enviar recomendación de riego por Email"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_configuration_hydric_est_et0_sensor_type
@@ -1695,6 +2531,26 @@ msgstr "Identificador de sesión"
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_import_kml_session_key
 msgid "Session Key"
 msgstr "Clave de sesión"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_parcel_sigpaclink.py:85
+#, python-format
+msgid "Skipped enclosures already have crop units created for the active agricultural season.\n"
+"\n"
+"Each SIGPAC enclosure can only have one crop unit per season."
+msgstr "Los recintos omitidos ya tienen unidad de cultivo para la camaña activa.\n"
+"\n"
+"Cada recinto SIGPAC solo puede tener una unidad de cultivo por campaña."
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_parcel_sigpaclink.py:82
+#, python-format
+msgid "Skipped: %d enclosure(s)\n"
+"\n"
+""
+msgstr "Omitidos: %d recintos(s)\n"
+"\n"
+""
 
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_cropunit_standard_application_efficiency
@@ -1768,9 +2624,24 @@ msgid "Suitable for irrigation recommendations"
 msgstr "Apto para recomendaciones de riego"
 
 #. module: base_wua_hydric_estimation
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wizard_cropunit_creation_summary_message
+msgid "Summary"
+msgstr "Resumen"
+
+#. module: base_wua_hydric_estimation
 #: selection:wua.configuration,period_start_day:0
 msgid "Sunday"
 msgstr "Domingo"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_report_document
+msgid "Surface:"
+msgstr "Superficie:"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.menu,name:base_wua_hydric_estimation.base_wua_hydric_estimation_technical_menu
+msgid "Technical"
+msgstr "Técnico"
 
 #. module: base_wua_hydric_estimation
 #: code:addons/base_wua_hydric_estimation/wizard/wizard_import_kml.py:107
@@ -1800,15 +2671,15 @@ msgid "The default standard application efficiency must be a value greater than 
 msgstr "La eficiencia de aplicación estándar debe ser un valor mayor que 0 y menor o igual que 1."
 
 #. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_monitoringperiod.py:258
+#: code:addons/base_wua_hydric_estimation/models/wua_monitoringperiod.py:263
 #, python-format
 msgid "The duration of the control period exceeds the maximum time allowed."
-msgstr "La duración del período de control excede el máximo tiempo permitido."
+msgstr "La duración del período de cálculo excede el máximo tiempo permitido."
 
 #. module: base_wua_hydric_estimation
 #: sql_constraint:wua.monitoringperiod:0
 msgid "The end date of the control period must be later than the start date."
-msgstr "La fecha de finalización del período de control debe ser posterior a su fecha de inicio."
+msgstr "La fecha de finalización del período de cálculo debe ser posterior a su fecha de inicio."
 
 #. module: base_wua_hydric_estimation
 #: sql_constraint:wua.cropunit:0
@@ -1822,13 +2693,13 @@ msgid "The file is not a valid KML."
 msgstr "El fichero no es un KML válido."
 
 #. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1467
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1754
 #, python-format
 msgid "The geometry has not been found."
 msgstr "Geometría no encontrada."
 
 #. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1448
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1735
 #, python-format
 msgid "The imported geometry does not intersect the reference polygon."
 msgstr "La geometría importada no intersecta con el polígono de referencia."
@@ -1860,6 +2731,18 @@ msgid "The parcel to which the crop unit belongs has no geometry."
 msgstr "La parcela a la que pertenece la unidad de cultivo carece de geometría."
 
 #. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/wizard/wizard_generate_monitoringperiods.py:54
+#, python-format
+msgid "The range of dates must be within the agricultural season."
+msgstr "El rango de fechas tiene que estar dentro de la campaña."
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1841
+#, python-format
+msgid "The remote sensing is not enabled."
+msgstr "No está habilitada la teledetección."
+
+#. module: base_wua_hydric_estimation
 #: sql_constraint:wua.irrigationsystem:0
 msgid "The standard application efficiency must be a value between 0 and 1."
 msgstr "La eficiencia de aplicación estándar debe ser un valor entre 0 y 1."
@@ -1875,7 +2758,7 @@ msgid "The zoom of the aerial image must be a strictly positive value."
 msgstr "El zoom de la imagen aérea debe ser un valor estrictamente positivo."
 
 #. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_monitoringperiod.py:273
+#: code:addons/base_wua_hydric_estimation/models/wua_monitoringperiod.py:278
 #, python-format
 msgid "There are overlapping control periods."
 msgstr "Hay períodos de control superpuestos."
@@ -1910,6 +2793,7 @@ msgstr "Para introducir la geometría de la unidad de cultivo, en primer lugar e
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_agriculturalseason_view_tree
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_view_tree
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_monitoringperiod_view_tree
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_recommendationperiod_view_tree
 msgid "Total"
 msgstr "Total"
 
@@ -1919,7 +2803,7 @@ msgid "Total GIN (m³)"
 msgstr "Total NRB (m³)"
 
 #. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_hydricneed.py:503
+#: code:addons/base_wua_hydric_estimation/models/wua_hydricneed.py:510
 #, python-format
 msgid "Total GIN(GIN, A)"
 msgstr "Total NRB(NRB, A)"
@@ -1936,6 +2820,11 @@ msgstr "Total NRB(NRB,A)"
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_monitoringperiod_sum_total_gin
 msgid "Total Gross Irrig. Need"
 msgstr "Total NRB"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_recommendationperiod_sum_total_gin
+msgid "Total Gross Irrigation Needs"
+msgstr "Necesidades de riego brutas"
 
 #. module: base_wua_hydric_estimation
 #: model:ir.model.fields,field_description:base_wua_hydric_estimation.field_wua_hydricneed_total_gin
@@ -1973,8 +2862,8 @@ msgid "Upper saturation for Kc"
 msgstr "Saturación superior para Kc"
 
 #. module: base_wua_hydric_estimation
-#: code:addons/base_wua_hydric_estimation/models/wua_agriculturalseason.py:222
-#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:976
+#: code:addons/base_wua_hydric_estimation/models/wua_agriculturalseason.py:227
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1016
 #, python-format
 msgid "Value (m³)"
 msgstr "Valor (m³)"
@@ -2037,6 +2926,16 @@ msgid "With GIS link: Yes"
 msgstr "Vínculo GIS: Sí"
 
 #. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_vegetationindex_ndvi_view_search
+msgid "With notes: No"
+msgstr "Con notas: No"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_vegetationindex_ndvi_view_search
+msgid "With notes: Yes"
+msgstr "Con notas: Sí"
+
+#. module: base_wua_hydric_estimation
 #: model:ir.model,name:base_wua_hydric_estimation.model_wizard_activate_season
 msgid "Wizard to activate a season and mass-create crop units and/or monitoring periods"
 msgstr "Asistente para activar una campaña y crear masivamente unidades de cultivo y/o períodos de control"
@@ -2052,6 +2951,12 @@ msgid "Woody others"
 msgstr "Otros cultivos leñosos"
 
 #. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1830
+#, python-format
+msgid "You do not have permission to execute this action."
+msgstr "No tienes permiso para ejecutar esta acción."
+
+#. module: base_wua_hydric_estimation
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wizard_base_wua_hydric_estimation_view_form
 msgid "You must choose one of the following options to generate the crop units:"
 msgstr "Debe elegir una de las siguientes opciones para generar las unidades de cultivo:"
@@ -2062,9 +2967,44 @@ msgid "Zoom to apply to the aerial image"
 msgstr "Zoom a aplicar sobre la imagen aérea"
 
 #. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_config_settings_view_form
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_config_settings_view_form_hydric_estimation
+msgid "email1@example.com,email2@example.com"
+msgstr "email1@example.com,email2@example.com"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:2072
+#, python-format
+msgid "end of operation."
+msgstr "end of operation."
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:2053
+#, python-format
+msgid "error when saving values."
+msgstr "error when saving values."
+
+#. module: base_wua_hydric_estimation
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_cropunit_view_kanban
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_report_document
 msgid "ha"
 msgstr "ha"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_report_document
+msgid "mm"
+msgstr "mm"
+
+#. module: base_wua_hydric_estimation
+#: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_hydricneed_report_document
+msgid "m³/ha"
+msgstr "m³/ha"
+
+#. module: base_wua_hydric_estimation
+#: code:addons/base_wua_hydric_estimation/models/wua_cropunit.py:1948
+#, python-format
+msgid "start of operation. Layer:"
+msgstr "start of operation. Layer:"
 
 #. module: base_wua_hydric_estimation
 #: code:addons/base_wua_hydric_estimation/wizard/wizard_import_kml.py:111
@@ -2092,4 +3032,3 @@ msgstr "wua_cropunit_avatar"
 #: model:ir.ui.view,arch_db:base_wua_hydric_estimation.wua_monitoringperiod_view_form
 msgid "⚠️ Please confirm the operation."
 msgstr "⚠️ Por favor, confirme la operación."
-

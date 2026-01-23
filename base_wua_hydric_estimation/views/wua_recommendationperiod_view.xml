@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_recommendationperiod_view_tree" model="ir.ui.view">
+        <field name="name">wua.recommendationperiod.view.tree</field>
+        <field name="model">wua.recommendationperiod</field>
+        <field name="arch" type="xml">
+            <tree string="Recommendation Periods"
+                  colors="green:is_current_recommendationperiod==True;"
+                  default_order="initial_date desc">
+                <field name="is_current_recommendationperiod" invisible="1"/>
+                <field name="initial_date"/>
+                <field name="end_date"/>
+                <field name="monitoringperiod_id"/>
+                <field name="agriculturalseason_id"/>
+                <field name="hydricneed_count"/>
+                <field name="sum_total_gin" sum="Total"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_recommendationperiod_view_form" model="ir.ui.view">
+        <field name="name">wua.recommendationperiod.view.form</field>
+        <field name="model">wua.recommendationperiod</field>
+        <field name="arch" type="xml">
+            <form string="Recommendation Period">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_recommendations"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-moval-hydric-estimation">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Reco-</span>
+                                <span class="o_stat_text">mmendation</span>
+                            </div>
+                        </button>
+                    </div>
+                    <group>
+                        <group string="Period Information">
+                            <field name="monitoringperiod_id"
+                                   readonly="1"
+                                   options="{'no_create': True}"/>
+                            <field name="agriculturalseason_id"
+                                   readonly="1"
+                                   options="{'no_create': True}"/>
+                            <label for="initial_date" string="Recommendation Period"/>
+                            <div class="o_row">
+                                <field name="initial_date"
+                                       class="oe_inline"
+                                       readonly="1"/>
+                                <span class="oe_inline"> - </span>
+                                <field name="end_date"
+                                       class="oe_inline"
+                                       readonly="1"/>
+                            </div>
+                        </group>
+                        <group name="master_data_right">
+                            <div name="section_sum_total_gin_title" colspan="2" class="text-center">
+                                <p>Gross Irrigation Needs:</p>
+                            </div>
+                            <div name="section_sum_total_gin"
+                                 colspan="2" class="text-center panel-body"
+                                 style="border-color:#cccccc;border-width:1px;border-style:solid;height:50px;margin-top:5px;margin-left:25%;margin-right:25%">
+                                <b><span class="oe_inline">Total = </span>
+                                <field name="sum_total_gin" class="oe_inline"/>
+                                <span class="oe_inline"> m³</span></b>
+                            </div>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_recommendationperiod_view_search" model="ir.ui.view">
+        <field name="name">wua.recommendationperiod.view.search</field>
+        <field name="model">wua.recommendationperiod</field>
+        <field name="arch" type="xml">
+            <search string="Recommendation Periods">
+                <field name="name"/>
+                <field name="monitoringperiod_id"/>
+                <field name="agriculturalseason_id"/>
+                <field name="initial_date" string="Initial Date"/>
+                <filter string="Active agricultural season"
+                        name="mapped_to_active_agriculturalseason_yes"
+                        domain="[('mapped_to_active_agriculturalseason', '=', True)]"/>
+                <separator/>
+                <filter string="Current or past recommendation period"
+                        name="is_occurred_or_current_recommendationperiod_yes"
+                        domain="[('is_occurred_or_current_recommendationperiod', '=', True)]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Agricultural Season"
+                            name="group_by_season"
+                            context="{'group_by': 'agriculturalseason_id'}"/>
+                    <filter string="Control Period"
+                            name="group_by_monitoring"
+                            context="{'group_by': 'monitoringperiod_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_recommendationperiod_action" model="ir.actions.act_window">
+        <field name="name">Recommendation Periods</field>
+        <field name="res_model">wua.recommendationperiod</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{
+            'search_default_mapped_to_active_agriculturalseason_yes': True,
+            'search_default_is_occurred_or_current_recommendationperiod_yes': True
+        }</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to create a new recommendation period.
+            </p>
+            <p>
+                Recommendation periods represent the week when irrigation recommendations
+                should be applied. Each recommendation period is based on a control period
+                (monitoring period) and represents the following week.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="wua_recommendationperiod_menu"
+              name="Recommendation Periods"
+              parent="base_wua_hydric_estimation.base_wua_hydric_estimation_data_menu"
+              action="wua_recommendationperiod_action"
+              sequence="30"/>
+
+</odoo>

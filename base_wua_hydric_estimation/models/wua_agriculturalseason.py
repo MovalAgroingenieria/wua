@@ -34,6 +34,11 @@ class WuaAgriculturalseason(models.Model):
         comodel_name='wua.hydricneed',
         inverse_name='agriculturalseason_id')
 
+    recommendationperiod_ids = fields.One2many(
+        string='Recommendation Periods',
+        comodel_name='wua.recommendationperiod',
+        inverse_name='agriculturalseason_id')
+
     state_active = fields.Selection(
         string='State',
         selection=[
@@ -307,6 +312,24 @@ class WuaAgriculturalseason(models.Model):
         return act_window
 
     @api.multi
+    def action_get_recommendationperiods(self):
+        self.ensure_one()
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Recommendation Periods'),
+            'res_model': 'wua.recommendationperiod',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'target': 'current',
+            'domain': [('id', 'in', self.recommendationperiod_ids.ids)],
+            'context': {
+                'search_default_is_occurred_or_current_'
+                'recommendationperiod_yes': True,
+            }
+        }
+        return act_window
+
+    @api.multi
     def generate_weekly_periods(self):
         self.ensure_one()
         season = self
@@ -374,6 +397,38 @@ class WuaAgriculturalseason(models.Model):
                 'initial_date': initial_date_last_mp.strftime('%Y-%m-%d'),
                 'end_date': end_date_last_mp.strftime('%Y-%m-%d')
             })
+
+        created_monitoringperiods = model_wua_monitoringperiod.search([
+            ('agriculturalseason_id', '=', season.id)
+        ], order='initial_date')
+
+        for monitoring_period in created_monitoringperiods:
+            try:
+                monitoring_end = datetime.datetime.strptime(
+                    str(monitoring_period.end_date), '%Y-%m-%d')
+                rec_initial = monitoring_end + datetime.timedelta(days=1)
+                rec_end = rec_initial + datetime.timedelta(days=6)
+                rec_name = '%s - %s' % (
+                    rec_initial.strftime('%Y-%m-%d'),
+                    rec_end.strftime('%Y-%m-%d')
+                )
+                self.env.cr.execute("""
+                    INSERT INTO wua_recommendationperiod
+                    (monitoringperiod_id, agriculturalseason_id, initial_date,
+                     end_date, name, create_uid, create_date, write_uid,
+                     write_date)
+                    VALUES (%s, %s, %s, %s, %s, %s, NOW(), %s, NOW())
+                """, (
+                    monitoring_period.id,
+                    season.id,
+                    rec_initial.strftime('%Y-%m-%d'),
+                    rec_end.strftime('%Y-%m-%d'),
+                    rec_name,
+                    self.env.uid,
+                    self.env.uid
+                ))
+            except Exception:
+                pass
 
     @api.multi
     def generate_cropunits_from_prev_season(self):

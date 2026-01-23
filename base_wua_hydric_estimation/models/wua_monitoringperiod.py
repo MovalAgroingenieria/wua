@@ -3,7 +3,6 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
-import logging
 
 from odoo import models, fields, api, exceptions, _
 
@@ -65,6 +64,12 @@ class WuaMonitoringperiod(models.Model):
         string='Associated hydric estimations',
         comodel_name='wua.hydricneed',
         inverse_name='monitoringperiod_id')
+
+    recommendationperiod_id = fields.One2many(
+        string='Recommendation Period',
+        comodel_name='wua.recommendationperiod',
+        inverse_name='monitoringperiod_id',
+    )
 
     number_of_hydricneeds = fields.Integer(
         string='Number of hydric estimations',
@@ -311,6 +316,13 @@ class WuaMonitoringperiod(models.Model):
                 [('end_date', '>=', self.initial_date),
                  ('initial_date', '<=', self.end_date)])
             if cropunits_to_calculate:
+                cropunit_ids = cropunits_to_calculate.ids
+                try:
+                    cropunits_to_calculate.get_ndvi_values_for_cropunits(
+                        cropunit_ids, show_dialog=False)
+                except Exception:
+                    pass
+
                 cropunits_to_calculate._compute_area_gis()
                 for cropunit_to_calculate in cropunits_to_calculate:
                     cropunit_out = \
@@ -334,10 +346,27 @@ class WuaMonitoringperiod(models.Model):
                 _('Calculation executed successfully, total gross irrigation '
                   'needs') + ' = {:.2f}'.format(self.sum_total_gin) +
                 ' ' + 'm3')
-            logging.getLogger(__name__).info(
-                'Calculation executed successfully. Control Period: ' +
-                self.name + '. Total gross irrigation needs = '
-                '{:.2f}'.format(self.sum_total_gin) + ' ' + 'm3')
+            if update_state:
+                self._send_calculation_notification()
+                self._update_recommendationperiod()
+
+    def _update_recommendationperiod(self):
+        self.ensure_one()
+        RecommendationPeriod = self.env['wua.recommendationperiod']
+        existing = RecommendationPeriod.search([
+            ('monitoringperiod_id', '=', self.id)
+        ], limit=1)
+        if existing:
+            existing._compute_dates()
+            recommendationperiod = existing
+        else:
+            recommendationperiod = RecommendationPeriod.create({
+                'monitoringperiod_id': self.id,
+            })
+        self.hydricneed_ids.write({
+            'recommendationperiod_id': recommendationperiod.id,
+        })
+        return recommendationperiod
 
     @api.multi
     def reset(self, update_state=True):
@@ -347,23 +376,16 @@ class WuaMonitoringperiod(models.Model):
                 raise exceptions.ValidationError(_(
                     'Operation not allowed.'))
             cropunit_to_update_ids = []
-            try:
-                self.env.cr.savepoint()
-                self.env.cr.execute(
-                    ('SELECT cropunit_id FROM wua_hydricneed WHERE '
-                     'monitoringperiod_id = %s' % (self.id,)))
-                sql_resp = self.env.cr.fetchall()
-                if sql_resp:
-                    for item in sql_resp:
-                        cropunit_to_update_ids.append(item[0])
-                self.env.cr.execute(
-                    ('DELETE FROM wua_hydricneed WHERE '
-                     'monitoringperiod_id = %s' % (self.id,)))
-                self.env.cr.commit()
-            except (Exception,):
-                self.env.cr.rollback()
-                raise exceptions.UserError(_(
-                    'It has not been possible to reset the control periods.'))
+            self.env.cr.execute(
+                ('SELECT cropunit_id FROM wua_hydricneed WHERE '
+                 'monitoringperiod_id = %s' % (self.id,)))
+            sql_resp = self.env.cr.fetchall()
+            if sql_resp:
+                for item in sql_resp:
+                    cropunit_to_update_ids.append(item[0])
+            self.env.cr.execute(
+                ('DELETE FROM wua_hydricneed WHERE '
+                 'monitoringperiod_id = %s' % (self.id,)))
             if cropunit_to_update_ids:
                 self.env['wua.cropunit'].browse(
                     cropunit_to_update_ids)._compute_sum_total_gin()
@@ -466,7 +488,23 @@ class WuaMonitoringperiod(models.Model):
                         disable_test_create_reading=True,
                     ).run()
             current_date = datetime.date.today().strftime('%Y-%m-%d')
-            self.env['wua.parcel'].get_all_ndvi_values()
+
+            # Get NDVI only for parcels with active cropunits
+            active_agriculturalseason = self.env['wua.agriculturalseason'].search(
+                [('active_agriculturalseason', '=', True)], limit=1)
+            if active_agriculturalseason:
+                # Get parcels that have cropunits in the active season
+                cropunits = self.env['wua.cropunit'].search([
+                    ('agriculturalseason_id', '=', active_agriculturalseason.id)
+                ])
+                parcel_ids = cropunits.mapped('parcel_id').ids
+                if parcel_ids:
+                    # Download NDVI only for these parcels
+                    for parcel_id in parcel_ids:
+                        self.env['wua.parcel'].get_ndvi_values(
+                            [parcel_id], show_dialog=False)
+                        self.env.cr.commit()
+
             self.env['wua.parcel.sensor.reading'].refresh_materialized_view()
             self.env['res.partner.sensor.reading'].refresh_materialized_view()
             uncalculated_monitoringperiods = \
@@ -475,3 +513,31 @@ class WuaMonitoringperiod(models.Model):
             if uncalculated_monitoringperiods:
                 for monitoringperiod in uncalculated_monitoringperiods:
                     monitoringperiod.calculate(force=True)
+
+    @api.multi
+    def _send_calculation_notification(self):
+        self.ensure_one()
+        notification_emails = self.env['ir.values'].get_default(
+            'wua.configuration', 'notification_emails')
+        if not notification_emails:
+            return
+        email_list = [email.strip() for email in notification_emails.split(',') if email.strip()]
+
+        if not email_list:
+            return
+
+        template = self.env.ref(
+            'base_wua_hydric_estimation.email_template_calculation_notification',
+            raise_if_not_found=False
+        )
+        if not template:
+            return
+        for email_to in email_list:
+            try:
+                template.send_mail(
+                    self.id,
+                    force_send=True,
+                    email_values={'email_to': email_to}
+                )
+            except Exception:
+                pass

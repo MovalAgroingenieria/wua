@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wizard_generate_monitoringperiods_view_form" model="ir.ui.view">
+        <field name="name">wizard.generate.monitoringperiods.view.form</field>
+        <field name="model">wizard.generate.monitoringperiods</field>
+        <field name="arch" type="xml">
+            <form string="Generate Control Periods">
+                <group>
+                    <field name="agriculturalseason_name"/>
+                    <field name="initial_date"/>
+                    <field name="end_date"/>
+                </group>
+                <footer>
+                    <button name="generate_periods"
+                            string="Generate Periods"
+                            type="object"
+                            class="btn-primary"/>
+                    <button string="Cancel"
+                            class="btn-default"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_wizard_generate_monitoringperiods" model="ir.actions.act_window">
+        <field name="name">Generate Control Periods</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">wizard.generate.monitoringperiods</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="wua_agriculturalseason_action_generate_monitoringperiods" model="ir.values">
+        <field name="name">Generate Control Periods</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.act_window,' + str(ref('action_wizard_generate_monitoringperiods'))"/>
+    </record>
+
+</odoo>

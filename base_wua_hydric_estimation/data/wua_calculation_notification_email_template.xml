@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="email_template_calculation_notification" model="mail.template">
+        <field name="name">Irrigation Recommendations - Calculation Notification</field>
+        <field name="model_id" ref="model_wua_monitoringperiod"/>
+        <field name="subject">Irrigation Recommendations Calculated - ${object.name}</field>
+        <field name="email_from">${user.email or ''}</field>
+        <field name="body_html"><![CDATA[
+<div style="font-family: 'Lucida Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: #FFF; ">
+
+    <p>Dear Administrator,</p>
+
+    <p>The irrigation recommendations have been successfully calculated for the control period:</p>
+
+    <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+        <tr>
+            <td style="padding: 8px; font-weight: bold; width: 200px;">Control Period:</td>
+            <td style="padding: 8px;">${object.name}</td>
+        </tr>
+        <tr style="background-color: #f5f5f5;">
+            <td style="padding: 8px; font-weight: bold;">Initial Date:</td>
+            <td style="padding: 8px;">${object.initial_date}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; font-weight: bold;">End Date:</td>
+            <td style="padding: 8px;">${object.end_date}</td>
+        </tr>
+        <tr style="background-color: #f5f5f5;">
+            <td style="padding: 8px; font-weight: bold;">Number of Recommendations:</td>
+            <td style="padding: 8px;">${object.number_of_hydricneeds}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; font-weight: bold;">Total Gross Irrigation Needs:</td>
+            <td style="padding: 8px;">${'{:.2f}'.format(object.sum_total_gin or 0)} m³</td>
+        </tr>
+    </table>
+
+    <p>You can access the recommendations from the control period form or send individual recommendations to partners.</p>
+
+</div>
+        ]]></field>
+    </record>
+
+</odoo>
