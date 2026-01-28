@@ -1326,6 +1326,11 @@ class WuaQuotaAggregatevalue(models.Model):
         digits=(32, 4),
     )
 
+    of_active_agriculturalseason = fields.Boolean(
+        string='Of active agricultural season',
+        related='quotaperiod_id.of_active_agriculturalseason',
+        store=False)
+
     @api.depends('accumulated_input', 'accumulated_consumption')
     def _compute_available_quota_percentage(self):
         for record in self:
