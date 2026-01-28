@@ -1490,6 +1490,43 @@ class WuaCropunit(models.Model):
                 bounding_box = [minx, miny, maxx, maxy]
         return srid, bounding_box
 
+    @api.multi
+    def get_bbox_from_geom(self):
+        self.ensure_one()
+
+        if not self.name:
+            return None
+
+        try:
+            query = """
+                SELECT Box2D(geom)::text as bbox
+                FROM wua_gis_cropunit
+                WHERE name = %s
+            """
+            self.env.cr.execute(query, (self.name,))
+            result = self.env.cr.fetchone()
+            if result and result[0]:
+                bbox_str = result[0]
+                bbox_str = bbox_str.replace('BOX(', '').replace(')', '')
+                coords = bbox_str.split(',')
+                if len(coords) == 2:
+                    min_coords = coords[0].strip().split()
+                    max_coords = coords[1].strip().split()
+                    if len(min_coords) == 2 and len(max_coords) == 2:
+                        return '{},{},{},{}'.format(
+                            min_coords[0],  # minx
+                            min_coords[1],  # miny
+                            max_coords[0],  # maxx
+                            max_coords[1]   # maxy
+                        )
+        except Exception as e:
+            import logging
+            _logger = logging.getLogger(__name__)
+            _logger.error('Error getting BBOX for cropunit %s: %s',
+                         self.name, str(e))
+
+        return None
+
     @api.model
     def get_bbox_final(self, zoom, bbox_initial,
                        image_width_initial, image_height_initial):
