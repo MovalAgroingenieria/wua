@@ -116,16 +116,24 @@ class WuaQuota(models.Model):
                 record.number_of_days_pending > 0 and
                     record.quotaperiod_id):
                 date_now = datetime.datetime.now()
+                quotaperiod_end_date = datetime.datetime.strptime(
+                    record.quotaperiod_id.end_date, '%Y-%m-%d')
                 days_until_end_balance = round(
                     (record.provisional_balance /
                      record.average_daily_consumption), 0)
+                max_days_to_period_end = (quotaperiod_end_date - date_now).days
+                max_safe_days = 999999
                 if int(days_until_end_balance) > 0:
-                    expected_date = date_now + \
-                        datetime.timedelta(days=days_until_end_balance)
-                    quotaperiod_id_end_date = datetime.datetime.strptime(
-                        record.quotaperiod_id.end_date, '%Y-%m-%d')
-                    if quotaperiod_id_end_date < expected_date:
-                        expected_date = quotaperiod_id_end_date
+                    if days_until_end_balance > max_safe_days:
+                        days_until_end_balance = max_safe_days
+                    if days_until_end_balance > max_days_to_period_end:
+                        expected_date = quotaperiod_end_date
+                    else:
+                        try:
+                            expected_date = date_now + \
+                                datetime.timedelta(days=days_until_end_balance)
+                        except (OverflowError, ValueError):
+                            expected_date = quotaperiod_end_date
             record.expected_date_for_zero_balance = expected_date
 
     @api.multi
@@ -379,14 +387,22 @@ class WuaQuotaAggregatevalue(models.Model):
                 record.number_of_days_pending > 0 and
                     record.quotaperiod_id):
                 date_now = datetime.datetime.now()
+                quotaperiod_end_date = datetime.datetime.strptime(
+                    record.quotaperiod_id.end_date, '%Y-%m-%d')
                 days_until_end_balance = round(
                     (record.provisional_balance /
                      record.average_daily_consumption), 0)
+                max_days_to_period_end = (quotaperiod_end_date - date_now).days
+                max_safe_days = 999999
                 if int(days_until_end_balance) > 0:
-                    expected_date = date_now + \
-                        datetime.timedelta(days=days_until_end_balance)
-                    quotaperiod_id_end_date = datetime.datetime.strptime(
-                        record.quotaperiod_id.end_date, '%Y-%m-%d')
-                    if quotaperiod_id_end_date < expected_date:
-                        expected_date = quotaperiod_id_end_date
+                    if days_until_end_balance > max_safe_days:
+                        days_until_end_balance = max_safe_days
+                    if days_until_end_balance > max_days_to_period_end:
+                        expected_date = quotaperiod_end_date
+                    else:
+                        try:
+                            expected_date = date_now + \
+                                datetime.timedelta(days=days_until_end_balance)
+                        except (OverflowError, ValueError):
+                            expected_date = quotaperiod_end_date
             record.expected_date_for_zero_balance = expected_date
