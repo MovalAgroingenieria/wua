@@ -243,17 +243,41 @@
                                     </div>
                                 </t>
                             </div>
+
+                            <t t-set="latest_ndvi" t-value="o.env['wua.cropunit.vegetationindex.ndvi'].search([('cropunit_id', '=', o.cropunit_id.id)], limit=1, order='data_date desc')"/>
                             <div class="row" style="margin-top: 4px;">
-                                <div class="col-xs-12 text-center">
-                                    <t t-if="o.cropunit_id.aerial_image">
-                                        <img t-att-src="'data:image/png;base64,%s' % o.cropunit_id.aerial_image"
-                                             style="max-width: 100%; max-height: 280px; margin-top: 4px;"/>
-                                    </t>
-                                    <t t-else="">
-                                        <div style="height: 280px; border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center; margin-top: 4px;">
-                                            <span style="color: #999;">No aerial image available</span>
-                                        </div>
-                                    </t>
+                                <div class="col-xs-6">
+                                    <div style="text-align: center; margin-bottom: 4px;">
+                                        <strong>NDVI Image</strong>
+                                    </div>
+                                    <div style="text-align: center;">
+                                        <t t-if="latest_ndvi and latest_ndvi.vegetationindex_img">
+                                            <img t-att-src="'data:image/png;base64,%s' % o.get_ndvi_with_cropunit_overlay(latest_ndvi)"
+                                                 style="max-width: 100%; max-height: 280px; border: 2px solid #000;"/>
+                                        </t>
+                                        <t t-else="">
+                                            <div style="height: 280px; border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center;">
+                                                <span style="color: #999;">No NDVI image available</span>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+
+                                <div class="col-xs-6">
+                                    <div style="text-align: center; margin-bottom: 4px;">
+                                        <strong>Aerial Image</strong>
+                                    </div>
+                                    <div style="text-align: center;">
+                                        <t t-if="o.cropunit_id.aerial_image_shown">
+                                            <img t-att-src="'data:image/png;base64,%s' % o.cropunit_id.aerial_image_shown"
+                                                 style="max-width: 100%; max-height: 280px; border: 2px solid #000;"/>
+                                        </t>
+                                        <t t-else="">
+                                            <div style="height: 280px; border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center;">
+                                                <span style="color: #999;">No aerial image available</span>
+                                            </div>
+                                        </t>
+                                    </div>
                                 </div>
                             </div>
                         </div>
