@@ -2,8 +2,15 @@
 # 2025 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 import datetime
+import base64
+import requests
+import gzip
+import logging
+from io import BytesIO
 
 from odoo import models, fields, api, exceptions, _
+
+_logger = logging.getLogger(__name__)
 
 
 class WuaHydricneed(models.Model):
@@ -637,3 +644,132 @@ class WuaHydricneed(models.Model):
                                               ndvi_value.mean_value)
                 mean_ndvi = accumulated_ndvi_value / len(ndvi_values)
         return accumulated_et0, accumulated_pe, mean_ndvi
+
+    @api.multi
+    def get_ndvi_with_cropunit_overlay(self, ndvi_record):
+
+        self.ensure_one()
+
+        _logger.info('=== get_ndvi_with_cropunit_overlay START ===')
+        _logger.info('NDVI record: %s', ndvi_record)
+        _logger.info('Has vegetationindex_img: %s', bool(ndvi_record.vegetationindex_img if ndvi_record else False))
+
+        if not ndvi_record or not ndvi_record.vegetationindex_img:
+            _logger.warning('No NDVI record or image, returning empty string')
+            return ''
+
+        _logger.info('Cropunit: %s', self.cropunit_id.name if self.cropunit_id else 'None')
+        _logger.info('Cropunit mapped_to_polygon: %s', self.cropunit_id.mapped_to_polygon if self.cropunit_id else False)
+
+        if not self.cropunit_id or not self.cropunit_id.mapped_to_polygon:
+            _logger.warning('Cropunit not mapped to polygon, returning original NDVI')
+            return ndvi_record.vegetationindex_img
+
+        try:
+            IrValues = self.env['ir.values']
+            wms_url = IrValues.get_default(
+                'wua.configuration', 'aerial_image_wms')
+
+            if not wms_url:
+                _logger.warning('No WMS URL configured, returning original NDVI image')
+                return ndvi_record.vegetationindex_img
+
+            layers = 'catastro'
+            bbox = self.cropunit_id.get_bbox_from_geom()
+            if not bbox:
+                _logger.warning('Could not get BBOX for cropunit %s', self.cropunit_id.name)
+                return ndvi_record.vegetationindex_img
+
+            zoom_factor = 1.3
+            bbox_parts = bbox.split(',')
+            if len(bbox_parts) == 4:
+                minx = float(bbox_parts[0])
+                miny = float(bbox_parts[1])
+                maxx = float(bbox_parts[2])
+                maxy = float(bbox_parts[3])
+
+                center_x = (minx + maxx) / 2.0
+                center_y = (miny + maxy) / 2.0
+                width_meters = maxx - minx
+                height_meters = maxy - miny
+
+                new_width = width_meters * zoom_factor
+                new_height = height_meters * zoom_factor
+
+                minx = center_x - new_width / 2.0
+                maxx = center_x + new_width / 2.0
+                miny = center_y - new_height / 2.0
+                maxy = center_y + new_height / 2.0
+
+                bbox = '{},{},{},{}'.format(minx, miny, maxx, maxy)
+
+            try:
+                from PIL import Image
+                ndvi_img_data = base64.b64decode(ndvi_record.vegetationindex_img)
+                ndvi_img = Image.open(BytesIO(ndvi_img_data))
+                width, height = ndvi_img.size
+            except Exception as e:
+                _logger.warning('Could not decode NDVI image: %s', str(e))
+                return ndvi_record.vegetationindex_img
+
+            wms_url_full = wms_url + '?service=wms' + \
+                '&request=getmap&crs=epsg:25830' + \
+                '&bbox=' + bbox + \
+                '&width=' + str(width) + \
+                '&height=' + str(height) + \
+                '&layers=' + layers + \
+                '&styles=default' + \
+                '&transparent=true' + \
+                '&format=image/png&version=1.3.0'
+
+            response = requests.get(
+                wms_url_full,
+                timeout=30,
+                verify=False
+            )
+
+            if response.status_code != 200:
+                _logger.warning('WMS request failed with status %s', response.status_code)
+                return ndvi_record.vegetationindex_img
+
+            raw_content = response.content
+            if response.headers.get('Content-Encoding', '').lower() == 'gzip':
+                try:
+                    raw_content = gzip.GzipFile(fileobj=BytesIO(raw_content)).read()
+                except Exception as e:
+                    _logger.warning('Failed to decompress gzip response: %s', str(e))
+                    return ndvi_record.vegetationindex_img
+
+            content_type = response.headers.get('Content-Type', '')
+            if 'image/png' not in content_type:
+                _logger.warning('WMS returned non-image content type: %s', content_type)
+                if 'xml' in content_type.lower():
+                    _logger.warning('WMS error response: %s', raw_content[:500])
+                return ndvi_record.vegetationindex_img
+
+            try:
+                perimeter_img = Image.open(BytesIO(raw_content))
+
+                if ndvi_img.size != perimeter_img.size:
+                    perimeter_img = perimeter_img.resize(ndvi_img.size, Image.LANCZOS)
+
+                if ndvi_img.mode != 'RGBA':
+                    ndvi_img = ndvi_img.convert('RGBA')
+                if perimeter_img.mode != 'RGBA':
+                    perimeter_img = perimeter_img.convert('RGBA')
+
+                composite = Image.alpha_composite(ndvi_img, perimeter_img)
+
+                output = BytesIO()
+                composite.save(output, format='PNG')
+                result = base64.b64encode(output.getvalue())
+
+                return result
+
+            except Exception as e:
+                return ndvi_record.vegetationindex_img
+
+        except Exception as e:
+            _logger.error('Error in get_ndvi_with_cropunit_overlay for cropunit %s: %s',
+                         self.cropunit_id.name if self.cropunit_id else 'Unknown', str(e))
+            return ndvi_record.vegetationindex_img
