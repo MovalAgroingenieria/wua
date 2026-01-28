@@ -193,6 +193,9 @@
         <field name="arch" type="xml">
             <search>
                 <field name="partner_id"/>
+                <filter string="Active Agricultural Season"
+                        name="active_agriculturalseason"
+                        domain="[('of_active_agriculturalseason','=',True)]"/>
                 <separator/>
                 <filter string="Positive Quotas"
                         name="positive_quotas"
@@ -200,7 +203,30 @@
                 <filter string="Negative Quotas"
                         name="negative_quotas"
                         domain="[('balance','&lt;',0)]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Quota Period"
+                            name="grouped_quotaperiod"
+                            context="{'group_by':'quotaperiod_id'}"/>
+                    <filter string="Partner WUA"
+                            name="grouped_partner"
+                            context="{'group_by':'partner_id'}"/>
+                </group>
             </search>
+        </field>
+    </record>
+
+    <record id="wua_quota_aggregatevalue_view_pivot" model="ir.ui.view">
+        <field name="name">Quotas Aggregate (pivot view)</field>
+        <field name="model">wua.quota.aggregatevalue</field>
+        <field name="arch" type="xml">
+            <pivot string="Aggregated Quotas" display_quantity="true">
+                <field name="quotaperiod_id" type="row"/>
+                <field name="partner_id" type="row"/>
+                <field name="accumulated_input" type="measure"/>
+                <field name="accumulated_consumption" type="measure"/>
+                <field name="balance" type="measure"/>
+            </pivot>
         </field>
     </record>
 
@@ -249,12 +275,17 @@
         <field name="name">Aggregated Quotas</field>
         <field name="res_model">wua.quota.aggregatevalue</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,pivot,form</field>
         <field name="view_ids"
          eval="[(5, 0),
                 (0, 0, {'view_mode': 'tree',
-                        'view_id': ref('wua_quota_aggregatevalue_view_tree')})]"/>
+                        'view_id': ref('wua_quota_aggregatevalue_view_tree')}),
+                (0, 0, {'view_mode': 'pivot',
+                        'view_id': ref('wua_quota_aggregatevalue_view_pivot')})]"/>
         <field name="search_view_id" ref="wua_quota_aggregatevalue_view_search"/>
+        <field name="context">
+          {'search_default_active_agriculturalseason': True}
+        </field>
     </record>
 
     <menuitem id="quota_menu"
