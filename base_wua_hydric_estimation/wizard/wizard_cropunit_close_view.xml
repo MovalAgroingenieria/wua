@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wizard_cropunit_close_view_form" model="ir.ui.view">
+        <field name="name">wizard.cropunit.close.view.form</field>
+        <field name="model">wizard.cropunit.close</field>
+        <field name="arch" type="xml">
+            <form>
+                <field name="state" invisible="1"/>
+                <group attrs="{'invisible': [('state', '=', 'done')]}">
+                    <field name="cropunit_count" invisible="1"/>
+                    <div colspan="2" class="alert alert-info" role="alert">
+                        <p>
+                            You are about to update the end date for <strong><field name="cropunit_count" class="oe_inline"/> crop unit(s)</strong>.
+                        </p>
+                        <p>
+                            Crop units with an end date in the past will be automatically marked as <strong>finished</strong>.
+                        </p>
+                    </div>
+                </group>
+                <group attrs="{'invisible': [('state', '=', 'done')]}">
+                    <field name="end_date" string="New End Date"/>
+                </group>
+                <group attrs="{'invisible': [('state', '!=', 'done')]}">
+                    <div colspan="2" class="alert alert-success" role="alert">
+                        <p>
+                            <strong>Operation Completed Successfully</strong>
+                        </p>
+                    </div>
+                    <field name="result_message" nolabel="1" colspan="2"/>
+                </group>
+                <footer>
+                    <button name="action_apply" string="Apply" type="object" class="btn-primary"
+                            attrs="{'invisible': [('state', '=', 'done')]}"/>
+                    <button string="Cancel" class="btn-default" special="cancel"
+                            attrs="{'invisible': [('state', '=', 'done')]}"/>
+                    <button name="action_close" string="Close" type="object" class="btn-primary"
+                            attrs="{'invisible': [('state', '!=', 'done')]}"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_wizard_cropunit_close" model="ir.actions.act_window">
+        <field name="name">Close or Change End Date</field>
+        <field name="res_model">wizard.cropunit.close</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="ir_values_wizard_cropunit_close" model="ir.values">
+        <field name="name">Close or Change End Date</field>
+        <field name="model">wua.cropunit</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.act_window,' + str(ref('action_wizard_cropunit_close'))"/>
+    </record>
+
+</odoo>

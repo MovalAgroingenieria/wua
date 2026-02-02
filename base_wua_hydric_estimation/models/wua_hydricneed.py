@@ -773,3 +773,56 @@ class WuaHydricneed(models.Model):
             _logger.error('Error in get_ndvi_with_cropunit_overlay for cropunit %s: %s',
                          self.cropunit_id.name if self.cropunit_id else 'Unknown', str(e))
             return ndvi_record.vegetationindex_img
+
+    @api.multi
+    def action_send_irrigation_recommendation_email(self):
+        template = self.env.ref(
+            'base_wua_hydric_estimation.email_template_irrigation_recommendation',
+            raise_if_not_found=False
+        )
+        if not template:
+            raise exceptions.UserError(_('Email template not found. Please contact system administrator.'))
+
+        sent_count = 0
+        error_count = 0
+        errors = []
+
+        for record in self:
+
+            if not record.partner_id:
+                msg = _('%s: No partner assigned') % record.name
+                _logger.warning('  - %s', msg)
+                errors.append(msg)
+                error_count += 1
+                continue
+
+            if not record.partner_id.email:
+                msg = _('%s: Partner %s has no email') % (record.name, record.partner_id.name)
+                _logger.warning('  - %s', msg)
+                errors.append(msg)
+                error_count += 1
+                continue
+
+            try:
+                mail_id = template.send_mail(
+                    record.id,
+                    force_send=True,
+                    raise_exception=True
+                )
+                sent_count += 1
+
+            except Exception as e:
+                msg = _('%s: %s') % (record.name, str(e))
+                errors.append(msg)
+                error_count += 1
+
+        if sent_count > 0:
+            msg = _('Successfully sent %d irrigation recommendation email(s).') % sent_count
+            if error_count > 0:
+                msg += '\n\n' + _('Failed to send %d email(s):') % error_count + '\n' + '\n'.join(errors)
+            raise exceptions.Warning(msg)
+        elif error_count > 0:
+            msg = _('Failed to send %d email(s):') % error_count + '\n' + '\n'.join(errors)
+            raise exceptions.Warning(msg)
+        else:
+            raise exceptions.Warning(_('No emails to send. Please select records with valid partner email addresses.'))

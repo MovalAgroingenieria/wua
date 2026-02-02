@@ -3,9 +3,12 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
+import logging
 from datetime import timedelta
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
+
+_logger = logging.getLogger(__name__)
 
 
 class WuaRecommendationperiod(models.Model):
@@ -234,3 +237,99 @@ class WuaRecommendationperiod(models.Model):
                 'default_recommendationperiod_id': self.id,
             },
         }
+
+    @api.multi
+    def _send_calculation_notification(self):
+        self.ensure_one()
+        notification_emails = self.env['ir.values'].get_default(
+            'wua.configuration', 'notification_emails')
+
+        if not notification_emails:
+            return
+
+        email_list = [email.strip() for email in notification_emails.split(',') if email.strip()]
+        if not email_list:
+            return
+
+        template = self.env.ref(
+            'base_wua_hydric_estimation.email_template_calculation_notification',
+            raise_if_not_found=False
+        )
+
+        if not template:
+            return
+
+        sent_count = 0
+        error_count = 0
+
+        for email_to in email_list:
+            try:
+                mail_id = template.send_mail(
+                    self.id,
+                    force_send=True,
+                    email_values={'email_to': email_to}
+                )
+                sent_count += 1
+            except Exception as e:
+                error_count += 1
+                continue
+
+        if sent_count > 0:
+            self.monitoringperiod_id.message_post(
+                _('Calculation notification sent by email to %d administrators.') % sent_count
+            )
+        if error_count > 0:
+            self.monitoringperiod_id.message_post(
+                _('Failed to send %d calculation notification emails.') % error_count
+            )
+
+    @api.multi
+    def _send_recommendations_to_partners(self):
+        self.ensure_one()
+        template = self.env.ref(
+            'base_wua_hydric_estimation.email_template_irrigation_recommendation',
+            raise_if_not_found=False
+        )
+        if not template:
+            return
+        hydricneeds_to_send = self.hydricneed_ids.filtered(
+            lambda h: h.cropunit_id.auto_send_irrigation_recommendations
+        )
+        sent_count = 0
+        error_count = 0
+        skipped_count = 0
+
+        for hydricneed in hydricneeds_to_send:
+
+            if not hydricneed.partner_id:
+                skipped_count += 1
+                continue
+
+            if not hydricneed.partner_id.email:
+                skipped_count += 1
+                continue
+
+            try:
+                _logger.info('  - Sending email to: %s (%s)',
+                           hydricneed.partner_id.name,
+                           hydricneed.partner_id.email)
+
+                mail_id = template.send_mail(
+                    hydricneed.id,
+                    force_send=True,
+                    raise_exception=True
+                )
+                sent_count += 1
+
+            except Exception as e:
+                error_count += 1
+                continue
+        if sent_count > 0:
+            self.monitoringperiod_id.message_post(
+                _('Irrigation recommendations sent by email to %d partners.') % sent_count
+            )
+
+        if error_count > 0:
+            self.monitoringperiod_id.message_post(
+                _('Failed to send %d irrigation recommendation emails.') % error_count
+            )
