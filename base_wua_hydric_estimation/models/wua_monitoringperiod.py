@@ -347,8 +347,10 @@ class WuaMonitoringperiod(models.Model):
                   'needs') + ' = {:.2f}'.format(self.sum_total_gin) +
                 ' ' + 'm3')
             if update_state:
-                self._send_calculation_notification()
-                self._update_recommendationperiod()
+                recommendationperiod = self._update_recommendationperiod()
+                if recommendationperiod:
+                    recommendationperiod._send_calculation_notification()
+                    recommendationperiod._send_recommendations_to_partners()
 
     def _update_recommendationperiod(self):
         self.ensure_one()
@@ -513,31 +515,3 @@ class WuaMonitoringperiod(models.Model):
             if uncalculated_monitoringperiods:
                 for monitoringperiod in uncalculated_monitoringperiods:
                     monitoringperiod.calculate(force=True)
-
-    @api.multi
-    def _send_calculation_notification(self):
-        self.ensure_one()
-        notification_emails = self.env['ir.values'].get_default(
-            'wua.configuration', 'notification_emails')
-        if not notification_emails:
-            return
-        email_list = [email.strip() for email in notification_emails.split(',') if email.strip()]
-
-        if not email_list:
-            return
-
-        template = self.env.ref(
-            'base_wua_hydric_estimation.email_template_calculation_notification',
-            raise_if_not_found=False
-        )
-        if not template:
-            return
-        for email_to in email_list:
-            try:
-                template.send_mail(
-                    self.id,
-                    force_send=True,
-                    email_values={'email_to': email_to}
-                )
-            except Exception:
-                pass

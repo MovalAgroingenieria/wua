@@ -46,6 +46,13 @@
                                 </span>
                             </div>
                         </button>
+                        <button name="action_see_gis_viewer"
+                                type="object"
+                                class="oe_stat_button"
+                                string="GIS Viewer"
+                                icon="fa-map-marker"
+                                attrs="{'invisible': [('mapped_to_polygon','=',False)]}"
+                                groups="base_wua.group_wua_user,base_wua.group_wua_portal_user"/>
                     </div>
                     <div class="oe_title" colspan="2">
                         <field name="parcel_type" widget="radio"
@@ -117,6 +124,8 @@
                             <field name="standard_application_efficiency"
                                    string="Applic. Efficiency"
                                    style="width:100px"/>
+                            <field name="auto_send_irrigation_recommendations"
+                                   string="Auto-send Recommendations"/>
                         </group>
                         <group name="master_data_02_right_no_recommendation"
                                attrs="{'invisible': [('exists_current_recommendation', '=', True)]}">
@@ -219,6 +228,12 @@
                 <field name="name" string="Crop Unit"/>
                 <field name="area_gis_ha" string="Area (ha)"/>
                 <field name="parcel_id" string="Parcel"/>
+                <field name="mapped_to_polygon" invisible="1"/>
+                <button name="action_see_gis_viewer"
+                        type="object" class="oe_stat_button"
+                        string="GIS Viewer"
+                        icon="fa-map-marker"
+                        attrs="{'invisible': [('mapped_to_polygon','=',False)]}"/>
                 <field name="partner_id" string="Irrigation Partner"/>
                 <field name="cultivation_id" string="Cultivation"/>
                 <field name="order_number" string="Order N."/>
@@ -447,6 +462,36 @@
                 </div>
             </form>
         </field>
+    </record>
+
+    <record id="action_enable_auto_send_recommendations" model="ir.actions.server">
+        <field name="name">Enable Auto-send Recommendations</field>
+        <field name="model_id" ref="model_wua_cropunit"/>
+        <field name="state">code</field>
+        <field name="code">action = records.action_enable_auto_send_recommendations()</field>
+    </record>
+
+    <record id="action_disable_auto_send_recommendations" model="ir.actions.server">
+        <field name="name">Disable Auto-send Recommendations</field>
+        <field name="model_id" ref="model_wua_cropunit"/>
+        <field name="state">code</field>
+        <field name="code">action = records.action_disable_auto_send_recommendations()</field>
+    </record>
+
+    <record id="ir_values_enable_auto_send_recommendations" model="ir.values">
+        <field name="name">Enable Auto-send Recommendations</field>
+        <field name="model">wua.cropunit</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('action_enable_auto_send_recommendations'))"/>
+    </record>
+
+    <record id="ir_values_disable_auto_send_recommendations" model="ir.values">
+        <field name="name">Disable Auto-send Recommendations</field>
+        <field name="model">wua.cropunit</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('action_disable_auto_send_recommendations'))"/>
     </record>
 
 </odoo>

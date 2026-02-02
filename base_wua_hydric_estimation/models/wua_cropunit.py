@@ -201,6 +201,13 @@ class WuaCropunit(models.Model):
         track_visibility='onchange',
     )
 
+    auto_send_irrigation_recommendations = fields.Boolean(
+        string='Auto-send Irrigation Recommendations by Email',
+        default=False,
+        help='If enabled, irrigation recommendations will be automatically '
+             'sent by email to the partner when calculations are completed.',
+    )
+
     current_monitoringperiod_id = fields.Many2one(
         string='Current control period',
         comodel_name='wua.monitoringperiod',
@@ -303,6 +310,11 @@ class WuaCropunit(models.Model):
         string='Mapped to polygon',
         compute='_compute_mapped_to_polygon',
         search='_search_mapped_to_polygon',
+    )
+
+    gis_viewer_link = fields.Char(
+        string='GIS Viewer',
+        compute='_compute_gis_viewer_link',
     )
 
     geom_ewkt = fields.Char(
@@ -728,6 +740,38 @@ class WuaCropunit(models.Model):
                    query_results[0].get(self._link_field) is not None):
                     mapped_to_polygon = True
             record.mapped_to_polygon = mapped_to_polygon
+
+    @api.multi
+    def _compute_gis_viewer_link(self):
+        url = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer')
+        username = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_username')
+        password = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_password')
+        cropunit_param = 'idunidadcultivo'
+
+        for record in self:
+            url_for_record = url
+            if url_for_record and record.mapped_to_polygon:
+                if cropunit_param:
+                    sep_char = u'?'
+                    if url_for_record.find('?') != -1:
+                        sep_char = u'&'
+                    url_for_record = url_for_record + sep_char + \
+                        cropunit_param + u'=' + record.name
+            if (url_for_record and username and password):
+                cipher_text = self.env['wua.parcel']._get_viewer_credentials(
+                    username, password)
+                if cipher_text:
+                    sep_char = '?'
+                    if url_for_record.find('?') != -1:
+                        sep_char = '&'
+                    url_for_record = url_for_record + sep_char + \
+                        "arg=" + cipher_text
+            if not url_for_record:
+                url_for_record = ''
+            record.gis_viewer_link = url_for_record
 
     def _search_mapped_to_polygon(self, operator, value):
         cropunit_ids = []
@@ -2148,6 +2192,26 @@ class WuaCropunit(models.Model):
                     'max_value': max_value,
                     'stdev_value': stdev_value,
                 })
+
+    @api.multi
+    def action_see_gis_viewer(self):
+        self.ensure_one()
+        if self.gis_viewer_link:
+            return {
+                'type': 'ir.actions.act_url',
+                'url': self.gis_viewer_link,
+                'target': 'new',
+            }
+
+    @api.multi
+    def action_enable_auto_send_recommendations(self):
+        self.write({'auto_send_irrigation_recommendations': True})
+        return {'type': 'ir.actions.act_window_close'}
+
+    @api.multi
+    def action_disable_auto_send_recommendations(self):
+        self.write({'auto_send_irrigation_recommendations': False})
+        return {'type': 'ir.actions.act_window_close'}
 
     @api.model
     def get_all_cropunit_ndvi_values(self):

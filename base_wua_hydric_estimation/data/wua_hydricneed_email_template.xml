@@ -1,58 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
+<odoo noupdate="0">
 
     <record id="email_template_irrigation_recommendation" model="mail.template">
         <field name="name">Irrigation Recommendation</field>
         <field name="model_id" ref="model_wua_hydricneed"/>
-        <field name="subject">Irrigation Recommendation - ${object.cropunit_id.name} - ${object.monitoringperiod_id.name}</field>
-        <field name="email_from">${(object.cropunit_id.parcel_id.wua_id.email or user.email)|safe}</field>
-        <field name="email_to">${object.partner_id.email|safe}</field>
-        <field name="lang">${object.partner_id.lang}</field>
+        <field name="subject">Irrigation Recommendation - ${object.cropunit_id.name or ''} - (${object.recommendationperiod_id.initial_date or ''} / ${object.recommendationperiod_id.end_date or ''})</field>
+        <field name="email_from">${user.email or ''}</field>
+        <field name="email_to">${object.partner_id.email or ''}</field>
+        <field name="lang">${object.partner_id.lang or 'es_ES'}</field>
         <field name="auto_delete" eval="True"/>
         <field name="body_html"><![CDATA[
-<div style="margin: 0px; padding: 0px;">
-    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+<div style="font-family: 'Lucida Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: #FFF; ">
+
+    <p>
+        % if object.partner_id:
         Dear ${object.partner_id.name or ''},
-        <br/><br/>
-        Please find attached the irrigation recommendation report for your crop unit <strong>${object.cropunit_id.name}</strong>.
-        <br/><br/>
-        <strong>Summary:</strong>
-        <ul>
-            <li>Parcel: ${object.parcel_id.name}</li>
-            <li>Cultivation: ${object.cultivation_id.name}</li>
-            <li>Application Period: ${object.initial_date} - ${object.end_date}</li>
-            <li>Recommended Volume: ${object.total_gin} m³</li>
-            <li>Dotation: ${object.gin} m³/ha</li>
-        </ul>
-        <br/>
-        For more details, please review the attached PDF report.
-        <br/><br/>
-        Best regards,
-        <br/>
-        ${user.name}
+        % else:
+        Dear Partner,
+        % endif
+    </p>
+
+    <p>
+        % if object.cropunit_id and object.parcel_id:
+        Here is a summary of the irrigation recommendation for the crop unit <strong>${object.cropunit_id.name or ''}</strong> belonging to parcel <strong>${object.parcel_id.name or ''}</strong>:
+        % elif object.cropunit_id:
+        Here is a summary of the irrigation recommendation for the crop unit <strong>${object.cropunit_id.name or ''}</strong>:
+        % else:
+        Here is a summary of your irrigation recommendation:
+        % endif
+    </p>
+
+    <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+        % if object.recommendationperiod_id and object.recommendationperiod_id.initial_date and object.recommendationperiod_id.end_date:
+        <tr>
+            <td style="padding: 8px; font-weight: bold; width: 200px;">Application Period:</td>
+            <td style="padding: 8px;">${object.recommendationperiod_id.initial_date or ''} - ${object.recommendationperiod_id.end_date or ''}</td>
+        </tr>
+        % endif
+        % if object.cultivation_id:
+        <tr style="background-color: #f5f5f5;">
+            <td style="padding: 8px; font-weight: bold; width: 200px;">Cultivation:</td>
+            <td style="padding: 8px;">${object.cultivation_id.name or ''}</td>
+        </tr>
+        % endif
+        <tr>
+            <td style="padding: 8px; font-weight: bold; width: 200px;">Dotation:</td>
+            <td style="padding: 8px;">${'{:.2f}'.format(object.gin or 0)} m³/ha</td>
+        </tr>
+        <tr style="background-color: #f5f5f5;">
+            <td style="padding: 8px; font-weight: bold; width: 200px;">Recommended Volume:</td>
+            <td style="padding: 8px;">${'{:.2f}'.format(object.total_gin or 0)} m³</td>
+        </tr>
+    </table>
+
+    <p>For more details, please review the attached PDF report.</p>
+
+    <p>
+        Best regards.<br/>
     </p>
 </div>
         ]]></field>
         <field name="report_template" ref="wua_hydricneed_report"/>
-        <field name="report_name">Irrigation_Recommendation_${object.cropunit_id.name.replace('/','_')}_${object.monitoringperiod_id.name.replace('/','_')}</field>
+        <field name="report_name">Irrigation_Recommendation_${(object.cropunit_id.name or 'cropunit').replace('/','_')}_${(object.monitoringperiod_id.name or 'period').replace('/','_')}</field>
     </record>
 
     <record id="action_send_irrigation_recommendations" model="ir.actions.server">
         <field name="name">Send Irrigation Recommendations by Email</field>
         <field name="model_id" ref="model_wua_hydricneed"/>
         <field name="state">code</field>
-        <field name="code"><![CDATA[
-# Get the email template
-template = env.ref('base_wua_hydric_estimation.email_template_irrigation_recommendation')
-
-# Send email for each selected hydricneed record
-for record in records:
-    if record.partner_id and record.partner_id.email:
-        template.send_mail(record.id, force_send=False)
-    else:
-        # Log warning if partner has no email
-        pass
-]]></field>
+        <field name="code">action = records.action_send_irrigation_recommendation_email()</field>
     </record>
 
     <record id="ir_values_send_irrigation_recommendations" model="ir.values">
@@ -61,10 +77,6 @@ for record in records:
         <field name="key">action</field>
         <field name="key2">client_action_multi</field>
         <field name="value" eval="'ir.actions.server,' + str(ref('action_send_irrigation_recommendations'))"/>
-    </record>
-
-    <record id="action_send_irrigation_recommendations" model="ir.actions.server">
-        <field name="active" eval="False"/>
     </record>
 
 </odoo>
