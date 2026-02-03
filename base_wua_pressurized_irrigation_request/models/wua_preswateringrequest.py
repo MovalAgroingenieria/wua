@@ -503,9 +503,11 @@ class WuaPreswateringrequest(models.Model):
     @api.multi
     def action_get_waterconnections(self):
         self.ensure_one()
+        # Use sudo() to avoid permission errors when portal users access
+        # waterconnections that reference parcels through irrigationpoints
         if self.partner_id and self.partner_id.waterconnectionlink_ids:
             presresconsumptions = []
-            waterconnections = self.partner_id.waterconnectionlink_ids.mapped(
+            waterconnections = self.partner_id.sudo().waterconnectionlink_ids.mapped(
                 lambda x: x.waterconnection_id)
             global_irrigation_duration = self.env['ir.values'].sudo().\
                 get_default('wua.irrigation.configuration',
