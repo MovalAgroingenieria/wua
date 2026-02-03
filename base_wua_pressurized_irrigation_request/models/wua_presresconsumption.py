@@ -258,6 +258,11 @@ class WuaPresresconsumption(models.Model):
         default=False,
     )
 
+    current_user_is_portal = fields.Boolean(
+        string='Current User is Portal',
+        compute='_compute_current_user_is_portal',
+    )
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE(name)',
             'The consumption code must be unique.'),
@@ -504,6 +509,12 @@ class WuaPresresconsumption(models.Model):
             if (record.modification_deadline):
                 portal_can_modify = record.modification_deadline > now
             record.portal_can_modify = portal_can_modify
+
+    @api.multi
+    def _compute_current_user_is_portal(self):
+        for record in self:
+            record.current_user_is_portal = \
+                not self.env.user.has_group('base.group_user')
 
     @api.multi
     def set_as_selected(self, active_presresconsumptions):
