@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Invoice negative refund -->
+    <report
+        id="account_invoice_negative_refund_report"
+        model="account.invoice"
+        string="Invoice report (negative refund)"
+        report_type="qweb-pdf"
+        name="account_wua.account_invoice_negative_refund_report_document"
+        file="account_wua.account_invoice_negative_refund_report_document"
+        menu="False"
+        attachment="(object.state in ('open','paid')) and ('INV'+(object.number or '').replace('/','')+'.pdf')"/>
+
+    <record id="account_wua.account_invoice_negative_refund_report" model="ir.actions.report.xml">
+        <field name="attachment_use" eval="False"/>
+    </record>
+
+    <template id="account_invoice_report_negative_refund" inherit_id="account.report_invoice_document" primary="True">
+        <!-- The changes only apply to the out_refund type -->
+        <!-- Details table -->
+        <xpath expr="//td[@name='amount']" position="replace">
+            <t t-if="o.type == 'out_refund'">
+                <t t-set="negative_amount" t-value="l['price_subtotal'] * -1"/>
+                <td name="amount" class="text-right">
+                    <span t-esc="negative_amount"
+                        t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                </td>
+            </t>
+        </xpath>
+        <!-- Product resume table -->
+        <xpath expr="//td[@name='total_amnt_td']" position="replace">
+            <t t-if="o.type == 'out_refund'">
+                <t t-set="negative_product_total_amount" t-value="product_total_amount * -1"/>
+                <td name="total_amnt_td" class="text-right">
+                    <span t-esc="negative_product_total_amount"
+                        t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                </td>
+            </t>
+        </xpath>
+        <!-- Subtotal table-->
+        <xpath expr="//tr[@name='tr_subtotal']" position="replace">
+            <t t-if="o.type == 'out_refund'">
+                <t t-set="negative_amount_untaxed" t-value="o.amount_untaxed * -1"/>
+                <tr class="border-black" name="tr_subtotal">
+                    <td><strong>Subtotal</strong></td>
+                    <td class="text-right">
+                        <span t-esc="negative_amount_untaxed"
+                            t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                    </td>
+                </tr>
+            </t>
+        </xpath>
+        <xpath expr="//tr[@name='tr_amount_by_group']/td[@class='text-right']" position="replace">
+            <t t-if="o.type == 'out_refund'">
+                <t t-set="amount_by_group_num" t-value="float(amount_by_group[2].split()[0].replace(',', '.'))"/>
+                <t t-if="amount_by_group_num > 0">
+                    <t t-set="negative_amount_by_group" t-value="u'-' + amount_by_group[2]"/>
+                </t>
+                <t t-else="">
+                    <t t-set="negative_amount_by_group" t-value="amount_by_group[2]"/>
+                </t>
+                <td class="text-right">
+                    <span t-esc="negative_amount_by_group"/>
+                </td>
+            </t>
+        </xpath>
+        <xpath expr="//tr[@name='tr_total']" position="replace">
+            <t t-if="o.type == 'out_refund'">
+                <t t-set="negative_amount_total" t-value="o.amount_total * -1"/>
+                <tr class="border-black" name="tr_total">
+                    <td><strong>Total</strong></td>
+                    <td class="text-right">
+                        <span t-esc="negative_amount_total"
+                            t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                    </td>
+                </tr>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="account_invoice_negative_refund_report_document">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="account_wua.account_invoice_report_negative_refund" t-lang="o.partner_id.lang"/>
+            </t>
+        </t>
+    </template>
+
+</odoo>
