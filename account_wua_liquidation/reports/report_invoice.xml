@@ -115,6 +115,20 @@
             </div>
         </xpath>
 
+        <xpath expr="//strong[@name='invoice_type_light']/span[@t-if=&quot;o.type == 'out_refund'&quot;]" position="replace">
+            <span t-if="o.type == 'out_refund'">
+                <t t-if="o.journal_id.expenses_diary">Rectificative Liquidation</t>
+                <t t-else="">Refund</t>
+            </span>
+        </xpath>
+
+        <xpath expr="//strong[@name='invoice_type_no_light']/span[@t-if=&quot;o.type == 'out_refund'&quot;]" position="replace">
+            <span t-if="o.type == 'out_refund'">
+                <t t-if="o.journal_id.expenses_diary">Rectificative Liquidation</t>
+                <t t-else="">Refund</t>
+            </span>
+        </xpath>
+
     </template>
 
 </odoo>
