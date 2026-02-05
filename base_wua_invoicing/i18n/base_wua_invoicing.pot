@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-02 14:28+0000\n"
-"PO-Revision-Date: 2025-12-02 14:28+0000\n"
+"POT-Creation-Date: 2026-02-05 10:45+0000\n"
+"PO-Revision-Date: 2026-02-05 10:45+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -33,6 +33,12 @@ msgstr ""
 #. module: base_wua_invoicing
 #: model:ir.ui.view,arch_db:base_wua_invoicing.report_credit_control_summary_document
 msgid "<i>Shipping Address</i>"
+msgstr ""
+
+#. module: base_wua_invoicing
+#: code:addons/base_wua_invoicing/wizard/res_partner_archive_wizard.py:33
+#, python-format
+msgid "<p style=\"color: red; font-weight: bold;\">WARNING: You are about to archive the following suppliers:</p>%s<p>Are you sure you want to continue?</p>"
 msgstr ""
 
 #. module: base_wua_invoicing
@@ -224,6 +230,23 @@ msgid "Apply"
 msgstr ""
 
 #. module: base_wua_invoicing
+#: model:ir.actions.server,name:base_wua_invoicing.action_archive_partner
+msgid "Archive"
+msgstr ""
+
+#. module: base_wua_invoicing
+#: model:ir.ui.view,arch_db:base_wua_invoicing.res_partner_archive_wizard_form
+msgid "Archive Supplier Confirmation"
+msgstr ""
+
+#. module: base_wua_invoicing
+#: code:addons/base_wua_invoicing/models/res_partner.py:152
+#: code:addons/base_wua_invoicing/models/res_partner.py:179
+#, python-format
+msgid "Archive Supplier Warning"
+msgstr ""
+
+#. module: base_wua_invoicing
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoiceset_view_search
 msgid "Archived"
 msgstr ""
@@ -338,6 +361,7 @@ msgid "Calculate"
 msgstr ""
 
 #. module: base_wua_invoicing
+#: model:ir.ui.view,arch_db:base_wua_invoicing.res_partner_archive_wizard_form
 #: model:ir.ui.view,arch_db:base_wua_invoicing.view_wizard_print_partner_invoices_lines_form
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoiceset_view_form
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoicing_config_settings_view_form
@@ -431,6 +455,11 @@ msgid "Configured"
 msgstr ""
 
 #. module: base_wua_invoicing
+#: model:ir.model,name:base_wua_invoicing.model_res_partner_archive_wizard
+msgid "Confirm archiving supplier partners"
+msgstr ""
+
+#. module: base_wua_invoicing
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoiceset_view_form
 msgid "Consult"
 msgstr ""
@@ -439,6 +468,11 @@ msgstr ""
 #: code:addons/base_wua_invoicing/models/wua_invoiceset.py:339
 #, python-format
 msgid "Consultation of Invoice-Set Lines"
+msgstr ""
+
+#. module: base_wua_invoicing
+#: model:ir.ui.view,arch_db:base_wua_invoicing.res_partner_archive_wizard_form
+msgid "Continue"
 msgstr ""
 
 #. module: base_wua_invoicing
@@ -464,6 +498,7 @@ msgstr ""
 
 #. module: base_wua_invoicing
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_account_invoice_tag_create_uid
+#: model:ir.model.fields,field_description:base_wua_invoicing.field_res_partner_archive_wizard_create_uid
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wizard_print_partner_invoice_lines_create_uid
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_create_uid
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_line_create_uid
@@ -477,6 +512,7 @@ msgstr ""
 
 #. module: base_wua_invoicing
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_account_invoice_tag_create_date
+#: model:ir.model.fields,field_description:base_wua_invoicing.field_res_partner_archive_wizard_create_date
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wizard_print_partner_invoice_lines_create_date
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_create_date
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_line_create_date
@@ -536,6 +572,7 @@ msgstr ""
 
 #. module: base_wua_invoicing
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_account_invoice_tag_display_name
+#: model:ir.model.fields,field_description:base_wua_invoicing.field_res_partner_archive_wizard_display_name
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wizard_print_partner_invoice_lines_display_name
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_display_name
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_line_display_name
@@ -569,7 +606,7 @@ msgid "Due Date"
 msgstr ""
 
 #. module: base_wua_invoicing
-#: code:addons/base_wua_invoicing/models/res_partner.py:128
+#: code:addons/base_wua_invoicing/models/res_partner.py:127
 #, python-format
 msgid "Due List"
 msgstr ""
@@ -577,16 +614,6 @@ msgstr ""
 #. module: base_wua_invoicing
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wizard_print_partner_invoice_lines_end_date
 msgid "End Date"
-msgstr ""
-
-#. module: base_wua_invoicing
-#: model:ir.model,name:base_wua_invoicing.model_product_category
-msgid "Entity (WUA Product Category)"
-msgstr ""
-
-#. module: base_wua_invoicing
-#: model:ir.model,name:base_wua_invoicing.model_product_template
-msgid "Entity (WUA Product Template)"
 msgstr ""
 
 #. module: base_wua_invoicing
@@ -617,11 +644,6 @@ msgstr ""
 #. module: base_wua_invoicing
 #: model:ir.model,name:base_wua_invoicing.model_wua_irrigationshed
 msgid "Entity (irrigation shed)"
-msgstr ""
-
-#. module: base_wua_invoicing
-#: model:ir.model,name:base_wua_invoicing.model_wua_invoiceset_line
-msgid "Entity (line of a WUA invoice set)"
 msgstr ""
 
 #. module: base_wua_invoicing
@@ -660,23 +682,9 @@ msgid "Filter by Journals"
 msgstr ""
 
 #. module: base_wua_invoicing
-#: selection:product.category,linkable_unit_type:0
-#: selection:product.template,linkable_unit_type:0
-#: selection:wua.invoiceset.line,linkable_unit_type:0
-msgid "Fixed Surcharge"
-msgstr ""
-
-#. module: base_wua_invoicing
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoiceset_view_search
 #: selection:wua.invoiceset,state:0
 msgid "Generated"
-msgstr ""
-
-#. module: base_wua_invoicing
-#: selection:product.category,linkable_unit_type:0
-#: selection:product.template,linkable_unit_type:0
-#: selection:wua.invoiceset.line,linkable_unit_type:0
-msgid "Gravity Consumptions"
 msgstr ""
 
 #. module: base_wua_invoicing
@@ -725,14 +733,8 @@ msgid "Hydraulic Sector"
 msgstr ""
 
 #. module: base_wua_invoicing
-#: selection:product.category,linkable_unit_type:0
-#: selection:product.template,linkable_unit_type:0
-#: selection:wua.invoiceset.line,linkable_unit_type:0
-msgid "Hydricmovement"
-msgstr ""
-
-#. module: base_wua_invoicing
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_account_invoice_tag_id
+#: model:ir.model.fields,field_description:base_wua_invoicing.field_res_partner_archive_wizard_id
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wizard_print_partner_invoice_lines_id
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_id
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_line_id
@@ -870,7 +872,7 @@ msgstr ""
 #: code:addons/base_wua_invoicing/models/product.py:108
 #: code:addons/base_wua_invoicing/models/product.py:248
 #: code:addons/base_wua_invoicing/models/product.py:297
-#: code:addons/base_wua_invoicing/models/res_partner.py:79
+#: code:addons/base_wua_invoicing/models/res_partner.py:78
 #: code:addons/base_wua_invoicing/models/wua_hydraulicsector.py:21
 #: code:addons/base_wua_invoicing/models/wua_irrigationditch.py:21
 #: code:addons/base_wua_invoicing/models/wua_irrigationgate.py:21
@@ -963,7 +965,7 @@ msgid "Invoice-Set Line Code"
 msgstr ""
 
 #. module: base_wua_invoicing
-#: code:addons/base_wua_invoicing/models/res_partner.py:105
+#: code:addons/base_wua_invoicing/models/res_partner.py:104
 #: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1501
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wizard_print_partner_invoice_lines_invoice_ids
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_invoice_ids
@@ -1056,13 +1058,6 @@ msgstr ""
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_line_parcel_partner_id
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoiceset_line_parcel_view_search
 msgid "Irrigation Partner"
-msgstr ""
-
-#. module: base_wua_invoicing
-#: selection:product.category,linkable_unit_type:0
-#: selection:product.template,linkable_unit_type:0
-#: selection:wua.invoiceset.line,linkable_unit_type:0
-msgid "Irrigation Report"
 msgstr ""
 
 #. module: base_wua_invoicing
@@ -1175,6 +1170,7 @@ msgstr ""
 
 #. module: base_wua_invoicing
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_account_invoice_tag___last_update
+#: model:ir.model.fields,field_description:base_wua_invoicing.field_res_partner_archive_wizard___last_update
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wizard_print_partner_invoice_lines___last_update
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset___last_update
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_line___last_update
@@ -1188,6 +1184,7 @@ msgstr ""
 
 #. module: base_wua_invoicing
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_account_invoice_tag_write_uid
+#: model:ir.model.fields,field_description:base_wua_invoicing.field_res_partner_archive_wizard_write_uid
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wizard_print_partner_invoice_lines_write_uid
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_line_irrigationgate_write_uid
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_line_parcel_write_uid
@@ -1201,6 +1198,7 @@ msgstr ""
 
 #. module: base_wua_invoicing
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_account_invoice_tag_write_date
+#: model:ir.model.fields,field_description:base_wua_invoicing.field_res_partner_archive_wizard_write_date
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wizard_print_partner_invoice_lines_write_date
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_line_irrigationgate_write_date
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_line_parcel_write_date
@@ -1234,6 +1232,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_line_pos
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_line_waterconnection_invoicesetline_id
 msgid "Line"
+msgstr ""
+
+#. module: base_wua_invoicing
+#: model:ir.model,name:base_wua_invoicing.model_wua_invoiceset_line
+msgid "Line of a WUA invoice set"
 msgstr ""
 
 #. module: base_wua_invoicing
@@ -1278,6 +1281,11 @@ msgstr ""
 #. module: base_wua_invoicing
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoicing_configuration_invoicing_area_measurement_equivalence
 msgid "Master unit equivalence"
+msgstr ""
+
+#. module: base_wua_invoicing
+#: model:ir.model.fields,field_description:base_wua_invoicing.field_res_partner_archive_wizard_message
+msgid "Message"
 msgstr ""
 
 #. module: base_wua_invoicing
@@ -1472,6 +1480,11 @@ msgid "Partner"
 msgstr ""
 
 #. module: base_wua_invoicing
+#: model:ir.model,name:base_wua_invoicing.model_res_partner_archive_warning
+msgid "Partner Archive Warning"
+msgstr ""
+
+#. module: base_wua_invoicing
 #: model:ir.model,name:base_wua_invoicing.model_wua_parcel_partnerlink
 msgid "Partner link of a parcel"
 msgstr ""
@@ -1493,6 +1506,11 @@ msgstr ""
 #. module: base_wua_invoicing
 #: model:ir.model,name:base_wua_invoicing.model_wua_invoiceset_line_partner
 msgid "Partners of a invoice-set line"
+msgstr ""
+
+#. module: base_wua_invoicing
+#: model:ir.model.fields,field_description:base_wua_invoicing.field_res_partner_archive_wizard_partner_ids
+msgid "Partners to Archive"
 msgstr ""
 
 #. module: base_wua_invoicing
@@ -1523,13 +1541,6 @@ msgstr ""
 #. module: base_wua_invoicing
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoicing_configuration_default_annual_seq_prefix
 msgid "Prefix (annual seq.)"
-msgstr ""
-
-#. module: base_wua_invoicing
-#: selection:product.category,linkable_unit_type:0
-#: selection:product.template,linkable_unit_type:0
-#: selection:wua.invoiceset.line,linkable_unit_type:0
-msgid "Pressure Consumptions"
 msgstr ""
 
 #. module: base_wua_invoicing
@@ -1589,11 +1600,17 @@ msgid "Product Categories"
 msgstr ""
 
 #. module: base_wua_invoicing
+#: model:ir.model,name:base_wua_invoicing.model_product_category
 #: model:ir.ui.view,arch_db:base_wua_invoicing.product_template_search_view
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_partner_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoicelines_view_search
 msgid "Product Category"
+msgstr ""
+
+#. module: base_wua_invoicing
+#: model:ir.model,name:base_wua_invoicing.model_product_template
+msgid "Product Template"
 msgstr ""
 
 #. module: base_wua_invoicing
@@ -1614,13 +1631,6 @@ msgstr ""
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_line_quantity
 #: model:ir.ui.view,arch_db:base_wua_invoicing.report_partner_invoice_lines
 msgid "Quantity"
-msgstr ""
-
-#. module: base_wua_invoicing
-#: selection:product.category,linkable_unit_type:0
-#: selection:product.template,linkable_unit_type:0
-#: selection:wua.invoiceset.line,linkable_unit_type:0
-msgid "Quota"
 msgstr ""
 
 #. module: base_wua_invoicing
@@ -1827,6 +1837,11 @@ msgid "True if payment lines have different schemes"
 msgstr ""
 
 #. module: base_wua_invoicing
+#: model:ir.actions.server,name:base_wua_invoicing.action_unarchive_partner
+msgid "Unarchive"
+msgstr ""
+
+#. module: base_wua_invoicing
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_line_price_unit
 msgid "Unit Price"
 msgstr ""
@@ -1834,20 +1849,6 @@ msgstr ""
 #. module: base_wua_invoicing
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_parcel_use_ownership_percentage_on_invoicing
 msgid "Use Ownership Percentage On Invoicing"
-msgstr ""
-
-#. module: base_wua_invoicing
-#: selection:product.category,linkable_unit_type:0
-#: selection:product.template,linkable_unit_type:0
-#: selection:wua.invoiceset.line,linkable_unit_type:0
-msgid "Variable Surcharge"
-msgstr ""
-
-#. module: base_wua_invoicing
-#: selection:product.category,linkable_unit_type:0
-#: selection:product.template,linkable_unit_type:0
-#: selection:wua.invoiceset.line,linkable_unit_type:0
-msgid "Variable Surcharge (Total)"
 msgstr ""
 
 #. module: base_wua_invoicing
@@ -1905,13 +1906,6 @@ msgstr ""
 #: selection:wua.invoiceset.line,linkable_unit_type:0
 #, python-format
 msgid "Water Connections"
-msgstr ""
-
-#. module: base_wua_invoicing
-#: selection:product.category,linkable_unit_type:0
-#: selection:product.template,linkable_unit_type:0
-#: selection:wua.invoiceset.line,linkable_unit_type:0
-msgid "Water Connections (by water costs)"
 msgstr ""
 
 #. module: base_wua_invoicing
