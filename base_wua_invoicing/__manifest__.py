@@ -49,6 +49,7 @@
         "views/res_partner_view.xml",
         "views/account_view.xml",
         "wizard/wizard_print_partner_invoices_lines_views.xml",
+        "wizard/res_partner_archive_wizard_view.xml",
     ],
     "installable": True,
     "application": True,

@@ -65,4 +65,43 @@
         </field>
     </record>
 
+        <record id="action_archive_partner" model="ir.actions.server">
+        <field name="name">Archive</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="state">code</field>
+        <field name="code">
+if context.get('active_ids'):
+    active_ids = context.get('active_ids', [])
+    action = env['res.partner'].browse(active_ids).archive_partner()
+        </field>
+    </record>
+
+    <record id="ir_value_archive_partner" model="ir.values">
+        <field name="name">Archive</field>
+        <field name="model">res.partner</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('action_archive_partner'))"/>
+    </record>
+
+    <record id="action_unarchive_partner" model="ir.actions.server">
+        <field name="name">Unarchive</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="state">code</field>
+        <field name="code">
+if context.get('active_ids'):
+    active_ids = context.get('active_ids', [])
+    partners = env['res.partner'].with_context(active_test=False).browse(active_ids)
+    partners.write({'active': True})
+        </field>
+    </record>
+
+    <record id="ir_value_unarchive_partner" model="ir.values">
+        <field name="name">Unarchive</field>
+        <field name="model">res.partner</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('action_unarchive_partner'))"/>
+    </record>
+
 </odoo>

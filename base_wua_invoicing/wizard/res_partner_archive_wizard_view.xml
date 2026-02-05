@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_partner_archive_wizard_form" model="ir.ui.view">
+        <field name="name">Archive Supplier Confirmation</field>
+        <field name="model">res.partner.archive.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Archive Supplier Confirmation">
+                <field name="partner_ids" invisible="1"/>
+                <group>
+                    <field name="message" nolabel="1"/>
+                </group>
+                <footer>
+                    <button name="action_confirm_archive"
+                            type="object"
+                            string="Continue"
+                            class="btn-primary"/>
+                    <button string="Cancel"
+                            class="btn-default"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

@@ -4,7 +4,6 @@
 
 from odoo import models, fields, api, _
 
-
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
@@ -135,3 +134,58 @@ class ResPartner(models.Model):
             'target': 'current',
             }
         return act_window
+
+    @api.multi
+    def archive_partner(self):
+        """Archive partners with wizard confirmation for suppliers"""
+        partners_to_archive = self.filtered(lambda p: p.active)
+
+        if partners_to_archive:
+            supplier_partners = partners_to_archive.filtered(lambda p: p.supplier)
+            if supplier_partners:
+                # Crear el wizard con todos los partners seleccionados
+                # El wizard mostrará solo los proveedores en el mensaje
+                wizard = self.env['res.partner.archive.wizard'].create({
+                    'partner_ids': [(6, 0, self.ids)],
+                })
+                return {
+                    'name': _('Archive Supplier Warning'),
+                    'type': 'ir.actions.act_window',
+                    'res_model': 'res.partner.archive.wizard',
+                    'res_id': wizard.id,
+                    'view_mode': 'form',
+                    'view_type': 'form',
+                    'target': 'new',
+                }
+
+        # Si no hay proveedores, archivar directamente
+        self.write({'active': False})
+        return {'type': 'ir.actions.act_window_close'}
+
+    @api.multi
+    def toggle_active(self):
+        """Override toggle_active to show confirmation wizard for suppliers"""
+        # Solo interceptar cuando se va a archivar (partners activos)
+        partners_to_archive = self.filtered(lambda p: p.active)
+
+        if partners_to_archive and not self._context.get('confirmed_archive'):
+            supplier_partners = partners_to_archive.filtered(lambda p: p.supplier)
+            if supplier_partners:
+                # Mostrar wizard de confirmación
+                wizard = self.env['res.partner.archive.wizard'].create({
+                    'partner_ids': [(6, 0, self.ids)],
+                })
+                return {
+                    'name': _('Archive Supplier Warning'),
+                    'type': 'ir.actions.act_window',
+                    'res_model': 'res.partner.archive.wizard',
+                    'res_id': wizard.id,
+                    'view_mode': 'form',
+                    'view_type': 'form',
+                    'target': 'new',
+                }
+
+        # Si no son proveedores o viene confirmado, ejecutar normal
+        return super(ResPartner, self).toggle_active()
+
+
