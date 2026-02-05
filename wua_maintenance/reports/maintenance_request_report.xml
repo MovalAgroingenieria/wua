@@ -356,10 +356,96 @@
                             </div>
                         </t>
 
+                        <!-- Message Log (only shown when with_message_log is set) -->
+                        <t t-if="with_message_log">
+                            <t t-set="messages" t-value="o.message_ids.filtered(lambda m: m.message_type in ('comment', 'email') and m.body)"/>
+                            <t t-if="messages">
+                                <div name="message_log_data">
+                                    <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                        <t t-if="report_style == 'light'">
+                                            <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                                <div style="float: left; width: 32px;"><span class="fa fa-comments"/></div>
+                                                <div style="float: left; display: inline;"><strong>Message Log</strong></div>
+                                            </div>
+                                        </t>
+                                        <t t-else="">
+                                            <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                                <div style="float: left; width: 32px;"><span class="fa fa-comments"/></div>
+                                                <div style="float: left; display: inline;"><strong>Message Log</strong></div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <div style="margin-top: 8px;">
+                                        <t t-foreach="messages" t-as="msg">
+                                            <div style="border: 1px solid #ddd; border-radius: 4px; padding: 10px; margin-bottom: 10px; background-color: #fafafa;">
+                                                <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid #eee; padding-bottom: 6px;">
+                                                    <div>
+                                                        <span class="fa fa-user" style="color: #666; margin-right: 5px;"/>
+                                                        <strong t-field="msg.author_id"/>
+                                                    </div>
+                                                    <div style="color: #888; font-size: 0.9em;">
+                                                        <span class="fa fa-clock-o" style="margin-right: 5px;"/>
+                                                        <span t-field="msg.date" t-options="{'format': 'dd/MM/yyyy HH:mm'}"/>
+                                                    </div>
+                                                </div>
+                                                <div style="padding: 4px 0; line-height: 1.5;">
+                                                    <span t-raw="msg.body"/>
+                                                </div>
+                                                <!-- Attachments -->
+                                                <t t-if="msg.attachment_ids">
+                                                    <div style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed #ddd;">
+                                                        <div style="color: #666; font-size: 0.9em; margin-bottom: 6px;">
+                                                            <span class="fa fa-paperclip" style="margin-right: 5px;"/>
+                                                            <strong>Attachments (<t t-esc="len(msg.attachment_ids)"/>)</strong>
+                                                        </div>
+                                                        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                                                            <t t-foreach="msg.attachment_ids" t-as="att">
+                                                                <t t-if="att.mimetype and att.mimetype.startswith('image/')">
+                                                                    <!-- Image attachment: show thumbnail -->
+                                                                    <div style="text-align: center; margin: 4px;">
+                                                                        <img t-att-src="'data:%s;base64,%s' % (att.mimetype, att.datas)"
+                                                                             style="max-width: 150px; max-height: 150px; border: 1px solid #ccc; border-radius: 4px;"/>
+                                                                        <div style="font-size: 0.8em; color: #666; margin-top: 4px; max-width: 150px; overflow: hidden; text-overflow: ellipsis;">
+                                                                            <t t-esc="att.name"/>
+                                                                        </div>
+                                                                    </div>
+                                                                </t>
+                                                                <t t-else="">
+                                                                    <!-- Other attachment: show icon and name -->
+                                                                    <div style="display: inline-flex; align-items: center; background: #fff; border: 1px solid #ddd; border-radius: 4px; padding: 6px 10px; margin: 4px;">
+                                                                        <span class="fa fa-file-o" style="color: #666; margin-right: 6px; font-size: 1.2em;"/>
+                                                                        <span style="font-size: 0.9em; color: #333;"><t t-esc="att.name"/></span>
+                                                                    </div>
+                                                                </t>
+                                                            </t>
+                                                        </div>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
+                        </t>
+
                     </div> <!-- end page -->
                 </t>
             </t>
         </t>
+    </template>
+
+    <!-- Maintenance request report WITH message log (droplist menu) -->
+    <report id="maintenance_request_report_with_log"
+        string="Maintenance Request Report (with Log)"
+        model="maintenance.request"
+        report_type="qweb-pdf"
+        file="wua_maintenance.maintenance_request_report_with_log_document"
+        name="wua_maintenance.maintenance_request_report_with_log_document"/>
+
+    <!-- Maintenance Request report with message log - wrapper template -->
+    <template id="maintenance_request_report_with_log_document">
+        <t t-set="with_message_log" t-value="True"/>
+        <t t-call="wua_maintenance.maintenance_request_report_document"/>
     </template>
 
 </odoo>
