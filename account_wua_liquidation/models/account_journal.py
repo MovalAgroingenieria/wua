@@ -10,6 +10,6 @@ class AccountJournal(models.Model):
     _inherit = ['account.journal', 'mail.thread']
 
     expenses_diary = fields.Boolean(
-        string= "Expenses diary",
-        default= False,
+        string="Expenses diary",
+        default=False,
     )
