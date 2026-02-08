@@ -3,6 +3,8 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import base64
+import unicodedata
+import urllib
 from odoo import http
 from odoo.http import request, Response
 from odoo.addons.website_portal.controllers.main import website_account
@@ -108,16 +110,17 @@ class website_account(website_account):
     @http.route(['/my/mails/<int:mail>/<int:attachment>/attachment'],
                 type='http', auth="user", website=True)
     def download_mail_attachment(self, mail=None, attachment=None, **kw):
-        mail = request.env['mail.mail'].browse(mail).sudo()
-
-        if not attachment or not mail.attachment_ids:
+        mail_record = request.env['mail.mail'].sudo().browse(mail)
+        if not mail_record or not attachment:
             return request.not_found()
 
         attachment_record = \
             request.env['ir.attachment'].sudo().browse(attachment)
 
-        if (not attachment_record or attachment_record.id
-                not in mail.attachment_ids.ids):
+        if (
+            not attachment_record or
+            attachment_record.id not in mail_record.attachment_ids.ids
+        ):
             return request.not_found()
 
         if not attachment_record.datas:
@@ -125,15 +128,32 @@ class website_account(website_account):
 
         try:
             content = base64.decodestring(
-                attachment_record.datas.encode('utf-8'))
+                attachment_record.datas.encode('utf-8'),
+            )
         except Exception:
             return request.not_found()
 
+        filename = attachment_record.name or 'file'
+
+        filename_ascii = unicodedata.normalize(
+            'NFKD',
+            filename,
+        ).encode('ascii', 'ignore')
+
+        filename_utf8 = urllib.quote(
+            filename.encode('utf-8'),
+        )
+
         headers = [
-            ('Content-Type',
-             attachment_record.mimetype or 'application/octet-stream'),
-            ('Content-Disposition',
-             'attachment; filename="{}"'.format(attachment_record.name)),
+            (
+                'Content-Type',
+                attachment_record.mimetype or 'application/octet-stream',
+            ),
+            (
+                'Content-Disposition',
+                'attachment; filename="%s"; filename*=UTF-8\'\'%s'
+                % (filename_ascii, filename_utf8),
+            ),
         ]
 
         return Response(content, headers=headers)
@@ -155,16 +175,18 @@ class website_account(website_account):
     @http.route(['/my/massmails/<int:mail>/<int:attachment>/attachment'],
                 type='http', auth="user", website=True)
     def download_massmails_attachment(self, mail=None, attachment=None, **kw):
-        mail = request.env['mail.mass_mailing'].browse(mail).sudo()
+        mail_record = request.env['mail.mass_mailing'].sudo().browse(mail)
 
-        if not attachment or not mail.attachment_ids:
+        if not mail_record or not attachment:
             return request.not_found()
 
         attachment_record = \
             request.env['ir.attachment'].sudo().browse(attachment)
 
-        if (not attachment_record or attachment_record.id
-                not in mail.attachment_ids.ids):
+        if (
+            not attachment_record or
+            attachment_record.id not in mail_record.attachment_ids.ids
+        ):
             return request.not_found()
 
         if not attachment_record.datas:
@@ -172,15 +194,32 @@ class website_account(website_account):
 
         try:
             content = base64.decodestring(
-                attachment_record.datas.encode('utf-8'))
+                attachment_record.datas.encode('utf-8'),
+            )
         except Exception:
             return request.not_found()
 
+        filename = attachment_record.name or 'file'
+
+        filename_ascii = unicodedata.normalize(
+            'NFKD',
+            filename,
+        ).encode('ascii', 'ignore')
+
+        filename_utf8 = urllib.quote(
+            filename.encode('utf-8'),
+        )
+
         headers = [
-            ('Content-Type',
-             attachment_record.mimetype or 'application/octet-stream'),
-            ('Content-Disposition',
-             'attachment; filename="{}"'.format(attachment_record.name)),
+            (
+                'Content-Type',
+                attachment_record.mimetype or 'application/octet-stream',
+            ),
+            (
+                'Content-Disposition',
+                'attachment; filename="%s"; filename*=UTF-8\'\'%s'
+                % (filename_ascii, filename_utf8),
+            ),
         ]
 
         return Response(content, headers=headers)
@@ -203,16 +242,18 @@ class website_account(website_account):
                 type='http', auth="user", website=True)
     def download_mailmessages_attachment(self, mail=None,
                                          attachment=None, **kw):
-        mail = request.env['mail.message'].browse(mail).sudo()
+        mail_record = request.env['mail.message'].sudo().browse(mail)
 
-        if not attachment or not mail.attachment_ids:
+        if not mail_record or not attachment:
             return request.not_found()
 
         attachment_record = \
             request.env['ir.attachment'].sudo().browse(attachment)
 
-        if (not attachment_record or attachment_record.id
-                not in mail.attachment_ids.ids):
+        if (
+            not attachment_record or
+            attachment_record.id not in mail_record.attachment_ids.ids
+        ):
             return request.not_found()
 
         if not attachment_record.datas:
@@ -220,15 +261,32 @@ class website_account(website_account):
 
         try:
             content = base64.decodestring(
-                attachment_record.datas.encode('utf-8'))
+                attachment_record.datas.encode('utf-8')
+            )
         except Exception:
             return request.not_found()
 
+        filename = attachment_record.name or 'file'
+
+        filename_ascii = unicodedata.normalize(
+            'NFKD',
+            filename,
+        ).encode('ascii', 'ignore')
+
+        filename_utf8 = urllib.quote(
+            filename.encode('utf-8'),
+        )
+
         headers = [
-            ('Content-Type',
-             attachment_record.mimetype or 'application/octet-stream'),
-            ('Content-Disposition',
-             'attachment; filename="{}"'.format(attachment_record.name)),
+            (
+                'Content-Type',
+                attachment_record.mimetype or 'application/octet-stream',
+            ),
+            (
+                'Content-Disposition',
+                'attachment; filename="%s"; filename*=UTF-8\'\'%s'
+                % (filename_ascii, filename_utf8),
+            ),
         ]
 
         return Response(content, headers=headers)
