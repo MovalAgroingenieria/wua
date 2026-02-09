@@ -65,7 +65,7 @@ class MaintenanceRequest(models.Model):
 
     resolution_time = fields.Datetime(
         string='Resolution Time',
-        readonly=True,
+        readonly=False,
         copy=False,
     )
 
