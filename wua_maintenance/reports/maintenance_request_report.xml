@@ -280,6 +280,36 @@
                                         </div>
                                     </t>
                                 </div>
+                                <div class="row" style="margin-top: 4px;">
+                                    <div class="col-xs-12" style="display: table;">
+                                        <div style="width: 50%; display: table-cell;">
+                                            <table style="width: 100%;">
+                                                <tbody>
+                                                    <tr name="tr_resolved_by">
+                                                        <td><span><b>Resolved By</b></span></td>
+                                                        <td class="text-right">
+                                                            <span t-field="o.resolved_by"/>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div style="width: 50%; display: table-cell; padding-left: 32px;">
+                                            <table style="width: 100%;">
+                                                <tbody>
+                                                    <t t-if="o.resolution_time">
+                                                        <tr name="tr_resolution_time">
+                                                            <td><span><b>Resolution Time</b></span></td>
+                                                            <td class="text-right">
+                                                                <span t-field="o.resolution_time"/>
+                                                            </td>
+                                                        </tr>
+                                                    </t>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div style="margin-top: 4px;">
                                     <span t-field="o.resolution_description"/>
                                 </div>
