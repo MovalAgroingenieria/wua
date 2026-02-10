@@ -49,7 +49,7 @@ class ResPartner(models.Model):
             _query_get()
         if where_clause:
             where_clause = 'AND ' + where_clause
-        # Query to get partners with overdue credit
+        # Query to get partners with overdue credit (only non-zero amounts)
         query = """
             SELECT account_move_line.partner_id,
                    SUM(account_move_line.amount_residual) as total
@@ -60,28 +60,29 @@ class ResPartner(models.Model):
             WHERE act.type = 'receivable'
               AND account_move_line.reconciled IS FALSE
               AND current_date > account_move_line.date_maturity
+              AND account_move_line.partner_id IS NOT NULL
               {where_clause}
             GROUP BY account_move_line.partner_id
+            HAVING SUM(account_move_line.amount_residual) != 0
         """.format(where_clause=where_clause)
         self.env.cr.execute(query, where_params)
         results = self.env.cr.fetchall()
-        # Build dict of partner_id -> overdue amount
+        # Build dict of partner_id -> overdue amount (only non-zero)
         partner_overdue = {row[0]: row[1] for row in results}
-        partners_with_overdue = set(partner_overdue.keys())
+        partners_with_nonzero_overdue = list(partner_overdue.keys())
         # Handle different operators
         if operator == '=' and value == 0:
-            # Partners with credit_overdue = 0 are those NOT in the list
-            # or those with sum = 0
-            zero_partners = [pid for pid, amt in partner_overdue.items()
-                             if amt == 0]
-            return ['|',
-                    ('id', 'not in', list(partners_with_overdue)),
-                    ('id', 'in', zero_partners)]
+            # Partners with credit_overdue = 0 are those NOT in the
+            # non-zero list
+            if not partners_with_nonzero_overdue:
+                # All partners have 0 overdue
+                return [(1, '=', 1)]
+            return [('id', 'not in', partners_with_nonzero_overdue)]
         elif operator == '!=' and value == 0:
             # Partners with credit_overdue != 0 are those with sum != 0
-            non_zero_partners = [pid for pid, amt in partner_overdue.items()
-                                 if amt != 0]
-            return [('id', 'in', non_zero_partners)]
+            if not partners_with_nonzero_overdue:
+                return [(0, '=', 1)]  # No results
+            return [('id', 'in', partners_with_nonzero_overdue)]
         elif operator in ('>', '>=', '<', '<=', '=', '!='):
             # Apply operator to the amounts
             ops = {
@@ -93,12 +94,16 @@ class ResPartner(models.Model):
             # For < and <= with positive value, include partners without
             # overdue (they have 0)
             if operator in ('<', '<=') and value > 0:
+                if not partners_with_nonzero_overdue:
+                    return [(1, '=', 1)]  # All partners match
                 return ['|',
-                        ('id', 'not in', list(partners_with_overdue)),
+                        ('id', 'not in', partners_with_nonzero_overdue),
                         ('id', 'in', matching_partners)]
+            if not matching_partners:
+                return [(0, '=', 1)]  # No results
             return [('id', 'in', matching_partners)]
         else:
-            return [('id', 'in', [])]
+            return [(0, '=', 1)]  # No results
 
     @api.multi
     def action_see_invoice_lines(self):
