@@ -120,7 +120,7 @@ class MaintenanceRequest(models.Model):
 
     resolution_description = fields.Html(
         string='Resolution Description',
-        readonly=True,
+        readonly=False,
         copy=False,
     )
 
