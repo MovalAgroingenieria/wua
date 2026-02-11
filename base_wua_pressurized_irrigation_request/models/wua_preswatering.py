@@ -416,7 +416,7 @@ class WuaPreswatering(models.Model):
         self.ensure_one()
         presresconsumption_ids = \
             [x.id for x in self.presresconsumption_ids
-             if x.watering_duration > 0 and x.selected]
+             if x.selected]
         if len(presresconsumption_ids) > 0:
             condition = [('id', 'in', presresconsumption_ids)]
             id_tree_view = self.env.ref(
@@ -440,6 +440,9 @@ class WuaPreswatering(models.Model):
                 'target': 'current',
                 }
             return act_window
+        else:
+            raise exceptions.UserError(_(
+                'There are no consumptions to show.'))
 
     @api.multi
     def cancel_preswatering(self):
