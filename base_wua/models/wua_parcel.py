@@ -1957,17 +1957,34 @@ class WuaParcel(models.Model):
 
     @api.multi
     def action_get_gis_data_from_cadastre(self):
-        espg_code = '25830'
         errors = []
         updated = []
         skipped = []
+        # Get the SRID of the wua_gis_parcel geometry column
+        self.env.cr.execute("""
+            SELECT postgis.ST_SRID(geom) FROM wua_gis_parcel
+            WHERE geom IS NOT NULL LIMIT 1
+        """)
+        result = self.env.cr.fetchone()
+        if result:
+            target_srid = result[0]
+        else:
+            # If no geometry exists, get SRID from table definition
+            self.env.cr.execute("""
+                SELECT srid FROM postgis.geometry_columns
+                WHERE f_table_name = 'wua_gis_parcel' AND f_geometry_column = 'geom'
+            """)
+            result = self.env.cr.fetchone()
+            target_srid = result[0] if result else 25830
+        # Cadastre uses EPSG:25830
+        source_srid = 25830
         for record in self:
             if record.cadastral_reference and not record.with_gis_parcel:
                 wfs_url = (
                     'https://ovc.catastro.meh.es/INSPIRE/wfsCP.aspx?'
                     'service=wfs&version=2.0.0&request=getfeature&'
                     'STOREDQUERIE_ID=GetParcel&refcat=%s&srsname=EPSG::%s'
-                ) % (record.cadastral_reference, espg_code)
+                ) % (record.cadastral_reference, source_srid)
                 try:
                     response = requests.get(wfs_url, verify=False)
                     if response.status_code != 200:
@@ -2002,13 +2019,26 @@ class WuaParcel(models.Model):
                                         "Cadastre is empty or invalid.") %
                                         record.name)
                                     continue
-                                # Insert geometry into database
-                                sql = """
-                                    INSERT INTO wua_gis_parcel (name, geom)
-                                    VALUES (%s, ST_GeomFromGML(%s))
-                                """
-                                self.env.cr.execute(sql, (
-                                    record.name, geom_gml))
+                                # Insert geometry with ST_Transform if needed
+                                if source_srid != target_srid:
+                                    sql = """
+                                        INSERT INTO wua_gis_parcel (name, geom)
+                                        VALUES (%s, postgis.ST_Transform(
+                                            postgis.ST_SetSRID(
+                                                postgis.ST_GeomFromGML(%s),
+                                                %s),
+                                            %s))
+                                    """
+                                    self.env.cr.execute(sql, (
+                                        record.name, geom_gml, source_srid,
+                                        target_srid))
+                                else:
+                                    sql = """
+                                        INSERT INTO wua_gis_parcel (name, geom)
+                                        VALUES (%s, postgis.ST_GeomFromGML(%s))
+                                    """
+                                    self.env.cr.execute(sql, (
+                                        record.name, geom_gml))
                                 self.env.cr.commit()
                                 self.env.invalidate_all()
                                 updated.append(record.name)
