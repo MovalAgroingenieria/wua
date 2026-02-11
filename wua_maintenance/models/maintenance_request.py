@@ -160,7 +160,7 @@ class MaintenanceRequest(models.Model):
 
     resolution_dynamic_fields = fields.Text(
         string='Updated info',
-        readonly=True,
+        readonly=False,
         copy=False,
     )
 
