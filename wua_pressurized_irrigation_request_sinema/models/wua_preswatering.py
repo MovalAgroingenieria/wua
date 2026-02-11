@@ -56,7 +56,7 @@ class WuaPresreswatering(models.Model):
             request_function = requests.post
         # Inestable connection, retry X times
         # TODO: Transform this to a parameter
-        max_retries = 5
+        max_retries = 10
         base_sleep = 10
         for attempt in range(1, max_retries + 1):
             try:
@@ -65,7 +65,7 @@ class WuaPresreswatering(models.Model):
                     json=payload,
                     headers=headers,
                     verify=False,
-                    timeout=60,
+                    timeout=300,
                 )
                 if response.status_code == 200:
                     return response.json()
