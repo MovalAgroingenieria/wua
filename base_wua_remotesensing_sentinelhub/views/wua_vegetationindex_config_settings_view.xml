@@ -17,18 +17,33 @@
                 <group string="Common Configuration"
                        name="common_configuration_group">
                     <field name="enable_remotesensing"/>
-                    <field name="remotesensing_key"
-                           attrs="{'invisible':[('enable_remotesensing','=',False)],
-                                   'required': [('enable_remotesensing', '=', True)]}"/>
-                    <field name="url_api_fis"
-                           attrs="{'invisible':[('enable_remotesensing','=',False)],
-                                   'required': [('enable_remotesensing', '=', True)]}"/>
-                    <field name="url_wms"
-                           attrs="{'invisible':[('enable_remotesensing','=',False)],
-                                   'required': [('enable_remotesensing', '=', True)]}"/>
                     <field name="initial_date"
                            attrs="{'invisible':[('enable_remotesensing','=',False)],
                                    'required': [('enable_remotesensing', '=', True)]}"/>
+                </group>
+                <group string="OAuth2 Authentication (Statistical API)"
+                       name="oauth2_configuration_group"
+                       attrs="{'invisible':[('enable_remotesensing','=',False)]}">
+                    <field name="oauth_client_id"
+                           attrs="{'required': [('enable_remotesensing', '=', True)]}"/>
+                    <field name="oauth_client_secret" password="True"
+                           attrs="{'required': [('enable_remotesensing', '=', True)]}"/>
+                    <field name="url_api_statistical"
+                           attrs="{'required': [('enable_remotesensing', '=', True)]}"/>
+                    <field name="url_oauth_token"
+                           attrs="{'required': [('enable_remotesensing', '=', True)]}"/>
+                </group>
+                <group string="WMS Service"
+                       name="wms_configuration_group"
+                       attrs="{'invisible':[('enable_remotesensing','=',False)]}">
+                    <field name="url_wms"/>
+                    <field name="remotesensing_key"
+                           attrs="{'invisible': True}"/>
+                </group>
+                <group string="Deprecated (FIS API)"
+                       name="deprecated_configuration_group"
+                       attrs="{'invisible': True}">
+                    <field name="url_api_fis"/>
                 </group>
             </form>
         </field>

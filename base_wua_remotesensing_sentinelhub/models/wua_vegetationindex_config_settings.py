@@ -16,14 +16,14 @@ class WuaVegetationindexConfiguration(models.TransientModel):
         string='Enabled Remote-Sensing')
 
     remotesensing_key = fields.Char(
-        string='Key',
+        string='Key (deprecated)',
         size=255,
-        help='Secret key of the Sentinel-Hub account')
+        help='Secret key of the Sentinel-Hub account (deprecated, use OAuth2)')
 
     url_api_fis = fields.Char(
-        string='API FIS',
+        string='API FIS (deprecated)',
         size=255,
-        help='URL of the API FIS of Sentinel-Hub')
+        help='URL of the API FIS of Sentinel-Hub (deprecated)')
 
     url_wms = fields.Char(
         string='WMS Service',
@@ -34,6 +34,30 @@ class WuaVegetationindexConfiguration(models.TransientModel):
         string='Initial Date',
         default='2021-01-01',
         help='Date of the first remote-sensing data capture')
+
+    # OAuth2 credentials for Statistical API
+    oauth_client_id = fields.Char(
+        string='OAuth2 Client ID',
+        size=255,
+        help='Client ID for OAuth2 authentication with Sentinel-Hub')
+
+    oauth_client_secret = fields.Char(
+        string='OAuth2 Client Secret',
+        size=255,
+        help='Client Secret for OAuth2 authentication with Sentinel-Hub')
+
+    url_api_statistical = fields.Char(
+        string='Statistical API URL',
+        size=255,
+        default='https://services.sentinel-hub.com/api/v1/statistics',
+        help='URL of the Statistical API of Sentinel-Hub')
+
+    url_oauth_token = fields.Char(
+        string='OAuth2 Token URL',
+        size=255,
+        default='https://services.sentinel-hub.com/auth/realms/main/protocol/'
+                'openid-connect/token',
+        help='URL for obtaining OAuth2 tokens from Sentinel-Hub')
 
     @api.multi
     def set_default_values(self):
@@ -53,3 +77,15 @@ class WuaVegetationindexConfiguration(models.TransientModel):
         values.set_default('wua.vegetationindex.configuration',
                            'initial_date',
                            self.initial_date)
+        values.set_default('wua.vegetationindex.configuration',
+                           'oauth_client_id',
+                           self.oauth_client_id)
+        values.set_default('wua.vegetationindex.configuration',
+                           'oauth_client_secret',
+                           self.oauth_client_secret)
+        values.set_default('wua.vegetationindex.configuration',
+                           'url_api_statistical',
+                           self.url_api_statistical)
+        values.set_default('wua.vegetationindex.configuration',
+                           'url_oauth_token',
+                           self.url_oauth_token)
