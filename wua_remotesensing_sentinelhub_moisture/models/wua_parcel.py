@@ -55,6 +55,72 @@ class WuaParcel(models.Model):
         string='Moisture Graph (active agricultural season, detail)',
         compute='_compute_moisture_graph_detail')
 
+    def _build_evalscript(self, index_name):
+        """
+        Build the evalscript for Moisture Index (NDMI) using Statistical API.
+        NDMI = (NIR - SWIR) / (NIR + SWIR) = (B08 - B11) / (B08 + B11)
+        Based on official Sentinel Hub examples format:
+        https://docs.sentinel-hub.com/api/latest/api/statistical/examples/
+        """
+        if index_name == 'moisture':
+            evalscript = """//VERSION=3
+function setup() {
+  return {
+    input: [{
+      bands: [
+        "B08",
+        "B11",
+        "SCL",
+        "dataMask"
+      ]
+    }],
+    output: [
+      {
+        id: "data",
+        bands: 1
+      },
+      {
+        id: "dataMask",
+        bands: 1
+      }]
+  }
+}
+
+function evaluatePixel(samples) {
+    let ndmi = (samples.B08 - samples.B11)/(samples.B08 + samples.B11)
+
+    // Mask to exclude invalid pixels for agricultural parcels:
+    // SCL (Scene Classification Layer) values:
+    //   0: No data - no sensor data available
+    //   1: Saturated/defective - pixels with technical errors
+    //   3: Cloud shadows - affect index calculation
+    //   8: Cloud medium probability - unreliable data
+    //   9: Cloud high probability - unreliable data
+    //  10: Thin cirrus - thin clouds that distort values
+    //  11: Snow/ice - not relevant for crops
+    // SCL=6 (water) is NOT excluded because there may be flood irrigation
+    // or very wet soils incorrectly classified as water
+    var validMask = 1
+    if (samples.SCL == 0 || samples.SCL == 1 || samples.SCL == 3 ||
+        samples.SCL == 8 || samples.SCL == 9 || samples.SCL == 10 || samples.SCL == 11) {
+        validMask = 0
+    }
+
+    // Avoid division by zero when both bands are 0
+    if (samples.B08 + samples.B11 == 0) {
+        validMask = 0
+    }
+
+    return {
+        data: [ndmi],
+        dataMask: [samples.dataMask * validMask]
+    }
+}
+"""
+            return evalscript
+        else:
+            return super(WuaParcel, self)._build_evalscript(index_name)
+
     @api.multi
     def _compute_number_of_moisture(self):
         model_wua_parcel_vegetationindex_moisture = \
@@ -321,7 +387,7 @@ class WuaParcel(models.Model):
                         'message': message,
                         'is_html_message': True,
                         'close_button_title': False,
-                        'buttons': buttons
+                        'buttons': buttons,
                         }
                     return act_window
 
@@ -347,7 +413,7 @@ class WuaParcel(models.Model):
                 'min_value': min_value,
                 'mean_value': mean_value,
                 'max_value': max_value,
-                'stdev_value': stdev_value
+                'stdev_value': stdev_value,
                 })
         else:
             super(WuaParcel, self)._save_values(
