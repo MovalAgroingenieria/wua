@@ -12,6 +12,11 @@ import random
 class WuaMaintenanceEquipmentCategory(models.Model):
     _inherit = 'maintenance.equipment.category'
 
+    def get_alias_model_name(self, vals):
+        """Override to create maintenance.request instead of
+        maintenance.equipment when receiving emails on the category alias."""
+        return vals.get('alias_model', 'maintenance.request')
+
     name = fields.Char(
         string='Name',
         required=True,

@@ -18,8 +18,28 @@ class MaintenanceRequest(models.Model):
         # Always at least one team
         if not default_team:
             default_team = self.env['maintenance.team'].search(
-                [()], limit=1)
+                [], limit=1)
         return default_team
+
+    @api.model
+    def message_new(self, msg_dict, custom_values=None):
+        """Override to handle maintenance request creation from incoming
+        emails. Sets the description from the email body and ensures
+        a default team is assigned."""
+        if custom_values is None:
+            custom_values = {}
+        # Set description from email body if not already provided
+        if not custom_values.get('description'):
+            body = msg_dict.get('body', '')
+            if body:
+                custom_values['description'] = body
+        # Ensure maintenance_team_id is set
+        if not custom_values.get('maintenance_team_id'):
+            default_team = self._get_default_team_id()
+            if default_team:
+                custom_values['maintenance_team_id'] = default_team.id
+        return super(MaintenanceRequest, self).message_new(
+            msg_dict, custom_values=custom_values)
 
     maintenance_team_id = fields.Many2one(
         default=lambda self: self._get_default_team_id(),
