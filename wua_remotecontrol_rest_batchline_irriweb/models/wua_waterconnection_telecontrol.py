@@ -102,24 +102,42 @@ class WuaWaterconnectionTelecontrol(models.Model):
                 if resprest.status_code == 200:
                     outputrest = json.loads(resprest.text)
                     for wc_info in outputrest:
-                        waterconnection = wc_info['Id']
-                        total_volume = wc_info['Volumen']
-                        waterflow = wc_info['Caudal']
-                        valve_open = wc_info['ValvulaAbierta']
-                        valve_scheduled = wc_info['ModoAuto']
+                        # Validate required fields
+                        waterconnection = wc_info.get('Id')
+                        if not waterconnection:
+                            error_message += _(
+                                ' Hydrant without Id. Data: %s. ') % \
+                                str(wc_info)
+                            continue
+                        date = wc_info.get('Fecha')
+                        if not date:
+                            error_message += _(
+                                ' Hydrant %s without date. ') % waterconnection
+                            continue
+                        # Get values with default values
+                        total_volume = wc_info.get('Volumen') or 0.0
+                        waterflow = wc_info.get('Caudal') or 0.0
+                        valve_open = wc_info.get('ValvulaAbierta') or False
+                        valve_scheduled = wc_info.get('ModoAuto') or False
                         valve_state = self.map_valve_state_to_selection(
-                            wc_info['EstadoValvula'])
+                            wc_info.get('EstadoValvula'))
                         valve_error = False
                         valve_error_msg = ''
                         watermeter_error = False
                         watermeter_error_msg = ''
-                        date = wc_info['Fecha']
-                        data_time = datetime.datetime.strptime(
-                            date, '%Y-%m-%dT%H:%M:%S')
-                        data_time = pytz.timezone('Europe/Madrid').\
-                            localize(data_time)
-                        data_time = data_time.astimezone(
-                            pytz.timezone('UTC')).strftime('%Y-%m-%d %H:%M:%S')
+                        try:
+                            data_time = datetime.datetime.strptime(
+                                date, '%Y-%m-%dT%H:%M:%S')
+                            data_time = pytz.timezone('Europe/Madrid').\
+                                localize(data_time)
+                            data_time = data_time.astimezone(
+                                pytz.timezone('UTC')).\
+                                strftime('%Y-%m-%d %H:%M:%S')
+                        except (ValueError, TypeError):
+                            error_message += _(
+                                ' Hydrant %s with invalid date: %s. ') % (
+                                    waterconnection, date)
+                            continue
                         wc_all_info.append({
                             'waterconnection': waterconnection,
                             'total_volume': total_volume,
