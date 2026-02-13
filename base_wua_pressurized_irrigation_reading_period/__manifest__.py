@@ -20,6 +20,7 @@
         "data/wua_irrigation_config_settings_data.xml",
         "views/resources.xml",
         "views/wua_irrigation_config_settings_view.xml",
+        "views/wua_waterconnection_view.xml",
         "views/wua_readingperiod_view.xml",
         "views/wua_reading_view.xml",
         "views/wua_negative_reading_view.xml",

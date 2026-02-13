@@ -189,7 +189,7 @@ class WuaReadingperiod(models.Model):
         if (len(self) == 1):
             agriculturalseasons = self.env['wua.agriculturalseason'].search([
                 ('initial_date', '<=', self.initial_date),
-                ('end_date', '>=', self.end_date)
+                ('end_date', '>=', self.end_date),
             ])
             if (not agriculturalseasons):
                 raise exceptions.ValidationError(_(
@@ -436,7 +436,7 @@ class WuaReadingperiodLine(models.Model):
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
-         'Existing Reading-Period Line.')
+         'Existing Reading-Period Line.'),
     ]
 
     @api.depends('readingperiod_id', 'hydraulicsector_id')
@@ -445,7 +445,7 @@ class WuaReadingperiodLine(models.Model):
             name = None
             if (record.readingperiod_id and record.hydraulicsector_id):
                 name = record.readingperiod_id.name + '-' + \
-                    str(record.hydraulicsector_id.hydraulicsector_code
+                    str(record.hydraulicsector_id.hydraulicsector_code,
                         ).zfill(6)
             record.name = name
 
@@ -520,7 +520,8 @@ class WuaReadingperiodLine(models.Model):
                     SELECT nextval(
                     'wua_readingperiod_line_irrigationshed_id_seq'), %s,
                     %s, now(), now(), %s, %s, id, hydraulicsector_id,
-                    elevation, number_of_parcels, number_of_waterconnections,
+                    elevation, number_of_parcels,
+                    number_of_waterconnections_reading_mode,
                     total_affected_area_official_hec FROM wua_irrigationshed
                     WHERE hydraulicsector_id = %s AND active
                     """, (user_id, user_id, readingperiodline_id, selected_val,
@@ -534,6 +535,10 @@ class WuaReadingperiodLine(models.Model):
     @api.multi
     def action_select_readingperiod_line_irrigationsheds(self):
         self.ensure_one()
+        if self.readingperiod_id and self.readingperiod_id.state == 'open':
+            raise exceptions.UserError(_(
+                'Cannot modify irrigation shed selection while the '
+                'reading period is open.'))
         if not self.configured_line:
             self._populate_items_select()
             self.env['wua.readingperiod.line.irrigationshed'].search([]).\
@@ -649,6 +654,12 @@ class WuaReadingperiodLineIrrigationshed(models.Model):
 
     @api.multi
     def add_to_readingperiod(self):
+        for record in self:
+            rp = record.readingperiod_id
+            if rp and rp.state == 'open':
+                raise exceptions.UserError(_(
+                    'Cannot modify irrigation shed selection while the '
+                    'reading period is open.'))
         vals = {
             'selected': True,
         }
@@ -656,6 +667,12 @@ class WuaReadingperiodLineIrrigationshed(models.Model):
 
     @api.multi
     def remove_from_readingperiod(self):
+        for record in self:
+            rp = record.readingperiod_id
+            if rp and rp.state == 'open':
+                raise exceptions.UserError(_(
+                    'Cannot modify irrigation shed selection while the '
+                    'reading period is open.'))
         vals = {
             'selected': False,
         }
