@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_waterconnection_view_form_reading_period" model="ir.ui.view">
+        <field name="name">Water Connection (Reading Period extension)</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_waterconnection_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='with_cultivation']" position="after">
+                <field name="visible_in_reading_mode"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_waterconnection_view_tree_reading_period" model="ir.ui.view">
+        <field name="name">Water Connection (Reading Period tree extension)</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_waterconnection_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="inside">
+                <field name="visible_in_reading_mode"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_waterconnection_view_search_reading_period" model="ir.ui.view">
+        <field name="name">Water Connection (Reading Period search extension)</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_waterconnection_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <filter string="Visible in Reading Mode"
+                        name="visible_in_reading_mode"
+                        domain="[('visible_in_reading_mode','=',True)]"/>
+                <filter string="Not Visible in Reading Mode"
+                        name="not_visible_in_reading_mode"
+                        domain="[('visible_in_reading_mode','=',False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

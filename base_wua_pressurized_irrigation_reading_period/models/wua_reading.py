@@ -68,9 +68,9 @@ class WuaReading(models.Model):
                 'This User don\'t belongs to watermeter reader group.'))
 
     @api.model
-    def _prepare_field_reading_values(self, watermeter_id, volume, readingperiod_id,
-                                      watermeter_reader_id, product_id, notes='',
-                                      picture=''):
+    def _prepare_field_reading_values(
+        self, watermeter_id, volume, readingperiod_id, watermeter_reader_id,
+            product_id, notes='', picture=''):
         vals = {}
         reading_img = None
         if picture:

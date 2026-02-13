@@ -7,3 +7,5 @@ from . import wua_reading
 from . import wua_negative_reading
 from . import wua_irrigation_config_settings
 from . import res_users
+from . import wua_waterconnection
+from . import wua_irrigationshed

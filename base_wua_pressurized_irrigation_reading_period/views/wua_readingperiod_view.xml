@@ -15,8 +15,7 @@
                             class="oe_read_only"
                             style="width: 105px;"
                             attrs="{'invisible':
-                                    ['|',('state','=','open'),
-                                     ('state','=','closed')]}"
+                                    [('state','=','open')]}"
                             groups="base_wua.group_wua_manager"/>
                     <button name="action_open_readingperiod"
                             type="object" string="Open"
@@ -104,8 +103,7 @@
                         <notebook name="slave_data_notebook">
                             <page name="lines_page" string="Lines">
                                 <field name="readingperiodline_ids"
-                                       attrs="{'readonly': ['|', ('state','=','open'),
-                                                            ('state','=','closed')]}"
+                                       attrs="{'readonly': [('state','=','open')]}"
                                         context="{'tree_view_ref':
                                                   'base_wua_pressurized_irrigation_reading_period.wua_readingperiod_line_view_tree'}"/>
                             </page>
