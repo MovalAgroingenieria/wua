@@ -80,7 +80,8 @@ class WuaReading(models.Model):
             'volume': volume,
             'watermeter_reader_id': watermeter_reader_id,
             'notes': notes,
-            'reading_time': fields.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'reading_time': fields.datetime.now().strftime(
+                '%Y-%m-%d %H:%M:%S'),
             'validated': False,
             'initialization_reading': False,
             'reading_img': reading_img,
