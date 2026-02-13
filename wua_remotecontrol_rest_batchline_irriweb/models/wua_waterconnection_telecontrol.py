@@ -9,6 +9,8 @@ import logging
 import json
 from odoo import models, api, fields, _
 
+_logger = logging.getLogger(__name__)
+
 
 class WuaWaterconnectionTelecontrol(models.Model):
     _inherit = 'wua.waterconnection.telecontrol'
@@ -111,8 +113,9 @@ class WuaWaterconnectionTelecontrol(models.Model):
                             continue
                         date = wc_info.get('Fecha')
                         if not date:
-                            error_message += _(
-                                ' Hydrant %s without date. ') % waterconnection
+                            _logger.warning(
+                                ' Hydrant %s without date. ',
+                                waterconnection)
                             continue
                         # Get values with default values
                         total_volume = wc_info.get('Volumen') or 0.0
@@ -134,9 +137,9 @@ class WuaWaterconnectionTelecontrol(models.Model):
                                 pytz.timezone('UTC')).\
                                 strftime('%Y-%m-%d %H:%M:%S')
                         except (ValueError, TypeError):
-                            error_message += _(
-                                ' Hydrant %s with invalid date: %s. ') % (
-                                    waterconnection, date)
+                            _logger.warning(
+                                ' Hydrant %s with invalid date: %s.',
+                                waterconnection, date)
                             continue
                         wc_all_info.append({
                             'waterconnection': waterconnection,
@@ -246,7 +249,6 @@ class WuaWaterconnectionTelecontrol(models.Model):
                 else:
                     self.create(waterconnection_telecontrol_params)
             if update_log:
-                _logger = logging.getLogger(self.__class__.__name__)
-                _logger.info(_('Remote Control: Saved Waterconnection'
-                               'Telecontrol Info') + '... ' +
-                             str(number_of_wc_info))
+                _logger.info(
+                    'Remote Control: Saved Waterconnection '
+                    'Telecontrol Info... %s', number_of_wc_info)
