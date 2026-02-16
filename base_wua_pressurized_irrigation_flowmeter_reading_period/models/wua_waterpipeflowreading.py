@@ -59,7 +59,10 @@ class WuaWaterpipeflowreading(models.Model):
 
     @api.model
     def create_field_reading(self, flowmeter_id, volume, instant_flow,
-                             watermeter_reader_id, notes='', picture=''):
+                             watermeter_reader_id, notes='', picture='',
+                             real_odoo_user_id=False):
+        if real_odoo_user_id:
+            watermeter_reader_id = real_odoo_user_id
         readingperiod_model = self.sudo().env['wua.readingperiod']
         readingperiodflowmeterline_model = \
             self.sudo().env['wua.readingperiod.flowmeterline']
