@@ -93,7 +93,9 @@ class WuaReading(models.Model):
     @api.model
     def create_field_reading(self, watermeter_id, volume, readingperiod_id,
                              watermeter_reader_id, product_id, notes='',
-                             picture=''):
+                             picture='', real_odoo_user_id=False):
+        if real_odoo_user_id:
+            watermeter_reader_id = real_odoo_user_id
         rp = self.env['wua.readingperiod'].search([('state', '=', 'open')])
         if (not rp):
             raise exceptions.UserError(_(
