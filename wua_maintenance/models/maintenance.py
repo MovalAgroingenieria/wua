@@ -820,22 +820,47 @@ class MaintenanceEquipment(models.Model):
 
     @api.model
     def _cron_generate_requests_with_limit(self):
-        for plan in self.env['maintenance.plan'].search([('period', '>', 0)]):
-            next_date = fields.Date.from_string(plan.next_creation_date)
-            today = fields.Date.from_string(fields.Date.today())
-            if next_date <= today:
+        today = fields.Date.from_string(fields.Date.today())
+        plans = self.env['maintenance.plan'].search([('period', '>', 0)])
+
+        ir_values = self.env['ir.values'].sudo()
+        update_with_open = ir_values.get_default(
+            'maintenance.config.settings',
+            'update_dates_with_open_requests'
+        )
+        if update_with_open is None:
+            update_with_open = False
+
+        for plan in plans:
+            next_creation = fields.Date.from_string(plan.next_creation_date)
+
+            if next_creation <= today:
                 equipment = plan.equipment_id
-                next_requests = self.env['maintenance.request'].search(
-                    [('stage_id.done', '=', False),
-                     ('equipment_id', '=', equipment.id),
-                     ('maintenance_type', '=', 'preventive'),
-                     ('maintenance_kind_id', '=', plan.maintenance_kind_id.id),
-                     ('request_date', '=', plan.next_maintenance_date)])
+                next_maintenance = fields.Date.from_string(
+                    plan.next_maintenance_date)
+
+                period_start = min(next_creation, next_maintenance)
+                period_end = max(next_creation, next_maintenance)
+
+                next_requests = self.env['maintenance.request'].search([
+                    ('stage_id.done', '=', False),
+                    ('equipment_id', '=', equipment.id),
+                    ('maintenance_type', '=', 'preventive'),
+                    ('maintenance_kind_id', '=', plan.maintenance_kind_id.id),
+                    ('request_date', '>=', fields.Date.to_string(period_start)),
+                    ('request_date', '<=', fields.Date.to_string(period_end))])
+
                 if not next_requests:
                     equipment._create_new_request(plan)
                     plan.next_creation_date = fields.Date.to_string(
-                        fields.Date.from_string(plan.next_creation_date) +
-                        timedelta(days=plan.period))
+                        next_creation + timedelta(days=plan.period))
+                    plan._compute_next_maintenance()
+                else:
+                    if update_with_open:
+                        plan.next_creation_date = fields.Date.to_string(
+                            next_creation + timedelta(days=plan.period))
+                        plan._compute_next_maintenance()
+
 
     @api.multi
     def _compute_hydraulicsector(self):

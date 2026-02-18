@@ -41,7 +41,9 @@ class MaintenancePlan(models.Model):
             record.next_creation_date = next_creation_date
 
     @api.depends('first_execution_date', 'period', 'equipment_id',
-                 'maintenance_kind_id')
+                 'maintenance_kind_id', 'equipment_id.maintenance_ids',
+                 'equipment_id.maintenance_ids.close_date',
+                 'equipment_id.maintenance_ids.stage_id.done')
     def _compute_next_maintenance(self):
         date_now = fields.Date.context_today(self)
         today_date = fields.Date.from_string(date_now)
@@ -60,8 +62,11 @@ class MaintenancePlan(models.Model):
                     plan.next_maintenance_date = plan.first_execution_date
                     continue
                 elif first_date < today_date:
-                    plan.next_maintenance_date = fields.Date.to_string(
-                        first_date + period_timedelta)
+                    days_passed = (today_date - first_date).days
+                    periods_passed = days_passed // period_days
+                    next_date = first_date + timedelta(
+                        days=(periods_passed + 1) * period_days)
+                    plan.next_maintenance_date = fields.Date.to_string(next_date)
                     continue
             next_maintenance_todo = self.env['maintenance.request'].search([
                 ('equipment_id', '=', plan.equipment_id.id),
@@ -78,20 +83,30 @@ class MaintenancePlan(models.Model):
 
             if next_maintenance_todo and last_maintenance_done:
                 next_date = next_maintenance_todo.request_date
-                date_gap = fields.Date.from_string(
-                    next_date) - fields.Date.from_string(
-                        last_maintenance_done.close_date)
-                if date_gap > max(timedelta(0), period_timedelta * 2) and \
-                        fields.Date.from_string(next_date) > today_date:
-                    if fields.Date.from_string(
-                        last_maintenance_done.close_date) + \
-                            period_timedelta < today_date:
+                next_date_obj = fields.Date.from_string(next_date)
+
+                if next_date_obj < today_date:
+                    next_date_calc = fields.Date.from_string(
+                        last_maintenance_done.close_date) + period_timedelta
+                    if next_date_calc < today_date:
                         next_date = date_now
                     else:
-                        next_date = fields.Date.to_string(
-                            fields.Date.from_string(
-                                last_maintenance_done.close_date) +
-                            period_timedelta)
+                        next_date = fields.Date.to_string(next_date_calc)
+                else:
+                    date_gap = fields.Date.from_string(
+                        next_date) - fields.Date.from_string(
+                            last_maintenance_done.close_date)
+                    if date_gap > max(timedelta(0), period_timedelta * 2) and \
+                            fields.Date.from_string(next_date) > today_date:
+                        if fields.Date.from_string(
+                            last_maintenance_done.close_date) + \
+                                period_timedelta < today_date:
+                            next_date = date_now
+                        else:
+                            next_date = fields.Date.to_string(
+                                fields.Date.from_string(
+                                    last_maintenance_done.close_date) +
+                                period_timedelta)
             elif next_maintenance_todo:
                 next_date = next_maintenance_todo.request_date
                 date_gap = fields.Date.from_string(next_date) - today_date
@@ -99,10 +114,12 @@ class MaintenancePlan(models.Model):
                     next_date = fields.Date.to_string(
                         today_date + period_timedelta)
             elif last_maintenance_done:
-                next_date = fields.Date.from_string(
+                next_date_calc = fields.Date.from_string(
                     last_maintenance_done.close_date) + period_timedelta
-                if next_date < today_date:
+                if next_date_calc < today_date:
                     next_date = date_now
+                else:
+                    next_date = fields.Date.to_string(next_date_calc)
             else:
                 next_date = fields.Date.to_string(
                     today_date + period_timedelta)

@@ -27,6 +27,7 @@ from . import maintenance_team
 from . import maintenance_settings
 from . import maintenance_stage
 from . import maintenance_plan
+from . import res_config
 from . import wua_building
 from . import wua_processingcentre
 from . import wua_powerline
