@@ -22,6 +22,7 @@
         "views/portal_account_templates.xml",
         "views/portal_parcels_templates.xml",
         "views/portal_invoices_templates.xml",
+        "views/wua_invoicing_config_settings_view.xml",
         "views/res_users_view.xml",
         "security/ir.model.access.csv",
     ],

@@ -72,6 +72,10 @@ class website_account(website_account):
             if num_pending_certificates >= max_pending_certificates:
                 can_request_certificate = False
         certificatetype_model = request.env['wua.certificate.type']
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal'
+        )
         values.update({
             'certificates': certificates,
             'pager': pager,
@@ -80,6 +84,7 @@ class website_account(website_account):
             'default_url': '/my/certificates',
             'can_request_certificate': can_request_certificate,
             'certificate_types': certificatetype_model.sudo().search([]),
+            'liquidation_on_portal': liquidation_on_portal,
         })
         return request.render(
             "base_wua_portal_certificate.portal_my_certificates",

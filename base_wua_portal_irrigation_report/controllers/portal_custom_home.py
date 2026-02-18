@@ -76,12 +76,17 @@ class website_account(website_account):
         offset = (page - 1) * items_per_page
         paginated_irrigationreports = \
             irrigationreports[offset:offset + items_per_page]
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal'
+        )
         values.update({
             'irrigationreports': paginated_irrigationreports,
             'pager': pager,
             'search_query': search,
             'search_field': search_field,
             'default_url': '/my/irrigationreports',
+            'liquidation_on_portal': liquidation_on_portal,
         })
         return request.render(
             "base_wua_portal_irrigation_report.portal_my_irrigationreports",

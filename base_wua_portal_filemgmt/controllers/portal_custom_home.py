@@ -66,12 +66,17 @@ class website_account(website_account):
         )
         offset = (page - 1) * items_per_page
         paginated_files = files[offset:offset + items_per_page]
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal'
+        )
         values.update({
             'files': paginated_files,
             'pager': pager,
             'search_query': search,
             'search_field': search_field,
             'default_url': '/my/files',
+            'liquidation_on_portal': liquidation_on_portal,
         })
         return request.render(
             "base_wua_portal_filemgmt.portal_my_files",
@@ -110,12 +115,17 @@ class website_account(website_account):
         )
         offset = (page - 1) * items_per_page
         paginated_registries = registries[offset:offset + items_per_page]
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal'
+        )
         values.update({
             'registries': paginated_registries.sudo(),
             'pager': pager,
             'search_query': search,
             'search_field': search_field,
             'default_url': '/my/registries',
+            'liquidation_on_portal': liquidation_on_portal,
         })
         return request.render(
             "base_wua_portal_filemgmt.portal_my_registries",

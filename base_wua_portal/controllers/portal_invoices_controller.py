@@ -18,11 +18,16 @@ class PortalInvoices(http.Controller):
         gis_viewer_link = partner.gis_viewer_link
         if gis_viewer_link and '&arg=' in gis_viewer_link:
             gis_viewer_link = gis_viewer_link.split('&arg=')[0]
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal'
+        )
         values = {
             'company': request.website.company_id,
             'gis_viewer_link': gis_viewer_link,
             'user': request.env.user,
-            'partner': partner
+            'partner': partner,
+            'liquidation_on_portal': liquidation_on_portal
         }
         return values
 

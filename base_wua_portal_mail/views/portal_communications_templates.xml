@@ -18,7 +18,13 @@
                     <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
                         <ul class="nav navbar-nav o_portal_submenu">
                             <li>
-                                <a href="/my/invoices">Invoices</a>
+                                                                    <t t-if="liquidation_on_portal">
+                                        <a href="/my/invoices">Liquidaciones</a>
+
+                                    </t>
+                                    <t t-else="">
+                                        <a href="/my/invoices">Facturas</a>
+                                    </t>
                             </li>
                             <li>
                                 <a href="/my/parcels">Parcels</a>

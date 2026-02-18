@@ -23,9 +23,13 @@ class website_account(website_account):
         waterconnection_count = waterconnections.search_count([
             ('partner_id', '=', partner.id),
         ])
-
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal'
+        )
         response.qcontext.update({
             'waterconnection_count': waterconnection_count,
+            'liquidation_on_portal': liquidation_on_portal,
         })
         return response
 
@@ -64,7 +68,10 @@ class website_account(website_account):
         waterconnections = \
             waterconnection_partnerlink_model.browse(
                 partnerlinks.mapped('waterconnection_id').ids)
-
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal'
+        )
         values.update({
             'waterconnections': waterconnections,
             'partnerlinks': partnerlinks,
@@ -73,6 +80,7 @@ class website_account(website_account):
             'search_field': search_field,
             'default_url': '/my/waterconnections',
             'waterconnection_id_list': ','.join(map(str, partnerlinks.ids)),
+            'liquidation_on_portal': liquidation_on_portal,
         })
         return request.render(
             "base_wua_portal_infrastructure.portal_my_waterconnections",
@@ -109,7 +117,10 @@ class website_account(website_account):
         )
         partner = request.env.user.partner_id
         partner = partner.parent_id or partner
-
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal'
+        )
         return request.render(
             "base_wua_portal_infrastructure.waterconnections_followup", {
                 'waterconnection': waterconnection_sudo,
@@ -121,4 +132,5 @@ class website_account(website_account):
                 'waterconnection_index':
                     current_index + 1 if current_index >= 0 else 0,
                 'waterconnection_total': len(waterconnection_id_list),
+                'liquidation_on_portal': liquidation_on_portal,
             })
