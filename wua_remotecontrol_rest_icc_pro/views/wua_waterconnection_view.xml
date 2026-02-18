@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_waterconnection_view_form" model="ir.ui.view">
+        <field name="name">wua.waterconnection.form.icc_pro</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="inherit_id" ref="base_wua_remotecontrol_rest.wua_waterconnection_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='telecontrol_associated']" position="after">
+                <field name="icc_pro_meter_id"
+                       attrs="{'invisible': [('telecontrol_associated', '!=', 'icc_pro')],
+                               'required': [('telecontrol_associated', '=', 'icc_pro')]}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
