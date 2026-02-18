@@ -56,6 +56,10 @@ class PortalParcels(http.Controller):
             parcel_partnerlink_model.browse(
                 partnerlinks.mapped('parcel_id').ids)
         has_extra_code = '' in parcel_partnerlink_model._fields
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal'
+        )
         values.update({
             'parcels': parcels,
             'partnerlinks': partnerlinks,
@@ -66,6 +70,7 @@ class PortalParcels(http.Controller):
             'search_field': search_field,
             'default_url': '/my/parcels',
             'parcel_id_list': ','.join(map(str, partnerlinks.ids)),
+            'liquidation_on_portal': liquidation_on_portal,
         })
         return request.render("base_wua_portal.portal_my_parcels", values)
 
@@ -103,6 +108,10 @@ class PortalParcels(http.Controller):
             'wua.configuration', 'url_gis_viewer_parcel_param')
         if (url and parcel_param):
             gis_viewer_link = url + '?' + parcel_param + '=' + parcel.name
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal'
+        )
         return request.render("base_wua_portal.parcels_followup", {
             'parcel': parcel_sudo,
             'partner': partner,
@@ -112,6 +121,7 @@ class PortalParcels(http.Controller):
             'ids': ids,
             'parcel_index': current_index + 1 if current_index >= 0 else 0,
             'parcel_total': len(parcel_id_list),
+            'liquidation_on_portal': liquidation_on_portal,
         })
 
     @http.route(['/my/parcels/<int:parcel>/report'],

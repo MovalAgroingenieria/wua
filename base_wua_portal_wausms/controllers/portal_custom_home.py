@@ -76,6 +76,10 @@ class website_account(website_account):
         )
         offset = (page - 1) * items_per_page
         paginated_wausms = wausms[offset:offset + items_per_page]
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal'
+        )
         values.update({
             'wausms': paginated_wausms,
             'pager': pager,
@@ -83,6 +87,7 @@ class website_account(website_account):
             'search_field': search_field,
             'has_waterconnection': has_waterconnection,
             'default_url': '/my/wausms',
+            'liquidation_on_portal': liquidation_on_portal,
         })
         return request.render(
             "base_wua_portal_wausms.portal_my_wausms",

@@ -69,12 +69,17 @@ class website_account(website_account):
         offset = (page - 1) * items_per_page
         paginated_enrolledsubparcels = \
             enrolledsubparcels[offset:offset + items_per_page]
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal'
+        )
         values.update({
             'enrolledsubparcels': paginated_enrolledsubparcels,
             'pager': pager,
             'search_query': search,
             'search_field': search_field,
             'default_url': '/my/enrolledsubparcels',
+            'liquidation_on_portal': liquidation_on_portal,
         })
         return request.render(
             "base_wua_portal_crop_planning.portal_my_enrolledsubparcels",
@@ -83,7 +88,8 @@ class website_account(website_account):
     @http.route(['/my/cropplans', '/my/cropplans/page/<int:page>'],
                 type='http', auth="user", website=True)
     def portal_my_cropplans(self, page=1, date_begin=None,
-                          date_end=None, search=None, search_field=None, **kw):
+                            date_end=None, search=None,
+                            search_field=None, **kw):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
         partner = partner.parent_id or partner

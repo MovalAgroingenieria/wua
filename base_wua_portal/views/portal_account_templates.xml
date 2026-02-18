@@ -5,9 +5,18 @@
                 <attribute name="style">display: flex; flex-direction: row; flex-wrap: wrap;</attribute>
             </xpath>
             <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="inside">
+                <li style="order: 1;">
+                    <a name="invoices_menu" href="/my/invoices">
+                        <t t-if="liquidation_on_portal">Liquidaciones</t>
+                        <t t-else="">Facturas</t>
+                    </a>
+                </li>
                 <li style="order: 2;">
                     <a name="parcels_menu" href="/my/parcels">Parcels</a>
                 </li>
+            </xpath>
+            <xpath expr="//li[a[@href='/my/invoices']]" position="attributes">
+                <attribute name="style">display: none;</attribute>
             </xpath>
             <xpath expr="//li[a[@href='/my/quotes']]" position="attributes">
                 <attribute name="style">display: none;</attribute>
@@ -75,13 +84,15 @@
                 <h3 class="page-header" style="order: 1;">
                     <a href="/my/invoices">
                         <i class="fa fa-fw fa-pencil-square-o"></i>
-                        Invoices and Payments
+                        <t t-if="liquidation_on_portal">Liquidation and Payments</t>
+                        <t t-else="">Invoices and Payments</t>
                         <small class="ml8">
                             <t t-if="invoice_count">
                                 <span class='badge pull-right'><t t-esc="invoice_count"/></span>
                             </t>
                             <t t-if="not invoice_count">
-                                There are currently no invoices for your account.
+                                <t t-if="liquidation_on_portal">There are currently no liquidations for your account.</t>
+                                <t t-else="">There are currently no invoices for your account.</t>
                             </t>
                         </small>
                     </a>

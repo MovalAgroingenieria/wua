@@ -16,11 +16,16 @@ class PortalIrrigationManagement(http.Controller):
         waterconnection_count = waterconnections.search_count([
             ('partner_id', '=', partner.id),
         ])
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal'
+        )
         values = {
             'company': request.website.company_id,
             'user': request.env.user,
             'partner': partner,
             'waterconnection_count': waterconnection_count,
+            'liquidation_on_portal': liquidation_on_portal
         }
         return values
 

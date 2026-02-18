@@ -23,9 +23,14 @@ class website_account(website_account):
         gis_viewer_link = partner.gis_viewer_link
         if gis_viewer_link and '&arg=' in gis_viewer_link:
             gis_viewer_link = gis_viewer_link.split('&arg=')[0]
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal'
+        )
         response.qcontext.update({
             'parcel_count': parcel_count,
             'gis_viewer_link': gis_viewer_link,
+            'liquidation_on_portal': liquidation_on_portal,
         })
         return response
 

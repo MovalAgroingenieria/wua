@@ -6,7 +6,12 @@
                     <div class="row">
                         <div class="col-md-2">
                             <select id="search_field" name="search_field" class="form-control">
-                                <option value="name" t-att-selected="'name' == search_field">Invoice #</option>
+                                <t t-if="liquidation_on_portal">
+                                    <option value="name" t-att-selected="'name' == search_field">Liquidation #</option>
+                                </t>
+                                <t t-else="">
+                                    <option value="name" t-att-selected="'name' == search_field">Invoice #</option>
+                                </t>
                                 <option value="invoiceset" t-att-selected="'invoiceset' == search_field">Invoiceset</option>
                                 <option value="date_invoice" t-att-selected="'date_invoice' == search_field">Invoice Date</option>
                             </select>
@@ -28,9 +33,24 @@
                                 <table class="table table-hover o_my_status_table">
                         <thead>
                         <tr class="active">
-                            <th>Invoice #</th>
-                            <th>Invoiceset</th>
-                            <th>Invoice Date</th>
+                            <t t-if="liquidation_on_portal">
+                                <th>Liquidation</th>
+                            </t>
+                            <t t-else="">
+                                <th>Invoice #</th>
+                            </t>
+                            <t t-if="liquidation_on_portal">
+                                <th>Liquidation Set</th>
+                            </t>
+                            <t t-else="">
+                                <th>Invoiceset</th>
+                            </t>
+                            <t t-if="liquidation_on_portal">
+                                <th>Liquidation Date</th>
+                            </t>
+                            <t t-else="">
+                                <th>Invoice Date</th>
+                            </t>
                             <th>Due Date</th>
                             <th></th>
                             <th>Amount Due</th>

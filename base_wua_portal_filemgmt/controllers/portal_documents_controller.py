@@ -23,12 +23,17 @@ class PortalDocuments(http.Controller):
                   ('sender_partner_id', '=', partner.id)]
         registries_count = registries.search_count(domain)
         registries_count = registries.search_count(domain)
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal'
+        )
         values = {
             'company': request.website.company_id,
             'user': request.env.user,
             'partner': partner,
             'files_count': files_count,
             'registries_count': registries_count,
+            'liquidation_on_portal': liquidation_on_portal
         }
         return values
 

@@ -83,12 +83,17 @@ class website_account(website_account):
         )
         offset = (page - 1) * items_per_page
         paginated_mails = mails[offset:offset + items_per_page]
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal'
+        )
         values.update({
             'mails': paginated_mails,
             'pager': pager,
             'search_query': search,
             'search_field': search_field,
             'default_url': '/my/mails',
+            'liquidation_on_portal': liquidation_on_portal,
         })
         return request.render(
             "base_wua_portal_mail.portal_my_mails",
