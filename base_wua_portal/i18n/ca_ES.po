@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-16 10:16+0000\n"
-"PO-Revision-Date: 2025-07-16 10:16+0000\n"
+"POT-Creation-Date: 2026-02-18 21:32+0000\n"
+"PO-Revision-Date: 2026-02-18 21:32+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,13 +21,6 @@ msgid "<i class=\"fa fa-fw fa-moval-parcel\"/>\n"
 "                        Parcels"
 msgstr "<i class=\"fa fa-fw fa-moval-parcel\"/>\n"
 "                        Parcel·les"
-
-#. module: base_wua_portal
-#: model:ir.ui.view,arch_db:base_wua_portal.portal_my_home_wua
-msgid "<i class=\"fa fa-fw fa-pencil-square-o\"/>\n"
-"                        Invoices and Payments"
-msgstr "<i class=\"fa fa-fw fa-pencil-square-o\"/>\n"
-"                        Factures i pagaments"
 
 #. module: base_wua_portal
 #: model:ir.ui.view,arch_db:base_wua_portal.portal_my_invoices
@@ -209,6 +202,11 @@ msgid "Concessions"
 msgstr "Concessions"
 
 #. module: base_wua_portal
+#: model:ir.model,name:base_wua_portal.model_wua_invoicing_configuration
+msgid "Configuration of invoicing behavior for wua portal"
+msgstr "Configuració de facturació"
+
+#. module: base_wua_portal
 #: model:ir.ui.view,arch_db:base_wua_portal.change_password_template
 msgid "Confirm new password"
 msgstr "Confirm new password"
@@ -259,6 +257,11 @@ msgid "Email"
 msgstr "Correu electrònic"
 
 #. module: base_wua_portal
+#: model:ir.model.fields,field_description:base_wua_portal.field_wua_invoicing_configuration_liquidation_on_portal
+msgid "Enable Liquidation on Portal"
+msgstr "Activar liquidacions en portal"
+
+#. module: base_wua_portal
 #: model:ir.ui.view,arch_db:base_wua_portal.portal_my_parcels
 msgid "Extra Code"
 msgstr "Extra Codi"
@@ -279,6 +282,11 @@ msgid "For any change of info, write to:"
 msgstr "Per a cualquier canvi de informació, escriure a:"
 
 #. module: base_wua_portal
+#: model:ir.model.fields,help:base_wua_portal.field_wua_invoicing_configuration_liquidation_on_portal
+msgid "If it is marked, liquidation functionality will be available on the portal instead of invoice functionality"
+msgstr "Si es marca, sustituirá la funcionalitat de factures per liquidacions en el portal."
+
+#. module: base_wua_portal
 #: model:ir.ui.view,arch_db:base_wua_portal.portal_my_invoices
 msgid "Invoice #"
 msgstr "Núm. Factura"
@@ -287,6 +295,11 @@ msgstr "Núm. Factura"
 #: model:ir.ui.view,arch_db:base_wua_portal.portal_my_invoices
 msgid "Invoice Date"
 msgstr "Data factura"
+
+#. module: base_wua_portal
+#: model:ir.ui.view,arch_db:base_wua_portal.portal_my_home_wua
+msgid "Invoices and Payments"
+msgstr "Factures i pagaments"
 
 #. module: base_wua_portal
 #: model:ir.ui.view,arch_db:base_wua_portal.portal_my_invoices
@@ -319,6 +332,41 @@ msgid "Is Portal User"
 msgstr "Is Portal User"
 
 #. module: base_wua_portal
+#: model:ir.ui.view,arch_db:base_wua_portal.portal_my_parcels
+msgid "Liquidaciones"
+msgstr "Liquidaciones"
+
+#. module: base_wua_portal
+#: model:ir.ui.view,arch_db:base_wua_portal.portal_my_invoices
+msgid "Liquidation"
+msgstr "Liquidació"
+
+#. module: base_wua_portal
+#: model:ir.ui.view,arch_db:base_wua_portal.portal_my_invoices
+msgid "Liquidation #"
+msgstr "Liquidació #"
+
+#. module: base_wua_portal
+#: model:ir.ui.view,arch_db:base_wua_portal.portal_my_invoices
+msgid "Liquidation Date"
+msgstr "Data liquidació"
+
+#. module: base_wua_portal
+#: model:ir.ui.view,arch_db:base_wua_portal.portal_my_invoices
+msgid "Liquidation Set"
+msgstr "Liquidacions Set"
+
+#. module: base_wua_portal
+#: model:ir.ui.view,arch_db:base_wua_portal.portal_my_home_wua
+msgid "Liquidation and Payments"
+msgstr "Liquidació i Pagaments"
+
+#. module: base_wua_portal
+#: model:ir.ui.view,arch_db:base_wua_portal.portal_my_parcels
+msgid "Liquidations"
+msgstr "Liquidacions"
+
+#. module: base_wua_portal
 #: model:ir.ui.view,arch_db:base_wua_portal.custom_my_account_details
 msgid "Mobile"
 msgstr "Mòbil"
@@ -344,7 +392,7 @@ msgid "New password"
 msgstr "New password"
 
 #. module: base_wua_portal
-#: code:addons/base_wua_portal/controllers/portal_account_controller.py:107
+#: code:addons/base_wua_portal/controllers/portal_account_controller.py:88
 #, python-format
 msgid "New passwords do not match."
 msgstr "New passwords do not match."
@@ -375,13 +423,13 @@ msgid "Number of Votes"
 msgstr "Nombre de Vots"
 
 #. module: base_wua_portal
-#: code:addons/base_wua_portal/controllers/portal_account_controller.py:102
+#: code:addons/base_wua_portal/controllers/portal_account_controller.py:83
 #, python-format
 msgid "Old and new passwords cannot be the same."
 msgstr "Old and new passwords cannot be the same."
 
 #. module: base_wua_portal
-#: code:addons/base_wua_portal/controllers/portal_account_controller.py:120
+#: code:addons/base_wua_portal/controllers/portal_account_controller.py:101
 #, python-format
 msgid "Old password is incorrect."
 msgstr "Old password is incorrect."
@@ -407,11 +455,6 @@ msgstr "Parcel·la"
 #: model:ir.ui.view,arch_db:base_wua_portal.portal_my_parcels
 msgid "Parcel #"
 msgstr "Parcel·la #"
-
-#. module: base_wua_portal
-#: model:ir.ui.view,arch_db:base_wua_portal.portal_my_parcels
-msgid "Parcelas"
-msgstr "Parcel·les"
 
 #. module: base_wua_portal
 #: model:ir.ui.view,arch_db:base_wua_portal.portal_my_home_menu_wua
@@ -440,7 +483,7 @@ msgid "Partner roles"
 msgstr "Rols Soci"
 
 #. module: base_wua_portal
-#: code:addons/base_wua_portal/controllers/portal_account_controller.py:115
+#: code:addons/base_wua_portal/controllers/portal_account_controller.py:96
 #, python-format
 msgid "Password updated successfully."
 msgstr "Password updated successfully."
@@ -506,6 +549,11 @@ msgstr "Subparcel·les"
 #: model:ir.ui.view,arch_db:base_wua_portal.portal_my_home_wua
 msgid "There are currently no invoices for your account."
 msgstr "Actualment no hi ha factures en aquest compte."
+
+#. module: base_wua_portal
+#: model:ir.ui.view,arch_db:base_wua_portal.portal_my_home_wua
+msgid "There are currently no liquidations for your account."
+msgstr "Actualmente no hi ha liquidacions en aquest compte."
 
 #. module: base_wua_portal
 #: model:ir.ui.view,arch_db:base_wua_portal.portal_my_home_wua
