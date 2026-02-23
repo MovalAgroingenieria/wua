@@ -20,3 +20,4 @@ from . import wua_parceltag
 from . import res_bank
 from . import res_users
 from . import ir_attachment
+from . import mail_compose_message
