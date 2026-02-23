@@ -16,7 +16,7 @@ _logger = logging.getLogger(__name__)
 class NDVIPointController(http.Controller):
 
     @http.route('/teledetection/point', type='http', auth='public',
-                methods=['GET', 'OPTIONS'], csrf=False, cors='*')
+                methods=['GET', 'OPTIONS'], csrf=False)
     def get_ndvi_point(self, **kwargs):
 
         if request.httprequest.method == 'OPTIONS':
