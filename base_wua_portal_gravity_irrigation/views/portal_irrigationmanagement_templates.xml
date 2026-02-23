@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="portal_my_irrigationmanagement"
+                  inherit_id="base_wua_portal_infrastructure.portal_my_irrigationmanagement"
+                  name="Add Gravity Irrigation Consumptions Menu">
+            <xpath expr="//div[@name='irrigation_menu']" position="inside">
+                <h3 class="page-header" style="order: 102;">
+                    <a href="/my/gravconsumptions">
+                        <i class="fa fa-tint"/>
+                        Gravity Irrigation Consumptions
+                        <small class="ml8">
+                            <t t-if="gravconsumption_count">
+                                <span class='badge pull-right'><t t-esc="gravconsumption_count"/></span>
+                            </t>
+                        </small>
+                    </a>
+                </h3>
+            </xpath>
+        </template>
+    </data>
+</odoo>
