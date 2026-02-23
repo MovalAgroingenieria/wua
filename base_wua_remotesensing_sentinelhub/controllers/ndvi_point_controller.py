@@ -20,15 +20,9 @@ class NDVIPointController(http.Controller):
     def get_ndvi_point(self, **kwargs):
 
         if request.httprequest.method == 'OPTIONS':
-            return request.make_response(
-                '',
-                headers=[
-                    ('Access-Control-Allow-Origin', '*'),
-                    ('Access-Control-Allow-Methods', 'GET, OPTIONS'),
-                    ('Access-Control-Allow-Headers', 'Content-Type, Authorization'),
-                    ('Access-Control-Max-Age', '86400'),
-                ]
-            )
+            return request.make_response('', headers=[
+                ('Content-Type', 'text/plain'),
+            ])
 
         db = kwargs.get('db')
         if db and not request.session.db:
@@ -49,10 +43,7 @@ class NDVIPointController(http.Controller):
             if not time_range or '/' not in time_range:
                 return request.make_response(
                     json.dumps({'error': 'TIME parameter required (format: YYYY-MM-DD/YYYY-MM-DD)'}),
-                    headers=[
-                        ('Content-Type', 'application/json'),
-                        ('Access-Control-Allow-Origin', '*'),
-                    ]
+                    headers=[('Content-Type', 'application/json')]
                 )
 
             start_date, end_date = time_range.split('/')
@@ -60,10 +51,7 @@ class NDVIPointController(http.Controller):
             if not bbox:
                 return request.make_response(
                     json.dumps({'error': 'BBOX parameter required'}),
-                    headers=[
-                        ('Content-Type', 'application/json'),
-                        ('Access-Control-Allow-Origin', '*'),
-                    ]
+                    headers=[('Content-Type', 'application/json')]
                 )
 
             try:
@@ -77,10 +65,7 @@ class NDVIPointController(http.Controller):
             except Exception:
                 return request.make_response(
                     json.dumps({'error': 'Invalid BBOX format'}),
-                    headers=[
-                        ('Content-Type', 'application/json'),
-                        ('Access-Control-Allow-Origin', '*'),
-                    ]
+                    headers=[('Content-Type', 'application/json')]
                 )
 
             result = self._get_ndvi_timeseries_internal(
@@ -89,31 +74,20 @@ class NDVIPointController(http.Controller):
             if result.get('status') == 'error':
                 return request.make_response(
                     json.dumps({'error': result.get('error')}),
-                    headers=[
-                        ('Content-Type', 'application/json'),
-                        ('Access-Control-Allow-Origin', '*'),
-                    ]
+                    headers=[('Content-Type', 'application/json')]
                 )
             fis_response = self._format_fis_response(
                 result.get('data', []), 'C4')
 
             return request.make_response(
                 json.dumps(fis_response),
-                headers=[
-                    ('Content-Type', 'application/json'),
-                    ('Access-Control-Allow-Origin', '*'),
-                    ('Access-Control-Allow-Methods', 'GET, OPTIONS'),
-                    ('Access-Control-Allow-Headers', 'Content-Type, Authorization'),
-                ]
+                headers=[('Content-Type', 'application/json')]
             )
 
         except Exception as e:
             return request.make_response(
                 json.dumps({'error': str(e)}),
-                headers=[
-                    ('Content-Type', 'application/json'),
-                    ('Access-Control-Allow-Origin', '*'),
-                ]
+                headers=[('Content-Type', 'application/json')]
             )
 
     @http.route('/teledetection/point/timeseries', type='json', auth='user',
