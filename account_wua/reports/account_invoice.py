@@ -20,7 +20,7 @@ class AccountInvoice(models.Model):
                 payment_line = partial.credit_move_id
                 payments.append([
                     payment_line.date,
-                    partial.amount
+                    partial.amount,
                 ])
 
             # Payments vendor bill
@@ -28,7 +28,7 @@ class AccountInvoice(models.Model):
                 payment_line = partial.debit_move_id
                 payments.append([
                     payment_line.date,
-                    partial.amount
+                    partial.amount,
                 ])
 
         return payments

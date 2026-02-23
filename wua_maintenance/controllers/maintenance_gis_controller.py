@@ -325,18 +325,18 @@ class MaintenanceGisController(http.Controller):
             maintenance.maintenance_team_id else _('Without team'),
             'procedure_description':
                 maintenance.maintenance_kind_id.procedure_description or '',
-            'technician': maintenance.technician_user_id.name or '',
+            'technician': maintenance.technician_user_id.sudo().name or '',
             'field_resolved': maintenance.field_resolved,
             'resolution_description': maintenance.resolution_description or '',
             'resolution_time': maintenance.resolution_time,
-            'resolved_by': maintenance.resolved_by.name or '',
+            'resolved_by': maintenance.resolved_by.sudo().name or '',
             'created_on_field': maintenance.created_on_field,
             'field_latitude': maintenance.field_latitude,
             'field_longitude': maintenance.field_longitude,
             'messages': maintenance.message_ids.filtered(
                 lambda x: x.body).mapped(
                 lambda message: {
-                    'author': message.author_id.name,
+                    'author': message.author_id.sudo().name,
                     'date': message.date,
                     'body': message.body,
                     'attachments': self._get_attachments_of_message(
