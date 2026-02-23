@@ -3509,6 +3509,12 @@ class WuaParcelPartnerlink(models.Model):
         digits=(32, 4),
         default=0)
 
+    area_gis = fields.Float(
+        string='GIS Area',
+        digits=(32, 4),
+        store=True,
+        related='parcel_id.area_gis')
+
     area_official_hec = fields.Float(
         string='Official Hectares',
         digits=(32, 4),
