@@ -17,6 +17,8 @@
 
                         <!-- Vars -->
                         <t t-set="report_style" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+                        <t t-set="area_measurement_type" t-value="o.env['ir.values'].get_default('wua.configuration', 'area_measurement_type')"/>
+                        <t t-set="area_measurement_name" t-value="o.env['ir.values'].get_default('wua.configuration', 'area_measurement_name') or ''"/>
 
                         <!-- SECTION: Waterconnection Data -->
                         <div name="toma_section" style="margin-bottom: 16px;">
@@ -37,23 +39,23 @@
                                 </t>
                             </div>
 
-                            <!-- Photo left + data right, two-column layout -->
+                            <!-- Three-column layout: photo | main fields | description + extra -->
                             <div style="display: table; width: 100%; margin-top: 8px;">
 
-                                <!-- Left column: photo (only takes space when image exists) -->
+                                <!-- Col 1: Photo (only rendered when image exists) -->
                                 <t t-if="o.image">
-                                    <div name="toma_photo_col" style="display: table-cell; width: 28%; vertical-align: middle; text-align: center; padding-right: 12px; border-right: 1px solid lightgrey;">
+                                    <div name="toma_photo_col" style="display: table-cell; width: 22%; vertical-align: middle; text-align: center; padding-right: 10px; border-right: 1px solid lightgrey;">
                                         <img t-att-src="'data:image/png;base64,' + o.image"
-                                             style="max-width: 180px; max-height: 160px; padding: 2px;"/>
+                                             style="max-width: 160px; max-height: 160px; padding: 2px;"/>
                                     </div>
                                 </t>
 
-                                <!-- Right column: data table -->
-                                <div name="toma_data_col" style="display: table-cell; vertical-align: middle; padding-left: 12px;">
-                                    <table name="toma_table" class="table-condensed" style="width: 100%;">
-                                        <tbody name="toma_tbody">
+                                <!-- Col 2: Identifier, sector, shed, position -->
+                                <div name="toma_col_left" style="display: table-cell; vertical-align: top; padding: 0 12px; border-right: 1px solid lightgrey;">
+                                    <table name="toma_table_left" class="table-condensed" style="width: 100%;">
+                                        <tbody name="toma_tbody_left">
                                             <tr name="tr_name">
-                                                <td style="width: 45%;"><span>Identifier:</span></td>
+                                                <td style="width: 50%;"><span>Identifier:</span></td>
                                                 <td class="text-right">
                                                     <t t-if="o.name"><span t-field="o.name"/></t>
                                                 </td>
@@ -82,8 +84,16 @@
                                                     </t>
                                                 </td>
                                             </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Col 3: Description + extra fields injected by child modules -->
+                                <div name="toma_col_right" style="display: table-cell; vertical-align: top; padding-left: 12px;">
+                                    <table name="toma_table_right" class="table-condensed" style="width: 100%;">
+                                        <tbody name="toma_tbody_right">
                                             <tr name="tr_description">
-                                                <td><span>Description:</span></td>
+                                                <td style="width: 50%;"><span>Description:</span></td>
                                                 <td class="text-right">
                                                     <t t-if="o.description">
                                                         <span t-field="o.description"/>
@@ -126,7 +136,12 @@
                                         <tr>
                                             <th name="th_parcel">Parcel</th>
                                             <th name="th_cadastral">Cadastral Ref.</th>
-                                            <th name="th_area">Area</th>
+                                            <th name="th_area">Area
+                                                <t t-if="area_measurement_type == 1 and area_measurement_name">
+                                                    (<span t-esc="area_measurement_name"/>)
+                                                </t>
+                                                <t t-else="">(ha)</t>
+                                            </th>
                                             <th name="th_irrigationshed">Irrigation Shed</th>
                                             <th name="th_hydraulicsector">Hydraulic Sector</th>
                                         </tr>
