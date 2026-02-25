@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_mdm_reading_view_tree" model="ir.ui.view">
+        <field name="name">wua.mdm.reading.view.tree</field>
+        <field name="model">mdm.measurement.device.sensor.reading</field>
+        <field name="inherit_id" ref="mdm_sensor_management.mdm_reading_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="decoration-warning">range_status == 'low'</attribute>
+                <attribute name="decoration-danger">range_status == 'high'</attribute>
+            </xpath>
+            <xpath expr="//field[@name='uom_id']" position="after">
+                <field name="range_status" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_mdm_reading_view_search" model="ir.ui.view">
+        <field name="name">wua.mdm.reading.view.search</field>
+        <field name="model">mdm.measurement.device.sensor.reading</field>
+        <field name="inherit_id" ref="mdm_sensor_management.mdm_reading_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='archived_readings']" position="before">
+                <separator/>
+                <filter string="Fuera de rango"
+                        name="out_of_range"
+                        domain="[('is_out_of_range', '=', True)]"/>
+                <filter string="Por encima del máximo"
+                        name="range_high"
+                        domain="[('range_status', '=', 'high')]"/>
+                <filter string="Por debajo del mínimo"
+                        name="range_low"
+                        domain="[('range_status', '=', 'low')]"/>
+                <filter string="Sin validación"
+                        name="range_unchecked"
+                        domain="[('range_status', '=', 'unchecked')]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
