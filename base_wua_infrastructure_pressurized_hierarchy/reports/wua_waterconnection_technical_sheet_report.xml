@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Extension of the waterconnection technical sheet: adds waterpipe (ramal)
+         info when the caseta has an associated ramal
+         (base_wua_infrastructure_pressurized_hierarchy) -->
+    <template id="wua_waterconnection_technical_sheet_report_document"
+              inherit_id="base_wua_infrastructure.wua_waterconnection_technical_sheet_report_document">
+
+        <!-- Add waterpipe (ramal) row to toma data table -->
+        <xpath expr="//tr[@name='tr_hydraulicsector']" position="after">
+            <t t-if="o.irrigationshed_id and o.irrigationshed_id.waterpipe_id">
+                <tr name="tr_waterpipe">
+                    <td style="width: 45%;"><span>Waterpipe:</span></td>
+                    <td class="text-right">
+                        <span t-field="o.irrigationshed_id.waterpipe_id"/>
+                    </td>
+                </tr>
+            </t>
+        </xpath>
+
+    </template>
+
+</odoo>

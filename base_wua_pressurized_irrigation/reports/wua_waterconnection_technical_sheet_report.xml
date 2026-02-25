@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Extension of the waterconnection technical sheet: adds meter data and
+         last reading info (base_wua_pressurized_irrigation) -->
+    <template id="wua_waterconnection_technical_sheet_report_document"
+              inherit_id="base_wua_infrastructure.wua_waterconnection_technical_sheet_report_document">
+
+        <!-- Add last reading rows to toma data table -->
+        <xpath expr="//tbody[@name='toma_tbody']" position="inside">
+            <tr name="tr_last_reading_time">
+                <td><span>Last reading (date):</span></td>
+                <td class="text-right">
+                    <t t-if="o.last_reading_time">
+                        <span t-field="o.last_reading_time"
+                              t-options="{'widget': 'datetime', 'format': 'dd/MM/yyyy HH:mm'}"/>
+                    </t>
+                </td>
+            </tr>
+            <tr name="tr_last_reading_value">
+                <td><span>Last reading (value):</span></td>
+                <td class="text-right">
+                    <t t-if="o.watermeter_id">
+                        <span t-field="o.last_reading_value"/>
+                    </t>
+                </td>
+            </tr>
+        </xpath>
+
+        <!-- Replace placeholder with the counter (watermeter) section -->
+        <xpath expr="//div[@name='watermeter_section_placeholder']" position="replace">
+            <t t-if="o.watermeter_id">
+                <div name="watermeter_section" style="margin-bottom: 16px;">
+
+                    <!-- Section header -->
+                    <div class="row h4 mb4" style="padding-bottom: 4px;">
+                        <t t-if="report_style == 'light'">
+                            <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                <div style="float: left; width: 32px;"><span class="fa fa-moval-water-counter"/></div>
+                                <div style="float: left; display: inline;"><strong>Meter Data</strong></div>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                <div style="float: left; width: 32px;"><span class="fa fa-moval-water-counter"/></div>
+                                <div style="float: left; display: inline;"><strong>Meter Data</strong></div>
+                            </div>
+                        </t>
+                    </div>
+
+                    <!-- Watermeter data: two columns -->
+                    <div style="display: table; width: 100%; margin-top: 8px;">
+
+                        <!-- Left column -->
+                        <div style="display: table-cell; vertical-align: top; width: 50%; padding-right: 16px;">
+                            <table name="watermeter_table" class="table-condensed" style="width: 100%;">
+                                <tbody name="watermeter_tbody">
+                                    <tr name="tr_watermeter_name">
+                                        <td><span>Identifier:</span></td>
+                                        <td class="text-right">
+                                            <span t-field="o.watermeter_id"/>
+                                        </td>
+                                    </tr>
+                                    <tr name="tr_nominal_diameter">
+                                        <td><span>DN:</span></td>
+                                        <td class="text-right">
+                                            <t t-if="o.watermeter_id.nominal_diameter">
+                                                <span t-field="o.watermeter_id.nominal_diameter"/>
+                                                <span>&#160;mm</span>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <tr name="tr_nominal_water_flow">
+                                        <td><span>Nominal flow:</span></td>
+                                        <td class="text-right">
+                                            <span t-field="o.watermeter_id.nominal_water_flow"/>
+                                            <span>&#160;m&#179;/h</span>
+                                        </td>
+                                    </tr>
+                                    <tr name="tr_pressure">
+                                        <td><span>Pressure:</span></td>
+                                        <td class="text-right">
+                                            <span t-field="o.watermeter_id.pressure"/>
+                                            <span>&#160;bar</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Right column -->
+                        <div style="display: table-cell; vertical-align: top; width: 50%; padding-left: 16px; border-left: 1px solid lightgrey;">
+                            <table name="watermeter_table_right" class="table-condensed" style="width: 100%;">
+                                <tbody>
+                                    <tr name="tr_watermeter_brand">
+                                        <td><span>Brand:</span></td>
+                                        <td class="text-right">
+                                            <t t-if="o.watermeter_id.watermeter_brand">
+                                                <span t-field="o.watermeter_id.watermeter_brand"/>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <tr name="tr_watermeter_model">
+                                        <td><span>Model:</span></td>
+                                        <td class="text-right">
+                                            <t t-if="o.watermeter_id.watermeter_model">
+                                                <span t-field="o.watermeter_id.watermeter_model"/>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <tr name="tr_serial_number">
+                                        <td><span>Serial no.:</span></td>
+                                        <td class="text-right">
+                                            <t t-if="o.watermeter_id.serial_number">
+                                                <span t-field="o.watermeter_id.serial_number"/>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <tr name="tr_installation_date">
+                                        <td><span>Installation date:</span></td>
+                                        <td class="text-right">
+                                            <t t-if="o.watermeter_id.installation_date">
+                                                <span t-field="o.watermeter_id.installation_date"
+                                                      t-options="{'widget': 'date', 'format': 'dd/MM/yyyy'}"/>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
+                </div>
+            </t>
+        </xpath>
+
+    </template>
+
+</odoo>
