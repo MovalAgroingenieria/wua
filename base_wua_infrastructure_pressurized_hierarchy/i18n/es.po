@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-21 16:53+0000\n"
-"PO-Revision-Date: 2023-09-21 16:53+0000\n"
+"POT-Creation-Date: 2026-02-25 08:30+0000\n"
+"PO-Revision-Date: 2026-02-25 08:30+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,13 +16,18 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
-#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:365
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_pressurized_hierarchy.wua_waterconnection_technical_sheet_report_document
+msgid "<span>Waterpipe:</span>"
+msgstr "<span>Ramal:</span>"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:484
 #, python-format
 msgid "A non-main water-pipe must be supplied by another."
 msgstr "Un ramal no principal debe ser abastecido por un otro."
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
-#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:368
+#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:487
 #, python-format
 msgid "A water-pipe cannot be supplied by itself."
 msgstr "Un ramal no puede abastecerse a sí mismo."
@@ -31,12 +36,6 @@ msgstr "Un ramal no puede abastecerse a sí mismo."
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_active
 msgid "Active"
 msgstr "Activo"
-
-#. module: base_wua_infrastructure_pressurized_hierarchy
-#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_parcel.py:539
-#, python-format
-msgid "All irrigation points must have the same water-pipe."
-msgstr "Todas las tomas deben pertenecer al mismo ramal."
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_pressurized_hierarchy.wua_waterpipe_view_form
@@ -91,7 +90,7 @@ msgstr "Descripción"
 #. module: base_wua_infrastructure_pressurized_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_display_name
 msgid "Display Name"
-msgstr "Nombre a mostrar"
+msgstr "Nombre mostrado"
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
 #: model:ir.model,name:base_wua_infrastructure_pressurized_hierarchy.model_wua_waterpipe
@@ -121,7 +120,7 @@ msgstr "Elemento (caseta)"
 #. module: base_wua_infrastructure_pressurized_hierarchy
 #: model:ir.model,name:base_wua_infrastructure_pressurized_hierarchy.model_wua_parcel
 msgid "Entity (parcel)"
-msgstr "Entity (parcel)"
+msgstr "Elemento (parcela)"
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
 #: model:ir.model,name:base_wua_infrastructure_pressurized_hierarchy.model_wua_presconsumption
@@ -214,11 +213,16 @@ msgid "If the active field is set to False, it will allow you to hide the regist
 msgstr "Si el campo activo está como falso, ello le permitirá ocultar el registro sin borrarlo. Para ver los registros archivados, ir a \"Buscar-Filtros\" en la vista árbol"
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
-#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:496
+#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:632
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_irrigationshed_ids
 #, python-format
 msgid "Irrigation Sheds"
 msgstr "Casetas"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model,name:base_wua_infrastructure_pressurized_hierarchy.model_wua_irrigationstretch
+msgid "Irrigation Stretch"
+msgstr "Tramo de conducción"
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
 #: model:ir.model,name:base_wua_infrastructure_pressurized_hierarchy.model_wua_parcel_irrigationpoint
@@ -233,7 +237,7 @@ msgstr "Casetas"
 #. module: base_wua_infrastructure_pressurized_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe___last_update
 msgid "Last Modified on"
-msgstr "Última modificación en"
+msgstr "Última modificación el"
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_write_uid
@@ -316,14 +320,114 @@ msgid "Level 20 Water Pipe"
 msgstr "Ramal de nivel 20"
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_parcel_waterpipe_21_id
+msgid "Level 21 Water Pipe"
+msgstr "Level 21 Water Pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_parcel_waterpipe_22_id
+msgid "Level 22 Water Pipe"
+msgstr "Level 22 Water Pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_parcel_waterpipe_23_id
+msgid "Level 23 Water Pipe"
+msgstr "Level 23 Water Pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_parcel_waterpipe_24_id
+msgid "Level 24 Water Pipe"
+msgstr "Level 24 Water Pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_parcel_waterpipe_25_id
+msgid "Level 25 Water Pipe"
+msgstr "Level 25 Water Pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_parcel_waterpipe_26_id
+msgid "Level 26 Water Pipe"
+msgstr "Level 26 Water Pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_parcel_waterpipe_27_id
+msgid "Level 27 Water Pipe"
+msgstr "Level 27 Water Pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_parcel_waterpipe_28_id
+msgid "Level 28 Water Pipe"
+msgstr "Level 28 Water Pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_parcel_waterpipe_29_id
+msgid "Level 29 Water Pipe"
+msgstr "Level 29 Water Pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_parcel_waterpipe_03_id
 msgid "Level 3 Water Pipe"
 msgstr "Ramal de nivel 3"
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_parcel_waterpipe_30_id
+msgid "Level 30 Water Pipe"
+msgstr "Level 30 Water Pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_parcel_waterpipe_31_id
+msgid "Level 31 Water Pipe"
+msgstr "Level 31 Water Pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_parcel_waterpipe_32_id
+msgid "Level 32 Water Pipe"
+msgstr "Level 32 Water Pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_parcel_waterpipe_33_id
+msgid "Level 33 Water Pipe"
+msgstr "Level 33 Water Pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_parcel_waterpipe_34_id
+msgid "Level 34 Water Pipe"
+msgstr "Level 34 Water Pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_parcel_waterpipe_35_id
+msgid "Level 35 Water Pipe"
+msgstr "Level 35 Water Pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_parcel_waterpipe_36_id
+msgid "Level 36 Water Pipe"
+msgstr "Level 36 Water Pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_parcel_waterpipe_37_id
+msgid "Level 37 Water Pipe"
+msgstr "Level 37 Water Pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_parcel_waterpipe_38_id
+msgid "Level 38 Water Pipe"
+msgstr "Level 38 Water Pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_parcel_waterpipe_39_id
+msgid "Level 39 Water Pipe"
+msgstr "Level 39 Water Pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_parcel_waterpipe_04_id
 msgid "Level 4 Water Pipe"
 msgstr "Ramal de nivel 4"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_parcel_waterpipe_40_id
+msgid "Level 40 Water Pipe"
+msgstr "Level 40 Water Pipe"
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_parcel_waterpipe_05_id
@@ -402,7 +506,7 @@ msgid "Param for waterpipe"
 msgstr "Parámetro Ramal"
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
-#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:532
+#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:668
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_number_of_parcels
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_pressurized_hierarchy.wua_waterpipe_view_form
 #, python-format
@@ -475,14 +579,114 @@ msgid "Parcels at level 20 of water-pipe"
 msgstr "Parcelas nivel 20 del ramal"
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_parcel_wp_21_ids
+msgid "Parcels at level 21 of water-pipe"
+msgstr "Parcels at level 21 of water-pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_parcel_wp_22_ids
+msgid "Parcels at level 22 of water-pipe"
+msgstr "Parcels at level 22 of water-pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_parcel_wp_23_ids
+msgid "Parcels at level 23 of water-pipe"
+msgstr "Parcels at level 23 of water-pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_parcel_wp_24_ids
+msgid "Parcels at level 24 of water-pipe"
+msgstr "Parcels at level 24 of water-pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_parcel_wp_25_ids
+msgid "Parcels at level 25 of water-pipe"
+msgstr "Parcels at level 25 of water-pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_parcel_wp_26_ids
+msgid "Parcels at level 26 of water-pipe"
+msgstr "Parcels at level 26 of water-pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_parcel_wp_27_ids
+msgid "Parcels at level 27 of water-pipe"
+msgstr "Parcels at level 27 of water-pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_parcel_wp_28_ids
+msgid "Parcels at level 28 of water-pipe"
+msgstr "Parcels at level 28 of water-pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_parcel_wp_29_ids
+msgid "Parcels at level 29 of water-pipe"
+msgstr "Parcels at level 29 of water-pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_parcel_wp_03_ids
 msgid "Parcels at level 3 of water-pipe"
 msgstr "Parcelas nivel 3 del ramal"
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_parcel_wp_30_ids
+msgid "Parcels at level 30 of water-pipe"
+msgstr "Parcels at level 30 of water-pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_parcel_wp_31_ids
+msgid "Parcels at level 31 of water-pipe"
+msgstr "Parcels at level 31 of water-pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_parcel_wp_32_ids
+msgid "Parcels at level 32 of water-pipe"
+msgstr "Parcels at level 32 of water-pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_parcel_wp_33_ids
+msgid "Parcels at level 33 of water-pipe"
+msgstr "Parcels at level 33 of water-pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_parcel_wp_34_ids
+msgid "Parcels at level 34 of water-pipe"
+msgstr "Parcels at level 34 of water-pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_parcel_wp_35_ids
+msgid "Parcels at level 35 of water-pipe"
+msgstr "Parcels at level 35 of water-pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_parcel_wp_36_ids
+msgid "Parcels at level 36 of water-pipe"
+msgstr "Parcels at level 36 of water-pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_parcel_wp_37_ids
+msgid "Parcels at level 37 of water-pipe"
+msgstr "Parcels at level 37 of water-pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_parcel_wp_38_ids
+msgid "Parcels at level 38 of water-pipe"
+msgstr "Parcels at level 38 of water-pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_parcel_wp_39_ids
+msgid "Parcels at level 39 of water-pipe"
+msgstr "Parcels at level 39 of water-pipe"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_parcel_wp_04_ids
 msgid "Parcels at level 4 of water-pipe"
 msgstr "Parcelas nivel 4 del ramal"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_parcel_wp_40_ids
+msgid "Parcels at level 40 of water-pipe"
+msgstr "Parcels at level 40 of water-pipe"
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_parcel_wp_05_ids
@@ -527,8 +731,8 @@ msgstr "Ramales abastecidos"
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
 #: sql_constraint:wua.infrastructure.configuration:0
-msgid "The \"Max. Levels\" value has to be between 1 and 20."
-msgstr "El valor de \"Nº máx. niveles\" debe estar entre 1 y 20."
+msgid "The \"Max. Levels\" value has to be between 1 and 40."
+msgstr "The \"Max. Levels\" value has to be between 1 and 40."
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
 #: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_hydraulicsector.py:43
@@ -537,7 +741,7 @@ msgid "The associated hydraulic sector already has a main water-pipe."
 msgstr "El sector hidráulico asociado ya tiene un ramal principal."
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
-#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:386
+#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:505
 #, python-format
 msgid "The character \"/\" cannot be used in the name of the water-pipe."
 msgstr "El caracter \"/\" no puede ser utilizado en el nombre de un ramal."
@@ -549,13 +753,13 @@ msgid "The hydraulic sector of the water-pipe is not the same as the hydraulic s
 msgstr "El sector hidráulico del ramal no es el mismo que el sector hidráulico de la caseta."
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
-#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:362
+#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:481
 #, python-format
 msgid "The main water-pipe cannot be supplied by any other."
 msgstr "El ramal principal no puede ser abastecido por ningún otro."
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
-#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:390
+#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:509
 #, python-format
 msgid "The name of waterpipe can not be empty."
 msgstr "El nombre del ramal no puede estar vacío."
@@ -577,6 +781,7 @@ msgstr "Actualizar ramal en consumos de presión"
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_irrigationshed_waterpipe_id
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_irrigationstretch_waterpipe_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_parcel_irrigationpoint_waterpipe_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_parcel_waterpipe_id
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_pressurized_hierarchy.wua_presconsumption_view_search
@@ -598,6 +803,7 @@ msgstr "Ramales"
 #. module: base_wua_infrastructure_pressurized_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_airvalve_waterpipe_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_drainagevalve_waterpipe_id
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_presconsumption_waterpipe_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_valve_waterpipe_id
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_pressurized_hierarchy.wua_airvalve_view_search
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_pressurized_hierarchy.wua_drainagevalve_view_search
@@ -607,7 +813,7 @@ msgid "Waterpipe"
 msgstr "Ramal"
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
-#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:378
+#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:497
 #, python-format
 msgid "You cannot create a waterpipe that depends on a water-pipe of the highest level (%s)."
 msgstr "No se puede crear un ramal dependiente del nivel máximo de ramales (%s)."
