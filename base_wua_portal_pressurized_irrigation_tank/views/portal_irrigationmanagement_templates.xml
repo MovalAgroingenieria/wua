@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="portal_my_irrigationmanagement" inherit_id="base_wua_portal_infrastructure.portal_my_irrigationmanagement" name="Hide Quotes and Orders">
+            <xpath expr="//div[@name='irrigation_menu']" position="inside">
+                <h3 class="page-header" style="order: 6;">
+                    <a href="/my/tankconsumptions">
+                        <i class="fa fa-fw fa-moval-watertank"/>
+                        Tankconsumptions
+                        <small class="ml8">
+                            <t t-if="tankconsumptions_count">
+                                <span class='badge pull-right'><t t-esc="tankconsumptions_count"/></span>
+                            </t>
+                        </small>
+                    </a>
+                </h3>
+            </xpath>
+        </template>
+    </data>
+</odoo>

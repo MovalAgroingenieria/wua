@@ -1,0 +1,51 @@
+<odoo>
+    <data>
+        <template id="portal_my_tankconsumptions" name="My tankconsumptions" inherit_id="base_wua_portal_pressurized_irrigation_tank.portal_my_tankconsumptions">
+            <xpath expr="//h3[@class='page-header']" position="before">
+                <a href="#"
+                   class="btn btn-primary btn-sm open-frame-modal"
+                   title="Tank scheduling"
+                   data-frame-title="Scheduling"
+                   t-att-data-frame-html="partner.html_scheduling_frame">
+                    <i class="fa fa-moval-watertank"/> Irrigation tank scheduling
+                </a>
+            </xpath>
+            <xpath expr="//div[@id='wrap']" position="inside">
+                <div class="modal fade" id="frameModal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-lg" role="document" style="width:auto; max-width:70%;">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="frameModalLabel">Title</h4>
+                                <button type="button" class="close" data-dismiss="modal" style="margin-top: -25px;">
+                                    X
+                                </button>
+                            </div>
+                            <div class="modal-body" id="frameModalBody">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <t t-jquery="body" t-operation="append">
+                    <script type="text/javascript">
+                        (function () {
+                            document.addEventListener('DOMContentLoaded', function () {
+                                $('.open-frame-modal').click(function (e) {
+                                    e.preventDefault();
+                                    var html = $(this).data('frame-html');
+                                    var title = $(this).data('frame-title');
+                                    $('#frameModalLabel').text(title);
+                                    $('#frameModalBody').html(html);
+                                    $('.modal-dialog').css({'width': '500px',
+                                                            'max-width': '100%',
+                                                            'overflow': 'auto'});
+                                    $('.modal-content').css({'overflow': 'auto'});
+                                    $('#frameModal').modal('show');
+                                });
+                            });
+                        })();
+                    </script>
+                </t>
+            </xpath>
+        </template>
+    </data>
+</odoo>

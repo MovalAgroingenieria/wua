@@ -1,0 +1,114 @@
+<odoo>
+    <data>
+        <template id="portal_my_tankconsumptions" name="My tankconsumptions">
+            <t t-call="website.layout">
+            <div class="container mt16">
+                <div class="navbar navbar-default">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#oe-help-navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/my/home">
+                    My Account
+                    </a>
+                </div>
+                <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
+                    <ul class="nav navbar-nav o_portal_submenu">
+                    <li>
+                        <t t-if="liquidation_on_portal">
+                            <a href="/my/invoices">Liquidaciones</a>
+                        </t>
+                        <t t-else="">
+                            <a href="/my/invoices">Facturas</a>
+                        </t>
+                    </li>
+                    <li>
+                        <a href="/my/parcels">Parcels</a>
+                    </li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <div id="wrap">
+                <div class="container mb64">
+                <div class="col-md-12">
+                    <h3 class="page-header">Your tankconsumptions</h3>
+                    <t t-if="not tankconsumptions">
+                    <p>There are currently no tankconsumptions for your account.</p>
+                    </t>
+
+                    <t t-if="tankconsumptions">
+                    <form action="/my/tankconsumptions" method="get" class="mb-3">
+                        <div class="row">
+                        <div class="col-md-2">
+                            <select id="search_field" name="search_field" class="form-control">
+                                <option value="tank" t-att-selected="'tank' == search_field">Tank</option>
+                                <option value="initial_time" t-att-selected="'initial_time' == search_field">Initial Time</option>
+                                <option value="end_time" t-att-selected="'end_time' == search_field">End Time</option>
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" name="search" class="form-control" placeholder="Search tankconsumptions..." t-att-value="search_query or ''"/>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary btn-block">Search</button>
+                        </div>
+                        </div>
+                    </form>
+
+                    <table class="table table-hover o_my_status_table">
+                        <thead>
+                        <tr class="active">
+                            <th>Tank</th>
+                            <th>Initial Time</th>
+                            <th>End Time</th>
+                            <th>Volume Request (m3)</th>
+                            <th>Volume Real (m3)</th>
+                            <th>Validated</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <t t-foreach="tankconsumptions" t-as="tankconsumption">
+                            <tr>
+                                <td>
+                                    <t t-esc="tankconsumption.tank_id.name"/>
+                                </td>
+                                <td>
+                                    <t t-esc="tankconsumption.initial_time"/>
+                                </td>
+                                <td>
+                                    <t t-esc="tankconsumption.end_time"/>
+                                </td>
+                                <td>
+                                    <t t-esc="tankconsumption.volume_request"/> m3
+                                </td>
+                                <td>
+                                    <t t-esc="tankconsumption.volume_real"/> m3
+                                </td>
+                                <td>
+                                    <t t-if="tankconsumption.validated">
+                                        <span class="label label-success">Yes</span>
+                                    </t>
+                                    <t t-else="">
+                                        <span class="label label-default">No</span>
+                                    </t>
+                                </td>
+                            </tr>
+                        </t>
+                        </tbody>
+                    </table>
+
+                    <div t-if="pager" class="o_portal_pager text-center">
+                        <t t-call="website.pager"/>
+                    </div>
+                    </t>
+
+                </div>
+                </div>
+            </div>
+            </t>
+        </template>
+    </data>
+</odoo>
