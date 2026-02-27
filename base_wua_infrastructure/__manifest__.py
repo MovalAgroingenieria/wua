@@ -6,7 +6,7 @@
     "name": "Water Users Association Infrastructure",
     "summary": "In a water users association, management of its "
                "infrastructure",
-    "version": '10.0.1.1.6',
+    "version": '10.0.1.1.8',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
@@ -45,7 +45,9 @@
         "reports/wua_parcel_report.xml",
         "reports/wua_waterconnection_technical_sheet_report.xml",
         "data/notice_mail.xml",
+        "data/technical_sheet_mail.xml",
         "wizard/waterconnection_mail_wizard.xml",
+        "wizard/wua_waterconnection_technical_sheet_wizard.xml",
     ],
     "post_init_hook": "post_init_hook",
     "installable": True,

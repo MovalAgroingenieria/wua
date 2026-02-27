@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Form view -->
+    <record id="view_wua_waterconnection_technical_sheet_wizard_form"
+            model="ir.ui.view">
+        <field name="name">wua.waterconnection.technical.sheet.wizard.form</field>
+        <field name="model">wua.waterconnection.technical.sheet.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Send Technical Sheet">
+                <group>
+                    <field name="template_id"/>
+                    <field name="subject"/>
+                    <field name="body"/>
+                </group>
+                <footer>
+                    <button name="action_send"
+                            type="object"
+                            class="oe_highlight"
+                            string="Send"/>
+                    <button string="Cancel" class="btn-default"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action: available from tree multi-action and form action menu -->
+    <act_window id="action_wua_waterconnection_technical_sheet_wizard"
+        name="Send Technical Sheet"
+        res_model="wua.waterconnection.technical.sheet.wizard"
+        src_model="wua.waterconnection"
+        view_mode="form"
+        target="new"
+        key2="client_action_multi"/>
+</odoo>
