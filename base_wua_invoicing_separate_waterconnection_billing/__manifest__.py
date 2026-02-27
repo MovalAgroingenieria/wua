@@ -9,7 +9,7 @@
                "connection, both for the waterconnection of your water and "
                "for the rest of the costs. In that case, the parcel will be "
                "billed separately. ",
-    "version": '10.0.1.1.1',
+    "version": '10.0.1.1.2',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",

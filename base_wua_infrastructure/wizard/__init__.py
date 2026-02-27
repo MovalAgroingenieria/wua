@@ -4,3 +4,4 @@
 
 from . import wizard_change_parcel_name
 from . import waterconnection_mail_wizard
+from . import wua_waterconnection_technical_sheet_wizard

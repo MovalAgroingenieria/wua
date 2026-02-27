@@ -1,30 +1,51 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#	* base_wua_infrastructure
+# 	* base_wua_infrastructure
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-25 09:36+0000\n"
-"PO-Revision-Date: 2026-02-25 09:36+0000\n"
+"POT-Creation-Date: 2026-02-26 12:00+0000\n"
+"PO-Revision-Date: 2026-02-26 13:05+0100\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: \n"
-"Plural-Forms: \n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.7\n"
 
 #. module: base_wua_infrastructure
 #: model:mail.template,body_html:base_wua_infrastructure.email_template_waterconnection_notice
-msgid "\n"
+msgid ""
+"\n"
 "                \n"
 "                <p> ${ctx.get('shared_text')}</p>\n"
 "                \n"
 "            "
-msgstr "\n"
+msgstr ""
+"\n"
 "                \n"
 "                <p> ${ctx.get('shared_text')}</p>\n"
+"                \n"
+"            "
+
+#. module: base_wua_infrastructure
+#: model:mail.template,body_html:base_wua_infrastructure.email_template_waterconnection_technical_sheet
+msgid ""
+"\n"
+"                \n"
+"                <p>Dear ${ctx.get('partner_name', '')},</p>\n"
+"                <p>Attached is the technical data sheet for waterconnection <strong>${object.name}</strong>.</p>\n"
+"                \n"
+"            "
+msgstr ""
+"\n"
+"                \n"
+"                <p>Estimado ${ctx.get('partner_name', '')},</p>\n"
+"                <p>Adjuntamos la ficha técnica de la toma <strong>${object.name}</strong>.</p>\n"
 "                \n"
 "            "
 
@@ -32,6 +53,11 @@ msgstr "\n"
 #: model:mail.template,subject:base_wua_infrastructure.email_template_waterconnection_notice
 msgid " ${ctx.get('shared_title')} - ${object.name}"
 msgstr " ${ctx.get('shared_title')} - ${object.name}"
+
+#. module: base_wua_infrastructure
+#: model:mail.template,subject:base_wua_infrastructure.email_template_waterconnection_technical_sheet
+msgid "${ctx.get('subject', object.name)}"
+msgstr "${ctx.get('subject', object.name)}"
 
 #. module: base_wua_infrastructure
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_parcel_report_document
@@ -44,34 +70,45 @@ msgid "(This parcel is not related to any type of infrastructure)"
 msgstr "(Esta parcela no está relacionada con ningún tipo de infraestructura)"
 
 #. module: base_wua_infrastructure
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_waterconnection_technical_sheet_report_document
+msgid "(ha)"
+msgstr "(ha)"
+
+#. module: base_wua_infrastructure
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.hr_kanban_view_employees
 msgid "<i class=\"fa fa-bicycle\"/> <strong>Irrigation worker</strong> (parcels:"
 msgstr "<i class=\"fa fa-bicycle\"/> <strong>Regador</strong> (parcelas:"
 
 #. module: base_wua_infrastructure
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.view_partner_form
-msgid "<span class=\"o_stat_text\">\n"
+msgid ""
+"<span class=\"o_stat_text\">\n"
 "                                Irrig. supplies\n"
 "                            </span>"
-msgstr "<span class=\"o_stat_text\">\n"
+msgstr ""
+"<span class=\"o_stat_text\">\n"
 "                                P. Suministro\n"
 "                            </span>"
 
 #. module: base_wua_infrastructure
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.view_partner_form
-msgid "<span class=\"o_stat_text\">\n"
+msgid ""
+"<span class=\"o_stat_text\">\n"
 "                                Waterconnections\n"
 "                            </span>"
-msgstr "<span class=\"o_stat_text\">\n"
+msgstr ""
+"<span class=\"o_stat_text\">\n"
 "                                Tomas\n"
 "                            </span>"
 
 #. module: base_wua_infrastructure
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.view_employee_form
-msgid "<span class=\"o_stat_text\">\n"
+msgid ""
+"<span class=\"o_stat_text\">\n"
 "                                parcels\n"
 "                            </span>"
-msgstr "<span class=\"o_stat_text\">\n"
+msgstr ""
+"<span class=\"o_stat_text\">\n"
 "                                parcelas\n"
 "                            </span>"
 
@@ -82,10 +119,12 @@ msgstr "<span class=\"o_stat_text\">Sectores</span>"
 
 #. module: base_wua_infrastructure
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_zone_view_form
-msgid "<span style=\"font-weight:bold;\">\n"
+msgid ""
+"<span style=\"font-weight:bold;\">\n"
 "                            N O T E S\n"
 "                            </span>"
-msgstr "<span style=\"font-weight:bold;\">\n"
+msgstr ""
+"<span style=\"font-weight:bold;\">\n"
 "                            N O T A S\n"
 "                            </span>"
 
@@ -325,6 +364,7 @@ msgid "Calculation: irrigation points"
 msgstr "Cálculo: puntos de suministro"
 
 #. module: base_wua_infrastructure
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.view_wua_waterconnection_technical_sheet_wizard_form
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_infrastructure_config_settings_view_form
 msgid "Cancel"
 msgstr "Cancelar"
@@ -382,6 +422,12 @@ msgid "Connected to main pipe"
 msgstr "Riego desde el canal de la acequia"
 
 #. module: base_wua_infrastructure
+#: code:addons/base_wua_infrastructure/wizard/wua_waterconnection_technical_sheet_wizard.py:121
+#, python-format
+msgid "Could not generate the technical sheet PDF for %s: %s"
+msgstr "No se pudo generar el PDF de la ficha técnica para %s: %s"
+
+#. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_create_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_type_create_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_building_create_uid
@@ -401,6 +447,7 @@ msgstr "Riego desde el canal de la acequia"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_create_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_create_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_mail_wizard_create_uid
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_technical_sheet_wizard_create_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone_create_uid
 msgid "Created by"
 msgstr "Creado por"
@@ -425,6 +472,7 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_create_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_create_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_mail_wizard_create_date
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_technical_sheet_wizard_create_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone_create_date
 msgid "Created on"
 msgstr "Creado el"
@@ -476,7 +524,7 @@ msgstr "Descripción"
 #. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_wizard_change_parcel_name
 msgid "Dialog box to change the parcel name (code), with irrigation infrastructure"
-msgstr "Dialog box to change the parcel name (code), with irrigation infrastructure"
+msgstr "Cuadro de diálogo para cambiar el nombre (código) de la parcela, con infraestructura de riego."
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_res_partner_waterconnection_display_name
@@ -500,6 +548,7 @@ msgstr "Dialog box to change the parcel name (code), with irrigation infrastruct
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_mail_wizard_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcellink_display_name
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_technical_sheet_wizard_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone_display_name
 msgid "Display Name"
 msgstr "Nombre mostrado"
@@ -560,6 +609,11 @@ msgstr "Tiempo de cierre anticipado (min)"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed_elevation
 msgid "Elevation (m)"
 msgstr "Cota (m)"
+
+#. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_technical_sheet_wizard_template_id
+msgid "Email Template"
+msgstr "Plantilla de correo electrónico"
 
 #. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_hr_employee
@@ -636,7 +690,7 @@ msgstr "Elemento (caseta)"
 #. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_wua_parcel
 msgid "Entity (parcel)"
-msgstr "Entity (parcel)"
+msgstr "Entidad (parcela)"
 
 #. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_wua_valve
@@ -649,18 +703,14 @@ msgid "Entity (water connection)"
 msgstr "Elemento (toma)"
 
 #. module: base_wua_infrastructure
-#: sql_constraint:wua.airvalve:0
-#: sql_constraint:wua.drainagevalve:0
-#: sql_constraint:wua.irrigationshed:0
-#: sql_constraint:wua.valve:0
+#: sql_constraint:wua.airvalve:0 sql_constraint:wua.drainagevalve:0
+#: sql_constraint:wua.irrigationshed:0 sql_constraint:wua.valve:0
 msgid "Existing Identifier."
 msgstr "Identificador existente."
 
 #. module: base_wua_infrastructure
-#: sql_constraint:wua.flowdivider:0
-#: sql_constraint:wua.irrigationditch:0
-#: sql_constraint:wua.irrigationgate:0
-#: sql_constraint:wua.waterconnection:0
+#: sql_constraint:wua.flowdivider:0 sql_constraint:wua.irrigationditch:0
+#: sql_constraint:wua.irrigationgate:0 sql_constraint:wua.waterconnection:0
 msgid "Existing Name."
 msgstr "Nombre existente."
 
@@ -958,6 +1008,7 @@ msgstr "Sectores hidráulicos de la zona"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_mail_wizard_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcellink_id
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_technical_sheet_wizard_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone_id
 msgid "ID"
 msgstr "ID"
@@ -1247,7 +1298,7 @@ msgstr "Punto de suministro de una parcela"
 #. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_wua_parcel_irrigationpointwc
 msgid "Irrigation point of a parcel (WC)"
-msgstr "Irrigation point of a parcel (WC)"
+msgstr "Punto de riego de una parcela (WC)"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,help:base_wua_infrastructure.field_wua_infrastructure_configuration_irrigation_model_type
@@ -1296,6 +1347,7 @@ msgstr "Es una parada"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_mail_wizard___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcellink___last_update
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_technical_sheet_wizard___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone___last_update
 msgid "Last Modified on"
 msgstr "Última modificación el"
@@ -1319,6 +1371,7 @@ msgstr "Última modificación el"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_mail_wizard_write_uid
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_technical_sheet_wizard_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone_write_uid
 msgid "Last Updated by"
@@ -1343,6 +1396,7 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_mail_wizard_write_date
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_technical_sheet_wizard_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone_write_date
 msgid "Last Updated on"
@@ -1384,6 +1438,11 @@ msgid "Material"
 msgstr "Material"
 
 #. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_technical_sheet_wizard_body
+msgid "Message Body"
+msgstr "Cuerpo del Mensaje"
+
+#. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationditch_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone_name
 msgid "Name"
@@ -1421,9 +1480,21 @@ msgid "Name of valve param in the GIS viewer url"
 msgstr "Nombre del parámetro de válvula en la URL del visor GIS"
 
 #. module: base_wua_infrastructure
+#: code:addons/base_wua_infrastructure/wizard/wua_waterconnection_technical_sheet_wizard.py:89
+#, python-format
+msgid "No email template selected. Please choose one before sending."
+msgstr "No se ha seleccionado ninguna plantilla de correo electrónico. Elija una antes de enviar."
+
+#. module: base_wua_infrastructure
 #: selection:wua.parcel,hydraulic_infrastructure_type:0
 msgid "No infrastructure"
 msgstr "Sin infraestructura"
+
+#. module: base_wua_infrastructure
+#: code:addons/base_wua_infrastructure/wizard/wua_waterconnection_technical_sheet_wizard.py:97
+#, python-format
+msgid "No water connections selected."
+msgstr "No se han seleccionado conexiones de agua."
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationstretch_nominal_diameter
@@ -1785,9 +1856,20 @@ msgid "Segment Type"
 msgstr "Tipo de tramo"
 
 #. module: base_wua_infrastructure
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.view_wua_waterconnection_technical_sheet_wizard_form
+msgid "Send"
+msgstr "Enviar"
+
+#. module: base_wua_infrastructure
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.view_wua_waterconnection_mail_wizard_form
 msgid "Send Mails"
 msgstr "Enviar correos"
+
+#. module: base_wua_infrastructure
+#: model:ir.actions.act_window,name:base_wua_infrastructure.action_wua_waterconnection_technical_sheet_wizard
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.view_wua_waterconnection_technical_sheet_wizard_form
+msgid "Send Technical Sheet"
+msgstr "Enviar ficha técnica"
 
 #. module: base_wua_infrastructure
 #: model:ir.actions.act_window,name:base_wua_infrastructure.action_mail_wizard_waterconnection
@@ -1842,6 +1924,11 @@ msgstr "Estado: Abierta"
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_waterconnection_view_form
 msgid "Street View"
 msgstr "Street View"
+
+#. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_technical_sheet_wizard_subject
+msgid "Subject"
+msgstr "Asunto"
 
 #. module: base_wua_infrastructure
 #: code:addons/base_wua_infrastructure/models/wua_parcel.py:1854
@@ -1976,8 +2063,7 @@ msgid "The name must be unique."
 msgstr "El nombre tiene que ser único."
 
 #. module: base_wua_infrastructure
-#: sql_constraint:wua.airvalve:0
-#: sql_constraint:wua.drainagevalve:0
+#: sql_constraint:wua.airvalve:0 sql_constraint:wua.drainagevalve:0
 #: sql_constraint:wua.valve:0
 msgid "The nominal diameter can not be a negative value."
 msgstr "El diámetro nominal debe ser un valor positivo."
@@ -2255,6 +2341,11 @@ msgid "With several water payers"
 msgstr "Con varios pagadores de agua"
 
 #. module: base_wua_infrastructure
+#: model:ir.model,name:base_wua_infrastructure.model_wua_waterconnection_technical_sheet_wizard
+msgid "Wizard to send the technical sheet report by e-mail"
+msgstr "Asistente para enviar el informe de la ficha técnica por correo electrónico"
+
+#. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_gis_viewer_x
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_gis_viewer_x
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_gis_viewer_x
@@ -2297,7 +2388,11 @@ msgid "res.partner.waterconnection"
 msgstr "res.partner.waterconnection"
 
 #. module: base_wua_infrastructure
+#: model:mail.template,report_name:base_wua_infrastructure.email_template_waterconnection_technical_sheet
+msgid "technical_sheet_${(object.name or '').replace('/', '_')}"
+msgstr "ficha_técnica_${(object.name or '').replace('/', '_')}"
+
+#. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_wua_waterconnection_mail_wizard
 msgid "wua.waterconnection.mail.wizard"
 msgstr "wua.waterconnection.mail.wizard"
-
