@@ -169,22 +169,26 @@
                                                     partner=line.invoice_id.partner_id
                                                 )"/>
                                             <t t-set="sign" t-value="-1 if line.invoice_id.type == 'out_refund' else 1"/>
+                                            <t t-set="line_subtotal" t-value="tax_data['total_excluded'] * sign"/>
                                             <t t-set="line_tax_amount" t-value="(tax_data['total_included'] - tax_data['total_excluded']) * sign"/>
                                             <t t-set="line_total" t-value="tax_data['total_included'] * sign"/>
+                                            <t t-set="total_quantity" t-value="total_quantity + (line.quantity * sign)"/>
+                                            <t t-set="subtotal_amount" t-value="subtotal_amount + line_subtotal"/>
+                                            <t t-set="total_amount" t-value="total_amount + line_total"/>
                                             <tr>
                                                 <td name="invoice_id"><span t-field="line.invoice_id"/></td>
                                                 <td name="line_date"><span t-field="line.date_invoice"/></td>
                                                 <td name="lineset"><span t-field="line.invoiceset_id"/></td>
                                                 <td name="line_product"><span t-field="line.product_id"/></td>
                                                 <td name="line_quantity">
-                                                    <span style="white-space:nowrap;" t-esc="wizard.env['wua.parcel'].transform_float_to_locale((line.quantity * (-1 if line.invoice_id.type == 'out_refund' else 1)), 2)"/>
+                                                    <span style="white-space:nowrap;" t-esc="wizard.env['wua.parcel'].transform_float_to_locale((line.quantity * sign), 2)"/>
                                                 </td>
                                                 <td name="line_price">
                                                     <span style="white-space:nowrap;" t-field="line.price_unit"/>
                                                 </td>
                                                 <t t-if="wizard.show_tax">
                                                     <td name="line_subtotal">
-                                                        <span style="white-space:nowrap;" t-esc="wizard.env['wua.parcel'].transform_float_to_locale((line.quantity * line.price_unit) * (-1 if line.invoice_id.type == 'out_refund' else 1), 2)"/>
+                                                        <span style="white-space:nowrap;" t-esc="wizard.env['wua.parcel'].transform_float_to_locale((line.quantity * line.price_unit) * sign, 2)"/>
                                                     </td>
                                                     <td name="line_tax">
                                                         <t t-foreach="line.invoice_line_tax_ids" t-as="tax">
@@ -239,10 +243,20 @@
                                                 <t t-set="uom_id" t-value="empty"/>
                                                 <t t-foreach="wizard.invoice_line_ids.filtered(lambda line: line.partner_id.id == partner.id)" t-as="l">
                                                     <t t-if="l.product_id.id == p.id">
-                                                        <t t-set="product_tax_amount" t-value="sum(l.price_subtotal * tax.amount / 100 for tax in l.invoice_line_tax_ids) * (-1 if l.invoice_id.type == 'out_refund' else 1)"/>
-                                                        <t t-set="product_total_qty" t-value="product_total_qty + (l.quantity * (-1 if l.invoice_id.type == 'out_refund' else 1))"/>
-                                                        <t t-set="product_subtotal_amount" t-value="product_subtotal_amount + (l.price_subtotal * (-1 if l.invoice_id.type == 'out_refund' else 1))"/>
-                                                        <t t-set="product_total_amount" t-value="product_total_amount + (l.price_subtotal * (-1 if l.invoice_id.type == 'out_refund' else 1)) + product_tax_amount"/>
+                                                        <t t-set="tax_data"
+                                                           t-value="l.invoice_line_tax_ids.compute_all(
+                                                                l.price_unit,
+                                                                l.invoice_id.currency_id,
+                                                                l.quantity,
+                                                                product=l.product_id,
+                                                                partner=l.invoice_id.partner_id
+                                                            )"/>
+                                                        <t t-set="sign" t-value="-1 if l.invoice_id.type == 'out_refund' else 1"/>
+                                                        <t t-set="line_subtotal" t-value="tax_data['total_excluded'] * sign"/>
+                                                        <t t-set="line_total" t-value="tax_data['total_included'] * sign"/>
+                                                        <t t-set="product_total_qty" t-value="product_total_qty + (l.quantity * sign)"/>
+                                                        <t t-set="product_subtotal_amount" t-value="product_subtotal_amount + line_subtotal"/>
+                                                        <t t-set="product_total_amount" t-value="product_total_amount + line_total"/>
                                                         <t t-set="uom_id" t-value="l.sudo().uom_id.name"/>
                                                     </t>
                                                 </t>
