@@ -22,23 +22,23 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>Water connection</th>
-                                <th>Watermeter</th>
-                                <th>Irrigationshed</th>
-                                <th>Hydraulicsector</th>
+                                <th name="waterconnection_th">Water connection</th>
+                                <th name="watermeter_th">Watermeter</th>
+                                <th name="irrigationshed_th">Irrigationshed</th>
+                                <th name="hydraulicsector_th">Hydraulicsector</th>
                             </tr>
                         </thead>
                         <tbody>
                             <t t-foreach="parcel.irrigationpointwc_ids" t-as="wc">
                                 <tr>
-                                    <td>
+                                    <td name="waterconnection_td">
                                         <a t-attf-href="/my/waterconnections/#{partner.waterconnectionlink_ids.filtered(lambda l: l.waterconnection_id == wc.waterconnection_id).id}">
                                             <t t-esc="wc.waterconnection_id.name"/>
                                         </a>
                                     </td>
-                                    <td><t t-esc="wc.watermeter_id.name"/></td>
-                                    <td><t t-esc="wc.irrigationshed_id.name"/></td>
-                                    <td><t t-esc="wc.hydraulicsector_id.name"/></td>
+                                    <td name="watermeter_td"><t t-esc="wc.watermeter_id.name"/></td>
+                                    <td name="irrigationshed_td"><t t-esc="wc.irrigationshed_id.name"/></td>
+                                    <td name="hydraulicsector_td"><t t-esc="wc.hydraulicsector_id.name"/></td>
                                 </tr>
                             </t>
                         </tbody>

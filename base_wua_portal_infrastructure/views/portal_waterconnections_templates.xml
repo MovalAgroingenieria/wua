@@ -54,17 +54,17 @@
                                 <table id="waterconnections-table" class="table table-hover o_my_status_table">
                                     <thead>
                                         <tr>
-                                            <th>Water Connection</th>
+                                            <th name="th_waterconnection">Water Connection</th>
                                             <th name="th_description">Description</th>
-                                            <th>Last Reading Time</th>
-                                            <th>Last Reading Value (m3)</th>
-                                            <th>Volume Real (m3)</th>
+                                            <th name="th_last_reading_time">Last Reading Time</th>
+                                            <th name="th_last_reading_value">Last Reading Value (m3)</th>
+                                            <th name="th_volume_real">Volume Real (m3)</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <t t-foreach="partnerlinks" t-as="link">
                                             <tr>
-                                                <td>
+                                                <td name="td_waterconnection">
                                                 <a t-attf-href="/my/waterconnections/#{link.id}?ids={{ waterconnection_id_list }}&amp;#{keep_query()}">
                                                         <t t-esc="link.waterconnection_id.name"/>
                                                     </a>
@@ -72,13 +72,13 @@
                                                 <td name="td_description">
                                                     <t t-esc="link.description"/>
                                                 </td>
-                                                <td>
+                                                <td name="td_last_reading_time">
                                                     <t t-esc="link.last_reading_time" t-options="{'widget': 'date'}"/>
                                                 </td>
-                                                <td>
+                                                <td name="td_last_reading_value">
                                                     <t t-esc="link.last_reading_value"/>
                                                 </td>
-                                                <td>
+                                                <td name="td_volume_real">
                                                     <t t-esc="link.volume_real"/>
                                                 </td>
                                             </tr>

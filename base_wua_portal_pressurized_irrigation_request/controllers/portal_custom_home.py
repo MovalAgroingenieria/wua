@@ -2,6 +2,8 @@
 # 2025 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+from collections import OrderedDict
+
 from odoo import http
 from odoo.http import request
 from odoo.addons.website_portal.controllers.main import website_account
@@ -60,6 +62,8 @@ class website_account(website_account):
                                        preswateringperiod_id=None,
                                        filter_is_open=None, **kw):
         """Portal view for pressurized irrigation requests"""
+        if filter_is_open is None:
+            filter_is_open = 'open'
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
         partner = partner.parent_id or partner
@@ -117,20 +121,37 @@ class website_account(website_account):
         offset = (page - 1) * items_per_page
         preswateringrequests = request.env['wua.preswateringrequest'].search(
             domain, limit=items_per_page, offset=offset,
-            order='preswateringperiod_id, is_open desc, initial_date desc')
+            order='preswateringperiod_id desc, is_open desc, initial_date desc')
 
         # Group by period and is_open for visual grouping
-        grouped_requests = {}
+        # Build period order sorted by initial_date desc (most recent first)
+        period_meta = OrderedDict()
+        for req in preswateringrequests:
+            period_name = (
+                req.preswateringperiod_id.display_name
+                if req.preswateringperiod_id else 'No Period'
+            )
+            if period_name not in period_meta:
+                period_meta[period_name] = (
+                    req.preswateringperiod_id.initial_date or ''
+                )
+
+        sorted_periods = sorted(
+            period_meta.keys(),
+            key=lambda p: period_meta[p],
+            reverse=True,
+        )
+
+        grouped_requests = OrderedDict()
+        for period_name in sorted_periods:
+            grouped_requests[period_name] = {'Open': [], 'Closed': []}
+
         for req in preswateringrequests:
             period_name = (
                 req.preswateringperiod_id.display_name
                 if req.preswateringperiod_id else 'No Period'
             )
             is_open_label = 'Open' if req.is_open else 'Closed'
-
-            if period_name not in grouped_requests:
-                grouped_requests[period_name] = {'Open': [], 'Closed': []}
-
             grouped_requests[period_name][is_open_label].append(req)
 
         preswateringperiods = request.env['wua.preswateringperiod'].search([
