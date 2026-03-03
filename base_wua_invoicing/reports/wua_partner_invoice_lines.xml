@@ -160,11 +160,17 @@
                                         <t t-set="total_amount" t-value="0"/>
                                         <t t-set="subtotal_amount" t-value="0"/>
                                         <t t-foreach="wizard.invoice_line_ids.filtered(lambda line: line.partner_id.id == partner.id)" t-as="line">
-                                            <t t-set="line_tax_amount" t-value="sum(line.price_subtotal * tax.amount / 100 for tax in line.invoice_line_tax_ids) * (-1 if line.invoice_id.type == 'out_refund' else 1)"/>
-                                            <t t-set="line_total" t-value="(line.price_subtotal + line_tax_amount) * (-1 if line.invoice_id.type == 'out_refund' else 1)"/>
-                                            <t t-set="total_quantity" t-value="total_quantity + (line.quantity * (-1 if line.invoice_id.type == 'out_refund' else 1))"/>
-                                            <t t-set="subtotal_amount" t-value="subtotal_amount + (line.price_subtotal * (-1 if line.invoice_id.type == 'out_refund' else 1))"/>
-                                            <t t-set="total_amount" t-value="total_amount + line_total"/>
+                                            <t t-set="tax_data"
+                                                t-value="line.invoice_line_tax_ids.compute_all(
+                                                    line.price_unit,
+                                                    line.invoice_id.currency_id,
+                                                    line.quantity,
+                                                    product=line.product_id,
+                                                    partner=line.invoice_id.partner_id
+                                                )"/>
+                                            <t t-set="sign" t-value="-1 if line.invoice_id.type == 'out_refund' else 1"/>
+                                            <t t-set="line_tax_amount" t-value="(tax_data['total_included'] - tax_data['total_excluded']) * sign"/>
+                                            <t t-set="line_total" t-value="tax_data['total_included'] * sign"/>
                                             <tr>
                                                 <td name="invoice_id"><span t-field="line.invoice_id"/></td>
                                                 <td name="line_date"><span t-field="line.date_invoice"/></td>
