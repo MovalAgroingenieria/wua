@@ -136,7 +136,8 @@ class MaintenanceGisController(http.Controller):
                     'category': equipment.category_id.name,
                     'geometry_type': equipment.category_id.geometry_type,
                     'geom': self._get_geojson_from_equipment_id(equipment),
-                    'image': equipment.image,
+                    'image_url': '/web/image/maintenance.equipment/%s/image' %
+                    equipment.id if equipment.image else None,
                     'attachments': request.env['ir.attachment'].search([
                         ('res_model', '=', 'maintenance.equipment'),
                         ('res_id', '=', equipment.id),
@@ -355,7 +356,9 @@ class MaintenanceGisController(http.Controller):
                     'url': '/web/content/%s' % attachment.id,
                     'mimetype': attachment.mimetype,
                 }),
-            'image': maintenance.equipment_id.image,
+            'image_url': '/web/image/maintenance.equipment/%s/image' %
+            maintenance.equipment_id.id if maintenance.equipment_id.image else
+            None,
             'dynamic_fields': dynamic_fields,
         }
 
