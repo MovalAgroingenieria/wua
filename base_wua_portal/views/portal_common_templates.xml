@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Navigation Bar Template -->
+        <template id="portal_wua_navbar" name="WUA Portal Navigation Bar">
+            <div class="container mt16">
+                <div class="navbar navbar-default">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#oe-help-navbar-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="/my/home">
+                            My Account
+                        </a>
+                    </div>
+                    <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
+                        <ul name="navbar_menu" class="nav navbar-nav o_portal_submenu">
+                            <li name="navbar_invoices">
+                                <t t-if="liquidation_on_portal">
+                                    <a href="/my/invoices">Liquidaciones</a>
+                                </t>
+                                <t t-else="">
+                                    <a href="/my/invoices">Facturas</a>
+                                </t>
+                            </li>
+                            <li name="navbar_parcels"><a href="/my/parcels">Parcelas</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- Empty State Message Template -->
+        <template id="portal_empty_state" name="Portal Empty State Message">
+            <t t-set="use_alert" t-value="use_alert or False"/>
+            <t t-set="message" t-value="message or 'There are currently no records for your account.'"/>
+
+            <t t-if="use_alert">
+                <div class="alert alert-info" role="alert">
+                    <t t-esc="message"/>
+                </div>
+            </t>
+            <t t-else="">
+                <p><t t-esc="message"/></p>
+            </t>
+        </template>
+
+        <!-- Pagination Template -->
+        <template id="portal_pagination" name="Portal Pagination">
+            <div t-if="pager" class="o_portal_pager text-center">
+                <t t-call="website.pager"/>
+            </div>
+        </template>
+
+        <!-- Breadcrumb Template -->
+        <template id="portal_breadcrumb" name="Portal Breadcrumb">
+            <div class="col-sm-4">
+                <ol class="breadcrumb mt8">
+                    <li><a href="/my/home"><i class="fa fa-home"/></a></li>
+                    <t t-raw="0"/>  <!-- Slot for custom breadcrumb items -->
+                </ol>
+            </div>
+        </template>
+
+        <!-- Search Form Template -->
+        <template id="portal_search_form" name="Portal Search Form">
+            <t t-set="form_action" t-value="form_action or '/my/items'"/>
+            <t t-set="placeholder" t-value="placeholder or 'Search...'"/>
+
+            <form t-att-action="form_action" method="get" class="mb-3">
+                <div class="row">
+                    <div class="col-md-2">
+                        <select id="search_field" name="search_field" class="form-control">
+                            <t t-raw="0"/>  <!-- Slot for search field options -->
+                        </select>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="text" name="search" class="form-control" t-att-placeholder="placeholder" t-att-value="search_query or ''"/>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary btn-block">Search</button>
+                    </div>
+                </div>
+            </form>
+        </template>
+
+    </data>
+</odoo>

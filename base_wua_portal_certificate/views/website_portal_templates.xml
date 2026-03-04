@@ -15,38 +15,17 @@
                 </h3>
             </xpath>
         </template>
+
+        <!-- Override parcels link to point to certificates instead -->
+        <template id="portal_wua_navbar_certificate" inherit_id="base_wua_portal.portal_wua_navbar">
+            <xpath expr="//li[@name='navbar_parcels']" position="after">
+                <li name="navbar_certificates"><a href="/my/certificates">Certificates</a></li>
+            </xpath>
+        </template>
+
         <template id="portal_my_certificates" name="My Certificates">
             <t t-call="website.layout">
-                <div class="container mt16">
-                    <div class="navbar navbar-default">
-                        <div class="navbar-header">
-                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#oe-help-navbar-collapse">
-                                <span class="sr-only">Toggle navigation</span>
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                            </button>
-                            <a class="navbar-brand" href="/my/home">
-                                My Account
-                            </a>
-                        </div>
-                        <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
-                            <ul class="nav navbar-nav o_portal_submenu">
-                            <li>
-                                                                    <t t-if="liquidation_on_portal">
-                                        <a href="/my/invoices">Liquidaciones</a>
-
-                                    </t>
-                                    <t t-else="">
-                                        <a href="/my/invoices">Facturas</a>
-                                    </t>
-                            </li>
-                            <li>
-                                <a href="/my/certificates">Parcels</a>
-                            </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                <t t-call="base_wua_portal.portal_wua_navbar"/>
                 <div id="wrap">
                     <div class="container mb64">
                         <div class="col-md-12">

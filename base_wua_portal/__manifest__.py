@@ -19,6 +19,7 @@
     ],
     "data": [
         "data/auth_config.xml",
+        "views/portal_common_templates.xml",
         "views/portal_account_templates.xml",
         "views/portal_parcels_templates.xml",
         "views/portal_invoices_templates.xml",

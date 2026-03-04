@@ -4,32 +4,7 @@
         <!-- Portal view for pressurized irrigation requests -->
         <template id="portal_my_preswateringrequests" name="My Pressurized Irrigation Requests">
             <t t-call="website.layout">
-            <div class="container mt16">
-                <div class="navbar navbar-default">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#oe-help-navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="/my/home">
-                    My Account
-                    </a>
-                </div>
-                <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
-                    <ul class="nav navbar-nav o_portal_submenu">
-                    <li>                                    <t t-if="liquidation_on_portal">
-                        <a href="/my/invoices">Liquidaciones</a>
-
-                        </t>
-                        <t t-else="">
-                        <a href="/my/invoices">Facturas</a>
-                        </t></li>
-                    <li><a href="/my/parcels">Parcels</a></li>
-                    </ul>
-                </div>
-                </div>
-            </div>
+            <t t-call="base_wua_portal.portal_wua_navbar"/>
             <t t-if="not preswateringrequests">
                 <div class="alert alert-info" role="alert">
                 There are currently no pressurized irrigation requests for the selected period.
@@ -199,32 +174,7 @@
         <!-- Portal view for pressurized irrigation request consumptions -->
         <template id="portal_my_presresconsumptions" name="My Request Consumptions">
             <t t-call="website.layout">
-                <div class="container mt16">
-                    <div class="navbar navbar-default">
-                        <div class="navbar-header">
-                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#oe-help-navbar-collapse">
-                                <span class="sr-only">Toggle navigation</span>
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                            </button>
-                            <a class="navbar-brand" href="/my/home">
-                                My Account
-                            </a>
-                        </div>
-                        <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
-                            <ul class="nav navbar-nav o_portal_submenu">
-                                <li>                                    <t t-if="liquidation_on_portal">
-                                        <a href="/my/invoices">Liquidaciones</a>
-
-                                    </t>
-                                    <t t-else="">
-                                        <a href="/my/invoices">Facturas</a>
-                                    </t></li>
-                                <li><a href="/my/parcels">Parcels</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                <t t-call="base_wua_portal.portal_wua_navbar"/>
                 <t t-if="not presresconsumptions">
                     <div class="alert alert-info" role="alert">
                         There are currently no request consumptions for your account.
@@ -348,32 +298,7 @@
         <!-- Portal view for single pressurized irrigation request detail -->
         <template id="portal_my_preswateringrequest_detail" name="My Pressurized Irrigation Request Detail">
             <t t-call="website.layout">
-                <div class="container mt16">
-                    <div class="navbar navbar-default">
-                        <div class="navbar-header">
-                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#oe-help-navbar-collapse">
-                                <span class="sr-only">Toggle navigation</span>
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                            </button>
-                            <a class="navbar-brand" href="/my/home">
-                                My Account
-                            </a>
-                        </div>
-                        <div class="collapse navbar-collapse" id="oe-help-navbar-collapse">
-                            <ul class="nav navbar-nav o_portal_submenu">
-                                <li>                                    <t t-if="liquidation_on_portal">
-                                        <a href="/my/invoices">Liquidaciones</a>
-
-                                    </t>
-                                    <t t-else="">
-                                        <a href="/my/invoices">Facturas</a>
-                                    </t></li>
-                                <li><a href="/my/parcels">Parcels</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                <t t-call="base_wua_portal.portal_wua_navbar"/>
 
                 <div id="wrap">
                     <div class="container-fluid mb64" style="max-width: 98%; margin: 0 auto;">
