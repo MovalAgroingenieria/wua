@@ -4,9 +4,12 @@
 
 import datetime
 import json
+import logging
 from lxml import etree
 from odoo import models, fields, api, exceptions, _
 from datetime import timedelta
+
+_logger = logging.getLogger(__name__)
 
 
 class WuaPreswateringrequest(models.Model):
@@ -604,6 +607,11 @@ class WuaPreswateringrequest(models.Model):
                     'watering_duration': x.watering_duration,
                     'watering_volume': x.watering_volume,
                 })
-            notification_template.sudo().with_context({
-                'data': {'consumptions': consumptions}}).send_mail(
-                record.id, force_send=True)
+            try:
+                notification_template.sudo().with_context({
+                    'data': {'consumptions': consumptions}}).send_mail(
+                    record.id, force_send=True)
+            except Exception as e:
+                _logger.warning(
+                    'Failed to send notification email for '
+                    'preswateringrequest %s: %s', record.id, e)
