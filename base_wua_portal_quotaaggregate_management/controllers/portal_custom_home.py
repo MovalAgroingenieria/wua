@@ -19,7 +19,7 @@ class website_account(website_account):
         partner = partner.parent_id or partner
         quotaaggregates_count = \
             request.env['wua.quota.aggregatevalue'].search_count([
-                ('partner_id', '=', partner.id)
+                ('partner_id', '=', partner.id),
             ])
         response.qcontext.update({
             'quotaaggregates_count': quotaaggregates_count,
@@ -37,7 +37,7 @@ class website_account(website_account):
         quotaaggregates_model = \
             request.env['wua.quota.aggregatevalue']
         domain = [
-            ('partner_id', '=', partner.id)
+            ('partner_id', '=', partner.id),
         ]
         if search and search_field:
             field_map = {
@@ -62,14 +62,18 @@ class website_account(website_account):
         offset = (page - 1) * items_per_page
         quotaaggregates = request.env['wua.quota.aggregatevalue'].search(
             domain, limit=items_per_page, offset=offset)
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal',
+        )
         values.update({
             'quotaaggregates': quotaaggregates,
             'pager': pager,
             'search_query': search,
             'search_field': search_field,
-            'default_url': '/my/quotaaggregates'
+            'default_url': '/my/quotaaggregates',
+            'liquidation_on_portal': liquidation_on_portal,
         })
         return request.render(
             "base_wua_portal_quota_management.portal_my_quotaaggregates",
             values)
-

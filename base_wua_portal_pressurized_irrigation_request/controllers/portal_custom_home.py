@@ -121,8 +121,8 @@ class website_account(website_account):
         offset = (page - 1) * items_per_page
         preswateringrequests = request.env['wua.preswateringrequest'].search(
             domain, limit=items_per_page, offset=offset,
-            order='preswateringperiod_id desc, is_open desc, initial_date desc')
-
+            order='preswateringperiod_id desc, is_open desc, '
+                  'initial_date desc')
         # Group by period and is_open for visual grouping
         # Build period order sorted by initial_date desc (most recent first)
         period_meta = OrderedDict()
@@ -158,6 +158,10 @@ class website_account(website_account):
             ('agriculturalseason_id', '=', current_season.id),
         ], order='initial_date desc')
 
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal',
+        )
         values.update({
             'preswateringrequests': preswateringrequests,
             'grouped_requests': grouped_requests,
@@ -171,6 +175,7 @@ class website_account(website_account):
             ),
             'filter_is_open': filter_is_open,
             'partner': partner,
+            'liquidation_on_portal': liquidation_on_portal,
         })
         portal_view = \
             'base_wua_portal_pressurized_irrigation_request.' \
@@ -201,11 +206,16 @@ class website_account(website_account):
             ('preswateringrequest_id', '=', preswateringrequest.id),
         ], order='request_date desc, initial_hour asc')
 
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal',
+        )
         values.update({
             'preswateringrequest': preswateringrequest,
             'presresconsumptions': presresconsumptions,
             'partner': partner,
             'page_name': 'preswateringrequest_detail',
+            'liquidation_on_portal': liquidation_on_portal,
         })
         portal_view = \
             'base_wua_portal_pressurized_irrigation_request.' \
@@ -275,6 +285,10 @@ class website_account(website_account):
             ('agriculturalseason_id', '=', current_season.id),
         ], order='initial_date desc')
 
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal',
+        )
         values.update({
             'presresconsumptions': presresconsumptions,
             'pager': pager,
@@ -286,6 +300,7 @@ class website_account(website_account):
                 int(preswateringperiod_id) if preswateringperiod_id else None
             ),
             'partner': partner,
+            'liquidation_on_portal': liquidation_on_portal,
         })
         portal_view = \
             'base_wua_portal_pressurized_irrigation_request.' \

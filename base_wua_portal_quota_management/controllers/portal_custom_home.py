@@ -21,14 +21,14 @@ class website_account(website_account):
         quota = request.env['wua.quota']
         quota_count = quota.search_count([
             ('partner_id', '=', partner.id),
-            ('balance', '!=', 0)
+            ('balance', '!=', 0),
         ])
         hydricmovement_count = request.env['wua.hydricmovement'].search_count([
-            ('partner_id', '=', partner.id)
+            ('partner_id', '=', partner.id),
         ])
         quotaaggregates_count = \
             request.env['wua.quota.aggregatevalue'].search_count([
-                ('partner_id', '=', partner.id)
+                ('partner_id', '=', partner.id),
             ])
         response.qcontext.update({
             'quota_count': quota_count,
@@ -83,12 +83,17 @@ class website_account(website_account):
         offset = (page - 1) * items_per_page
         quotas = request.env['wua.quota'].search(
             domain, limit=items_per_page, offset=offset)
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal',
+        )
         values.update({
             'quotas': quotas,
             'pager': pager,
             'search_query': search,
             'search_field': search_field,
-            'default_url': '/my/quotas'
+            'default_url': '/my/quotas',
+            'liquidation_on_portal': liquidation_on_portal,
         })
         return request.render(
             "base_wua_portal_quota_management.portal_my_quotas",
@@ -143,12 +148,17 @@ class website_account(website_account):
         offset = (page - 1) * items_per_page
         hydricmovements = request.env['wua.hydricmovement'].search(
             hydricmovements_domain, limit=items_per_page, offset=offset)
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal',
+        )
         values.update({
             'hydricmovements': hydricmovements,
             'pager': pager,
             'search_query': search,
             'search_field': search_field,
             'default_url': '/my/hydricmovements',
+            'liquidation_on_portal': liquidation_on_portal,
         })
         portal_view = \
             'base_wua_portal_quota_management.portal_my_hydricmovements'
@@ -179,7 +189,7 @@ class website_account(website_account):
             headers=[
                 ('Content-Type', 'application/pdf'),
                 ('Content-Disposition',
-                 'attachment; filename="wua_partner_quota_report.pdf"')
-            ]
+                 'attachment; filename="wua_partner_quota_report.pdf"'),
+            ],
         )
         return response

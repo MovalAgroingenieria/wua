@@ -25,7 +25,7 @@ class website_account(website_account):
             gis_viewer_link = gis_viewer_link.split('&arg=')[0]
         liquidation_on_portal = request.env['ir.values'].sudo().get_default(
             'wua.invoicing.configuration',
-            'liquidation_on_portal'
+            'liquidation_on_portal',
         )
         response.qcontext.update({
             'parcel_count': parcel_count,
@@ -40,7 +40,7 @@ class website_account(website_account):
         return {
             'company': request.website.company_id,
             'user': request.env.user,
-            'partner': partner
+            'partner': partner,
         }
 
     @http.route(['/my/account'], type='http', auth='user', website=True)
@@ -50,7 +50,7 @@ class website_account(website_account):
         partner = request.env.user.partner_id
         partner = partner.parent_id or partner
         mandates = request.env['account.banking.mandate'].sudo().search([
-            ('partner_id', '=', partner.id)
+            ('partner_id', '=', partner.id),
         ])
         company = request.website.company_id
         response.qcontext.update({

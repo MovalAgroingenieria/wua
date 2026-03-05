@@ -23,7 +23,7 @@ class website_account(website_account):
             [('partner_id', '=', partner.id)]).mapped('waterconnection_id').ids
         fertconsumptions_count = \
             request.env['wua.fertconsumption'].search_count([
-                ('waterconnection_id', 'in', waterconnections)
+                ('waterconnection_id', 'in', waterconnections),
             ])
         response.qcontext.update({
             'fertconsumptions_count': fertconsumptions_count,
@@ -55,7 +55,7 @@ class website_account(website_account):
                 'waterconnection_id')
         fertconsumptions_domain = [
             ('waterconnection_id', 'in', waterconnections.ids),
-            ('validated', '=', True)
+            ('validated', '=', True),
         ]
         if search and search_field:
             field_map = {
@@ -94,6 +94,10 @@ class website_account(website_account):
         fertconsumptions = request.env['wua.fertconsumption'].search(
             fertconsumptions_domain, limit=items_per_page, offset=offset,
             order="reading_initial_time desc")
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal',
+        )
         values.update({
             'fertconsumptions': fertconsumptions,
             'waterconnections': waterconnections,
@@ -101,6 +105,7 @@ class website_account(website_account):
             'search_query': search,
             'search_field': search_field,
             'default_url': '/my/fertconsumptions',
+            'liquidation_on_portal': liquidation_on_portal,
         })
         portal_view = \
             'base_wua_portal_pressurized_irrigation_with_fertilizer' + \
