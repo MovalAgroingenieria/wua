@@ -78,7 +78,7 @@ class website_account(website_account):
             irrigationreports[offset:offset + items_per_page]
         liquidation_on_portal = request.env['ir.values'].sudo().get_default(
             'wua.invoicing.configuration',
-            'liquidation_on_portal'
+            'liquidation_on_portal',
         )
         values.update({
             'irrigationreports': paginated_irrigationreports,
@@ -102,7 +102,7 @@ class website_account(website_account):
         model_report = request.env['report'].sudo()
         irrigationreport = irrigationreport_model.search([
             ('id', '=', irrigationreport),
-            ('partner_id', '=', partner.id)
+            ('partner_id', '=', partner.id),
         ], limit=1)
         if not irrigationreport:
             return Response(
@@ -119,8 +119,8 @@ class website_account(website_account):
             headers=[
                 ('Content-Type', 'application/pdf'),
                 ('Content-Disposition',
-                 'attachment; filename="wua_irrigationreport_report.pdf"')
-            ]
+                 'attachment; filename="wua_irrigationreport_report.pdf"'),
+            ],
         )
         return response
 
@@ -163,12 +163,17 @@ class website_account(website_account):
         offset = (page - 1) * items_per_page
         paginated_irrigationreport_requests = \
             irrigationreport_requests[offset:offset + items_per_page]
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal',
+        )
         values.update({
             'irrigationreportrequests': paginated_irrigationreport_requests,
             'pager': pager,
             'search_query': search,
             'search_field': search_field,
             'default_url': '/my/irrigationreportrequests',
+            'liquidation_on_portal': liquidation_on_portal,
         })
         return request.render(
             "base_wua_portal_irrigation_report" +
@@ -186,7 +191,7 @@ class website_account(website_account):
         model_report = request.env['report'].sudo()
         reportrequest = reportrequest_model.search([
             ('id', '=', reportrequest),
-            ('partner_id', '=', partner.id)
+            ('partner_id', '=', partner.id),
         ], limit=1)
         if not reportrequest:
             return Response(
@@ -204,7 +209,7 @@ class website_account(website_account):
             headers=[
                 ('Content-Type', 'application/pdf'),
                 ('Content-Disposition',
-                 'attachment; filename="wua_irrigationreport_report.pdf"')
-            ]
+                 'attachment; filename="wua_irrigationreport_report.pdf"'),
+            ],
         )
         return response

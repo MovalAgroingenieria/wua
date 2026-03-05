@@ -80,6 +80,10 @@ class website_account(website_account):
         offset = (page - 1) * items_per_page
         readings = request.env['wua.reading'].search(
             domain, limit=items_per_page, offset=offset)
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal',
+        )
         values.update({
             'readings': readings,
             'waterconnections': waterconnections,
@@ -87,6 +91,7 @@ class website_account(website_account):
             'search_query': search,
             'search_field': search_field,
             'default_url': '/my/readings',
+            'liquidation_on_portal': liquidation_on_portal,
         })
         return request.render(
             "base_wua_portal_pressurized_irrigation.portal_my_readings",
@@ -156,6 +161,10 @@ class website_account(website_account):
         offset = (page - 1) * items_per_page
         presconsumptions = request.env['wua.presconsumption'].search(
             presconsumptions_domain, limit=items_per_page, offset=offset)
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal',
+        )
         values.update({
             'presconsumptions': presconsumptions,
             'waterconnections': waterconnections,
@@ -163,6 +172,7 @@ class website_account(website_account):
             'search_query': search,
             'search_field': search_field,
             'default_url': '/my/presconsumptions',
+            'liquidation_on_portal': liquidation_on_portal,
         })
         portal_view = \
             'base_wua_portal_pressurized_irrigation.portal_my_presconsumptions'
@@ -239,6 +249,10 @@ class website_account(website_account):
             request.env['wua.waterconnection.irrigation.event'].search(
                 irrigationevents_domain, limit=items_per_page, offset=offset,
                 order='irrigation_end_date desc')
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal',
+        )
         values.update({
             'irrigationevents': irrigationevents,
             'waterconnections': waterconnections,
@@ -247,6 +261,7 @@ class website_account(website_account):
             'search_field': search_field,
             'date_filter': date_filter,
             'default_url': '/my/irrigationevents',
+            'liquidation_on_portal': liquidation_on_portal,
         })
         portal_view = \
             'base_wua_portal_pressurized_irrigation.portal_my_irrigationevents'

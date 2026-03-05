@@ -106,6 +106,10 @@ class WebsiteAccountHydricEstimation(website_account):
         cropunits_page = wua_cropunit_model.search(
             domain, order=order, limit=self._items_per_page,
             offset=pager['offset'])
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal',
+        )
         values.update({
             'cropunits_page': cropunits_page,
             'filterby': filterby,
@@ -113,6 +117,7 @@ class WebsiteAccountHydricEstimation(website_account):
             'search': search,
             'sortby': sortby,
             'pager': pager,
+            'liquidation_on_portal': liquidation_on_portal,
         })
         return request.render(
             'base_wua_portal_hydric_estimation.portal_my_cropunits',
@@ -194,6 +199,10 @@ class WebsiteAccountHydricEstimation(website_account):
         hydricneeds_page = wua_hydricneed_model.search(
             domain, order=order, limit=self._items_per_page,
             offset=pager['offset'])
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal',
+        )
         values.update({
             'hydricneeds_page': hydricneeds_page,
             'filterby': filterby,
@@ -201,6 +210,7 @@ class WebsiteAccountHydricEstimation(website_account):
             'search': search,
             'sortby': sortby,
             'pager': pager,
+            'liquidation_on_portal': liquidation_on_portal,
         })
         return request.render(
             'base_wua_portal_hydric_estimation.portal_my_hydricneeds',

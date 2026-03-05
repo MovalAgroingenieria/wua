@@ -20,7 +20,7 @@ class PortalQuotaWithProvisional(http.Controller):
         values = {
             'company': request.website.company_id,
             'user': request.env.user,
-            'partner': partner
+            'partner': partner,
         }
         env = request.env
         quota_model = env['wua.quota']
@@ -65,6 +65,10 @@ class PortalQuotaWithProvisional(http.Controller):
         if not controlperiod_id and current_controlperiod:
             controlperiod_id = current_controlperiod.id
         controlperiods = controlperiod_model.search([])
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal',
+        )
         values.update({
             'quotas': quotas,
             'pager': pager,
@@ -72,8 +76,10 @@ class PortalQuotaWithProvisional(http.Controller):
             'search_field': search_field,
             'controlperiods': controlperiods,
             'current_controlperiod': current_controlperiod,
-            'selected_controlperiod_id': int(controlperiod_id) if controlperiod_id else None,
-            'default_url': '/my/quotas'
+            'selected_controlperiod_id': int(controlperiod_id) if
+            controlperiod_id else None,
+            'default_url': '/my/quotas',
+            'liquidation_on_portal': liquidation_on_portal,
         })
         return request.render(
             "base_wua_portal_quota_management.portal_my_quotas",
@@ -101,7 +107,8 @@ class PortalQuotaWithProvisional(http.Controller):
                 'watermeter': 'watermeter_id.name',
             }
             if search_field in partner_field_map:
-                partner_domain.append((partner_field_map[search_field], 'ilike', search))
+                partner_domain.append(
+                    (partner_field_map[search_field], 'ilike', search))
         partner_links = waterconnection_model.sudo().search(partner_domain)
         waterconnections_ids = partner_links.mapped('waterconnection_id').ids
         current_controlperiod = env['wua.controlperiod'].search([
@@ -109,7 +116,7 @@ class PortalQuotaWithProvisional(http.Controller):
         if not controlperiod_id and current_controlperiod:
             controlperiod_id = current_controlperiod.id
         controlpresconsumptions_domain = [
-            ('waterconnection_id', 'in', waterconnections_ids)
+            ('waterconnection_id', 'in', waterconnections_ids),
         ]
         if controlperiod_id:
             controlpresconsumptions_domain.append(
@@ -125,7 +132,8 @@ class PortalQuotaWithProvisional(http.Controller):
                 controlpresconsumptions_domain.append(
                     (field_map[search_field], 'ilike', search))
         cp_model = env['wua.controlpresconsumption']
-        controlpresconsumptions_count = cp_model.search_count(controlpresconsumptions_domain)
+        controlpresconsumptions_count = cp_model.search_count(
+            controlpresconsumptions_domain)
         items_per_page = self._items_per_page
         pager = request.website.pager(
             url="/my/controlconsumptions",
@@ -140,18 +148,24 @@ class PortalQuotaWithProvisional(http.Controller):
         )
         offset = (page - 1) * items_per_page
         controlpresconsumptions = cp_model.search(
-            controlpresconsumptions_domain, limit=items_per_page, offset=offset,
-            order='reading_end_time desc')
+            controlpresconsumptions_domain, limit=items_per_page,
+            offset=offset, order='reading_end_time desc')
         controlperiods = env['wua.controlperiod'].search([])
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal',
+        )
         values.update({
             'controlpresconsumptions': controlpresconsumptions,
             'controlperiods': controlperiods,
             'current_controlperiod': current_controlperiod,
-            'selected_controlperiod_id': int(controlperiod_id) if controlperiod_id else None,
+            'selected_controlperiod_id': int(controlperiod_id) if
+            controlperiod_id else None,
             'pager': pager,
             'search_query': search,
             'search_field': search_field,
-            'default_url': '/my/controlconsumptions'
+            'default_url': '/my/controlconsumptions',
+            'liquidation_on_portal': liquidation_on_portal,
         })
         return request.render(
             "base_wua_portal_quota_management_with_provisional_quota."

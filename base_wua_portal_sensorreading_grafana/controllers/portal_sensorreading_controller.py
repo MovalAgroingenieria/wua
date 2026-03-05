@@ -4,7 +4,8 @@
 
 from odoo import http, exceptions, _
 from odoo.http import request
-from odoo.addons.base_wua_portal_sensorreading.controllers.portal_sensorreading_controller import website_sensorreadings
+from odoo.addons.base_wua_portal_sensorreading.controllers.\
+    portal_sensorreading_controller import website_sensorreadings
 
 
 class website_sensorreadings_grafana(website_sensorreadings):
@@ -146,14 +147,14 @@ class website_sensorreadings_grafana(website_sensorreadings):
             total=sensorreadings_count,
             page=page,
             step=self._items_per_page,
-            url_args=url_args
+            url_args=url_args,
         )
 
         sensorreadings = sensorreadings_model.search(
             domain,
             limit=self._items_per_page,
             offset=pager["offset"],
-            order=order
+            order=order,
         )
 
         values.update({
@@ -194,6 +195,13 @@ class website_sensorreadings_grafana(website_sensorreadings):
             "frame_height": frame_height,
         })
         # Render template with Grafana extensions
-        values.update({'view': view})
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal',
+        )
+        values.update({
+            'view': view,
+            'liquidation_on_portal': liquidation_on_portal,
+        })
         return request.render(
             "base_wua_portal_sensorreading.portal_my_sensorreadings", values)

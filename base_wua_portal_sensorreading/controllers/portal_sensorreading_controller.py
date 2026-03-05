@@ -127,6 +127,10 @@ class website_sensorreadings(website_account):
             order=order,
         )
 
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal',
+        )
         values.update({
             'sensorreadings': sensorreadings,
             'pager': pager,
@@ -134,6 +138,7 @@ class website_sensorreadings(website_account):
             'search_field': search_field,
             'sortby': sortby,
             'default_url': '/my/sensorreadings',
+            'liquidation_on_portal': liquidation_on_portal,
         })
         return request.render(
             "base_wua_portal_sensorreading.portal_my_sensorreadings", values,

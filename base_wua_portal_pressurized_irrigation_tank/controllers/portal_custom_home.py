@@ -20,7 +20,7 @@ class website_account(website_account):
 
         tankconsumptions_count = \
             request.env['wua.tankconsumption'].search_count([
-                ('partner_id', '=', partner.id)
+                ('partner_id', '=', partner.id),
             ])
         response.qcontext.update({
             'tankconsumptions_count': tankconsumptions_count,
@@ -38,7 +38,7 @@ class website_account(website_account):
         partner = partner.parent_id or partner
 
         tankconsumptions_domain = [
-            ('partner_id', '=', partner.id)
+            ('partner_id', '=', partner.id),
         ]
         if search and search_field:
             field_map = {
@@ -68,12 +68,17 @@ class website_account(website_account):
         tankconsumptions = request.env['wua.tankconsumption'].search(
             tankconsumptions_domain, limit=items_per_page, offset=offset,
             order="initial_time desc")
+        liquidation_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration',
+            'liquidation_on_portal',
+        )
         values.update({
             'tankconsumptions': tankconsumptions,
             'pager': pager,
             'search_query': search,
             'search_field': search_field,
             'default_url': '/my/tankconsumptions',
+            'liquidation_on_portal': liquidation_on_portal,
         })
         portal_view = \
             'base_wua_portal_pressurized_irrigation_tank' + \
