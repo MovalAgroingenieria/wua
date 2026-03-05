@@ -403,7 +403,11 @@ class WuaPreswateringrequest(models.Model):
                 }))
             new_request_vals['presresconsumption_ids'] = \
                 presresconsumption_vals
-        self.env['wua.preswateringrequest'].create(new_request_vals)
+        self.env['wua.preswateringrequest'].with_context(
+            mail_create_nosubscribe=True,
+            mail_create_nolog=True,
+            tracking_disable=True,
+        ).create(new_request_vals)
 
     @api.multi
     def generate_recurrences_preswateringrequests(self):
@@ -586,7 +590,11 @@ class WuaPreswateringrequest(models.Model):
                 }))
             for future_request in future_requests:
                 future_request.presresconsumption_ids.unlink()
-                future_request.write({
+                future_request.with_context(
+                    mail_create_nosubscribe=True,
+                    mail_create_nolog=True,
+                    tracking_disable=True,
+                ).write({
                     'presresconsumption_ids': presresconsumption_vals,
                 })
             consumptions = record.presresconsumption_ids.mapped(
