@@ -2,7 +2,12 @@
 # Copyright 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import logging
+import time
+from collections import defaultdict
 from odoo import models, fields, api, _
+
+_logger = logging.getLogger(__name__)
 
 
 class WuaInvoiceset(models.Model):
@@ -22,19 +27,24 @@ class WuaInvoiceset(models.Model):
         return waterconnection_ids
 
     # Return ID of the only payer (if there's only one)
-    def have_same_payer_water_costs(self, parcels, partnerlinks):
+    def have_same_payer_water_costs(self, parcels, partnerlinks,
+                                    partnerlinks_by_parcel_id=None):
         payers = []
         for parcel in parcels:
-            partnerlinks_of_parcel = partnerlinks.filtered(
-                lambda x: x.parcel_id.id == parcel.id and
-                x.water_costs_percentage > 0)
+            if partnerlinks_by_parcel_id is not None:
+                pl_ids = partnerlinks_by_parcel_id.get(parcel.id, [])
+                partnerlinks_of_parcel = self.env['wua.parcel.partnerlink'].browse(pl_ids) if pl_ids else self.env['wua.parcel.partnerlink']
+            else:
+                partnerlinks_of_parcel = partnerlinks.filtered(
+                    lambda x: x.parcel_id.id == parcel.id and
+                    x.water_costs_percentage > 0)
             for partnerlink in partnerlinks_of_parcel:
                 if (len(payers) == 1 and partnerlink.partner_id.id not in
                         payers):
                     return None
                 else:
                     payers.append(partnerlink.partner_id.id)
-        return payers[0]
+        return payers[0] if payers else None
 
     def calculate_invoice_details_others_categ(self, product_id, categ_code,
                                                item_ids, partnerlinks):
@@ -42,10 +52,29 @@ class WuaInvoiceset(models.Model):
             return super(WuaInvoiceset,
                          self).calculate_invoice_details_others_categ(
                              product_id, categ_code, item_ids, partnerlinks)
+        _logger.info('[invoiceset categ10] calculate_invoice_details_others_categ: start product_id=%s item_ids=%s',
+                     product_id, len(item_ids))
+        t0 = time.time()
         invoice_details_categ10 = []
         waterconnections = self.env['wua.waterconnection'].browse(item_ids)
+        t1 = time.time()
         irrigationpoints = self.env['wua.parcel.irrigationpoint'].search(
             [('type', '=', 'WC')])
+        _logger.info('[invoiceset categ10] irrigationpoints (type=WC) loaded: %s in %.2fs',
+                     len(irrigationpoints), time.time() - t1)
+        t_index_ip = time.time()
+        irrigationpoints_by_wc_id = defaultdict(list)
+        for ip in irrigationpoints:
+            irrigationpoints_by_wc_id[ip.waterconnection_id.id].append(ip.id)
+        _logger.info('[invoiceset categ10] irrigationpoints indexed by wc_id in %.2fs',
+                     time.time() - t_index_ip)
+        t_index_pl = time.time()
+        partnerlinks_by_parcel_id = defaultdict(list)
+        for pl in partnerlinks:
+            if pl.water_costs_percentage > 0:
+                partnerlinks_by_parcel_id[pl.parcel_id.id].append(pl.id)
+        _logger.info('[invoiceset categ10] partnerlinks indexed by parcel_id in %.2fs',
+                     time.time() - t_index_pl)
         area_measurement_name = self.get_area_measurement_name()
         # precision = self.env['decimal.precision'].precision_get(
         #     'Product Unit of Measure')
@@ -59,7 +88,13 @@ class WuaInvoiceset(models.Model):
         invoicing_of_wc_with_factor = self.env['ir.values'].get_default(
             'wua.invoicing.configuration',
             'invoicing_of_wc_with_factor')
-        for waterconnection in waterconnections:
+        log_every = max(1, min(50, len(waterconnections) // 20))
+        for wc_idx, waterconnection in enumerate(waterconnections):
+            if wc_idx == 0:
+                _logger.info('[invoiceset categ10] loop: first iteration starting (wc_id=%s)', waterconnection.id)
+            if (wc_idx + 1) % log_every == 0 or (wc_idx + 1) == len(waterconnections):
+                _logger.info('[invoiceset categ10] processing waterconnection %s/%s (%.2fs so far)',
+                             wc_idx + 1, len(waterconnections), time.time() - t0)
             # Normally 1, but quantity can be modified by the factor
             waterconnection_line_quantity = 1
             if invoicing_of_wc_with_factor:
@@ -68,25 +103,45 @@ class WuaInvoiceset(models.Model):
             waterconnection_line_quantity_str = (
                 '%.1f' % waterconnection_line_quantity).replace('.', ',')
             waterconnection_code = waterconnection.name
-            irrigationpoints_of_waterconnection = irrigationpoints.filtered(
-                lambda x: x.waterconnection_id.id == waterconnection.id)
+            if wc_idx == 0:
+                t_filter = time.time()
+            irrigationpoints_of_waterconnection = self.env['wua.parcel.irrigationpoint'].browse(
+                irrigationpoints_by_wc_id.get(waterconnection.id, []))
+            if wc_idx == 0:
+                _logger.info('[invoiceset categ10] first wc: filtered irrigationpoints in %.2fs -> %s points',
+                             time.time() - t_filter, len(irrigationpoints_of_waterconnection))
+                t_parcels = time.time()
             parcels_of_waterconnection = \
                 [x.parcel_id for x in irrigationpoints_of_waterconnection
                  if x.parcel_id.is_billable_water]
+            if wc_idx == 0:
+                _logger.info('[invoiceset categ10] first wc: parcels_of_waterconnection in %.2fs -> %s parcels',
+                             time.time() - t_parcels, len(parcels_of_waterconnection))
             number_of_parcels = len(parcels_of_waterconnection)
             if number_of_parcels > 0:
+                if wc_idx == 0:
+                    t_block = time.time()
                 total_area_official = \
                     sum(x.area_official for x in parcels_of_waterconnection)
                 single_payer = self.is_parcels_with_a_single_payer(
                     parcels_of_waterconnection, True)
+                if wc_idx == 0:
+                    _logger.info('[invoiceset categ10] first wc: is_parcels_with_a_single_payer in %.2fs',
+                                 time.time() - t_block)
                 cumulative_quantity = 0
                 processed_parcels = 0
                 # Checks if all parcels same water_costs
                 group_parcels = False
                 if (grouped_same_payer):
+                    if wc_idx == 0:
+                        t_payer = time.time()
                     payer_id = self.have_same_payer_water_costs(
                         parcels_of_waterconnection,
-                        partnerlinks)
+                        partnerlinks,
+                        partnerlinks_by_parcel_id=partnerlinks_by_parcel_id)
+                    if wc_idx == 0:
+                        _logger.info('[invoiceset categ10] first wc: have_same_payer_water_costs in %.2fs',
+                                     time.time() - t_payer)
                     if (payer_id):
                         group_parcels = True
                 if (group_parcels and not total_area_official == 0):
@@ -140,9 +195,8 @@ class WuaInvoiceset(models.Model):
                                 waterconnection_quantity
                         waterconnection_quantity_str = \
                             '%.2f' % (waterconnection_quantity * 100)
-                        partnerlinks_of_parcel = partnerlinks.filtered(
-                            lambda x: x.parcel_id.id == parcel.id and
-                            x.water_costs_percentage > 0)
+                        pl_ids = partnerlinks_by_parcel_id.get(parcel.id, [])
+                        partnerlinks_of_parcel = self.env['wua.parcel.partnerlink'].browse(pl_ids) if pl_ids else self.env['wua.parcel.partnerlink']
                         if len(partnerlinks_of_parcel) > 0:
                             for partnerlink in partnerlinks_of_parcel:
                                 partner_id = partnerlink.partner_id.id
@@ -197,6 +251,8 @@ class WuaInvoiceset(models.Model):
                                     'description': description,
                                     }
                                 invoice_details_categ10.append(result)
+        _logger.info('[invoiceset categ10] calculate_invoice_details_others_categ: done in %.2fs -> %s details',
+                     time.time() - t0, len(invoice_details_categ10))
         return invoice_details_categ10
 
     def add_to_invoice_data_line_ref_to_other_types(
