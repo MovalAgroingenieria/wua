@@ -3,11 +3,15 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import logging
+import time
 import datetime
+from collections import defaultdict
 from odoo import models, fields, api, exceptions, _
 from odoo.exceptions import UserError
 from operator import itemgetter
 from lxml import etree
+
+_logger = logging.getLogger(__name__)
 
 
 class WuaInvoiceset(models.Model):
@@ -348,34 +352,63 @@ class WuaInvoiceset(models.Model):
 
     @api.multi
     def calculate_invoiceset(self):
-        _logger = logging.getLogger(__name__)
         compute_management = self.env['ir.values'].sudo().get_default(
             'wua.invoicing.configuration', 'invoiceset_compute_management')
         for record in self:
             if (record.is_being_computed):
                 raise exceptions.UserError(_(
                     'The invoice-set is being computed. Please, wait.'))
-            _logger.info('Invoiceset ' + record.name + ': Calculus started')
+            _logger.info('[invoiceset %s] Calculus started', record.name)
+            t0 = time.time()
             if (compute_management):
                 record.message_post(
                     body=_('Invoiceset calculus started'),
                 )
                 record.is_being_computed = True
                 self.env.cr.commit()
+            t1 = time.time()
             invoice_items = self.select_invoice_items(record)
+            _logger.info('[invoiceset %s] select_invoice_items done in %.2fs -> %s items',
+                         record.name, time.time() - t1, len(invoice_items))
+            if len(invoice_items) == 0:
+                _logger.info('[invoiceset %s] No invoice items to process, skipping',
+                             record.name)
             if len(invoice_items) > 0:
+                t2 = time.time()
                 invoice_details = self.calculate_invoice_details(invoice_items)
+                _logger.info('[invoiceset %s] calculate_invoice_details done in %.2fs -> %s details',
+                             record.name, time.time() - t2, len(invoice_details))
+                if len(invoice_details) == 0:
+                    _logger.info('[invoiceset %s] No invoice details after calculation, skipping',
+                                 record.name)
                 if len(invoice_details) > 0:
+                    t3 = time.time()
+                    _logger.info('[invoiceset %s] about to call group_invoice_details (%s details)',
+                                 record.name, len(invoice_details))
                     invoices_data = self.group_invoice_details(invoice_details)
+                    _logger.info('[invoiceset %s] group_invoice_details done in %.2fs -> %s partners',
+                                 record.name, time.time() - t3, len(invoices_data))
+                    t4 = time.time()
                     product_data = self.get_product_data(record.line_ids)
+                    _logger.info('[invoiceset %s] get_product_data done in %.2fs -> %s products',
+                                 record.name, time.time() - t4, len(product_data))
+                    t5 = time.time()
                     number_of_invoices = self.create_invoices(
                         invoices_data, record, product_data)
+                    _logger.info('[invoiceset %s] create_invoices done in %.2fs -> %s invoices',
+                                 record.name, time.time() - t5, number_of_invoices)
                     if number_of_invoices > 0:
+                        t6 = time.time()
                         total_product_quantities = \
                             self.get_total_product_quantities(invoice_details)
                         self.update_invoiceset_quantities(
                             record, total_product_quantities)
+                        _logger.info('[invoiceset %s] update_invoiceset_quantities done in %.2fs',
+                                     record.name, time.time() - t6)
+                        t7 = time.time()
                         amounts = self.update_invoiceset_amounts(record)
+                        _logger.info('[invoiceset %s] update_invoiceset_amounts done in %.2fs',
+                                     record.name, time.time() - t7)
                         record.write({
                             'amount_untaxed': amounts['amount_untaxed'],
                             'amount_tax': amounts['amount_tax'],
@@ -383,14 +416,17 @@ class WuaInvoiceset(models.Model):
                             'number_of_invoices': number_of_invoices,
                             'state': 'generated',
                             })
-                        # Hook: run after the calculation
+                        t8 = time.time()
                         self.after_calculate_invoiceset(record)
+                        _logger.info('[invoiceset %s] after_calculate_invoiceset done in %.2fs',
+                                     record.name, time.time() - t8)
             if (compute_management):
                 record.message_post(
                     body=_('Invoiceset calculus ended'),
                 )
                 record.is_being_computed = False
-            _logger.info('Invoiceset ' + record.name + ': Calculus ended')
+            _logger.info('[invoiceset %s] Calculus ended (total %.2fs)',
+                         record.name, time.time() - t0)
 
     @api.multi
     def action_set_as_not_being_computed(self):
@@ -422,10 +458,14 @@ class WuaInvoiceset(models.Model):
     # - The list of ids of the linked items (parcels, partners, water
     #   connections, irrigation gates, or others).
     def select_invoice_items(self, invoiceset):
+        _logger.info('[invoiceset %s] select_invoice_items: start (%s lines)',
+                     invoiceset.name, len(invoiceset.line_ids))
+        t0 = time.time()
         invoice_items = []
         for line in invoiceset.line_ids:
             if line.categ_id and line.categ_id.is_wua_product_category:
                 productcategory_code = line.categ_id.productcategory_code
+                t_line = time.time()
                 if (productcategory_code == 1 or productcategory_code == 3 or
                    productcategory_code == 4):
                     item_ids = self.select_invoice_items_parcel_type(line)
@@ -441,6 +481,9 @@ class WuaInvoiceset(models.Model):
                     # Hook for categories defined in a daugther class.
                     item_ids = self.select_invoice_items_other_types(
                         productcategory_code, line)
+                _logger.debug('[invoiceset %s] line product_id=%s categ=%s -> %s items in %.3fs',
+                              invoiceset.name, line.product_id.id, productcategory_code,
+                              len(item_ids) if item_ids else 0, time.time() - t_line)
                 if item_ids and len(item_ids) > 0:
                     item_ids.sort()
                     invoice_item = {
@@ -452,6 +495,8 @@ class WuaInvoiceset(models.Model):
         if len(invoice_items) > 0:
             invoice_items = sorted(invoice_items,
                                    key=itemgetter('categ_code', 'product_id'))
+        _logger.info('[invoiceset %s] select_invoice_items: done in %.2fs -> %s invoice_items',
+                     invoiceset.name, time.time() - t0, len(invoice_items))
         return invoice_items
 
     def select_invoice_items_parcel_type(self, invoiceset_line):
@@ -512,44 +557,71 @@ class WuaInvoiceset(models.Model):
     # - The product quantity.
     # - The invoice line description.
     def calculate_invoice_details(self, invoice_items):
+        _logger.info('[invoiceset] calculate_invoice_details: start (%s items)',
+                     len(invoice_items))
+        t0 = time.time()
         partnerlinks = self.env['wua.parcel.partnerlink'].search([])
+        _logger.info('[invoiceset] partnerlinks loaded: %s (%.2fs)',
+                    len(partnerlinks), time.time() - t0)
         invoice_details = []
-        for invoice_item in invoice_items:
+        for idx, invoice_item in enumerate(invoice_items):
             product_id = invoice_item['product_id']
             categ_code = invoice_item['categ_code']
             item_ids = invoice_item['item_ids']
+            _logger.info('[invoiceset] calculate_invoice_details: processing item %s/%s product_id=%s categ=%s item_ids_count=%s',
+                         idx + 1, len(invoice_items), product_id, categ_code, len(item_ids))
             invoice_details_product = []
+            t_categ = time.time()
             if categ_code == 1:
+                _logger.info('[invoiceset] calling calculate_invoice_details_categ01 product_id=%s item_ids=%s',
+                             product_id, len(item_ids))
                 invoice_details_product = \
                     self.calculate_invoice_details_categ01(
                         product_id, categ_code, item_ids, partnerlinks)
             elif categ_code == 2:
+                _logger.info('[invoiceset] calling calculate_invoice_details_categ02 product_id=%s item_ids=%s',
+                             product_id, len(item_ids))
                 invoice_details_product = \
                     self.calculate_invoice_details_categ02(
                         product_id, categ_code, item_ids, partnerlinks)
             elif categ_code == 3:
+                _logger.info('[invoiceset] calling calculate_invoice_details_categ03 product_id=%s item_ids=%s',
+                             product_id, len(item_ids))
                 invoice_details_product = \
                     self.calculate_invoice_details_categ03(
                         product_id, categ_code, item_ids, partnerlinks)
             elif categ_code == 4:
+                _logger.info('[invoiceset] calling calculate_invoice_details_categ04 product_id=%s item_ids=%s',
+                             product_id, len(item_ids))
                 invoice_details_product = \
                     self.calculate_invoice_details_categ04(
                         product_id, categ_code, item_ids, partnerlinks)
             elif categ_code == 5:
+                _logger.info('[invoiceset] calling calculate_invoice_details_categ05 product_id=%s item_ids=%s',
+                             product_id, len(item_ids))
                 invoice_details_product = \
                     self.calculate_invoice_details_categ05(
                         product_id, categ_code, item_ids, partnerlinks)
             elif categ_code == 6:
+                _logger.info('[invoiceset] calling calculate_invoice_details_categ06 product_id=%s item_ids=%s',
+                             product_id, len(item_ids))
                 invoice_details_product = \
                     self.calculate_invoice_details_categ06(
                         product_id, categ_code, item_ids, partnerlinks)
             else:
                 # Hook for categories defined in a daugther class.
+                _logger.info('[invoiceset] calling calculate_invoice_details_others_categ product_id=%s categ=%s item_ids=%s',
+                             product_id, categ_code, len(item_ids))
                 invoice_details_product = \
                     self.calculate_invoice_details_others_categ(
                         product_id, categ_code, item_ids, partnerlinks)
+            _logger.info('[invoiceset] calculate_invoice_details item %s/%s categ=%s product_id=%s -> %s details in %.2fs',
+                         idx + 1, len(invoice_items), categ_code, product_id,
+                         len(invoice_details_product), time.time() - t_categ)
             if len(invoice_details_product) > 0:
                 invoice_details = invoice_details + invoice_details_product
+        _logger.info('[invoiceset] calculate_invoice_details: done in %.2fs -> %s total details',
+                     time.time() - t0, len(invoice_details))
         return invoice_details
 
     def calculate_invoice_details_categ01(self, product_id, categ_code,
@@ -1166,6 +1238,8 @@ class WuaInvoiceset(models.Model):
     # Hook.
     def calculate_invoice_details_others_categ(self, product_id, categ_code,
                                                item_ids, partnerlinks):
+        _logger.info('[invoiceset] calculate_invoice_details_others_categ (base) product_id=%s categ=%s item_ids=%s -> returning []',
+                     product_id, categ_code, len(item_ids))
         return []
 
     # This method receives a list of results dictionaries, and it
@@ -1178,30 +1252,56 @@ class WuaInvoiceset(models.Model):
     #   dictionaries assigned to the current partner.
     # The returned list of final dictionaries is sorted by partner code.
     def group_invoice_details(self, invoice_details):
-        invoices_data = []
-        partner_ids = []
+        _logger.info('[invoiceset] group_invoice_details: start (%s details)',
+                     len(invoice_details))
+        t0 = time.time()
+        details_by_partner_id = defaultdict(list)
         for item in invoice_details:
-            partner_ids.append(item['partner_id'])
-        partner_ids = list(set(partner_ids))
-        partners = self.env['res.partner'].browse(partner_ids).sorted(
-            key=lambda x: x.partner_code)
-        for partner in partners:
-            result = {
-                'partner_id': partner.id,
-                'partner_code': partner.partner_code,
-                'account_id': partner.property_account_receivable_id.id,
-                'payment_term_id': partner.property_payment_term_id.id,
-                'payment_mode_id': partner.customer_payment_mode_id.id,
-                'customer_invoice_transmit_method_id':
-                    partner.customer_invoice_transmit_method_id.id,
-                'detail': filter(
-                    lambda x: x['partner_id'] == partner.id, invoice_details),
+            details_by_partner_id[item['partner_id']].append(item)
+        _logger.info('[invoiceset] group_invoice_details: index by partner_id done in %.2fs -> %s partners',
+                     time.time() - t0, len(details_by_partner_id))
+        t1 = time.time()
+        partner_ids = list(details_by_partner_id.keys())
+        invoices_data = []
+        if partner_ids:
+            read_fields = [
+                'id', 'partner_code',
+                'property_account_receivable_id', 'property_payment_term_id',
+                'customer_payment_mode_id', 'customer_invoice_transmit_method_id',
+            ]
+            _logger.info('[invoiceset] group_invoice_details: about to read %s partners (fields: %s)',
+                         len(partner_ids), len(read_fields))
+            t_read = time.time()
+            partners_read = self.env['res.partner'].search_read(
+                [('id', 'in', partner_ids)], read_fields)
+            _logger.info('[invoiceset] group_invoice_details: read done in %.2fs -> %s rows',
+                         time.time() - t_read, len(partners_read))
+            t_sort = time.time()
+            partners_read.sort(key=lambda r: (r.get('partner_code') or '', r['id']))
+            _logger.info('[invoiceset] group_invoice_details: sort done in %.2fs',
+                         time.time() - t_sort)
+            t_build = time.time()
+            for r in partners_read:
+                result = {
+                    'partner_id': r['id'],
+                    'partner_code': r.get('partner_code'),
+                    'account_id': r.get('property_account_receivable_id') or False,
+                    'payment_term_id': r.get('property_payment_term_id') or False,
+                    'payment_mode_id': r.get('customer_payment_mode_id') or False,
+                    'customer_invoice_transmit_method_id': r.get(
+                        'customer_invoice_transmit_method_id') or False,
+                    'detail': details_by_partner_id[r['id']],
                 }
-            invoices_data.append(result)
+                invoices_data.append(result)
+            _logger.info('[invoiceset] group_invoice_details: build list done in %.2fs',
+                         time.time() - t_build)
+        _logger.info('[invoiceset] group_invoice_details: done in %.2fs -> %s partners',
+                     time.time() - t0, len(invoices_data))
         return invoices_data
 
-    # Get the product list with their data.
     def get_product_data(self, invoiceset_lines):
+        _logger.info('[invoiceset] get_product_data: start (%s lines)', len(invoiceset_lines))
+        t0 = time.time()
         product_data = []
         for line in invoiceset_lines:
             item = {
@@ -1213,6 +1313,8 @@ class WuaInvoiceset(models.Model):
                 'uom_id': line.product_id.uom_id.id,
                 }
             product_data.append(item)
+        _logger.info('[invoiceset] get_product_data: done in %.2fs -> %s products',
+                     time.time() - t0, len(product_data))
         return product_data
 
     # Get price and account of a product.
@@ -1228,21 +1330,39 @@ class WuaInvoiceset(models.Model):
     # group_invoice_details method, and it creates the invoices of
     # invoice set (second parameter).
     def create_invoices(self, invoices_data, record, product_data):
+        _logger.info('[invoiceset %s] create_invoices: start (%s partners)',
+                     record.name, len(invoices_data))
+        t0 = time.time()
         number_of_invoices = 0
         paymentterms = self.env['account.payment.term']
         partners = self.env['res.partner']
         mandates = self.env['account.banking.mandate']
-        for invoice_data in invoices_data:
+        product_ids = [p['product_id'] for p in product_data]
+        _logger.info('[invoiceset %s] create_invoices: preloading analytic defaults for %s products',
+                     record.name, len(product_ids))
+        t_pre = time.time()
+        analytic_by_product = {}
+        if product_ids:
+            for ad in self.env['account.analytic.default'].search(
+                    [('product_id', 'in', product_ids)]):
+                if ad.product_id.id not in analytic_by_product and ad.analytic_id:
+                    analytic_by_product[ad.product_id.id] = ad.analytic_id.id
+        _logger.info('[invoiceset %s] create_invoices: analytic defaults loaded in %.2fs',
+                     record.name, time.time() - t_pre)
+        product_convert = {}
+        for p in self.env['product.product'].browse(product_ids):
+            product_convert[p.id] = getattr(p, 'invoicing_conversion_factor', 1.0)
+        log_every = min(100, max(1, len(invoices_data) // 20)) if invoices_data else 1
+        for inv_idx, invoice_data in enumerate(invoices_data):
+            t_inv = time.time()
             lines = []
             for invoice_data_line in invoice_data['detail']:
                 product_id = invoice_data_line['product_id']
                 price_account = self.get_price_account_product(
                     product_data, product_id)
-                # Check if quantity have a conversion factor
-                product = self.env['product.product'].browse(product_id)
-                invoice_data_line['quantity'] = \
-                    invoice_data_line['quantity'] * \
-                    product.invoicing_conversion_factor
+                invoice_data_line['quantity'] = (
+                    invoice_data_line['quantity'] *
+                    product_convert.get(product_id, 1.0))
                 if price_account:
                     data = {
                         'product_id': product_id,
@@ -1254,14 +1374,9 @@ class WuaInvoiceset(models.Model):
                         'invoice_line_tax_ids':
                         [(4, x) for x in price_account['tax_ids']],
                         'invoiceset_id': record.id,
-                        }
-                    # Check if account analytic default exists for product
-                    # variant and in that case add the account_analytic
-                    analytic_default = self.env['account.analytic.default'].\
-                        search([('product_id', '=', product_id)])
-                    if (analytic_default and len(analytic_default) > 0):
-                        analytic_id = analytic_default[0].analytic_id.id
-                        data['account_analytic_id'] = analytic_id
+                    }
+                    if product_id in analytic_by_product:
+                        data['account_analytic_id'] = analytic_by_product[product_id]
                     categ_code = invoice_data_line['categ_code']
                     if categ_code == 1 or categ_code == 3 or categ_code == 4:
                         data = self.add_to_invoice_data_line_ref_to_parcel(
@@ -1338,6 +1453,17 @@ class WuaInvoiceset(models.Model):
                                          partner_shipping_id})
                 self.env['account.invoice'].create(invoice_vals)
                 number_of_invoices = number_of_invoices + 1
+                if number_of_invoices == 1:
+                    _logger.info('[invoiceset %s] create_invoices: first invoice created in %.2fs',
+                                 record.name, time.time() - t_inv)
+            if (inv_idx + 1) % log_every == 0 or (inv_idx + 1) == len(invoices_data):
+                _logger.info('[invoiceset %s] create_invoices: %s/%s partners processed (%.2fs so far)',
+                             record.name, inv_idx + 1, len(invoices_data), time.time() - t0)
+            if (inv_idx + 1) % 500 == 0 and (inv_idx + 1) < len(invoices_data):
+                _logger.info('[invoiceset %s] create_invoices: milestone %s partners -> %s invoices (%.2fs)',
+                             record.name, inv_idx + 1, number_of_invoices, time.time() - t0)
+        _logger.info('[invoiceset %s] create_invoices: done in %.2fs -> %s invoices created',
+                     record.name, time.time() - t0, number_of_invoices)
         return number_of_invoices
 
     def add_to_invoice_data_line_ref_to_parcel(self, invoice_data_line, data):
@@ -1377,6 +1503,9 @@ class WuaInvoiceset(models.Model):
     # - The product id.
     # - The total cumulative quantity.
     def get_total_product_quantities(self, invoice_details):
+        _logger.info('[invoiceset] get_total_product_quantities: start (%s details)',
+                     len(invoice_details))
+        t0 = time.time()
         total_product_quantities = []
         product_ids = []
         for item in invoice_details:
@@ -1389,11 +1518,16 @@ class WuaInvoiceset(models.Model):
                                 if x['product_id'] == product_id),
                 }
             total_product_quantities.append(result)
+        _logger.info('[invoiceset] get_total_product_quantities: done in %.2fs -> %s products',
+                     time.time() - t0, len(total_product_quantities))
         return total_product_quantities
 
     # This method update the total quantity for each invoice-set line.
     def update_invoiceset_quantities(self, invoiceset,
                                      total_product_quantities):
+        _logger.info('[invoiceset %s] update_invoiceset_quantities: start (%s lines)',
+                     invoiceset.name, len(invoiceset.line_ids))
+        t0 = time.time()
         for line in invoiceset.line_ids:
             quantities_filtered = filter(
                 lambda x: x['product_id'] == line.product_id.id,
@@ -1401,14 +1535,21 @@ class WuaInvoiceset(models.Model):
             if len(quantities_filtered) == 1:
                 quantity = quantities_filtered[0]['quantity']
                 line.quantity = quantity
+        _logger.info('[invoiceset %s] update_invoiceset_quantities: done in %.2fs',
+                     invoiceset.name, time.time() - t0)
 
     # This method update the amount_untaxed, amount_tax and
     # amount_total fields of a invoice-set.
     def update_invoiceset_amounts(self, invoiceset):
+        _logger.info('[invoiceset %s] update_invoiceset_amounts: start',
+                     invoiceset.name)
+        t0 = time.time()
         amount_untaxed = \
             sum(line.amount_untaxed for line in invoiceset.line_ids)
         amount_tax = \
             sum(line.amount_tax for line in invoiceset.line_ids)
+        _logger.info('[invoiceset %s] update_invoiceset_amounts: done in %.2fs',
+                     invoiceset.name, time.time() - t0)
         return {
             'amount_untaxed': amount_untaxed,
             'amount_tax': amount_tax,
@@ -1417,6 +1558,9 @@ class WuaInvoiceset(models.Model):
 
     # Run after the calculation (hook).
     def after_calculate_invoiceset(self, invoiceset):
+        _logger.info('[invoiceset %s] after_calculate_invoiceset: start',
+                     invoiceset.name)
+        t0 = time.time()
         for line in invoiceset.line_ids:
             if line.categ_id.productcategory_code in [1, 3, 4]:
                 unselected_parcel_lines = \
@@ -1442,6 +1586,8 @@ class WuaInvoiceset(models.Model):
                         lambda x: x.selected is False)
                 if unselected_irrigationgate_lines:
                     unselected_irrigationgate_lines.unlink()
+        _logger.info('[invoiceset %s] after_calculate_invoiceset: done in %.2fs',
+                     invoiceset.name, time.time() - t0)
 
     @api.multi
     def cancel_invoiceset(self):
