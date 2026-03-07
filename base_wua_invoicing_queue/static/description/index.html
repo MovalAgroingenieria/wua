@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>WUA Invoicing – Calculate in background (queue)</title>
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 1em auto; padding: 0 1em; }
+    h1 { color: #875a7b; font-size: 1.5em; border-bottom: 1px solid #ddd; padding-bottom: 0.3em; }
+    h2 { font-size: 1.2em; margin-top: 1.2em; color: #555; }
+    p { margin: 0.5em 0; }
+    ul { margin: 0.5em 0; padding-left: 1.5em; }
+    .badge { display: inline-block; padding: 2px 8px; background: #875a7b; color: #fff; border-radius: 3px; font-size: 0.85em; text-decoration: none; margin-bottom: 1em; }
+    .badge:hover { background: #6d4c6d; }
+    .credits { margin-top: 2em; font-size: 0.9em; color: #666; }
+    .credits a { color: #875a7b; }
+  </style>
+</head>
+<body>
+  <a href="http://www.gnu.org/licenses/agpl-3.0-standalone.html" class="badge">License: AGPL-3</a>
+
+  <h1>WUA Invoicing – Calculate in background (queue)</h1>
+
+  <p>This module adds a <strong>Calcular en paralelo</strong> (Calculate in parallel) button to invoice sets. It runs the same calculation as <strong>Calcular</strong> but in a <em>queue_job</em> worker so the interface does not block. It depends on <em>backend_process_status</em> so a green blinking indicator in the top bar shows when the calculation is running or enqueued.</p>
+
+  <h2>Usage</h2>
+  <ul>
+    <li>Open an invoice set in draft, configured and not yet generated.</li>
+    <li>Click <strong>Calcular en paralelo</strong> and confirm.</li>
+    <li>The calculation is enqueued; follow the status via the indicator in the top bar.</li>
+    <li>Ensure a queue job worker is running for your database.</li>
+  </ul>
+
+  <h2>Credits</h2>
+  <p class="credits">
+    <strong>Moval Agroingeniería S.L.</strong><br/>
+    This module is maintained by <a href="https://www.moval.es" target="_blank">Moval Agroingeniería</a>.
+  </p>
+</body>
+</html>

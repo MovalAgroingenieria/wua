@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="wua_invoiceset_view_form_queue" model="ir.ui.view">
+        <field name="name">Invoice Sets (form) – Calculate in parallel</field>
+        <field name="model">wua.invoiceset</field>
+        <field name="inherit_id" ref="base_wua_invoicing.wua_invoiceset_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='calculate_invoiceset']" position="after">
+                <button name="action_calculate_invoiceset_queue"
+                        type="object"
+                        string="Calculate in parallel"
+                        attrs="{'invisible':
+                                ['|',
+                                 ('configured_invoiceset','=',False),
+                                 ('state','=','generated')]}"
+                        groups="base_wua.group_wua_manager"
+                        confirm="The calculation will run in the background. Continue?"/>
+                <button name="action_calculate_and_validate_invoiceset_queue"
+                        type="object"
+                        string="Calculate + Validate"
+                        attrs="{'invisible':
+                                ['|',
+                                 ('configured_invoiceset','=',False),
+                                 ('state','=','generated')]}"
+                        groups="base_wua.group_wua_manager"
+                        confirm="The calculation and validation will run in the background. Continue?"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
