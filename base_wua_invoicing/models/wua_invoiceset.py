@@ -25,6 +25,8 @@ class WuaInvoiceset(models.Model):
     SIZE_NUMERIC_CODE = 6
     SIZE_ANNUALSEQ_CODE = 4
     SIZE_INVOICESETLINE_SUFFIX = 2
+    # Commit every N invoices to avoid one huge transaction (index growth, cache).
+    COMMIT_EVERY_N_INVOICES = 200
 
     @api.model_cr
     def init(self):
@@ -1337,6 +1339,7 @@ class WuaInvoiceset(models.Model):
         paymentterms = self.env['account.payment.term']
         partners = self.env['res.partner']
         mandates = self.env['account.banking.mandate']
+        invoiceset_id = record.id
         product_ids = [p['product_id'] for p in product_data]
         _logger.info('[invoiceset %s] create_invoices: preloading analytic defaults for %s products',
                      record.name, len(product_ids))
@@ -1373,7 +1376,7 @@ class WuaInvoiceset(models.Model):
                         'account_id': price_account['account_id'],
                         'invoice_line_tax_ids':
                         [(4, x) for x in price_account['tax_ids']],
-                        'invoiceset_id': record.id,
+                        'invoiceset_id': invoiceset_id,
                     }
                     if product_id in analytic_by_product:
                         data['account_analytic_id'] = analytic_by_product[product_id]
@@ -1399,6 +1402,8 @@ class WuaInvoiceset(models.Model):
                     lines.append((0, 0, data))
             if (len(lines) > 0 and (not self.is_invoice_zero(lines))):
                 partner_id = invoice_data['partner_id']
+                # Re-browse after possible invalidate_all to get fresh record
+                record = self.env['wua.invoiceset'].browse(invoiceset_id)
                 date_invoice = record.date_invoiceset
                 date_due = record.date_due_invoiceset
                 payment_term_id = record.property_payment_term_invoiceset_id.id
@@ -1427,7 +1432,7 @@ class WuaInvoiceset(models.Model):
                     'date_due': date_due,
                     'transmit_method_id':
                         invoice_data['customer_invoice_transmit_method_id'],
-                    'invoiceset_id': record.id,
+                    'invoiceset_id': invoiceset_id,
                     'note1': note1,
                     'note2': note2,
                     'invoice_line_ids': lines,
@@ -1453,6 +1458,10 @@ class WuaInvoiceset(models.Model):
                                          partner_shipping_id})
                 self.env['account.invoice'].create(invoice_vals)
                 number_of_invoices = number_of_invoices + 1
+                # Periodic commit to keep transaction short and limit cache growth
+                if (number_of_invoices % self.COMMIT_EVERY_N_INVOICES == 0):
+                    self.env.cr.commit()
+                    self.env.invalidate_all()
                 if number_of_invoices == 1:
                     _logger.info('[invoiceset %s] create_invoices: first invoice created in %.2fs',
                                  record.name, time.time() - t_inv)
