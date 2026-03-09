@@ -27,6 +27,11 @@ class WuaInvoiceset(models.Model):
     SIZE_INVOICESETLINE_SUFFIX = 2
     # Commit every N invoices to avoid one huge transaction (index growth, cache).
     COMMIT_EVERY_N_INVOICES = 200
+    # Log progress every N partners (step = min(MAX, max(1, total // DIVISOR))).
+    LOG_PROGRESS_PARTNERS_MAX_STEP = 100
+    LOG_PROGRESS_PARTNERS_DIVISOR = 20
+    # Log a milestone message every N partners during create_invoices.
+    LOG_MILESTONE_PARTNERS_EVERY = 500
 
     @api.model_cr
     def init(self):
@@ -1262,7 +1267,6 @@ class WuaInvoiceset(models.Model):
             details_by_partner_id[item['partner_id']].append(item)
         _logger.info('[invoiceset] group_invoice_details: index by partner_id done in %.2fs -> %s partners',
                      time.time() - t0, len(details_by_partner_id))
-        t1 = time.time()
         partner_ids = list(details_by_partner_id.keys())
         invoices_data = []
         if partner_ids:
@@ -1355,7 +1359,19 @@ class WuaInvoiceset(models.Model):
         product_convert = {}
         for p in self.env['product.product'].browse(product_ids):
             product_convert[p.id] = getattr(p, 'invoicing_conversion_factor', 1.0)
-        log_every = min(100, max(1, len(invoices_data) // 20)) if invoices_data else 1
+        ir_vals = self.env['ir.values']
+        log_max = ir_vals.get_default(
+            'wua.invoicing.configuration', 'log_progress_partners_max_step')
+        log_div = ir_vals.get_default(
+            'wua.invoicing.configuration', 'log_progress_partners_divisor')
+        if log_max is None:
+            log_max = self.LOG_PROGRESS_PARTNERS_MAX_STEP
+        if log_div is None:
+            log_div = self.LOG_PROGRESS_PARTNERS_DIVISOR
+        log_every = min(
+            log_max,
+            max(1, len(invoices_data) // log_div)
+        ) if invoices_data else 1
         for inv_idx, invoice_data in enumerate(invoices_data):
             t_inv = time.time()
             lines = []
@@ -1459,7 +1475,11 @@ class WuaInvoiceset(models.Model):
                 self.env['account.invoice'].create(invoice_vals)
                 number_of_invoices = number_of_invoices + 1
                 # Periodic commit to keep transaction short and limit cache growth
-                if (number_of_invoices % self.COMMIT_EVERY_N_INVOICES == 0):
+                commit_every = self.env['ir.values'].get_default(
+                    'wua.invoicing.configuration', 'commit_every_n_invoices')
+                if commit_every is None:
+                    commit_every = self.COMMIT_EVERY_N_INVOICES
+                if (number_of_invoices % commit_every == 0):
                     self.env.cr.commit()
                     self.env.invalidate_all()
                 if number_of_invoices == 1:
@@ -1468,7 +1488,12 @@ class WuaInvoiceset(models.Model):
             if (inv_idx + 1) % log_every == 0 or (inv_idx + 1) == len(invoices_data):
                 _logger.info('[invoiceset %s] create_invoices: %s/%s partners processed (%.2fs so far)',
                              record.name, inv_idx + 1, len(invoices_data), time.time() - t0)
-            if (inv_idx + 1) % 500 == 0 and (inv_idx + 1) < len(invoices_data):
+            milestone_every = self.env['ir.values'].get_default(
+                'wua.invoicing.configuration', 'log_milestone_partners_every')
+            if milestone_every is None:
+                milestone_every = self.LOG_MILESTONE_PARTNERS_EVERY
+            if ((inv_idx + 1) % milestone_every == 0 and
+                    (inv_idx + 1) < len(invoices_data)):
                 _logger.info('[invoiceset %s] create_invoices: milestone %s partners -> %s invoices (%.2fs)',
                              record.name, inv_idx + 1, number_of_invoices, time.time() - t0)
         _logger.info('[invoiceset %s] create_invoices: done in %.2fs -> %s invoices created',

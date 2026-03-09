@@ -83,6 +83,44 @@ class WuaInvoicingConfiguration(models.TransientModel):
         default=False,
     )
 
+    # Calculation and logging (performance / progress logs)
+    commit_every_n_invoices = fields.Integer(
+        string='Commit every N invoices',
+        default=200,
+        help='During invoice set calculation, commit the transaction every N '
+             'invoices created to avoid one huge transaction (default: 200).')
+    log_progress_partners_max_step = fields.Integer(
+        string='Log progress (partners) – max step',
+        default=100,
+        help='Maximum step for progress logs by partners (default: 100).')
+    log_progress_partners_divisor = fields.Integer(
+        string='Log progress (partners) – divisor',
+        default=20,
+        help='Divisor to compute progress log step: step = total // divisor '
+             '(default: 20).')
+    log_milestone_partners_every = fields.Integer(
+        string='Log milestone every N partners',
+        default=500,
+        help='Log a milestone message every N partners during invoice creation '
+             '(default: 500).')
+
+    @api.model
+    def default_get(self, fields_list):
+        res = super(WuaInvoicingConfiguration, self).default_get(fields_list)
+        ir_values = self.env['ir.values'].sudo()
+        keys_calc = [
+            'commit_every_n_invoices',
+            'log_progress_partners_max_step',
+            'log_progress_partners_divisor',
+            'log_milestone_partners_every',
+        ]
+        for key in keys_calc:
+            if key in fields_list:
+                val = ir_values.get_default('wua.invoicing.configuration', key)
+                if val is not None:
+                    res[key] = val
+        return res
+
     @api.multi
     def set_default_values(self):
         values = self.env['ir.values'].sudo()
@@ -119,3 +157,15 @@ class WuaInvoicingConfiguration(models.TransientModel):
         values.set_default('wua.invoicing.configuration',
                            'invoiceset_compute_management',
                            self.invoiceset_compute_management)
+        values.set_default('wua.invoicing.configuration',
+                           'commit_every_n_invoices',
+                           self.commit_every_n_invoices)
+        values.set_default('wua.invoicing.configuration',
+                           'log_progress_partners_max_step',
+                           self.log_progress_partners_max_step)
+        values.set_default('wua.invoicing.configuration',
+                           'log_progress_partners_divisor',
+                           self.log_progress_partners_divisor)
+        values.set_default('wua.invoicing.configuration',
+                           'log_milestone_partners_every',
+                           self.log_milestone_partners_every)

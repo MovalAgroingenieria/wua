@@ -13,9 +13,36 @@ _logger = logging.getLogger(__name__)
 class WuaInvoiceset(models.Model):
     _inherit = 'wua.invoiceset'
 
+    # Defaults when not set in configuration (fallback).
+    PRODUCT_CATEGORY_WATER_COSTS = 10
+    LOG_PROGRESS_WC_MAX_STEP = 50
+    LOG_PROGRESS_WC_DIVISOR = 20
+    INVOICE_LINE_QUANTITY_PRECISION = 2
+
+    def _get_config_product_category_water_costs(self):
+        val = self.env['ir.values'].get_default(
+            'wua.invoicing.configuration', 'product_category_water_costs')
+        return val if val is not None else self.PRODUCT_CATEGORY_WATER_COSTS
+
+    def _get_config_log_progress_wc_max_step(self):
+        val = self.env['ir.values'].get_default(
+            'wua.invoicing.configuration', 'log_progress_wc_max_step')
+        return val if val is not None else self.LOG_PROGRESS_WC_MAX_STEP
+
+    def _get_config_log_progress_wc_divisor(self):
+        val = self.env['ir.values'].get_default(
+            'wua.invoicing.configuration', 'log_progress_wc_divisor')
+        return val if val is not None else self.LOG_PROGRESS_WC_DIVISOR
+
+    def _get_config_invoice_line_quantity_precision(self):
+        val = self.env['ir.values'].get_default(
+            'wua.invoicing.configuration', 'invoice_line_quantity_precision')
+        return val if val is not None else self.INVOICE_LINE_QUANTITY_PRECISION
+
     def select_invoice_items_other_types(self, productcategory_code,
                                          invoiceset_line):
-        if productcategory_code != 10:
+        categ_wc = self._get_config_product_category_water_costs()
+        if productcategory_code != categ_wc:
             return super(WuaInvoiceset,
                          self).select_invoice_items_other_types(
                              productcategory_code, invoiceset_line)
@@ -48,7 +75,8 @@ class WuaInvoiceset(models.Model):
 
     def calculate_invoice_details_others_categ(self, product_id, categ_code,
                                                item_ids, partnerlinks):
-        if categ_code != 10:
+        categ_wc = self._get_config_product_category_water_costs()
+        if categ_code != categ_wc:
             return super(WuaInvoiceset,
                          self).calculate_invoice_details_others_categ(
                              product_id, categ_code, item_ids, partnerlinks)
@@ -76,10 +104,7 @@ class WuaInvoiceset(models.Model):
         _logger.info('[invoiceset categ10] partnerlinks indexed by parcel_id in %.2fs',
                      time.time() - t_index_pl)
         area_measurement_name = self.get_area_measurement_name()
-        # precision = self.env['decimal.precision'].precision_get(
-        #     'Product Unit of Measure')
-        # The invoice line quantity always has an accuracy equal to 2
-        precision = 2
+        precision = self._get_config_invoice_line_quantity_precision()
         # Checked if want to group the waterconnection details if same payer
         # of other costs
         grouped_same_payer = self.env['ir.values'].get_default(
@@ -88,7 +113,9 @@ class WuaInvoiceset(models.Model):
         invoicing_of_wc_with_factor = self.env['ir.values'].get_default(
             'wua.invoicing.configuration',
             'invoicing_of_wc_with_factor')
-        log_every = max(1, min(50, len(waterconnections) // 20))
+        log_every = max(1, min(
+            self._get_config_log_progress_wc_max_step(),
+            len(waterconnections) // self._get_config_log_progress_wc_divisor()))
         for wc_idx, waterconnection in enumerate(waterconnections):
             if wc_idx == 0:
                 _logger.info('[invoiceset categ10] loop: first iteration starting (wc_id=%s)', waterconnection.id)
@@ -257,7 +284,7 @@ class WuaInvoiceset(models.Model):
 
     def add_to_invoice_data_line_ref_to_other_types(
             self, categ_code, invoice_data_line, data):
-        if categ_code != 10:
+        if categ_code != self._get_config_product_category_water_costs():
             return super(WuaInvoiceset,
                          self).add_to_invoice_data_line_ref_to_other_types(
                              categ_code, invoice_data_line, data)
@@ -268,7 +295,7 @@ class WuaInvoiceset(models.Model):
     # If this method is executed, then the
     # "base_wua_invoicing_separate_parcel_billing" module is installed.
     def get_parcel_id(self, invoice_detail):
-        if invoice_detail['categ_code'] == 10:
+        if invoice_detail['categ_code'] == self._get_config_product_category_water_costs():
             parcel_id = invoice_detail['key2']
             is_watercosts = True
         else:
