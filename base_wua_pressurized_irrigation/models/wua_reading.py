@@ -146,6 +146,10 @@ class WuaReading(models.Model):
     @api.multi
     @api.depends('waterconnection_id', 'waterconnection_id.last_reading_value')
     def _compute_last_reading_value(self):
+        # Batch: prefetch waterconnection_id and last_reading_value
+        waterconnections = self.mapped('waterconnection_id')
+        if waterconnections:
+            waterconnections.mapped('last_reading_value')
         for record in self:
             last_reading_value = 0
             if record.waterconnection_id:
@@ -156,6 +160,10 @@ class WuaReading(models.Model):
     @api.multi
     @api.depends('waterconnection_id', 'waterconnection_id.last_reading_time')
     def _compute_last_reading_time(self):
+        # Batch: prefetch waterconnection_id and last_reading_time
+        waterconnections = self.mapped('waterconnection_id')
+        if waterconnections:
+            waterconnections.mapped('last_reading_time')
         for record in self:
             last_reading_time = None
             if record.waterconnection_id:
@@ -164,6 +172,13 @@ class WuaReading(models.Model):
 
     @api.depends('watermeter_id')
     def _compute_hydraulic_infrastructure_data(self):
+        # Batch: prefetch watermeter -> waterconnection, irrigationshed, hydraulicsector, partner
+        watermeters = self.mapped('watermeter_id')
+        if watermeters:
+            watermeters.mapped('waterconnection_id')
+            watermeters.mapped('irrigationshed_id')
+            watermeters.mapped('hydraulicsector_id')
+            watermeters.mapped('waterconnection_id').mapped('partner_id')
         for record in self:
             waterconnection_id_value = None
             irrigationshed_id_value = None
@@ -185,6 +200,10 @@ class WuaReading(models.Model):
 
     @api.depends('reading_time', 'watermeter_id')
     def _compute_name(self):
+        # Batch: prefetch watermeter_id.name
+        watermeters = self.mapped('watermeter_id')
+        if watermeters:
+            watermeters.mapped('name')
         for record in self:
             value = ''
             if record.watermeter_id and record.reading_time:
@@ -194,6 +213,10 @@ class WuaReading(models.Model):
 
     @api.multi
     def _compute_is_last_reading(self):
+        # Batch: prefetch watermeter_id and last_reading_time
+        watermeters = self.mapped('watermeter_id')
+        if watermeters:
+            watermeters.mapped('last_reading_time')
         for record in self:
             is_last_reading = False
             if (record.watermeter_id and
@@ -204,6 +227,10 @@ class WuaReading(models.Model):
 
     @api.depends('presconsumption_id', 'presconsumption_id.volume')
     def _compute_presconsumption_volume(self):
+        # Batch: prefetch presconsumption_id.volume
+        presconsumptions = self.mapped('presconsumption_id')
+        if presconsumptions:
+            presconsumptions.mapped('volume')
         for record in self:
             presconsumption_volume = 0
             if record.presconsumption_id:
@@ -212,6 +239,10 @@ class WuaReading(models.Model):
 
     @api.depends('presconsumption_id', 'presconsumption_id.adjustement_volume')
     def _compute_presconsumption_adjustement_volume(self):
+        # Batch: prefetch presconsumption_id.adjustement_volume
+        presconsumptions = self.mapped('presconsumption_id')
+        if presconsumptions:
+            presconsumptions.mapped('adjustement_volume')
         for record in self:
             presconsumption_adjustement_volume = 0
             if record.presconsumption_id:
@@ -222,6 +253,10 @@ class WuaReading(models.Model):
 
     @api.depends('presconsumption_id', 'presconsumption_id.volume_real')
     def _compute_presconsumption_volume_real(self):
+        # Batch: prefetch presconsumption_id.volume_real
+        presconsumptions = self.mapped('presconsumption_id')
+        if presconsumptions:
+            presconsumptions.mapped('volume_real')
         for record in self:
             presconsumption_volume_real = 0
             if record.presconsumption_id:
@@ -263,67 +298,87 @@ class WuaReading(models.Model):
         reading_end_time = vals['reading_time']
         end_volume = vals['volume']
         # New consumption.
+        ctx = self.env.context
+        prev_by_wm = ctx.get('estimated_wizard_previous_reading') or {}
+        init_wm_ids = ctx.get('estimated_wizard_init_watermeter_ids') or frozenset()
         if not vals['initialization_reading']:
-            reading_initial_time = reading_end_time
-            initial_volume = end_volume
-            previous_reading = self.env['wua.reading'].search(
-                [('watermeter_id', '=', vals['watermeter_id']),
-                 ('reading_time', '<', reading_end_time)],
-                limit=1, order='reading_time desc')
-            last_reading = self.env['wua.reading'].search(
-                [('watermeter_id', '=', vals['watermeter_id'])],
-                limit=1, order='reading_time desc')
-            # Must be at least one reading and must be the last one
-            if (not last_reading or not previous_reading or last_reading.id !=
-                    previous_reading.id):
-                raise exceptions.UserError(_('The reading time is minor '
-                                             'than the time of the previous '
-                                             'reading.'))
+            wm_id = vals['watermeter_id']
+            if wm_id in prev_by_wm:
+                prev = prev_by_wm[wm_id]
+                reading_initial_time = prev['reading_time']
+                initial_volume = prev['volume']
+                presconsumption_vals = {
+                    'reading_initial_time': reading_initial_time,
+                    'initial_volume': initial_volume,
+                    'reading_end_time': reading_end_time,
+                    'end_volume': end_volume,
+                }
+                new_presconsumption = self.env['wua.presconsumption'].create(
+                    presconsumption_vals)
             else:
+                reading_initial_time = reading_end_time
+                initial_volume = end_volume
+                previous_reading = self.env['wua.reading'].search(
+                    [('watermeter_id', '=', vals['watermeter_id']),
+                     ('reading_time', '<', reading_end_time)],
+                    limit=1, order='reading_time desc')
+                last_reading = self.env['wua.reading'].search(
+                    [('watermeter_id', '=', vals['watermeter_id'])],
+                    limit=1, order='reading_time desc')
+                if (not last_reading or not previous_reading or last_reading.id !=
+                        previous_reading.id):
+                    raise exceptions.UserError(_('The reading time is minor '
+                                                 'than the time of the previous '
+                                                 'reading.'))
                 reading_initial_time = previous_reading[0].reading_time
                 initial_volume = previous_reading[0].volume
-            presconsumption_vals = {
-                'reading_initial_time': reading_initial_time,
-                'initial_volume': initial_volume,
-                'reading_end_time': reading_end_time,
-                'end_volume': end_volume,
+                presconsumption_vals = {
+                    'reading_initial_time': reading_initial_time,
+                    'initial_volume': initial_volume,
+                    'reading_end_time': reading_end_time,
+                    'end_volume': end_volume,
                 }
-            new_presconsumption = self.env['wua.presconsumption'].create(
-                presconsumption_vals)
+                new_presconsumption = self.env['wua.presconsumption'].create(
+                    presconsumption_vals)
         else:
-            last_reading = self.env['wua.reading'].search(
-                [('watermeter_id', '=', vals['watermeter_id'])],
-                limit=1, order='reading_time desc')
-            if (last_reading and last_reading.reading_time >
-                    reading_end_time):
-                raise exceptions.UserError(_('The reading time is minor '
-                                             'than the time of the previous '
-                                             'reading.'))
+            if vals['watermeter_id'] in init_wm_ids:
+                pass  # No previous reading; skip search and check
+            else:
+                last_reading = self.env['wua.reading'].search(
+                    [('watermeter_id', '=', vals['watermeter_id'])],
+                    limit=1, order='reading_time desc')
+                if (last_reading and last_reading.reading_time >
+                        reading_end_time):
+                    raise exceptions.UserError(_('The reading time is minor '
+                                                 'than the time of the previous '
+                                                 'reading.'))
         if new_presconsumption is not None:
             vals['presconsumption_id'] = new_presconsumption.id
         # Updating the "last_reading_time" and "last_reading_value" fields
-        # of the watermeter.
-        watermeter = self.env['wua.watermeter'].browse(vals['watermeter_id'])
-        if watermeter:
-            if new_presconsumption:
-                vals_watermeter = {
-                    'last_reading_time': reading_end_time,
-                    'last_reading_value': end_volume,
-                    'last_reading_consumption':
-                        new_presconsumption.volume_real}
-            else:
-                vals_watermeter = {
-                    'last_reading_time': reading_end_time,
-                    'last_reading_value': end_volume,
-                    'last_reading_consumption': 0}
-            if 'reading_type' in vals:
-                vals_watermeter['last_reading_type'] = vals['reading_type']
-            watermeter.write(vals_watermeter)
+        # of the watermeter (skipped when wizard will do a batch update).
+        skip_wm_write = ctx.get('estimated_wizard_skip_watermeter_write')
+        if not skip_wm_write:
+            watermeter = self.env['wua.watermeter'].browse(vals['watermeter_id'])
+            if watermeter:
+                if new_presconsumption:
+                    vals_watermeter = {
+                        'last_reading_time': reading_end_time,
+                        'last_reading_value': end_volume,
+                        'last_reading_consumption':
+                            new_presconsumption.volume_real}
+                else:
+                    vals_watermeter = {
+                        'last_reading_time': reading_end_time,
+                        'last_reading_value': end_volume,
+                        'last_reading_consumption': 0}
+                if 'reading_type' in vals:
+                    vals_watermeter['last_reading_type'] = vals['reading_type']
+                watermeter.write(vals_watermeter)
         # Creation of reading.
         new_reading = super(WuaReading, self).create(vals)
         # Here Presconsumption have the reference to the reading
         pres_id = new_reading.presconsumption_id
-        if (pres_id):
+        if (pres_id) and not ctx.get('estimated_wizard_defer_perunitareas'):
             pres_id.update_volume_perunitareas()
         return new_reading
 
