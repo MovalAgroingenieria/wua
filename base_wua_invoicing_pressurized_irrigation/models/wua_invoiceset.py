@@ -2,6 +2,7 @@
 # Copyright 2018 Eduardo Iniesta - <einiesta@moval.es>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+from collections import defaultdict
 from operator import itemgetter
 from odoo import models, fields, api, exceptions, _
 from odoo.exceptions import UserError
@@ -14,12 +15,9 @@ class WuaInvoiceset(models.Model):
     # and invoiced_consumption fields for the affected consumptions.
     @api.multi
     def unlink(self):
-        presconsumptions_ids = []
-        for record in self:
-            presconsumptions = self.env['wua.presconsumption'].search(
-                [('invoiceset_id', '=', record.id)])
-            for presconsumption in presconsumptions:
-                presconsumptions_ids.append(presconsumption.id)
+        presconsumptions = self.env['wua.presconsumption'].search(
+            [('invoiceset_id', 'in', self.ids)])
+        presconsumptions_ids = presconsumptions.ids
         res = super(WuaInvoiceset, self).unlink()
         if presconsumptions_ids:
             presconsumptions = self.env['wua.presconsumption'].browse(
@@ -185,9 +183,18 @@ class WuaInvoiceset(models.Model):
         waterconnections = self.env['wua.waterconnection'].browse(wc_ids)
         irrigationpoints = self.env['wua.parcel.irrigationpoint'].search(
             [('type', '=', 'WC')])
+        irrigationpoints_by_wc = defaultdict(list)
+        for ip in irrigationpoints:
+            if ip.waterconnection_id.id in wc_ids:
+                irrigationpoints_by_wc[ip.waterconnection_id.id].append(ip)
+        partnerlinks_with_pct = partnerlinks.filtered(
+            lambda x: x.water_costs_percentage > 0)
+        partnerlinks_by_parcel = defaultdict(list)
+        for pl in partnerlinks_with_pct:
+            partnerlinks_by_parcel[pl.parcel_id.id].append(pl)
         for waterconnection in waterconnections:
-            irrigationpoints_of_waterconnection = irrigationpoints.filtered(
-                lambda x: x.waterconnection_id.id == waterconnection.id)
+            irrigationpoints_of_waterconnection = irrigationpoints_by_wc.get(
+                waterconnection.id, [])
             parcels_of_waterconnection = \
                 [x.parcel_id for x in irrigationpoints_of_waterconnection
                  if x.parcel_id.is_billable_water]
@@ -205,9 +212,8 @@ class WuaInvoiceset(models.Model):
                     presconsumption_quantity = \
                         volume_real_of_waterconnection * \
                         (parcel.area_official / total_area_official)
-                    partnerlinks_of_parcel = partnerlinks.filtered(
-                        lambda x: x.parcel_id.id == parcel.id and
-                        x.water_costs_percentage > 0)
+                    partnerlinks_of_parcel = partnerlinks_by_parcel.get(
+                        parcel.id, [])
                     if len(partnerlinks_of_parcel) > 0:
                         for partnerlink in partnerlinks_of_parcel:
                             description = self._get_description_categ07_normal(
@@ -245,21 +251,29 @@ class WuaInvoiceset(models.Model):
         waterconnections = self.env['wua.waterconnection'].browse(wc_ids)
         irrigationpoints = self.env['wua.parcel.irrigationpoint'].search(
             [('type', '=', 'WC')])
+        irrigationpoints_by_wc = defaultdict(list)
+        for ip in irrigationpoints:
+            if ip.waterconnection_id.id in wc_ids:
+                irrigationpoints_by_wc[ip.waterconnection_id.id].append(ip)
+        partnerlinks_with_pct = partnerlinks.filtered(
+            lambda x: x.water_costs_percentage > 0)
+        partnerlinks_by_parcel = defaultdict(list)
+        for pl in partnerlinks_with_pct:
+            partnerlinks_by_parcel[pl.parcel_id.id].append(pl)
         # For each water connection: all parcels of this water connection
         # must have the same water payer.
         wc_partners = []
         for waterconnection in waterconnections:
-            irrigationpoints_of_waterconnection = irrigationpoints.filtered(
-                lambda x: x.waterconnection_id.id == waterconnection.id)
+            irrigationpoints_of_waterconnection = irrigationpoints_by_wc.get(
+                waterconnection.id, [])
             parcels_of_waterconnection = \
                 [x.parcel_id for x in irrigationpoints_of_waterconnection
                  if x.parcel_id.is_billable_water]
             first_partnerlink = True
             partner_of_wc_id = 0
             for parcel in parcels_of_waterconnection:
-                partnerlinks_of_parcel = partnerlinks.filtered(
-                    lambda x: x.parcel_id.id == parcel.id and
-                    x.water_costs_percentage > 0)
+                partnerlinks_of_parcel = partnerlinks_by_parcel.get(
+                    parcel.id, [])
                 for partnerlink in partnerlinks_of_parcel:
                     if first_partnerlink:
                         partner_of_wc_id = partnerlink.partner_id.id
@@ -469,8 +483,18 @@ class WuaInvoiceset(models.Model):
                 partner_id = line['partner_id']
                 if partner_id != main_partner_id:
                     grouped_lines.setdefault(partner_id, []).append(line)
+            partner_ids = list(grouped_lines.keys())
+            partners = self.env['res.partner'].browse(partner_ids)
+            partners.mapped('property_account_receivable_id')
+            partners.mapped('property_payment_term_id')
+            partners.mapped('customer_payment_mode_id')
+            partners.mapped('customer_invoice_transmit_method_id')
+            partners.mapped('partner_code')
+            partner_by_id = {p.id: p for p in partners}
             for partner_id, lines in grouped_lines.items():
-                partner = self.env['res.partner'].browse(partner_id)
+                partner = partner_by_id.get(partner_id)
+                if not partner:
+                    continue
                 invoices_data.append({
                     'partner_id': partner.id,
                     'partner_code': partner.partner_code,
