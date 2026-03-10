@@ -416,6 +416,36 @@ class MaintenanceEquipment(models.Model):
         sanitize=False,
     )
 
+    request_ids = fields.One2many(
+        string='Maintenance Requests',
+        comodel_name='maintenance.request',
+        inverse_name='equipment_id',
+    )
+
+    request_count = fields.Integer(
+        string='Request Count',
+        compute='_compute_request_count',
+        store=True,
+    )
+
+    request_open_count = fields.Integer(
+        string='Open Request Count',
+        compute='_compute_request_count',
+        store=True,
+    )
+
+    @api.depends('request_ids', 'request_ids.stage_id.done',
+                 'request_ids.active')
+    def _compute_request_count(self):
+        for equipment in self:
+            all_requests = self.env['maintenance.request'].with_context(
+                active_test=False).search([
+                    ('equipment_id', '=', equipment.id)])
+            equipment.request_count = len(all_requests)
+            equipment.request_open_count = len(
+                all_requests.filtered(
+                    lambda x: not x.stage_id.done and x.active))
+
     @api.model_cr
     def init(self):
         try:
