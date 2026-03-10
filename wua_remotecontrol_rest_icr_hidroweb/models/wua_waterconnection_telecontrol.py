@@ -74,7 +74,7 @@ class WuaWaterconnectionTelecontrol(models.Model):
                     # watermeters
                     wm_dict = dict(
                         ('{watermeter_name}'.format(
-                            watermeter_name=wm.name
+                            watermeter_name=wm.name,
                         ), wm)
                         for wm in self.env['wua.watermeter'].search([])
                     )
@@ -105,7 +105,7 @@ class WuaWaterconnectionTelecontrol(models.Model):
                         resprest_volume = requests.request(
                             'GET', url_readings,
                             headers=headers,
-                            data={}
+                            data={},
                         )
                         if (resprest_volume.ok and resprest_volume.text):
                             readings_response += json.loads(
@@ -115,7 +115,7 @@ class WuaWaterconnectionTelecontrol(models.Model):
                         resprest_flow = requests.request(
                             'GET', url_flows,
                             headers=headers,
-                            data={}
+                            data={},
                         )
                         # Get the flows and if already a volume exists update
                         if (resprest_flow.ok and resprest_flow.text):
@@ -126,7 +126,7 @@ class WuaWaterconnectionTelecontrol(models.Model):
                         resprest_valve = requests.request(
                             'GET', url_valves,
                             headers=headers,
-                            data={}
+                            data={},
                         )
                         # Get the valves opened and if already a volume exists
                         # update
@@ -156,7 +156,8 @@ class WuaWaterconnectionTelecontrol(models.Model):
                                     'valve_error': valve_error,
                                     'valve_error_msg': valve_error_msg,
                                     'watermeter_error': watermeter_error,
-                                    'watermeter_error_msg': watermeter_error_msg,
+                                    'watermeter_error_msg':
+                                    watermeter_error_msg,
                                 }
                     for flow in flows_response:
                         code_values = flow['name'].split('_')
@@ -168,7 +169,7 @@ class WuaWaterconnectionTelecontrol(models.Model):
                             if (wc and wc.name and wc.name in
                                     wc_all_info_dict):
                                 wc_all_info_dict[wc.name].update({
-                                    'waterflow': flow_value
+                                    'waterflow': flow_value,
                                 })
                     for valve in valves_response:
                         code_values = valve['name'].split('_')
@@ -180,12 +181,16 @@ class WuaWaterconnectionTelecontrol(models.Model):
                             if (wc and wc.name and wc.name in
                                     wc_all_info_dict):
                                 wc_all_info_dict[wc.name].update({
-                                    'valve_open': valve_open
+                                    'valve_open': valve_open,
                                 })
                 else:
-                    error_message = _(' It is not possible to stablish connection with icr. ')
+                    error_message = _(
+                        ' It is not possible to stablish connection '
+                        'with icr. ')
             else:
-                error_message = _(' It is not possible to get installation / client identifiers. ')
+                error_message = _(
+                    ' It is not possible to get installation / client '
+                    'identifiers. ')
             wc_all_info = wc_all_info_dict.values()
             error_message = ''
             installation_identifiers = self.env['ir.values'].get_default(
@@ -205,7 +210,7 @@ class WuaWaterconnectionTelecontrol(models.Model):
                     # watermeters
                     wm_dict = dict(
                         ('{watermeter_name}'.format(
-                            watermeter_name=wm.name
+                            watermeter_name=wm.name,
                         ), wm)
                         for wm in self.env['wua.watermeter'].search([])
                     )
@@ -236,7 +241,7 @@ class WuaWaterconnectionTelecontrol(models.Model):
                         resprest_volume = requests.request(
                             'GET', url_readings,
                             headers=headers,
-                            data={}
+                            data={},
                         )
                         if (resprest_volume.ok and resprest_volume.text):
                             readings_response += json.loads(
@@ -244,7 +249,7 @@ class WuaWaterconnectionTelecontrol(models.Model):
                         resprest_flow = requests.request(
                             'GET', url_flows,
                             headers=headers,
-                            data={}
+                            data={},
                         )
                         # Get the flows and if already a volume exists update
                         if (resprest_flow.ok and resprest_flow.text):
@@ -253,7 +258,7 @@ class WuaWaterconnectionTelecontrol(models.Model):
                         resprest_valve = requests.request(
                             'GET', url_valves,
                             headers=headers,
-                            data={}
+                            data={},
                         )
                         # Get the valves opened and if already a volume exists
                         # update
@@ -281,7 +286,8 @@ class WuaWaterconnectionTelecontrol(models.Model):
                                     'valve_error': valve_error,
                                     'valve_error_msg': valve_error_msg,
                                     'watermeter_error': watermeter_error,
-                                    'watermeter_error_msg': watermeter_error_msg,
+                                    'watermeter_error_msg':
+                                    watermeter_error_msg,
                                 }
                     for flow in flows_response:
                         code_values = flow['name'].split('_')
@@ -293,7 +299,7 @@ class WuaWaterconnectionTelecontrol(models.Model):
                             if (wc and wc.name and wc.name in
                                     wc_all_info_dict):
                                 wc_all_info_dict[wc.name].update({
-                                    'waterflow': flow_value
+                                    'waterflow': flow_value,
                                 })
                     for valve in valves_response:
                         code_values = valve['name'].split('_')
@@ -305,7 +311,7 @@ class WuaWaterconnectionTelecontrol(models.Model):
                             if (wc and wc.name and wc.name in
                                     wc_all_info_dict):
                                 wc_all_info_dict[wc.name].update({
-                                    'valve_open': valve_open
+                                    'valve_open': valve_open,
                                 })
             wc_all_info = wc_all_info_dict.values()
         except Exception as e:
@@ -319,11 +325,11 @@ class WuaWaterconnectionTelecontrol(models.Model):
         resprest = requests.request(
             'POST', url_remotecontrol_rest + '/login',
             headers={
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
                 },
             data=json.dumps({
                 'username': url_remotecontrol_rest_username,
-                'password': url_remotecontrol_rest_password
+                'password': url_remotecontrol_rest_password,
                 }))
         if resprest.ok and resprest.text:
             response = json.loads(resprest.text)

@@ -429,6 +429,26 @@ class WuaControlreading(models.Model):
         watermeter.write(vals_watermeter)
         return resp
 
+    def _update_watermeter_last_reading(self, watermeter):
+        """Update the watermeter's last_controlreading_time and
+        last_controlreading_value to reflect the actual last
+        active controlreading."""
+        last_reading = self.search([
+            ('watermeter_id', '=', watermeter.id)],
+            order='reading_time desc', limit=1)
+        if last_reading:
+            watermeter.write({
+                'last_controlreading_time':
+                    last_reading.reading_time,
+                'last_controlreading_value':
+                    last_reading.volume,
+            })
+        else:
+            watermeter.write({
+                'last_controlreading_time': None,
+                'last_controlreading_value': 0,
+            })
+
     @api.model
     def run_remotecontrol_application_url(self):
         enable_remotecontrol = self.env['ir.values'].get_default(

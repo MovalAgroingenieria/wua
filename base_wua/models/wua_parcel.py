@@ -1972,7 +1972,8 @@ class WuaParcel(models.Model):
             # If no geometry exists, get SRID from table definition
             self.env.cr.execute("""
                 SELECT srid FROM postgis.geometry_columns
-                WHERE f_table_name = 'wua_gis_parcel' AND f_geometry_column = 'geom'
+                WHERE f_table_name = 'wua_gis_parcel' AND f_geometry_column =
+                'geom'
             """)
             result = self.env.cr.fetchone()
             target_srid = result[0] if result else 25830
