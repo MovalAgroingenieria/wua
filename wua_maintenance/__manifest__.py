@@ -40,6 +40,7 @@
         "wizard/wizard_massive_maintenance_requests.xml",
         "wizard/wizard_image_preview.xml",
         "wizard/wizard_massive_maintenance_plans.xml",
+        "wizard/wizard_export_images_zip.xml",
         "views/maintenance_equipment_view.xml",
         "views/maintenance_views.xml",
         "views/maintenance_plan_view.xml",
