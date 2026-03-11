@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-17 18:15+0000\n"
-"PO-Revision-Date: 2025-11-17 18:15+0000\n"
+"POT-Creation-Date: 2026-03-11 13:01+0000\n"
+"PO-Revision-Date: 2026-03-11 13:01+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,6 +21,11 @@ msgstr ""
 #: code:addons/wua_mdm_sensor_management/static/src/xml/buttons_assign_device.xml:9
 #, python-format
 msgid "&nbsp;&nbsp;"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: selection:mdm.measurement.device.sensor.reading,range_status:0
+msgid "Above maximum"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
@@ -46,6 +51,11 @@ msgid "Associated with any device (y/n)"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
+#: selection:mdm.measurement.device.sensor.reading,range_status:0
+msgid "Below minimum"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_device_parcellink_name
 msgid "Code"
 msgstr ""
@@ -63,6 +73,21 @@ msgstr ""
 #. module: wua_mdm_sensor_management
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_device_parcellink_create_date
 msgid "Created on"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_custom_max_value
+msgid "Custom maximum value"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_custom_min_value
+msgid "Custom minimum value"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_has_custom_range
+msgid "Custom range"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
@@ -123,6 +148,26 @@ msgid "Display Name"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_mdm_sensor_view_form
+msgid "Effective Range"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_effective_max_value
+msgid "Effective maximum"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_effective_min_value
+msgid "Effective minimum"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_effective_has_validation
+msgid "Effective validation"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
 #: model:ir.model,name:wua_mdm_sensor_management.model_wua_parcel
 msgid "Entity (parcel)"
 msgstr ""
@@ -135,6 +180,11 @@ msgstr ""
 #. module: wua_mdm_sensor_management
 #: sql_constraint:mdm.device.parcellink:0
 msgid "Existing device-parcel line."
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_mdm_reading_view_search
+msgid "Fuera de rango"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
@@ -175,6 +225,21 @@ msgstr ""
 #. module: wua_mdm_sensor_management
 #: model:ir.model.fields,help:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_type_requires_exclusivity
 msgid "If enabled, only one sensor of this type may coexist in the same parcel."
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,help:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_type_has_range_validation
+msgid "If enabled, readings of sensors of this type will be checked against the defined min/max values."
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,help:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_has_custom_range
+msgid "If enabled, this sensor uses its own min/max values instead of those defined at the sensor type level."
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,help:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_has_range_validation
+msgid "If enabled, this sensor validates readings against a min/max range regardless of the sensor type setting."
 msgstr ""
 
 #. module: wua_mdm_sensor_management
@@ -235,8 +300,23 @@ msgid "Linked to some device: Yes"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
+#: model:ir.model.fields,help:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_type_min_value
+msgid "Lower bound for normal readings. Readings below this value will be flagged as out of range."
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,help:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_custom_min_value
+msgid "Lower bound specific to this sensor. Only applies when custom range is enabled."
+msgstr ""
+
+#. module: wua_mdm_sensor_management
 #: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_parcel_from_device_view_tree
 msgid "Mapped"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_type_max_value
+msgid "Maximum value"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
@@ -250,6 +330,11 @@ msgid "Measurement Device Sensor"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
+#: model:ir.model,name:wua_mdm_sensor_management.model_mdm_measurement_device_sensor_reading
+msgid "Measurement Device Sensor Reading"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_res_partner_sensor_reading_measurement_time
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_wua_parcel_sensor_reading_measurement_time
 #: model:ir.ui.view,arch_db:wua_mdm_sensor_management.res_partner_sensor_reading_view_search
@@ -257,6 +342,26 @@ msgstr ""
 #: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_parcel_sensor_reading_view_search
 #: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_parcel_sensor_reading_view_tree
 msgid "Measurement Time"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_type_min_value
+msgid "Minimum value"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: selection:mdm.measurement.device.sensor.reading,range_status:0
+msgid "Normal"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: selection:mdm.measurement.device.sensor.reading,range_status:0
+msgid "Not checked"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_reading_is_out_of_range
+msgid "Out of range"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
@@ -292,7 +397,7 @@ msgid "Parcel link of a device"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
-#: code:addons/wua_mdm_sensor_management/models/measurement_device.py:150
+#: code:addons/wua_mdm_sensor_management/models/measurement_device.py:152
 #: model:ir.ui.view,arch_db:wua_mdm_sensor_management.mdm_device_view_form
 #, python-format
 msgid "Parcels"
@@ -311,9 +416,35 @@ msgid "Partner Sensor Readings"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
-#: code:addons/wua_mdm_sensor_management/models/measurement_device.py:314
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_mdm_reading_view_search
+msgid "Por debajo del mínimo"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_mdm_reading_view_search
+msgid "Por encima del máximo"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: code:addons/wua_mdm_sensor_management/models/measurement_device.py:317
 #, python-format
 msgid "Problem with the parcel %s: duplicated sensor."
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_mdm_sensor_view_form
+msgid "Range Validation"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_reading_range_status
+msgid "Range status"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_has_range_validation
+#: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_type_has_range_validation
+msgid "Range validation"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
@@ -332,6 +463,21 @@ msgstr ""
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_requires_exclusivity
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_type_requires_exclusivity
 msgid "Requires exclusivity (y/n)"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,help:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_effective_max_value
+msgid "Resolved maximum value: custom range if enabled, otherwise the sensor type maximum."
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,help:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_effective_min_value
+msgid "Resolved minimum value: custom range if enabled, otherwise the sensor type minimum."
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,help:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_effective_has_validation
+msgid "Resolved validation flag: True if this sensor or its type has range validation enabled."
 msgstr ""
 
 #. module: wua_mdm_sensor_management
@@ -360,10 +506,13 @@ msgid "Sensor"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_mdm_sensor_view_form
+msgid "Sensor Range Validation"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
 #: model:ir.actions.act_window,name:wua_mdm_sensor_management.res_partner_sensor_reading_action_from_partner
 #: model:ir.actions.act_window,name:wua_mdm_sensor_management.wua_parcel_sensor_reading_action_from_parcel
-#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.res_partner_view_form_inherit_sensor_readings_shortcut
-#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_parcel_view_form_inherit_device_shortcut
 msgid "Sensor Readings"
 msgstr ""
 
@@ -377,14 +526,24 @@ msgid "Sensor Type"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
+#: model:ir.ui.view,arch_db:wua_mdm_sensor_management.wua_mdm_reading_view_search
+msgid "Sin validación"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_mdm_measurement_device_subparcel_id
 msgid "Subparcel"
 msgstr ""
 
 #. module: wua_mdm_sensor_management
-#: code:addons/wua_mdm_sensor_management/models/measurement_device.py:170
+#: code:addons/wua_mdm_sensor_management/models/measurement_device.py:172
 #, python-format
 msgid "The sensor %s requires exclusivity."
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,help:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_reading_is_out_of_range
+msgid "True if the reading value falls outside the effective min/max range defined for the sensor."
 msgstr ""
 
 #. module: wua_mdm_sensor_management
@@ -404,6 +563,21 @@ msgstr ""
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_res_partner_sensor_reading_uom_id
 #: model:ir.model.fields,field_description:wua_mdm_sensor_management.field_wua_parcel_sensor_reading_uom_id
 msgid "Unit of Measure"
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,help:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_type_max_value
+msgid "Upper bound for normal readings. Readings above this value will be flagged as out of range."
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,help:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_custom_max_value
+msgid "Upper bound specific to this sensor. Only applies when custom range is enabled."
+msgstr ""
+
+#. module: wua_mdm_sensor_management
+#: model:ir.model.fields,help:wua_mdm_sensor_management.field_mdm_measurement_device_sensor_reading_range_status
+msgid "Validity status of the reading with respect to the sensor range: normal, below minimum, above maximum, or not checked (when range validation is disabled for the sensor)."
 msgstr ""
 
 #. module: wua_mdm_sensor_management
@@ -428,3 +602,4 @@ msgstr ""
 #: model:ir.model,name:wua_mdm_sensor_management.model_wua_parcel_sensor_reading
 msgid "wua.parcel.sensor.reading"
 msgstr ""
+
