@@ -126,8 +126,8 @@
         <field name="model">maintenance.equipment</field>
         <field name="inherit_id" ref="maintenance.hr_equipment_view_tree" />
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='category_id']" position="replace">
-                <field name="category_id" string="Equipment Category" />
+            <xpath expr="//field[@name='category_id']" position="attributes">
+                <attribute name="string">Equipment Category</attribute>
             </xpath>
             <xpath expr="//field[@name='name']" position="after">
                 <field name="with_infrastructure_gis" invisible="1"/>

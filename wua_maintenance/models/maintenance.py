@@ -856,22 +856,18 @@ class MaintenanceEquipment(models.Model):
         ir_values = self.env['ir.values'].sudo()
         update_with_open = ir_values.get_default(
             'maintenance.config.settings',
-            'update_dates_with_open_requests'
+            'update_dates_with_open_requests',
         )
         if update_with_open is None:
             update_with_open = False
-
         for plan in plans:
             next_creation = fields.Date.from_string(plan.next_creation_date)
-
             if next_creation <= today:
                 equipment = plan.equipment_id
                 next_maintenance = fields.Date.from_string(
                     plan.next_maintenance_date)
-
                 period_start = min(next_creation, next_maintenance)
                 period_end = max(next_creation, next_maintenance)
-
                 next_requests = self.env['maintenance.request'].search([
                     ('stage_id.done', '=', False),
                     ('equipment_id', '=', equipment.id),
@@ -890,7 +886,6 @@ class MaintenanceEquipment(models.Model):
                         plan.next_creation_date = fields.Date.to_string(
                             next_creation + timedelta(days=plan.period))
                         plan._compute_next_maintenance()
-
 
     @api.multi
     def _compute_hydraulicsector(self):

@@ -362,6 +362,39 @@ class MaintenanceGisController(http.Controller):
             'dynamic_fields': dynamic_fields,
         }
 
+    @http.route("/maintenance_creation_data", auth='user',
+                type='json', methods=['POST'], csrf=False)
+    def get_maintenance_creation_data(self, **kwargs):
+        """Return all categories, maintenance kinds and equipment
+        (id, name, category_id) for the creation form in the GIS viewer.
+        This endpoint is called asynchronously and stored in Dexie."""
+        categories = request.env[
+            'maintenance.equipment.category'].search([])
+        kinds = request.env['maintenance.kind'].search([])
+        equipments = request.env['maintenance.equipment'].search(
+            [], order='name asc')
+        return json.dumps({
+            'categories': categories.mapped(
+                lambda cat: {
+                    'id': cat.id,
+                    'name': cat.name,
+                }),
+            'kinds': kinds.mapped(
+                lambda kind: {
+                    'id': kind.id,
+                    'name': kind.name,
+                    'category_id': kind.category_id.id
+                    if kind.category_id else False,
+                }),
+            'equipments': equipments.mapped(
+                lambda eq: {
+                    'id': eq.id,
+                    'name': eq.name,
+                    'category_id': eq.category_id.id
+                    if eq.category_id else False,
+                }),
+        }, ensure_ascii=False)
+
     @http.route("/maintenance_init_config", auth='user', type='json',
                 methods=['POST'], csrf=False)
     def get_maintenance_init_config(self, *args, **kwargs):
