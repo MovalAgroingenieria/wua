@@ -97,7 +97,12 @@
                                         <div class="col-md-8">
                                             <h4>
                                                 <t>Water connection</t>
-                                                <span t-esc="waterconnection.name"/>
+                                                <a t-att-href="'/my/waterconnections/' + str(waterconnection.id) + '/report'">
+                                                    <span t-esc="waterconnection.name"/>
+                                                </a>
+                                                <a t-att-href="'/my/waterconnections/' + str(waterconnection.id) + '/report'" class="ml8" title="Print">
+                                                    <i class="fa fa-print"/>
+                                                </a>
                                             </h4>
                                         </div>
                                         <div class="col-md-4 text-right">

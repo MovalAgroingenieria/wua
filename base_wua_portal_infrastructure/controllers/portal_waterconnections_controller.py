@@ -4,7 +4,7 @@
 
 from odoo import http
 from odoo.exceptions import AccessError
-from odoo.http import request
+from odoo.http import request, Response
 from odoo.addons.website_portal.controllers.main import website_account
 
 
@@ -134,3 +134,39 @@ class website_account(website_account):
                 'waterconnection_total': len(waterconnection_id_list),
                 'liquidation_on_portal': liquidation_on_portal,
             })
+
+    @http.route(['/my/waterconnections/<int:waterconnection>/report'],
+                type='http', auth="user", website=True)
+    def waterconnections_followup_report(self, waterconnection=None, **kw):
+        """Generates the waterconnection report and serves it as a PDF"""
+        user = request.env.user
+        partnerlink = \
+            request.env['res.partner.waterconnection'].search(
+                [('waterconnection_id', '=', waterconnection)], limit=1)
+        waterconnection = partnerlink.waterconnection_id
+        try:
+            waterconnection.check_access_rights('read')
+            waterconnection.check_access_rule('read')
+        except AccessError:
+            return request.render("website.403")
+
+        model_report = request.env['report'].sudo()
+        if not waterconnection:
+            return Response(
+                "No waterconnection found",
+                status=404)
+        report_ref = \
+            'base_wua_infrastructure.wua_waterconnection_technical_sheet_report_document'
+        waterconnection_report = model_report.with_context(
+            {'lang': user.partner_id.lang}).get_pdf(
+                [waterconnection.id], report_ref)
+
+        response = request.make_response(
+            waterconnection_report,
+            headers=[
+                ('Content-Type', 'application/pdf'),
+                ('Content-Disposition',
+                 'attachment; filename="wua_waterconnection_report.pdf"')
+            ]
+        )
+        return response
