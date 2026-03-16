@@ -6,11 +6,39 @@ import base64
 import io
 import zipfile
 
-from odoo import models, api, _
+from odoo import models, fields, api, exceptions, _
 
 
 class WizardExportImagesZip(models.TransientModel):
     _name = 'wizard.export.images.zip'
+
+    name = fields.Char(
+        string='File Name',
+        readonly=True,
+    )
+    data = fields.Binary(
+        string='File',
+        readonly=True,
+    )
+    state = fields.Selection(
+        selection=[
+            ('choose', 'choose'),
+            ('get', 'get'),
+        ],
+        default='choose',
+    )
+    export_before = fields.Boolean(
+        string='Before images',
+        default=True,
+    )
+    export_after = fields.Boolean(
+        string='After images',
+        default=True,
+    )
+    export_field = fields.Boolean(
+        string='Field images',
+        default=True,
+    )
 
     @api.model
     def _sanitize_filename(self, name):
@@ -72,79 +100,77 @@ class WizardExportImagesZip(models.TransientModel):
 
     @api.multi
     def action_export_images_zip(self):
-        """Export all before, after and field images from the selected
-        maintenance requests into a ZIP file organized by folders.
-        Folder structure:
-          <sequence>_<equipment>/
-            before/
-              image1.jpg
-            after/
-              image2.jpg
-            field/
-              image3.jpg
+        """Export selected image types from maintenance requests
+        into a ZIP file and present the download in the wizard.
         """
+        self.ensure_one()
         active_ids = self.env.context.get('active_ids', [])
-        requests = self.env['maintenance.request'].browse(active_ids)
-        if not requests:
-            return
-        base_url = self.env['ir.config_parameter'].get_param(
-            'web.base.url')
+        if not active_ids:
+            raise exceptions.UserError(
+                _('No maintenance requests selected.'))
+        requests = self.env['maintenance.request'].browse(
+            active_ids)
         zip_buffer = io.BytesIO()
         total_images = 0
 
         with zipfile.ZipFile(
-                zip_buffer, 'w', zipfile.ZIP_STORED) as zip_file:
-            for request in requests:
-                folder = self._get_request_folder_name(request)
+                zip_buffer, 'w', zipfile.ZIP_STORED) as zf:
+            for req in requests:
+                folder = self._get_request_folder_name(req)
                 before_label = _('before')
                 after_label = _('after')
                 field_label = _('field')
                 # Before images
-                total_images += self._add_images_to_zip(
-                    zip_file,
-                    '%s/%s' % (folder, before_label),
-                    request.resolution_images_before,
-                    legacy_image=request.resolution_image_before,
-                    legacy_filename=(
-                        request.resolution_image_before_filename),
-                )
+                if self.export_before:
+                    total_images += self._add_images_to_zip(
+                        zf,
+                        '%s/%s' % (folder, before_label),
+                        req.resolution_images_before,
+                        legacy_image=(
+                            req.resolution_image_before),
+                        legacy_filename=(
+                            req
+                            .resolution_image_before_filename
+                        ),
+                    )
                 # After images
-                total_images += self._add_images_to_zip(
-                    zip_file,
-                    '%s/%s' % (folder, after_label),
-                    request.resolution_images_after,
-                    legacy_image=request.resolution_image_after,
-                    legacy_filename=(
-                        request.resolution_image_after_filename),
-                )
+                if self.export_after:
+                    total_images += self._add_images_to_zip(
+                        zf,
+                        '%s/%s' % (folder, after_label),
+                        req.resolution_images_after,
+                        legacy_image=(
+                            req.resolution_image_after),
+                        legacy_filename=(
+                            req
+                            .resolution_image_after_filename
+                        ),
+                    )
                 # Field images
-                total_images += self._add_images_to_zip(
-                    zip_file,
-                    '%s/%s' % (folder, field_label),
-                    request.field_images,
-                    legacy_image=request.field_image,
-                )
+                if self.export_field:
+                    total_images += self._add_images_to_zip(
+                        zf,
+                        '%s/%s' % (folder, field_label),
+                        req.field_images,
+                        legacy_image=req.field_image,
+                    )
         if total_images == 0:
-            return
-        result = base64.b64encode(zip_buffer.getvalue())
+            raise exceptions.UserError(
+                _('No images found for the selected '
+                  'maintenance requests.'))
+        zip_data = base64.b64encode(zip_buffer.getvalue())
         filename = _('maintenance_images') + '.zip'
-        attachment_obj = self.sudo().env['ir.attachment']
-        # Clean previous temporary downloads
-        attachment_obj.search([
-            ('name', '=', 'maintenance_images_zip_download'),
-            ('res_model', '=', 'maintenance.request'),
-        ]).unlink()
-        # Create new attachment
-        attachment_id = attachment_obj.create({
-            'name': 'maintenance_images_zip_download',
-            'datas_fname': filename,
-            'datas': result,
-            'res_model': 'maintenance.request',
+        self.write({
+            'state': 'get',
+            'data': zip_data,
+            'name': filename,
         })
-        download_url = '/web/content/%s?download=true' % (
-            str(attachment_id.id))
         return {
-            'type': 'ir.actions.act_url',
-            'url': '%s%s' % (str(base_url), str(download_url)),
+            'type': 'ir.actions.act_window',
+            'res_model': 'wizard.export.images.zip',
+            'view_mode': 'form',
+            'view_type': 'form',
+            'res_id': self.id,
+            'views': [(False, 'form')],
             'target': 'new',
         }

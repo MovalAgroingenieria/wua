@@ -1,6 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- Form view for the wizard -->
+    <record id="wizard_export_images_zip_form"
+            model="ir.ui.view">
+        <field name="name">wizard.export.images.zip.form</field>
+        <field name="model">wizard.export.images.zip</field>
+        <field name="arch" type="xml">
+            <form string="Export Images (ZIP)">
+                <field name="state" invisible="1"/>
+                <field name="name" invisible="1"/>
+                <group states="choose"
+                       string="Select image types to export">
+                    <field name="export_before"/>
+                    <field name="export_after"/>
+                    <field name="export_field"/>
+                </group>
+                <div states="get">
+                    <p>Download the ZIP file:
+                        <field name="data" readonly="1"
+                               filename="name"/>
+                    </p>
+                </div>
+                <footer states="choose">
+                    <button name="action_export_images_zip"
+                            string="Export" type="object"
+                            class="btn-primary"/>
+                    <button string="Cancel" class="btn-default"
+                            special="cancel"/>
+                </footer>
+                <footer states="get">
+                    <button string="Close" class="btn-primary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Server action that opens the wizard form -->
     <record id="action_server_export_images_zip"
             model="ir.actions.server">
         <field name="name">Export Images (ZIP)</field>
@@ -8,8 +45,15 @@
                ref="maintenance.model_maintenance_request"/>
         <field name="state">code</field>
         <field name="code">
-wizard = env['wizard.export.images.zip'].create({})
-action = wizard.with_context(active_ids=context.get('active_ids', [])).action_export_images_zip()
+action = {
+    'type': 'ir.actions.act_window',
+    'name': 'Export Images (ZIP)',
+    'res_model': 'wizard.export.images.zip',
+    'view_type': 'form',
+    'view_mode': 'form',
+    'target': 'new',
+    'context': {'active_ids': context.get('active_ids', [])},
+}
         </field>
     </record>
 
