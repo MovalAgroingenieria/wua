@@ -5,7 +5,7 @@
 import base64
 import datetime
 import io
-import json
+import math
 import re
 import requests
 import numpy
@@ -20,7 +20,8 @@ from bokeh.models import ColumnDataSource, HoverTool, HelpTool
 from bokeh.models.formatters import DatetimeTickFormatter
 from lxml import etree
 
-from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import DEFAULT_STANDARD_APPLICATION_EFFICIENCY
+from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import \
+    DEFAULT_STANDARD_APPLICATION_EFFICIENCY
 from odoo import models, fields, api, exceptions, _
 
 
@@ -161,7 +162,7 @@ class WuaCropunit(models.Model):
         selection=[
             ('01_not_started', 'Crop not started'),
             ('02_active', 'Active Crop'),
-            ('03_closed', 'Crop finished')
+            ('03_closed', 'Crop finished'),
         ],
         compute='_compute_state',
         search='_search_state')
@@ -363,7 +364,8 @@ class WuaCropunit(models.Model):
     googlemaps_link = fields.Char(
         string='Google Maps Link',
         default='',
-        compute='_compute_googlemaps_link',)
+        compute='_compute_googlemaps_link',
+    )
 
     html_frame_googlemaps = fields.Char(
         string='GIS preview with google maps viewer',
@@ -439,7 +441,8 @@ class WuaCropunit(models.Model):
                     record.agriculturalseason_id.end_date).strftime('%Y')
                 name = (record.parcel_id.name + '-' +
                         initial_year[2:] + '/' + end_year[2:] + '-' +
-                        unidecode(record.cultivation_id.name[:3]).upper() + '-' +
+                        unidecode(record.cultivation_id.name[:3]).upper() +
+                        '-' +
                         str(record.order_number).rjust(3, '0'))
             record.name = name
 
@@ -476,7 +479,7 @@ class WuaCropunit(models.Model):
                 sql_for_02_active = \
                     ('SELECT id FROM wua_cropunit WHERE '
                      'initial_date <= \'%s\' AND end_date >= \'%s\''
-                     % (current_date, current_date, ))
+                     % (current_date, current_date))
                 sql_for_03_closed = \
                     ('SELECT id FROM wua_cropunit WHERE '
                      'end_date < \'%s\'' % (current_date, ))
@@ -505,7 +508,7 @@ class WuaCropunit(models.Model):
             sql_statement_current_mp = \
                 ('SELECT id FROM wua_monitoringperiod '
                  'WHERE initial_date <= \'%s\' AND '
-                 'end_date >= \'%s\'' % (current_date, current_date,))
+                 'end_date >= \'%s\'' % (current_date, current_date))
             self.env.cr.execute(sql_statement_current_mp)
             query_results = self.env.cr.dictfetchall()
             if (query_results and
@@ -523,18 +526,19 @@ class WuaCropunit(models.Model):
                 sql_statement_current_mp = \
                     ('SELECT initial_date FROM wua_monitoringperiod '
                      'WHERE initial_date <= \'%s\' AND '
-                     'end_date >= \'%s\'' % (current_date, current_date,))
+                     'end_date >= \'%s\'' % (current_date, current_date))
                 self.env.cr.execute(sql_statement_current_mp)
                 query_results = self.env.cr.dictfetchall()
                 if (query_results and
                    query_results[0].get('initial_date') is not None):
-                    current_mp_initial_date = query_results[0].get('initial_date')
+                    current_mp_initial_date = query_results[0].get(
+                        'initial_date')
                 if current_mp_initial_date:
                     current_mp_initial_date = datetime.datetime.strptime(
                         str(current_mp_initial_date), '%Y-%m-%d')
                     previous_mp_end_date = (
-                            current_mp_initial_date -
-                            datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+                        current_mp_initial_date -
+                        datetime.timedelta(days=1)).strftime('%Y-%m-%d')
                     sql_statement_previous_mp = \
                         ('SELECT id FROM wua_monitoringperiod '
                          'WHERE end_date = \'%s\' AND '
@@ -730,11 +734,11 @@ class WuaCropunit(models.Model):
         for record in self:
             mapped_to_polygon = False
             if geom_ok:
-                self.env.cr.execute("""
-                    SELECT """ + self._link_field + """
+                self.env.cr.execute(
+                    """SELECT """ + self._link_field + """
                     FROM """ + self._gis_table + """
-                    WHERE """ + self._link_field + """='""" + record.name + """'
-                    """)
+                    WHERE """ + self._link_field + """='""" +
+                    record.name + """'""")
                 query_results = self.env.cr.dictfetchall()
                 if (query_results and
                    query_results[0].get(self._link_field) is not None):
@@ -927,7 +931,8 @@ class WuaCropunit(models.Model):
                     SELECT postgis.st_asewkt
                     (st_centroid(""" + self._geom_field + """))
                     FROM """ + self._gis_table + """
-                    WHERE """ + self._link_field + """='""" + record.name + """'""")
+                    WHERE """ + self._link_field + """='""" + record.name +
+                                    """'""")
                 query_results = self.env.cr.dictfetchall()
                 if (query_results and
                    query_results[0].get('st_asewkt') is not None):
@@ -956,7 +961,8 @@ class WuaCropunit(models.Model):
                 pos_bracketright = coordinates.find(')')
                 pos_space = coordinates.find(' ')
                 if (pos_bracketleft != -1 and pos_bracketright != -1 and
-                   pos_space != -1 and pos_bracketleft < pos_space < pos_bracketright):
+                   pos_space != -1 and pos_bracketleft < pos_space <
+                        pos_bracketright):
                     x_in = 0
                     y_in = 0
                     try:
@@ -1024,22 +1030,24 @@ class WuaCropunit(models.Model):
                     x_values = []
                     y_values = []
                     for monitoringperiod in monitoringperiods:
-                        x_values.append(model_transform.transform_date_to_locale(
-                            monitoringperiod)[:5])
+                        x_values.append(
+                            model_transform.transform_date_to_locale(
+                                monitoringperiod)[:5])
                         y_value = 0.0
                         self.env.cr.execute(
                             '(SELECT hn.total_gin FROM wua_hydricneed hn '
                             'INNER JOIN wua_monitoringperiod mp '
                             'ON hn.monitoringperiod_id = mp.id '
                             'WHERE mp.initial_date = %s AND '
-                            'hn.cropunit_id = %s)', (monitoringperiod, cropunit_id))
+                            'hn.cropunit_id = %s)', (
+                                monitoringperiod, cropunit_id))
                         query_results = self.env.cr.dictfetchall()
                         if (query_results and
                                 query_results[0].get('total_gin') is not None):
                             y_value = query_results[0].get('total_gin')
                         y_values.append(y_value)
                     source = ColumnDataSource(data=dict(
-                        x=x_values, y=y_values,))
+                        x=x_values, y=y_values))
                     initial_date = model_transform.transform_date_to_locale(
                         monitoringperiods[0])
                     end_date = model_transform.transform_date_to_locale(
@@ -1052,7 +1060,7 @@ class WuaCropunit(models.Model):
                                sizing_mode='scale_width',
                                height=150, title=title,
                                x_axis_label=_('Control Periods'),
-                               y_axis_label=_('m³'),)
+                               y_axis_label=_('m³'))
                     if len(x_values) > 12:
                         p.xaxis[0].major_label_orientation = 0.785
                     hover = HoverTool(tooltips=[
@@ -1065,7 +1073,8 @@ class WuaCropunit(models.Model):
                             p.tools.remove(tool)
                             break
                     p.toolbar.logo = None
-                    p.vbar(x='x', top='y', source=source, width=0.1, color='navy')
+                    p.vbar(
+                        x='x', top='y', source=source, width=0.1, color='navy')
                     script, div = components(p)
                     if script and div:
                         gin_graph = '%s%s' % (div, script)
@@ -1106,7 +1115,8 @@ class WuaCropunit(models.Model):
                 _('CROP UNIT') + ': ' + record.name + ', ' + \
                 _('NDVI VALUES')
             if record.partner_id:
-                cropunit_title_ndvi = cropunit_title_ndvi + '. ' + _('PARTNER') + \
+                cropunit_title_ndvi = cropunit_title_ndvi + '. ' + \
+                    _('PARTNER') + \
                     ': ' + record.partner_id.display_name + ' [' + \
                     str(record.partner_id.partner_code) + ']'
             record.cropunit_title_ndvi = cropunit_title_ndvi
@@ -1269,23 +1279,19 @@ class WuaCropunit(models.Model):
     def _get_interpolated_daily_values(self, x_values, y_values):
         if not x_values or len(x_values) < 2:
             return x_values, y_values
-
         x_values_interpolated = []
         y_values_interpolated = []
-
         for i in range(len(x_values) - 1):
             x_start = x_values[i]
             y_start = y_values[i]
             x_end = x_values[i + 1]
             y_end = y_values[i + 1]
-
             # Add the start point
             x_values_interpolated.append(x_start)
             y_values_interpolated.append(y_start)
-
             # Calculate days between points
-            days_diff = (x_end.astype('datetime64[D]') - x_start.astype('datetime64[D]')).astype(int)
-
+            days_diff = (x_end.astype('datetime64[D]') - x_start.astype(
+                'datetime64[D]')).astype(int)
             # Interpolate daily values
             if days_diff > 1:
                 for day in range(1, days_diff):
@@ -1294,11 +1300,9 @@ class WuaCropunit(models.Model):
                     y_interpolated = y_start + (y_end - y_start) * fraction
                     x_values_interpolated.append(x_interpolated)
                     y_values_interpolated.append(y_interpolated)
-
         # Add the last point
         x_values_interpolated.append(x_values[-1])
         y_values_interpolated.append(y_values[-1])
-
         return x_values_interpolated, y_values_interpolated
 
     @api.constrains('cultivation_id')
@@ -1314,7 +1318,8 @@ class WuaCropunit(models.Model):
         for record in self:
             if record.variety_id:
                 if ((not record.cultivation_id) or
-                   (record.variety_id.cultivation_id != record.cultivation_id)):
+                   (record.variety_id.cultivation_id !=
+                        record.cultivation_id)):
                     raise exceptions.ValidationError(
                         _('Incorrect variety.'))
 
@@ -1326,8 +1331,9 @@ class WuaCropunit(models.Model):
             initial_date = record.initial_date
             end_date = record.end_date
             if agriculturalseason_id and initial_date and end_date:
-                dates_ok = (agriculturalseason_id.initial_date <= initial_date
-                            <= end_date <= agriculturalseason_id.end_date)
+                dates_ok = (agriculturalseason_id.initial_date <=
+                            initial_date <= end_date <=
+                            agriculturalseason_id.end_date)
                 if not dates_ok:
                     raise exceptions.ValidationError(
                         _('Dates outside the agricultural season.'))
@@ -1370,7 +1376,8 @@ class WuaCropunit(models.Model):
             prev_cultivation_id = 0
             prev_order_number = 0
             update_estimations = False
-            if (('agriculturalseason_id' in vals and vals['agriculturalseason_id']) or
+            if (('agriculturalseason_id' in vals and
+                 vals['agriculturalseason_id']) or
                ('parcel_id' in vals and vals['parcel_id']) or
                ('cultivation_id' in vals and vals['cultivation_id']) or
                ('order_number' in vals and vals['order_number'])):
@@ -1388,7 +1395,8 @@ class WuaCropunit(models.Model):
             updated_cropunits = super(WuaCropunit, self).write(vals)
             if update_gis:
                 agriculturalseason_id = prev_agriculturalseason_id
-                if 'agriculturalseason_id' in vals and vals['agriculturalseason_id']:
+                if 'agriculturalseason_id' in vals and vals[
+                        'agriculturalseason_id']:
                     agriculturalseason_id = vals['agriculturalseason_id']
                 parcel_id = prev_parcel_id
                 if 'parcel_id' in vals and vals['parcel_id']:
@@ -1401,10 +1409,11 @@ class WuaCropunit(models.Model):
                     order_number = vals['order_number']
                 if (agriculturalseason_id and parcel_id and cultivation_id and
                    order_number):
-                    agriculturalseason = self.env['wua.agriculturalseason'].browse(
-                        agriculturalseason_id)
+                    agriculturalseason = self.env['wua.agriculturalseason'].\
+                        browse(agriculturalseason_id)
                     parcel = self.env['wua.parcel'].browse(parcel_id)
-                    cultivation = self.env['wua.cultivation'].browse(cultivation_id)
+                    cultivation = self.env['wua.cultivation'].browse(
+                        cultivation_id)
                     if (agriculturalseason and parcel and cultivation and
                        order_number):
                         initial_year = fields.Date.from_string(
@@ -1412,8 +1421,9 @@ class WuaCropunit(models.Model):
                         end_year = fields.Date.from_string(
                             agriculturalseason.end_date).strftime('%Y')
                         new_code = (parcel.name + '-' +
-                                    initial_year[2:] + '/' + end_year[2:] + '-' +
-                                    unidecode(cultivation.name[:3]).upper() + '-' +
+                                    initial_year[2:] + '/' + end_year[2:] +
+                                    '-' + unidecode(
+                                        cultivation.name[:3]).upper() + '-' +
                                     str(order_number).rjust(3, '0'))
                         self.update_wua_gis_cropunit(prev_code, new_code)
             if update_estimations:
@@ -1425,7 +1435,7 @@ class WuaCropunit(models.Model):
     def update_wua_gis_cropunit(self, prev_code, new_code):
         sql_statement = \
             ('UPDATE wua_gis_cropunit SET name = \'%s\' '
-             'WHERE name = \'%s\'' % (new_code, prev_code, ))
+             'WHERE name = \'%s\'' % (new_code, prev_code))
         try:
             self.env.cr.savepoint()
             self.env.cr.execute(sql_statement)
@@ -1561,13 +1571,13 @@ class WuaCropunit(models.Model):
                             min_coords[0],  # minx
                             min_coords[1],  # miny
                             max_coords[0],  # maxx
-                            max_coords[1]   # maxy
+                            max_coords[1],   # maxy
                         )
         except Exception as e:
             import logging
             _logger = logging.getLogger(__name__)
             _logger.error('Error getting BBOX for cropunit %s: %s',
-                         self.name, str(e))
+                          self.name, str(e))
 
         return None
 
@@ -1577,8 +1587,8 @@ class WuaCropunit(models.Model):
         bbox_final = [0, 0, 0, 0]
         image_width_final = 0
         image_height_final = 0
-        if (bbox_initial and len(bbox_initial) == 4
-           and image_width_initial >= 0 and image_height_initial >= 0):
+        if (bbox_initial and len(bbox_initial) == 4 and
+                image_width_initial >= 0 and image_height_initial >= 0):
             minx = bbox_initial[0]
             miny = bbox_initial[1]
             maxx = bbox_initial[2]
@@ -1651,10 +1661,12 @@ class WuaCropunit(models.Model):
                     cql_filter = ''
                     if with_cql_filter:
                         cql_filter = '&FILTER=' + '()' * number_of_layers + \
-                                     '(<Filter><PropertyIsLike wildCard="*" ' + \
+                                     '(<Filter><PropertyIsLike ' + \
+                                     'wildCard="*" ' + \
                                      'singleChar="." escape="!">' + \
                                      '<PropertyName>' + self._link_field + \
-                                     '</PropertyName><Literal>' + record.name + \
+                                     '</PropertyName><Literal>' + \
+                                     record.name + \
                                      '</Literal></PropertyIsLike></Filter>)'
                     url = wms + '?service=wms' + \
                         '&request=getmap&crs=epsg:' + str(srid) + \
@@ -1756,7 +1768,7 @@ class WuaCropunit(models.Model):
             'target': 'new',
             'context': {
                 'session_key': session_key,
-            }
+            },
         }
 
     @api.model
@@ -1809,7 +1821,7 @@ class WuaCropunit(models.Model):
                     postgis.ST_GeomFromEWKT(%s)
                 )
                 """,
-                (wkt_4326, epsg_code, intersection_geom)
+                (wkt_4326, epsg_code, intersection_geom),
             )
             intersects = self.env.cr.fetchone()[0]
             if not intersects:
@@ -1828,7 +1840,7 @@ class WuaCropunit(models.Model):
                 )
             )
             """,
-            (wkt_4326, epsg_code)
+            (wkt_4326, epsg_code),
         )
         ewkt_25830 = self.env.cr.fetchone()[0]
         if not ewkt_25830:
@@ -1858,7 +1870,7 @@ class WuaCropunit(models.Model):
                 INSERT INTO wua_gis_cropunit (name, geom)
                 VALUES (%s, postgis.ST_GeomFromEWKT(%s))
                 """,
-                (polygon_code, ewkt_25830)
+                (polygon_code, ewkt_25830),
             )
             self.env.cr.commit()
         except Exception:
@@ -1902,259 +1914,532 @@ class WuaCropunit(models.Model):
     @api.multi
     def get_ndvi_values_for_cropunits(self, cropunit_ids, show_dialog=True):
         _logger = logging.getLogger(__name__)
-        _logger.info('=== START get_ndvi_values_for_cropunits ===')
-        _logger.info('cropunit_ids: %s' % cropunit_ids)
-        _logger.info('show_dialog: %s' % show_dialog)
-
-        if (not self.env.user.has_group('base_wua.group_wua_manager')):
-            _logger.error('User does not have permission')
+        if not self.env.user.has_group('base_wua.group_wua_manager'):
             raise exceptions.UserError(_(
                 'You do not have permission to execute this action.'))
-
-        _logger.info('Getting configuration values...')
         model_ir_values = self.env['ir.values']
         enable_remotesensing = model_ir_values.get_default(
-            'wua.vegetationindex.configuration', 'enable_remotesensing')
-        _logger.info('enable_remotesensing: %s' % enable_remotesensing)
-
-        if (not enable_remotesensing):
-            _logger.error('Remote sensing is not enabled')
+            'wua.vegetationindex.configuration',
+            'enable_remotesensing')
+        if not enable_remotesensing:
             raise exceptions.UserError(_(
                 'The remote sensing is not enabled.'))
-
-        layer_ndvi = model_ir_values.get_default(
-            'wua.vegetationindex.configuration', 'layer_ndvi')
-        band_ndvi = model_ir_values.get_default(
-            'wua.vegetationindex.configuration', 'band_ndvi')
         max_cloud_cover_ndvi = model_ir_values.get_default(
-            'wua.vegetationindex.configuration', 'max_cloud_cover_ndvi')
+            'wua.vegetationindex.configuration',
+            'max_cloud_cover_ndvi')
         resolution_ndvi = model_ir_values.get_default(
-            'wua.vegetationindex.configuration', 'resolution_ndvi')
-
-        _logger.info('layer_ndvi: %s' % layer_ndvi)
-        _logger.info('band_ndvi: %s' % band_ndvi)
-        _logger.info('max_cloud_cover_ndvi: %s' % max_cloud_cover_ndvi)
-        _logger.info('resolution_ndvi: %s' % resolution_ndvi)
-
-        if layer_ndvi and band_ndvi:
-            _logger.info('Browsing cropunits...')
-            cropunits = self.env['wua.cropunit'].browse(cropunit_ids)
-            _logger.info('Found %s cropunits' % len(cropunits))
-
-            if cropunits:
-                _logger.info('Calling _get_cropunit_index_values...')
-                number_of_records_ok, number_of_errors = \
-                    cropunits._get_cropunit_index_values(
-                        layer_ndvi, band_ndvi,
-                        max_cloud_cover_ndvi, resolution_ndvi,
-                        'ndvi')
-
-                _logger.info('Results: records_ok=%s, errors=%s' % (number_of_records_ok, number_of_errors))
-                _logger.info('Results: records_ok=%s, errors=%s' % (number_of_records_ok, number_of_errors))
-
-                if show_dialog:
-                    _logger.info('Preparing dialog...')
-                    buttons = [{'type': 'ir.actions.act_window_close',
-                                'name': _('Close')}]
-                    if len(cropunit_ids) == 1:
-                        _logger.info('Single cropunit - adding form view button')
-                        buttons.append({
-                            'type': 'ir.actions.act_window',
-                            'name': _('NDVI values'),
-                            'res_model': 'wua.cropunit',
-                            'view_mode': 'form',
-                            'view_type': 'form',
-                            'res_id': cropunit_ids[0],
-                            'classes': 'btn-primary'})
-                    else:
-                        _logger.info('Multiple cropunits - adding tree view button')
-                        id_form_view = self.env.ref(
-                            'base_wua_hydric_estimation.'
-                            'wua_cropunit_vegetationindex_ndvi_view_form').id
-                        id_tree_view = self.env.ref(
-                            'base_wua_hydric_estimation.'
-                            'wua_cropunit_vegetationindex_ndvi_view_tree').id
-                        buttons.append({
-                            'type': 'ir.actions.act_window',
-                            'name': _('NDVI values'),
-                            'res_model': 'wua.cropunit.vegetationindex.ndvi',
-                            'view_mode': 'tree',
-                            'view_type': 'form',
-                            'views': [[id_tree_view, 'list'],
-                                      [id_form_view, 'form']],
-                            'context': {'search_default_active_agriculturalseason':
-                                        True},
-                            'classes': 'btn-primary'})
-
-                    message_01 = _('OPERATION COMPLETED')
-                    message_02 = _('Number of imported values')
-                    message_03 = _('Number of errors')
-                    message = '<center>' + message_01 + '</center><br>' + \
-                        message_02 + ': ' + '<b>' + str(number_of_records_ok) + \
-                        '</b><br>' + \
-                        message_03 + ': ' + '<b>' + str(number_of_errors) + '<b>'
-
-                    _logger.info('Creating dialog window...')
-                    act_window = {
-                        'type': 'ir.actions.act_window.message',
-                        'title': _('Import last NDVI values for Crop Units'),
-                        'message': message,
-                        'is_html_message': True,
-                        'close_button_title': False,
-                        'buttons': buttons
-                        }
-                    _logger.info('=== END get_ndvi_values_for_cropunits (with dialog) ===')
-                    return act_window
-        else:
-            _logger.warning('layer_ndvi or band_ndvi not configured!')
-        _logger.info('=== END get_ndvi_values_for_cropunits (no dialog) ===')
+            'wua.vegetationindex.configuration',
+            'resolution_ndvi')
+        cropunits = self.env['wua.cropunit'].browse(cropunit_ids)
+        if cropunits:
+            number_of_records_ok, number_of_errors = \
+                cropunits._get_cropunit_index_values(
+                    max_cloud_cover=max_cloud_cover_ndvi,
+                    resolution=resolution_ndvi,
+                    index_name='ndvi')
+            _logger.info(
+                'get_ndvi_values_for_cropunits: '
+                'records_ok=%s, errors=%s',
+                number_of_records_ok, number_of_errors)
+            if show_dialog:
+                buttons = [{
+                    'type': 'ir.actions.act_window_close',
+                    'name': _('Close'),
+                }]
+                if len(cropunit_ids) == 1:
+                    buttons.append({
+                        'type': 'ir.actions.act_window',
+                        'name': _('NDVI values'),
+                        'res_model': 'wua.cropunit',
+                        'view_mode': 'form',
+                        'view_type': 'form',
+                        'res_id': cropunit_ids[0],
+                        'classes': 'btn-primary',
+                    })
+                else:
+                    id_form_view = self.env.ref(
+                        'base_wua_hydric_estimation.'
+                        'wua_cropunit_vegetationindex'
+                        '_ndvi_view_form').id
+                    id_tree_view = self.env.ref(
+                        'base_wua_hydric_estimation.'
+                        'wua_cropunit_vegetationindex'
+                        '_ndvi_view_tree').id
+                    buttons.append({
+                        'type': 'ir.actions.act_window',
+                        'name': _('NDVI values'),
+                        'res_model':
+                            'wua.cropunit.vegetationindex.ndvi',
+                        'view_mode': 'tree',
+                        'view_type': 'form',
+                        'views': [[id_tree_view, 'list'],
+                                  [id_form_view, 'form']],
+                        'context': {
+                            'search_default_active_'
+                            'agriculturalseason': True,
+                        },
+                        'classes': 'btn-primary',
+                    })
+                msg_01 = _('OPERATION COMPLETED')
+                msg_02 = _('Number of imported values')
+                msg_03 = _('Number of errors')
+                message = (
+                    '<center>' + msg_01 +
+                    '</center><br>' + msg_02 +
+                    ': <b>' + str(number_of_records_ok) +
+                    '</b><br>' + msg_03 +
+                    ': <b>' + str(number_of_errors) +
+                    '</b>'
+                )
+                return {
+                    'type':
+                        'ir.actions.act_window.message',
+                    'title': _('Import last NDVI values '
+                               'for Crop Units'),
+                    'message': message,
+                    'is_html_message': True,
+                    'close_button_title': False,
+                    'buttons': buttons,
+                }
 
     @api.multi
-    def _get_cropunit_index_values(self, layer, band, max_cloud_cover=10,
-                                    resolution=10, index_name=''):
+    def _get_cropunit_index_values(
+            self, max_cloud_cover=10, resolution=10,
+            index_name=''):
+        """Get vegetation index values using the Statistical API.
+
+        This method uses the Sentinel Hub Statistical API (v1)
+        via OAuth2 authentication, replacing the deprecated FIS
+        endpoint. It delegates authentication, evalscript
+        building and geometry conversion to the helpers already
+        available on the ``wua.parcel`` model.
+        """
         _logger = logging.getLogger(__name__)
-        _logger.info('=== START _get_cropunit_index_values ===')
-        _logger.info('layer: %s, band: %s, max_cloud_cover: %s, resolution: %s, index_name: %s' %
-                    (layer, band, max_cloud_cover, resolution, index_name))
         number_of_records_ok = 0
         number_of_errors = 0
         model_ir_values = self.env['ir.values']
         enable_remotesensing = model_ir_values.get_default(
-            'wua.vegetationindex.configuration', 'enable_remotesensing')
-        _logger.info('enable_remotesensing: %s' % enable_remotesensing)
-        if enable_remotesensing:
-            prefix_messages = _('Import data from Sentinel-Hub for Crop Units')
-            _logger = logging.getLogger(self.__class__.__name__)
-            _logger.info(prefix_messages + ': ' +
-                         _('start of operation. Layer:') + ' ' + layer + '.')
+            'wua.vegetationindex.configuration',
+            'enable_remotesensing')
+        if not enable_remotesensing:
+            return number_of_records_ok, number_of_errors
+        prefix_msg = _(
+            'Import data from Sentinel-Hub '
+            'Statistical API for Crop Units')
+        _logger.info(
+            '%s: start. index=%s', prefix_msg, index_name)
+        # --- Authentication (OAuth2) ---
+        model_parcel = self.env['wua.parcel']
+        access_token = model_parcel._get_oauth_token()
+        if not access_token:
+            _logger.error(
+                '%s: failed to obtain OAuth2 token.',
+                prefix_msg)
+            return 0, 1
+        _logger.info(
+            '%s: OAuth2 token obtained.', prefix_msg)
+        # --- Configuration ---
+        url_api_statistical = model_ir_values.get_default(
+            'wua.vegetationindex.configuration',
+            'url_api_statistical')
+        if not url_api_statistical:
+            url_api_statistical = (
+                'https://services.sentinel-hub.com'
+                '/api/v1/statistics')
+        default_initial_date = model_ir_values.get_default(
+            'wua.vegetationindex.configuration',
+            'initial_date')
+        # --- Evalscript & data collection ---
+        evalscript = model_parcel._build_evalscript(
+            index_name)
+        data_collection = model_parcel._get_data_collection(
+            index_name)
+        end_date = datetime.datetime.today().strftime(
+            '%Y-%m-%d')
+        headers = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer ' + access_token,
+        }
+        # Codes that indicate the geometry is too complex
+        codes_geom_complicated = [431, 414, 400, 500]
 
-            remotesensing_key = model_ir_values.get_default(
-                'wua.vegetationindex.configuration', 'remotesensing_key')
-            url_api_fis = model_ir_values.get_default(
-                'wua.vegetationindex.configuration', 'url_api_fis')
-            default_initial_date = model_ir_values.get_default(
-                'wua.vegetationindex.configuration', 'initial_date')
-            _logger.info('remotesensing_key: %s' % (remotesensing_key[:10] + '...' if remotesensing_key else 'None'))
-            _logger.info('url_api_fis: %s' % url_api_fis)
-            _logger.info('default_initial_date: %s' % default_initial_date)
-            if url_api_fis[-1] != '/':
-                url_api_fis = url_api_fis + '/'
-            url_api_fis = url_api_fis + remotesensing_key
-            end_date = datetime.datetime.today().strftime('%Y-%m-%d')
-            model_parcel = self.env['wua.parcel']
-            _logger.info('Processing %s cropunits...' % len(self))
-            for idx, cropunit in enumerate(self):
-                _logger.info('--- Processing cropunit %s/%s: %s (ID: %s)' %
-                           (idx + 1, len(self), cropunit.name, cropunit.id))
-                # Get last measurement date for this cropunit
-                initial_date = self._get_date_last_cropunit_measurement(
+        _logger.info(
+            '%s: config loaded. url=%s, '
+            'collection=%s, cropunits=%s',
+            prefix_msg, url_api_statistical,
+            data_collection, len(self))
+
+        for cropunit in self:
+            # Determine start date
+            initial_date = \
+                self._get_date_last_cropunit_measurement(
                     cropunit, index_name)
-                _logger.info('Last measurement date: %s' % initial_date)
-                if not initial_date:
-                    initial_date = default_initial_date
-                    _logger.info('Using default initial date: %s' % initial_date)
+            if not initial_date:
+                initial_date = default_initial_date
+            else:
+                dt = datetime.datetime.strptime(
+                    initial_date, '%Y-%m-%d',
+                ) + datetime.timedelta(days=1)
+                initial_date = dt.strftime('%Y-%m-%d')
+            if initial_date > end_date or not cropunit.geom_ewkt:
+                if not cropunit.geom_ewkt:
+                    _logger.info(
+                        '%s: skipping %s (no geometry).',
+                        prefix_msg, cropunit.name)
                 else:
-                    initial_date_plus_one_day = datetime.datetime.strptime(
-                        initial_date, '%Y-%m-%d') + datetime.timedelta(days=1)
-                    initial_date = datetime.datetime.strftime(
-                        initial_date_plus_one_day, '%Y-%m-%d')
-                    _logger.info('Using date + 1 day: %s' % initial_date)
-                _logger.info('Date range: %s to %s' % (initial_date, end_date))
-                _logger.info('Has geometry: %s' % bool(cropunit.geom_ewkt))
+                    _logger.info(
+                        '%s: skipping %s '
+                        '(no new dates to query).',
+                        prefix_msg, cropunit.name)
+                continue
+            # Convert EWKT geometry -> WGS84 GeoJSON
+            # and get centroid latitude to convert
+            # resolution from metres to degrees.
+            geometry, centroid_lat = \
+                self._parse_geometry_for_stats_api(
+                    cropunit.geom_ewkt)
+            if not geometry:
+                number_of_errors += 1
+                _logger.warning(
+                    '%s: could not parse geometry for '
+                    'cropunit %s.',
+                    prefix_msg, cropunit.name)
+                continue
+            # Convert resolution (metres) to degrees
+            resx_deg, resy_deg = \
+                self._metres_to_degrees(
+                    resolution, centroid_lat)
+            _logger.info(
+                '%s: querying %s (%s to %s, '
+                'lat=%.4f, resx=%.7f, resy=%.7f).',
+                prefix_msg, cropunit.name,
+                initial_date, end_date,
+                centroid_lat, resx_deg, resy_deg)
+            # Build Statistical API request body.
+            # Geometry is WGS84; resx/resy are in
+            # degrees, converted from metres.
+            request_body = {
+                'input': {
+                    'bounds': {
+                        'geometry': geometry,
+                    },
+                    'data': [{
+                        'type': data_collection,
+                        'dataFilter': {
+                            'maxCloudCoverage':
+                                max_cloud_cover,
+                            'mosaickingOrder': 'leastCC',
+                        },
+                    }],
+                },
+                'aggregation': {
+                    'timeRange': {
+                        'from':
+                            initial_date + 'T00:00:00Z',
+                        'to':
+                            end_date + 'T23:59:59Z',
+                    },
+                    'aggregationInterval': {
+                        'of': 'P1D',
+                    },
+                    'evalscript': evalscript,
+                    'resx': resx_deg,
+                    'resy': resy_deg,
+                },
+            }
+            # POST to Statistical API (with geometry
+            # fallback on complex geometries)
+            request_ok, resp = self._statistical_api_post(
+                url_api_statistical, headers,
+                request_body, cropunit,
+                codes_geom_complicated, prefix_msg)
+            if not request_ok or not resp:
+                number_of_errors += 1
+                _logger.warning(
+                    '%s: API call failed for %s.',
+                    prefix_msg, cropunit.name)
+                continue
+            # Parse the response
+            ok, errors = self._parse_statistical_response(
+                resp, cropunit, index_name, prefix_msg)
+            number_of_records_ok += ok
+            number_of_errors += errors
+            _logger.info(
+                '%s: %s -> %s values imported, '
+                '%s errors.',
+                prefix_msg, cropunit.name, ok, errors)
+        _logger.info(
+            '%s: end. records_ok=%s, errors=%s',
+            prefix_msg, number_of_records_ok,
+            number_of_errors)
+        return number_of_records_ok, number_of_errors
 
-                if initial_date <= end_date and cropunit.geom_ewkt:
-                    _logger.info('Extracting coordinates from geometry...')
-                    srid, coordinates = model_parcel.extract_coordinates(
-                        cropunit.geom_ewkt)
-                    _logger.info('SRID: %s, Coordinates length: %s' % (srid, len(coordinates)))
-                    url = url_api_fis + '?' + \
-                        'LAYER=' + layer + \
-                        '&CRS=EPSG:' + srid + \
-                        '&TIME=' + initial_date + '/' + end_date + \
-                        '&GEOMETRY=' + coordinates + \
-                        '&RESOLUTION=' + str(resolution) + \
-                        '&MAXCC=' + str(max_cloud_cover)
-                    _logger.info('Requesting Sentinel Hub API...')
-                    _logger.info('URL: %s' % url[:200] + '...')
-                    request_ok = True
-                    try:
-                        resp = requests.get(url)
-                        _logger.info('Response status: %s' % resp.status_code)
-                    except Exception as e:
-                        _logger.error('Request failed: %s' % str(e))
-                        request_ok = False
-                    if (request_ok and resp.status_code == 200 and
-                       resp.text.find('Exception') == -1):
-                        _logger.info('Response OK. Parsing JSON...')
-                        _logger.info('Response text length: %s' % len(resp.text))
-                        if resp.text != '{}':
-                            request_ok = True
-                            values = None
-                            try:
-                                values = json.loads(resp.text)[band]
-                                _logger.info('Found %s measurements' % (len(values) if values else 0))
-                            except Exception as e:
-                                _logger.error('JSON parsing error: %s' % str(e))
-                                request_ok = False
-                            if request_ok:
-                                for measurement in (values or []):
-                                    record_ok = True
-                                    data_date = measurement['date']
-                                    min_value = \
-                                        str(measurement['basicStats']['min'])
-                                    mean_value = \
-                                        str(measurement['basicStats']['mean'])
-                                    max_value = \
-                                        str(measurement['basicStats']['max'])
-                                    stdev_value = \
-                                        str(measurement['basicStats']['stDev'])
-                                    _logger.info('Measurement date %s: min=%s, mean=%s, max=%s' %
-                                               (data_date, min_value, mean_value, max_value))
-                                    if (min_value.lower() == 'nan' or
-                                       mean_value.lower() == 'nan' or
-                                       max_value.lower() == 'nan' or
-                                       stdev_value.lower() == 'nan'):
-                                        _logger.warning('Skipping NaN values for date %s' % data_date)
-                                        continue
-                                    try:
-                                        min_value = float(min_value)
-                                        mean_value = float(mean_value)
-                                        max_value = float(max_value)
-                                        stdev_value = float(stdev_value)
-                                        _logger.info('Saving values to database...')
-                                        self._save_cropunit_values(
-                                            cropunit, data_date, min_value,
-                                            mean_value, max_value, stdev_value,
-                                            index_name)
-                                        number_of_records_ok += 1
-                                        _logger.info('Successfully saved measurement for date %s' % data_date)
-                                    except Exception as exception_error:
-                                        _logger.warning(
-                                            prefix_messages + ': ' +
-                                            _('error when saving values.') +
-                                            ' ' + str(exception_error))
-                                        number_of_errors += 1
-                                        record_ok = False
-                        else:
-                            _logger.warning('Empty response from Sentinel Hub')
-                    else:
-                        if not request_ok:
-                            _logger.warning('Request failed')
-                        elif resp.status_code != 200:
-                            _logger.warning('Bad status code: %s' % resp.status_code)
-                        else:
-                            _logger.warning('Exception in response: %s' % resp.text[:500])
-                        number_of_errors += 1
-                else:
-                    if initial_date > end_date:
-                        _logger.info('Skipping - initial_date > end_date')
-                    else:
-                        _logger.warning('Skipping - no geometry for cropunit')
-            _logger.info(prefix_messages + ': ' + _('end of operation.'))
-            _logger.info('=== SUMMARY: records_ok=%s, errors=%s ===' % (number_of_records_ok, number_of_errors))
-        else:
-            _logger.warning('Remote sensing is not enabled!')
-        _logger.info('=== END _get_cropunit_index_values ===')
+    def _statistical_api_post(
+            self, url, headers, request_body, cropunit,
+            codes_geom_complicated, prefix_msg):
+        """POST to the Statistical API with geometry fallback.
+
+        If the original geometry is too complex (HTTP 400, 414,
+        431 or 500), retries with a simplified version of the
+        coordinates (integer-rounded) and, if that also fails,
+        with the oriented bounding rectangle.
+
+        Returns ``(request_ok, response)``.
+        """
+        _logger = logging.getLogger(__name__)
+        request_ok = True
+        resp = None
+        try:
+            resp = requests.post(
+                url, headers=headers,
+                json=request_body, timeout=120)
+        except Exception as e:
+            _logger.warning(
+                '%s: request exception for cropunit %s: '
+                '%s', prefix_msg, cropunit.name, e)
+            return False, None
+
+        _logger.info(
+            '%s: %s -> initial POST status=%s.',
+            prefix_msg, cropunit.name,
+            resp.status_code)
+
+        # Fallback 1: simplified geometry (integer coords)
+        if (resp.status_code in
+                codes_geom_complicated and
+                cropunit.geom_ewkt):
+            _logger.info(
+                '%s: %s -> retrying with simplified '
+                'geometry.',
+                prefix_msg, cropunit.name)
+            simplified = self._get_simplified_geom_ewkt(
+                cropunit.geom_ewkt)
+            geom, _ = \
+                self._parse_geometry_for_stats_api(
+                    simplified)
+            if geom:
+                request_body['input']['bounds'][
+                    'geometry'] = geom
+                try:
+                    resp = requests.post(
+                        url, headers=headers,
+                        json=request_body, timeout=120)
+                    _logger.info(
+                        '%s: %s -> simplified POST '
+                        'status=%s.',
+                        prefix_msg, cropunit.name,
+                        resp.status_code)
+                except Exception:
+                    request_ok = False
+
+        # Fallback 2: oriented envelope (bounding rectangle)
+        if (request_ok and
+                resp is not None and
+                resp.status_code in
+                codes_geom_complicated and
+                cropunit.geom_ewkt):
+            _logger.info(
+                '%s: %s -> retrying with oriented '
+                'envelope.',
+                prefix_msg, cropunit.name)
+            envelope = self._get_oriented_envelope_ewkt(
+                cropunit.geom_ewkt)
+            geom, _ = \
+                self._parse_geometry_for_stats_api(
+                    envelope)
+            if geom:
+                request_body['input']['bounds'][
+                    'geometry'] = geom
+                try:
+                    resp = requests.post(
+                        url, headers=headers,
+                        json=request_body, timeout=120)
+                    _logger.info(
+                        '%s: %s -> envelope POST '
+                        'status=%s.',
+                        prefix_msg, cropunit.name,
+                        resp.status_code)
+                except Exception:
+                    request_ok = False
+        if not request_ok or resp is None:
+            return False, None
+        if resp.status_code != 200:
+            _logger.warning(
+                '%s: API error for cropunit %s. '
+                'Status: %s. Response: %s',
+                prefix_msg, cropunit.name,
+                resp.status_code, resp.text[:500])
+            return False, None
+        return True, resp
+
+    @staticmethod
+    def _get_simplified_geom_ewkt(geom_ewkt):
+        """Round all coordinate decimals to integers."""
+        if not geom_ewkt:
+            return ''
+        return re.sub(
+            r'\d+\.\d{1,}',
+            lambda m: str(int(round(float(m.group(0))))),
+            geom_ewkt,
+        )
+
+    def _get_oriented_envelope_ewkt(self, geom_ewkt):
+        """Get oriented bounding rectangle via PostGIS."""
+        if not geom_ewkt:
+            return ''
+        try:
+            self.env.cr.execute("""
+                SELECT postgis.st_asewkt(
+                    postgis.st_orientedenvelope(
+                        postgis.st_geomfromewkt(%s)
+                    )
+                )
+            """, (geom_ewkt,))
+            result = self.env.cr.fetchone()
+            if result and result[0]:
+                return result[0]
+        except Exception:
+            pass
+        return ''
+
+    def _parse_geometry_for_stats_api(
+            self, geom_ewkt):
+        """Convert EWKT to WGS84 GeoJSON + centroid lat.
+
+        Transforms the geometry to WGS84 (EPSG:4326)
+        and returns the centroid latitude so the caller
+        can convert ``resx``/``resy`` from metres to
+        degrees.  Uses 6 decimal places (~0.1 m).
+
+        Returns ``(geojson_dict, centroid_lat)`` or
+        ``(None, None)``.
+        """
+        if not geom_ewkt:
+            return None, None
+        try:
+            self.env.cr.execute("""
+                SELECT
+                    postgis.ST_AsGeoJSON(
+                        postgis.ST_Transform(
+                            postgis.ST_GeomFromEWKT(
+                                %s),
+                            4326
+                        ), 6
+                    ),
+                    postgis.ST_Y(
+                        postgis.ST_Centroid(
+                            postgis.ST_Transform(
+                                postgis.ST_GeomFromEWKT(
+                                    %s),
+                                4326
+                            )
+                        )
+                    )
+            """, (geom_ewkt, geom_ewkt))
+            result = self.env.cr.fetchone()
+            if result and result[0]:
+                import json as _json
+                geometry = _json.loads(result[0])
+                centroid_lat = (
+                    float(result[1])
+                    if result[1] else 0.0)
+                return geometry, centroid_lat
+        except Exception:
+            pass
+        return None, None
+
+    @staticmethod
+    def _metres_to_degrees(resolution_m, latitude):
+        """Convert a resolution in metres to degrees.
+
+        At a given latitude:
+        - 1 degree of longitude ≈ 111 320 × cos(lat) m
+        - 1 degree of latitude  ≈ 110 574 m
+
+        Returns ``(resx_deg, resy_deg)``.
+        """
+        cos_lat = math.cos(math.radians(latitude))
+        if cos_lat < 1e-10:
+            cos_lat = 1e-10
+        resx = resolution_m / (111320.0 * cos_lat)
+        resy = resolution_m / 110574.0
+        return resx, resy
+
+    def _parse_statistical_response(
+            self, resp, cropunit, index_name, prefix_msg):
+        """Parse the Sentinel Hub Statistical API response.
+
+        Returns ``(number_of_records_ok, number_of_errors)``.
+        """
+        _logger = logging.getLogger(__name__)
+        number_of_records_ok = 0
+        number_of_errors = 0
+        try:
+            response_data = resp.json()
+            if response_data.get('status') != 'OK':
+                _logger.warning(
+                    '%s: unexpected status for cropunit '
+                    '%s: %s', prefix_msg, cropunit.name,
+                    response_data.get('status'))
+                return 0, 1
+            for interval_data in response_data.get(
+                    'data', []):
+                interval = interval_data.get(
+                    'interval', {})
+                data_date = interval.get(
+                    'from', '')[:10]
+                outputs = interval_data.get(
+                    'outputs', {})
+                data_output = outputs.get('data', {})
+                bands = data_output.get('bands', {})
+                band_data = None
+                for band_key in bands:
+                    band_data = bands[band_key]
+                    break
+                if not band_data:
+                    continue
+                stats = band_data.get('stats', {})
+                min_val = stats.get('min')
+                mean_val = stats.get('mean')
+                max_val = stats.get('max')
+                stdev_val = stats.get('stDev')
+                if (min_val is None or
+                        mean_val is None or
+                        max_val is None or
+                        stdev_val is None):
+                    continue
+                try:
+                    min_val = float(min_val)
+                    mean_val = float(mean_val)
+                    max_val = float(max_val)
+                    stdev_val = float(stdev_val)
+                except (ValueError, TypeError):
+                    continue
+                # Skip NaN values
+                if any(str(v).lower() == 'nan' for v in (
+                        min_val, mean_val,
+                        max_val, stdev_val)):
+                    continue
+                try:
+                    self._save_cropunit_values(
+                        cropunit, data_date,
+                        min_val, mean_val,
+                        max_val, stdev_val,
+                        index_name)
+                    number_of_records_ok += 1
+                except Exception as e:
+                    _logger.warning(
+                        '%s: error saving values for '
+                        'cropunit %s: %s',
+                        prefix_msg, cropunit.name, e)
+                    number_of_errors += 1
+        except Exception as e:
+            _logger.warning(
+                '%s: error parsing response for '
+                'cropunit %s: %s',
+                prefix_msg, cropunit.name, e)
+            number_of_errors += 1
         return number_of_records_ok, number_of_errors
 
     def _get_date_last_cropunit_measurement(self, cropunit, index_name):
@@ -2171,18 +2456,19 @@ class WuaCropunit(models.Model):
         return date_last_measurement
 
     def _save_cropunit_values(self, cropunit, data_date, min_value,
-                               mean_value, max_value, stdev_value,
-                               index_name):
+                              mean_value, max_value, stdev_value,
+                              index_name):
         if index_name == 'ndvi':
             model_ndvi = self.env['wua.cropunit.vegetationindex.ndvi']
             # Check if already exists
             existing = model_ndvi.search([
                 ('cropunit_id', '=', cropunit.id),
-                ('data_date', '=', data_date)
+                ('data_date', '=', data_date),
             ])
             if not existing:
                 # Get parcel from cropunit's parcel_id
-                parcel_id = cropunit.parcel_id.id if cropunit.parcel_id else False
+                parcel_id = cropunit.parcel_id.id if cropunit.parcel_id else \
+                    False
                 model_ndvi.create({
                     'cropunit_id': cropunit.id,
                     'parcel_id': parcel_id,
@@ -2217,11 +2503,11 @@ class WuaCropunit(models.Model):
     def get_all_cropunit_ndvi_values(self):
         cropunit_ids = []
         cropunits = self.env['wua.cropunit'].search([
-            ('agriculturalseason_id.active_agriculturalseason', '=', True)
+            ('agriculturalseason_id.active_agriculturalseason', '=', True),
         ])
         for cropunit in (cropunits or []):
             cropunit_ids.append(cropunit.id)
         for cropunit_id in cropunit_ids:
-            self.get_ndvi_values_for_cropunits([cropunit_id], show_dialog=False)
+            self.get_ndvi_values_for_cropunits(
+                [cropunit_id], show_dialog=False)
             self.env.cr.commit()
-

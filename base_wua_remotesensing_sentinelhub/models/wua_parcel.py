@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
+import math
 import requests
 import logging
 import json
@@ -106,10 +107,10 @@ function evaluatePixel(samples) {
     // or very wet soils incorrectly classified as water
     var validMask = 1
     if (samples.SCL == 0 || samples.SCL == 1 || samples.SCL == 3 ||
-        samples.SCL == 8 || samples.SCL == 9 || samples.SCL == 10 || samples.SCL == 11) {
+        samples.SCL == 8 || samples.SCL == 9 || samples.SCL == 10 ||
+        samples.SCL == 11) {
         validMask = 0
     }
-
     // Avoid division by zero when both bands are 0
     if (samples.B08 + samples.B04 == 0) {
         validMask = 0
@@ -133,7 +134,8 @@ function evaluatePixel(samples) {
     def _parse_geometry_to_geojson(self, geom_ewkt):
         """
         Convert EWKT geometry to GeoJSON format for Statistical API.
-        Always transforms to WGS84 (EPSG:4326) as required by Statistical API.
+        Always transforms to WGS84 (EPSG:4326) as required by
+        Statistical API. Uses 6 decimal places (~0.1 m).
         """
         if not geom_ewkt:
             return None
@@ -143,7 +145,7 @@ function evaluatePixel(samples) {
                 postgis.ST_Transform(
                     postgis.ST_GeomFromEWKT(%s),
                     4326
-                )
+                ), 6
             )
         """, (geom_ewkt,))
         result = self.env.cr.fetchone()
@@ -151,6 +153,45 @@ function evaluatePixel(samples) {
             geometry = json.loads(result[0])
             return geometry
         return None
+
+    def _get_geometry_centroid_lat(self, geom_ewkt):
+        """Return the WGS84 centroid latitude of an EWKT geometry."""
+        if not geom_ewkt:
+            return 0.0
+        try:
+            self.env.cr.execute("""
+                SELECT postgis.ST_Y(
+                    postgis.ST_Centroid(
+                        postgis.ST_Transform(
+                            postgis.ST_GeomFromEWKT(%s),
+                            4326
+                        )
+                    )
+                )
+            """, (geom_ewkt,))
+            result = self.env.cr.fetchone()
+            if result and result[0]:
+                return float(result[0])
+        except Exception:
+            pass
+        return 0.0
+
+    @staticmethod
+    def _metres_to_degrees(resolution_m, latitude):
+        """Convert a resolution in metres to degrees.
+
+        At a given latitude:
+        - 1 degree of longitude = 111 320 * cos(lat) m
+        - 1 degree of latitude  = 110 574 m
+
+        Returns (resx_deg, resy_deg).
+        """
+        cos_lat = math.cos(math.radians(latitude))
+        if cos_lat < 1e-10:
+            cos_lat = 1e-10
+        resx = resolution_m / (111320.0 * cos_lat)
+        resy = resolution_m / 110574.0
+        return resx, resy
 
     @api.multi
     def get_index_values(self, layer, band, max_cloud_cover=10, resolution=10,
@@ -218,8 +259,13 @@ function evaluatePixel(samples) {
                             _('Could not parse geometry for parcel:') + ' ' +
                             str(parcel.id))
                         continue
+                    # Convert resolution from metres to degrees
+                    centroid_lat = self._get_geometry_centroid_lat(
+                        parcel.geom_ewkt)
+                    resx_deg, resy_deg = self._metres_to_degrees(
+                        resolution, centroid_lat)
                     # Build the request body
-                    # Geometry is already in WGS84 (EPSG:4326)
+                    # Geometry is in WGS84; resx/resy in degrees
                     request_body = {
                         "input": {
                             "bounds": {
@@ -242,8 +288,8 @@ function evaluatePixel(samples) {
                                 "of": "P1D",
                             },
                             "evalscript": evalscript,
-                            "resx": resolution,
-                            "resy": resolution,
+                            "resx": resx_deg,
+                            "resy": resy_deg,
                         },
                     }
 
