@@ -5,7 +5,7 @@
 {
     "name": "Quota Management: Superproduct Water Transfer",
     "summary": "Quota management for watet transfering between superproducts",
-    "version": '10.0.1.1.0',
+    "version": '10.0.1.1.1',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
@@ -13,6 +13,7 @@
     "depends": [
         "base_wua_quota_management",
     ],
+    "post_init_hook": "post_init_hook",
     "data": [
         "security/ir.model.access.csv",
         "data/wua_individualinput_category_data.xml",

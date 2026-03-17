@@ -144,11 +144,12 @@ class WuaInvoiceset(models.Model):
         return invoice_details_categ09
 
     def add_to_invoice_data_line_ref_to_other_types(
-            self, categ_code, invoice_data_line, data):
+            self, categ_code, invoice_data_line, data, parcels_by_id=None):
         if categ_code != 9:
             return super(WuaInvoiceset,
                          self).add_to_invoice_data_line_ref_to_other_types(
-                             categ_code, invoice_data_line, data)
+                             categ_code, invoice_data_line, data,
+                             parcels_by_id=parcels_by_id)
         data['enrolledsubparcel_id'] = invoice_data_line['key1']
         data['parcel_id'] = invoice_data_line['key2']
         return data

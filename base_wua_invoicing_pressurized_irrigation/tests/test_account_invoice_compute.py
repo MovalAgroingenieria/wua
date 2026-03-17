@@ -63,3 +63,8 @@ class TestAccountInvoiceComputePressurized(SavepointCase):
         })
         inv._compute_amount()
         self.assertEqual(inv.amount_untaxed_categ07, 5.0)
+
+    def test_get_presconsumptions_from_lines_empty_returns_empty(self):
+        """_get_presconsumptions_from_lines with no lines returns []."""
+        result = self.Invoice._get_presconsumptions_from_lines([])
+        self.assertEqual(result, [])

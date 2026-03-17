@@ -6,7 +6,7 @@
     "name": "WUA MDM Sensor Management",
     "summary": "Water Users Associations integration with Measurement Sensor "
                "Management",
-    "version": "10.0.1.2.0",
+    "version": "10.0.1.2.1",
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",

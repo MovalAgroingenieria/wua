@@ -28,12 +28,16 @@ class WuaWatering(models.Model):
                 waterings_no_watertype.write(vals)
 
     def _default_product_id(self):
+        from .wua_wateringrequest import WuaWateringrequest as Wr
         resp = None
-        default_product_id = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'default_gravity_product_id')
-        if default_product_id:
-            resp = default_product_id
-        else:
+        config = self.env['ir.config_parameter'].sudo()
+        val = config.get_param(Wr.CONFIG_KEY_GRAVITY_PRODUCT)
+        if val:
+            try:
+                resp = int(val)
+            except (TypeError, ValueError):
+                pass
+        if resp is None:
             categ_08_products = self.env['product.product'].search(
                 [('categ_id.productcategory_code', '=', 8)], order='id')
             if len(categ_08_products) > 0:

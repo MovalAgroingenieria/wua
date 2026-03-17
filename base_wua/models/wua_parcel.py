@@ -237,6 +237,7 @@ class WuaParcel(models.Model):
     leased_parcel = fields.Boolean(
         string='Leased Parcel',
         default=False,
+        index=True,
         track_visibility='onchange')
 
     leaser_id = fields.Many2one(
@@ -311,6 +312,7 @@ class WuaParcel(models.Model):
     with_gis_parcel = fields.Boolean(
         string='GIS Parcel',
         store=True,
+        index=True,
         compute='_compute_with_gis_parcel')
 
     rural_location_county = fields.Char(

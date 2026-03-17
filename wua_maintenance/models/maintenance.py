@@ -4,7 +4,9 @@
 
 from odoo import models, fields, api, exceptions, _
 from datetime import timedelta
+import logging
 import string
+from psycopg2 import ProgrammingError
 
 
 class MaintenanceEquipment(models.Model):
@@ -733,7 +735,7 @@ class MaintenanceEquipment(models.Model):
                     ),
                     equipment_with_infrastructure_gis AS (
                         SELECT me.id AS equipment_id,
-                            ST_AsGeoJSON(gis.geom) AS geojson
+                            postgis.ST_AsGeoJSON(gis.geom) AS geojson
                         FROM maintenance_equipment me
                         INNER JOIN {base_table} bt ON me.id = bt.equipment_id
                         INNER JOIN {intermediate_table} it ON bt.{base_field}
@@ -769,7 +771,7 @@ class MaintenanceEquipment(models.Model):
                         JOIN category_hierarchy ch ON c.parent_id = ch.id
                     ),
                     equipment_with_infrastructure_gis AS (
-                        SELECT me.id AS equipment_id, ST_AsGeoJSON(gis.geom)
+                        SELECT me.id AS equipment_id, postgis.ST_AsGeoJSON(gis.geom)
                             AS geojson
                         FROM maintenance_equipment me
                         INNER JOIN {base_table} bt ON me.id = bt.equipment_id
@@ -790,7 +792,16 @@ class MaintenanceEquipment(models.Model):
                     gis_field=gis_field,
                     category_id=category_id,
                 )
-            env.cr.execute(sql)
+            try:
+                env.cr.execute(sql)
+            except ProgrammingError as e:
+                if 'st_asgeojson' in str(e).lower() or 'postgis' in str(e).lower():
+                    logging.getLogger(__name__).warning(
+                        'PostGIS ST_AsGeoJSON no disponible para categoría %s '
+                        '(tablas %s / %s): %s',
+                        category_id, base_table, gis_table, e)
+                else:
+                    raise
         cleanup_sql = """
             UPDATE maintenance_equipment
             SET geojson_geom = NULL, with_infrastructure_gis = FALSE

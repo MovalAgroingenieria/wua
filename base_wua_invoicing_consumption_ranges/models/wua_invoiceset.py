@@ -4,6 +4,7 @@
 
 import datetime
 import sys
+from collections import defaultdict
 from odoo import models, fields, exceptions, _
 from operator import itemgetter
 
@@ -48,16 +49,29 @@ class WuaInvoiceset(models.Model):
                 partner_ids.append(item['partner_id'])
             partner_ids = list(set(partner_ids))
             partner_ids.sort()
+            partnerlinks = self.env['wua.parcel.partnerlink'].search(
+                [('partner_id', 'in', partner_ids)])
+            partnerlinks.mapped('area_official_water_costs_net')
+            partnerlinks_by_partner_id = defaultdict(list)
+            for pl in partnerlinks:
+                partnerlinks_by_partner_id[pl.partner_id.id].append(pl)
+            partners = self.env['res.partner'].browse(partner_ids)
+            partners.mapped('lang')
+            partner_by_id = dict((p.id, p) for p in partners)
+            presconsumptions = self.env['wua.presconsumption'].browse(
+                item_ids)
             for partner_id in partner_ids:
-                partner = self.env['res.partner'].browse(partner_id)
+                partner = partner_by_id.get(partner_id)
+                if not partner:
+                    continue
                 range_lbl = _('Range')
                 if partner.lang:
                     range_lbl = \
                         self.get_value_from_translation(
                             'base_wua_invoicing_consumption_ranges',
                             'Range', partner.lang)
-                invoice_details_of_current_partner = filter(
-                    lambda x: x['partner_id'] == partner_id, invoice_details)
+                invoice_details_of_current_partner = [
+                    x for x in invoice_details if x['partner_id'] == partner_id]
                 total_consumption = sum(x['quantity'] for x in
                                         invoice_details_of_current_partner)
                 waterconnections_of_current_partner = []
@@ -66,11 +80,10 @@ class WuaInvoiceset(models.Model):
                     waterconnections_of_current_partner.append(
                         str(waterconnection_id))
                 partnerlinks_of_current_partner = \
-                    self.env['wua.parcel.partnerlink'].search(
-                        [('partner_id', '=', partner_id)])
+                    partnerlinks_by_partner_id.get(partner_id, [])
                 total_area = sum(
-                    x.area_official_water_costs_net
-                    for x in partnerlinks_of_current_partner)
+                    pl.area_official_water_costs_net
+                    for pl in partnerlinks_of_current_partner)
                 waterconnection_ids_str = ''
                 if len(waterconnections_of_current_partner) > 0:
                     waterconnections_of_current_partner = list(
@@ -81,8 +94,6 @@ class WuaInvoiceset(models.Model):
                             str(wc_id) + ','
                     waterconnection_ids_str = waterconnection_ids_str[:-1]
                 days = 1
-                presconsumptions = self.env['wua.presconsumption'].browse(
-                    item_ids)
                 initial_date = datetime.date.max
                 end_date = datetime.date.min
                 for presconsumption in presconsumptions:
@@ -158,11 +169,12 @@ class WuaInvoiceset(models.Model):
         return reorganized_invoice_details
 
     def add_to_invoice_data_line_ref_to_other_types(
-            self, categ_code, invoice_data_line, data):
+            self, categ_code, invoice_data_line, data, parcels_by_id=None):
         if categ_code != 7:
             return super(WuaInvoiceset,
                          self).add_to_invoice_data_line_ref_to_other_types(
-                             categ_code, invoice_data_line, data)
+                             categ_code, invoice_data_line, data,
+                             parcels_by_id=parcels_by_id)
         # Modified by EIS (2022-12-14)
         # data['partner_id'] = invoice_data_line['key1']
         if 'key2' in invoice_data_line and invoice_data_line['key2'] != 0:

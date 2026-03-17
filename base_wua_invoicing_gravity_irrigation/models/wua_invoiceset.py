@@ -14,12 +14,9 @@ class WuaInvoiceset(models.Model):
     # and invoiced_consumption fields for the affected consumptions.
     @api.multi
     def unlink(self):
-        gravconsumptions_ids = []
-        for record in self:
-            gravconsumptions = self.env['wua.gravconsumption'].search(
-                [('invoiceset_id', '=', record.id)])
-            for gravconsumption in gravconsumptions:
-                gravconsumptions_ids.append(gravconsumption.id)
+        gravconsumptions = self.env['wua.gravconsumption'].search(
+            [('invoiceset_id', 'in', self.ids)])
+        gravconsumptions_ids = gravconsumptions.ids
         res = super(WuaInvoiceset, self).unlink()
         if gravconsumptions_ids:
             gravconsumptions = self.env['wua.gravconsumption'].browse(
@@ -200,11 +197,12 @@ class WuaInvoiceset(models.Model):
         return invoice_details_categ08
 
     def add_to_invoice_data_line_ref_to_other_types(
-            self, categ_code, invoice_data_line, data):
+            self, categ_code, invoice_data_line, data, parcels_by_id=None):
         if categ_code != 8:
             return super(WuaInvoiceset,
                          self).add_to_invoice_data_line_ref_to_other_types(
-                             categ_code, invoice_data_line, data)
+                             categ_code, invoice_data_line, data,
+                             parcels_by_id=parcels_by_id)
         data['irrigationgate_id'] = invoice_data_line['key1']
         data['parcel_id'] = invoice_data_line['key2']
         # Add overprice if there is an irrigation worker?
@@ -213,52 +211,58 @@ class WuaInvoiceset(models.Model):
             'overprice_with_irrigation_worker')
         if (overprice_with_irrigation_worker and
            overprice_with_irrigation_worker != 0):
-            parcel = self.env['wua.parcel'].browse(data['parcel_id'])
-            if parcel.with_irrigation_worker:
+            parcel_id = data['parcel_id']
+            parcel = (parcels_by_id or {}).get(parcel_id)
+            if parcel is None and parcel_id:
+                parcel = self.env['wua.parcel'].browse(parcel_id)
+            if parcel and parcel.with_irrigation_worker:
                 data['price_unit'] = data['price_unit'] + \
                     overprice_with_irrigation_worker
         return data
 
     def after_calculate_invoiceset(self, invoiceset):
         super(WuaInvoiceset, self).after_calculate_invoiceset(invoiceset)
+        all_gravconsumptions_ids = []
+        to_unlink = self.env['wua.invoiceset.line.gravconsumption']
         for line in invoiceset.line_ids:
             if line.categ_id.productcategory_code == 8:
                 unselected_gravconsumptions = \
                     line.line_gravconsumption_ids.filtered(
                         lambda x: x.selected is False)
                 if unselected_gravconsumptions:
-                    gravconsumptions_ids = []
                     for line_gravconsumption in unselected_gravconsumptions:
-                        gravconsumptions_ids.append(
+                        all_gravconsumptions_ids.append(
                             line_gravconsumption.gravconsumption_id.id)
-                    if gravconsumptions_ids:
-                        gravconsumptions = \
-                            self.env['wua.gravconsumption'].browse(
-                                gravconsumptions_ids)
-                        vals = {
-                            'invoiceset_id': None,
-                            'invoiced_consumption': False,
-                            }
-                        gravconsumptions.write(vals)
-                    unselected_gravconsumptions.unlink()
+                    to_unlink |= unselected_gravconsumptions
+        if all_gravconsumptions_ids:
+            gravconsumptions = self.env['wua.gravconsumption'].browse(
+                list(set(all_gravconsumptions_ids)))
+            gravconsumptions.write({
+                'invoiceset_id': None,
+                'invoiced_consumption': False,
+            })
+        if to_unlink:
+            to_unlink.unlink()
 
     def after_cancel_invoiceset(self, invoiceset):
         super(WuaInvoiceset, self).after_cancel_invoiceset(invoiceset)
+        gravconsumptions_ids = []
+        to_unlink = self.env['wua.invoiceset.line.gravconsumption']
         for line in invoiceset.line_ids:
             if line.categ_id.productcategory_code == 8:
-                gravconsumptions_ids = []
                 for line_gravconsumption in line.line_gravconsumption_ids:
                     gravconsumptions_ids.append(
                         line_gravconsumption.gravconsumption_id.id)
-                if gravconsumptions_ids:
-                    gravconsumptions = self.env['wua.gravconsumption'].browse(
-                        gravconsumptions_ids)
-                    vals = {
-                        'invoiceset_id': None,
-                        'invoiced_consumption': False,
-                        }
-                    gravconsumptions.write(vals)
-                line.line_gravconsumption_ids.unlink()
+                to_unlink |= line.line_gravconsumption_ids
+        if gravconsumptions_ids:
+            gravconsumptions = self.env['wua.gravconsumption'].browse(
+                list(set(gravconsumptions_ids)))
+            gravconsumptions.write({
+                'invoiceset_id': None,
+                'invoiced_consumption': False,
+            })
+        if to_unlink:
+            to_unlink.unlink()
 
 
 class WuaInvoicesetLine(models.Model):
@@ -285,19 +289,18 @@ class WuaInvoicesetLine(models.Model):
     # the invoiceset_id field for the affected consumptions.
     @api.multi
     def unlink(self):
+        gravconsumptions_ids = []
         for record in self:
-            gravconsumptions_ids = []
             for line_gravconsumption in record.line_gravconsumption_ids:
                 gravconsumptions_ids.append(
                     line_gravconsumption.gravconsumption_id.id)
-            if gravconsumptions_ids:
-                gravconsumptions = self.env['wua.gravconsumption'].browse(
-                    gravconsumptions_ids)
-                vals = {
-                    'invoiceset_id': None,
-                    'invoiced_consumption': False,
-                    }
-                gravconsumptions.write(vals)
+        if gravconsumptions_ids:
+            gravconsumptions = self.env['wua.gravconsumption'].browse(
+                list(set(gravconsumptions_ids)))
+            gravconsumptions.write({
+                'invoiceset_id': None,
+                'invoiced_consumption': False,
+            })
         return super(WuaInvoicesetLine, self).unlink()
 
     def populate_items_select(self):

@@ -294,6 +294,11 @@ class WuaInvoiceset(models.Model):
                                 message_wc_more_one_water_payer_01 + ' ' +
                                 waterconnection.name + ' ' +
                                 message_wc_more_one_water_payer_02)
+        # Pre-load lang per partner to avoid browse(partner_id) in loop
+        partner_ids_wc = list(set(p['partner_id'] for p in wc_partners))
+        partners_wc = self.env['res.partner'].browse(partner_ids_wc)
+        partners_wc.mapped('lang')
+        lang_by_partner_id = {p.id: p.lang for p in partners_wc}
         # Loop on pressure consumptions to generate the invoice lines.
         for presconsumption in presconsumptions:
             waterconnection = presconsumption.waterconnection_id
@@ -301,8 +306,9 @@ class WuaInvoiceset(models.Model):
                 filter(lambda x: x['wc_id'] == waterconnection.id, wc_partners)
             if filtered_partner:
                 partner_id = filtered_partner[0]['partner_id']
+                lang = lang_by_partner_id.get(partner_id)
                 description = self.get_detail_of_presconsumption(
-                    presconsumption, partner_id)
+                    presconsumption, partner_id, lang=lang)
                 result = {
                     'partner_id': partner_id,
                     'product_id': product_id,
@@ -314,9 +320,10 @@ class WuaInvoiceset(models.Model):
                 invoice_details_categ07.append(result)
         return invoice_details_categ07
 
-    def get_detail_of_presconsumption(self, presconsumption, partner_id):
+    def get_detail_of_presconsumption(self, presconsumption, partner_id, lang=None):
         resp = ''
-        lang = self.env['res.partner'].browse(partner_id).lang
+        if lang is None:
+            lang = self.env['res.partner'].browse(partner_id).lang
         default_waterconnection_label = _('Water Connection')
         default_initial_reading_label = _('Initial Reading')
         default_final_reading_label = _('Final Reading')
@@ -361,11 +368,12 @@ class WuaInvoiceset(models.Model):
         return resp
 
     def add_to_invoice_data_line_ref_to_other_types(
-            self, categ_code, invoice_data_line, data):
+            self, categ_code, invoice_data_line, data, parcels_by_id=None):
         if categ_code != 7:
             return super(WuaInvoiceset,
                          self).add_to_invoice_data_line_ref_to_other_types(
-                             categ_code, invoice_data_line, data)
+                             categ_code, invoice_data_line, data,
+                             parcels_by_id=parcels_by_id)
         data['waterconnection_id'] = invoice_data_line['key1']
         if 'key2' in invoice_data_line:
             data['parcel_id'] = invoice_data_line['key2']

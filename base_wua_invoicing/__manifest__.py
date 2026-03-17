@@ -6,12 +6,13 @@
     "name": "Water Users Association Invoicing",
     "summary": "In a water users association, global invoicing "
                "based on a selection of items (parcels, partners, etc)",
-    "version": '10.0.1.1.1',
+    "version": '10.0.1.1.2',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
     "license": "AGPL-3",
     "depends": [
+        "base_wua",
         "base_wua_infrastructure",
         "account_cancel",
         "account_banking_sepa_direct_debit_extended",
@@ -51,6 +52,7 @@
         "wizard/wizard_print_partner_invoices_lines_views.xml",
         "wizard/res_partner_archive_wizard_view.xml",
     ],
+    "post_init_hook": "post_init_hook",
     "installable": True,
     "application": True,
 }

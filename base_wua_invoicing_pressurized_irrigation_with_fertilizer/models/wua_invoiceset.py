@@ -15,11 +15,10 @@ class WuaInvoiceset(models.Model):
     @api.multi
     def unlink(self):
         fertconsumptions_ids = []
-        for record in self:
+        if self:
             fertconsumptions = self.env['wua.fertconsumption'].search(
-                [('invoiceset_id', '=', record.id)])
-            for fertconsumption in fertconsumptions:
-                fertconsumptions_ids.append(fertconsumption.id)
+                [('invoiceset_id', 'in', self.ids)])
+            fertconsumptions_ids = fertconsumptions.ids
         res = super(WuaInvoiceset, self).unlink()
         if fertconsumptions_ids:
             fertconsumptions = self.env['wua.fertconsumption'].browse(
@@ -291,14 +290,19 @@ class WuaInvoiceset(models.Model):
                                 waterconnection.name + ' ' +
                                 message_wc_more_one_water_payer_02)
         # Loop on fertilizer consumptions to generate the invoice lines.
+        partner_ids_from_wc = list(set(p['partner_id'] for p in wc_partners))
+        partners_by_id = dict(
+            (p.id, p) for p in self.env['res.partner'].browse(partner_ids_from_wc))
         for fertconsumption in fertconsumptions:
             waterconnection = fertconsumption.waterconnection_id
             filtered_partner = \
                 filter(lambda x: x['wc_id'] == waterconnection.id, wc_partners)
             if filtered_partner:
                 partner_id = filtered_partner[0]['partner_id']
+                partner = partners_by_id.get(partner_id)
+                lang = partner.lang if partner else None
                 description = self.get_detail_of_fertconsumption(
-                    fertconsumption, partner_id)
+                    fertconsumption, partner_id=partner_id, lang=lang)
                 result = {
                     'partner_id': partner_id,
                     'product_id': product_id,
@@ -310,9 +314,12 @@ class WuaInvoiceset(models.Model):
                 invoice_details_categ12.append(result)
         return invoice_details_categ12
 
-    def get_detail_of_fertconsumption(self, fertconsumption, partner_id):
+    def get_detail_of_fertconsumption(self, fertconsumption, partner_id=None,
+                                      lang=None):
         resp = ''
-        lang = self.env['res.partner'].browse(partner_id).lang
+        if lang is None and partner_id is not None:
+            lang = self.env['res.partner'].browse(partner_id).lang
+        lang = lang or self.env.context.get('lang')
         default_waterconnection_label = _('Water Connection')
         waterconnection_label = self.get_value_from_translation(
             'base_wua_invoicing_pressurized_irrigation',
@@ -325,11 +332,12 @@ class WuaInvoiceset(models.Model):
         return resp
 
     def add_to_invoice_data_line_ref_to_other_types(
-            self, categ_code, invoice_data_line, data):
+            self, categ_code, invoice_data_line, data, parcels_by_id=None):
         if categ_code != 12:
             return super(WuaInvoiceset,
                          self).add_to_invoice_data_line_ref_to_other_types(
-                             categ_code, invoice_data_line, data)
+                             categ_code, invoice_data_line, data,
+                             parcels_by_id=parcels_by_id)
         data['waterconnection_id'] = invoice_data_line['key1']
         if 'key2' in invoice_data_line:
             data['parcel_id'] = invoice_data_line['key2']

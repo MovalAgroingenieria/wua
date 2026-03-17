@@ -29,7 +29,8 @@ class WuaFlowData(models.Model):
 
     flowmeter_id = fields.Many2one(
         string='Flow Meter',
-        comodel_name='wua.flowmeter')
+        comodel_name='wua.flowmeter',
+        index=True)
 
     @api.depends('flowmeter_id', 'time')
     def _compute_name(self):

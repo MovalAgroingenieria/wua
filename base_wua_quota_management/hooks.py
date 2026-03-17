@@ -2,10 +2,37 @@
 # 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import logging
+
 from odoo import api, SUPERUSER_ID
+
+_logger = logging.getLogger(__name__)
+
+
+def create_performance_indexes(cr):
+    """Create indexes for models defined in this module."""
+    indexes = [
+        ("wua_quota_partner_superproduct_idx",
+         "CREATE INDEX IF NOT EXISTS wua_quota_partner_superproduct_idx "
+         "ON wua_quota (quotaperiod_id, superproduct_id, partner_id)"),
+        ("wua_quotaperiod_line_quotaperiod_superproduct_idx",
+         "CREATE INDEX IF NOT EXISTS "
+         "wua_quotaperiod_line_quotaperiod_superproduct_idx "
+         "ON wua_quotaperiod_line (quotaperiod_id, superproduct_id)"),
+        ("wua_hydricmovement_quotaperiod_type_idx",
+         "CREATE INDEX IF NOT EXISTS wua_hydricmovement_quotaperiod_type_idx "
+         "ON wua_hydricmovement (quotaperiod_id, type)"),
+    ]
+    for name, sql in indexes:
+        try:
+            cr.execute(sql)
+        except Exception as e:
+            _logger.debug(
+                "base_wua_quota_management: skip index %s (%s)", name, e)
 
 
 def post_init_hook(cr, registry):
+    create_performance_indexes(cr)
     env = api.Environment(cr, SUPERUSER_ID, {})
     templates = env['product.template'].search([])
     for template in templates:

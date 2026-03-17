@@ -23,10 +23,14 @@ def create_parcel_sensor_reading_view(cr):
                 );
             """, (table_name,))
             if not cr.fetchone()[0]:
-                logger.info("Table '%s' doesn't exist yet, skipping view creation", table_name)
+                logger.info(
+                    "Table '%s' doesn't exist yet, skipping view creation",
+                    table_name)
                 return
         except Exception as e:
-            logger.info("Error checking table existence: %s, skipping view creation", str(e))
+            logger.info(
+                "Error checking table existence: %s, skipping view creation",
+                str(e))
             return
     try:
         cr.execute("""
@@ -67,26 +71,41 @@ def create_parcel_sensor_reading_indexes(cr):
         );
     """)
     if not cr.fetchone()[0]:
-        logger.info("wua_parcel_sensor_reading view doesn't exist yet, skipping index creation")
+        logger.info(
+            "wua_parcel_sensor_reading view doesn't exist yet, "
+            "skipping index creation")
         return
     indexes = [
-        "CREATE UNIQUE INDEX IF NOT EXISTS wua_parcel_sensor_reading_id_index ON wua_parcel_sensor_reading (id);",
-        "CREATE INDEX IF NOT EXISTS wua_parcel_sensor_reading_name_index ON wua_parcel_sensor_reading (name);",
-        "CREATE INDEX IF NOT EXISTS wua_parcel_sensor_reading_parcel_id_index ON wua_parcel_sensor_reading (parcel_id);",
-        "CREATE INDEX IF NOT EXISTS wua_parcel_sensor_reading_device_id_index ON wua_parcel_sensor_reading (device_id);",
-        "CREATE INDEX IF NOT EXISTS wua_parcel_sensor_reading_sensor_id_index ON wua_parcel_sensor_reading (sensor_id);",
-        "CREATE INDEX IF NOT EXISTS wua_parcel_sensor_reading_type_id_index ON wua_parcel_sensor_reading (type_id);",
-        "CREATE INDEX IF NOT EXISTS wua_parcel_sensor_reading_reading_id_index ON wua_parcel_sensor_reading (reading_id);",
-        "CREATE INDEX IF NOT EXISTS wua_parcel_sensor_reading_uom_id_index ON wua_parcel_sensor_reading (uom_id);",
-        "CREATE INDEX IF NOT EXISTS wua_parcel_sensor_reading_measurement_time_index ON wua_parcel_sensor_reading (measurement_time);",
-        "CREATE INDEX IF NOT EXISTS wua_parcel_sensor_reading_value_index ON wua_parcel_sensor_reading (value);",
+        ("CREATE UNIQUE INDEX IF NOT EXISTS wua_parcel_sensor_reading_id_"
+         "index ON wua_parcel_sensor_reading (id);"),
+        ("CREATE INDEX IF NOT EXISTS wua_parcel_sensor_reading_name_index "
+         "ON wua_parcel_sensor_reading (name);"),
+        ("CREATE INDEX IF NOT EXISTS wua_parcel_sensor_reading_parcel_id_"
+         "index ON wua_parcel_sensor_reading (parcel_id);"),
+        ("CREATE INDEX IF NOT EXISTS wua_parcel_sensor_reading_device_id_"
+         "index ON wua_parcel_sensor_reading (device_id);"),
+        ("CREATE INDEX IF NOT EXISTS wua_parcel_sensor_reading_sensor_id_"
+         "index ON wua_parcel_sensor_reading (sensor_id);"),
+        ("CREATE INDEX IF NOT EXISTS wua_parcel_sensor_reading_type_id_"
+         "index ON wua_parcel_sensor_reading (type_id);"),
+        ("CREATE INDEX IF NOT EXISTS wua_parcel_sensor_reading_reading_id_"
+         "index ON wua_parcel_sensor_reading (reading_id);"),
+        ("CREATE INDEX IF NOT EXISTS wua_parcel_sensor_reading_uom_id_"
+         "index ON wua_parcel_sensor_reading (uom_id);"),
+        ("CREATE INDEX IF NOT EXISTS wua_parcel_sensor_reading_"
+         "measurement_time_index ON wua_parcel_sensor_reading "
+         "(measurement_time);"),
+        ("CREATE INDEX IF NOT EXISTS wua_parcel_sensor_reading_value_index "
+         "ON wua_parcel_sensor_reading (value);"),
     ]
     for index_sql in indexes:
         try:
             cr.execute(index_sql)
         except Exception as e:
-            logger.warning("Index creation failed: %s - %s", index_sql, str(e))
-    logger.info("Indexes for wua_parcel_sensor_reading created successfully")
+            logger.warning(
+                "Index creation failed: %s - %s", index_sql, str(e))
+    logger.info(
+        "Indexes for wua_parcel_sensor_reading created successfully")
 
 
 def create_partner_sensor_reading_view(cr):
@@ -107,10 +126,14 @@ def create_partner_sensor_reading_view(cr):
                 );
             """, (table_name,))
             if not cr.fetchone()[0]:
-                logger.info("Table '%s' doesn't exist yet, skipping view creation", table_name)
+                logger.info(
+                    "Table '%s' doesn't exist yet, skipping view creation",
+                    table_name)
                 return
         except Exception as e:
-            logger.info("Error checking table existence: %s, skipping view creation", str(e))
+            logger.info(
+                "Error checking table existence: %s, skipping view creation",
+                str(e))
             return
     try:
         cr.execute("""
@@ -152,30 +175,62 @@ def create_partner_sensor_reading_indexes(cr):
         );
     """)
     if not cr.fetchone()[0]:
-        logger.info("res_partner_sensor_reading view doesn't exist yet, skipping index creation")
+        logger.info(
+            "res_partner_sensor_reading view doesn't exist yet, "
+            "skipping index creation")
         return
     indexes = [
-        "CREATE UNIQUE INDEX IF NOT EXISTS res_partner_sensor_reading_id_index ON res_partner_sensor_reading (id);",
-        "CREATE INDEX IF NOT EXISTS res_partner_sensor_reading_name_index ON res_partner_sensor_reading (name);",
-        "CREATE INDEX IF NOT EXISTS res_partner_sensor_reading_partner_id_index ON res_partner_sensor_reading (partner_id);",
-        "CREATE INDEX IF NOT EXISTS res_partner_sensor_reading_parcel_id_index ON res_partner_sensor_reading (parcel_id);",
-        "CREATE INDEX IF NOT EXISTS res_partner_sensor_reading_device_id_index ON res_partner_sensor_reading (device_id);",
-        "CREATE INDEX IF NOT EXISTS res_partner_sensor_reading_sensor_id_index ON res_partner_sensor_reading (sensor_id);",
-        "CREATE INDEX IF NOT EXISTS res_partner_sensor_reading_type_id_index ON res_partner_sensor_reading (type_id);",
-        "CREATE INDEX IF NOT EXISTS res_partner_sensor_reading_reading_id_index ON res_partner_sensor_reading (reading_id);",
-        "CREATE INDEX IF NOT EXISTS res_partner_sensor_reading_uom_id_index ON res_partner_sensor_reading (uom_id);",
-        "CREATE INDEX IF NOT EXISTS res_partner_sensor_reading_measurement_time_index ON res_partner_sensor_reading (measurement_time);",
-        "CREATE INDEX IF NOT EXISTS res_partner_sensor_reading_value_index ON res_partner_sensor_reading (value);",
+        ("CREATE UNIQUE INDEX IF NOT EXISTS res_partner_sensor_reading_id_"
+         "index ON res_partner_sensor_reading (id);"),
+        ("CREATE INDEX IF NOT EXISTS res_partner_sensor_reading_name_index "
+         "ON res_partner_sensor_reading (name);"),
+        ("CREATE INDEX IF NOT EXISTS res_partner_sensor_reading_partner_id_"
+         "index ON res_partner_sensor_reading (partner_id);"),
+        ("CREATE INDEX IF NOT EXISTS res_partner_sensor_reading_parcel_id_"
+         "index ON res_partner_sensor_reading (parcel_id);"),
+        ("CREATE INDEX IF NOT EXISTS res_partner_sensor_reading_device_id_"
+         "index ON res_partner_sensor_reading (device_id);"),
+        ("CREATE INDEX IF NOT EXISTS res_partner_sensor_reading_sensor_id_"
+         "index ON res_partner_sensor_reading (sensor_id);"),
+        ("CREATE INDEX IF NOT EXISTS res_partner_sensor_reading_type_id_"
+         "index ON res_partner_sensor_reading (type_id);"),
+        ("CREATE INDEX IF NOT EXISTS res_partner_sensor_reading_reading_id_"
+         "index ON res_partner_sensor_reading (reading_id);"),
+        ("CREATE INDEX IF NOT EXISTS res_partner_sensor_reading_uom_id_"
+         "index ON res_partner_sensor_reading (uom_id);"),
+        ("CREATE INDEX IF NOT EXISTS res_partner_sensor_reading_"
+         "measurement_time_index ON res_partner_sensor_reading "
+         "(measurement_time);"),
+        ("CREATE INDEX IF NOT EXISTS res_partner_sensor_reading_value_index "
+         "ON res_partner_sensor_reading (value);"),
     ]
     for index_sql in indexes:
         try:
             cr.execute(index_sql)
         except Exception as e:
-            logger.warning("Index creation failed: %s - %s", index_sql, str(e))
-    logger.info("Indexes for res_partner_sensor_reading created successfully")
+            logger.warning(
+                "Index creation failed: %s - %s", index_sql, str(e))
+    logger.info(
+        "Indexes for res_partner_sensor_reading created successfully")
+
+
+def create_performance_indexes(cr):
+    """Create indexes for models defined in this module."""
+    indexes = [
+        ("mdm_device_parcellink_device_parcel_idx",
+         "CREATE INDEX IF NOT EXISTS mdm_device_parcellink_device_parcel_idx "
+         "ON mdm_device_parcellink (device_id, parcel_id)"),
+    ]
+    for name, sql in indexes:
+        try:
+            cr.execute(sql)
+        except Exception as e:
+            logger.debug(
+                "wua_mdm_sensor_management: skip index %s (%s)", name, e)
 
 
 def post_init_hook(cr, registry):
+    create_performance_indexes(cr)
     create_parcel_sensor_reading_view(cr)
     create_parcel_sensor_reading_indexes(cr)
     create_partner_sensor_reading_view(cr)

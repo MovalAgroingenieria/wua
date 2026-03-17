@@ -16,6 +16,7 @@ class AccountInvoice(models.Model):
         string='Invoice Set',
         comodel_name='wua.invoiceset',
         readonly=True,
+        index=True,
         ondelete='cascade')
 
     amount_untaxed_nocateg = fields.Monetary(
