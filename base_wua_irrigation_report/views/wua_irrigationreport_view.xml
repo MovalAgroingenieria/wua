@@ -176,8 +176,10 @@
                 <filter name="state" string="Validated"
                         domain="[('state','=','validated')]"/>
                 <separator/>
-                <filter string="Irrigationreport Cancelled" name="cancelled"
+                <filter string="Cancelled: Yes" name="cancelled_yes"
                         domain="[('cancelled','=', True)]"/>
+                <filter string="Cancelled: No" name="cancelled_no"
+                        domain="[('cancelled','=', False)]"/>
                 <separator/>
                 <filter name="with_irrigation_worker" string="With Irrigation Worker"
                         domain="[('with_irrigation_worker','=',True)]"/>
