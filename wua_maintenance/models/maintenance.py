@@ -18,6 +18,12 @@ class MaintenanceEquipment(models.Model):
         translate=False,
     )
 
+    display_label = fields.Char(
+        string='Name',
+        compute='_compute_display_label',
+        store=False,
+    )
+
     tag_ids = fields.Many2many(
         string='Equipment Tags',
         comodel_name='maintenance.equipmenttag',
@@ -1116,15 +1122,72 @@ class MaintenanceEquipment(models.Model):
             record.tag_html = tags
 
     @api.multi
+    def _compute_display_label(self):
+        pump_category_id = False
+        try:
+            pump_category_id = self.env.ref(
+                'wua_maintenance.equipment_category_pump').id
+        except Exception:
+            pass
+        for record in self:
+            name = record.name
+            if (record.is_wua and pump_category_id and
+                    record.category_id.id == pump_category_id and
+                    record.pumpunit_id):
+                pumpunit = record.pumpunit_id
+                if pumpunit.pumpgroup_id:
+                    name = pumpunit.pumpgroup_id.name + \
+                        u' [nº ' + str(pumpunit.pumpunit_number) + ']'
+            record.display_label = name
+
+    @api.multi
     def name_get(self):
         result = []
+        pump_category_id = False
+        try:
+            pump_category_id = self.env.ref(
+                'wua_maintenance.equipment_category_pump').id
+        except Exception:
+            pass
         for record in self:
             name = record.name
             if record.is_wua:
-                name = name + ' (' +\
+                if (pump_category_id and
+                        record.category_id.id == pump_category_id and
+                        record.pumpunit_id):
+                    pumpunit = record.pumpunit_id
+                    if pumpunit.pumpgroup_id:
+                        name = pumpunit.pumpgroup_id.name + \
+                            u' [nº ' + str(pumpunit.pumpunit_number) + ']'
+                name = name + ' (' + \
                     string.capwords(record.category_id.name) + ')'
             result.append((record.id, name))
         return result
+
+    @api.model
+    def name_search(self, name='', args=None, operator='ilike', limit=100):
+        args = args or []
+        if name:
+            recs = self.search(
+                ['|',
+                 ('name', operator, name),
+                 ('category_id.name', operator, name),
+                 ] + args, limit=limit)
+            if len(recs) < (limit or 100):
+                remaining = (limit or 100) - len(recs)
+                pumpunits = self.env['wua.pumpunit'].search([
+                    ('pumpgroup_id.name', operator, name)
+                ])
+                if pumpunits:
+                    equipment_ids = pumpunits.mapped('equipment_id').ids
+                    extra_recs = self.search([
+                        ('id', 'in', equipment_ids),
+                        ('id', 'not in', recs.ids),
+                    ] + args, limit=remaining)
+                    recs |= extra_recs
+            return recs.name_get()
+        return super(MaintenanceEquipment, self).name_search(
+            name, args=args, operator=operator, limit=limit)
 
     @api.multi
     def action_get_wua_infrastructure_item(self):

@@ -129,7 +129,10 @@
             <xpath expr="//field[@name='category_id']" position="attributes">
                 <attribute name="string">Equipment Category</attribute>
             </xpath>
-            <xpath expr="//field[@name='name']" position="after">
+            <xpath expr="//field[@name='name']" position="replace">
+                <field name="display_label" string="Name"/>
+            </xpath>
+            <xpath expr="//field[@name='display_label']" position="after">
                 <field name="with_infrastructure_gis" invisible="1"/>
                 <button name="action_see_gis_viewer"
                         type="object" class="oe_stat_button"

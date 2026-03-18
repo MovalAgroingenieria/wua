@@ -11,6 +11,23 @@ from bs4 import BeautifulSoup
 
 class MaintenanceGisController(http.Controller):
 
+    def _get_equipment_display_name(self, equipment):
+        """Return a descriptive name for the equipment.
+        For pumpunit equipment, returns 'Pumpgroup Name [nº X]'.
+        For other WUA equipment, returns the stored name."""
+        try:
+            pump_category_id = request.env.ref(
+                'wua_maintenance.equipment_category_pump').id
+        except Exception:
+            return equipment.name
+        if (equipment.category_id.id == pump_category_id and
+                equipment.pumpunit_id and
+                equipment.pumpunit_id.pumpgroup_id):
+            pumpunit = equipment.pumpunit_id
+            return pumpunit.pumpgroup_id.name + \
+                u' [nº ' + str(pumpunit.pumpunit_number) + ']'
+        return equipment.name
+
     def _get_geojson_from_equipment_id(self, equipment):
         env = request.env
         category_mapping = env['maintenance.equipment'].\
@@ -132,7 +149,7 @@ class MaintenanceGisController(http.Controller):
             'equipments': equipments.mapped(
                 lambda equipment: {
                     'id': equipment.id,
-                    'name': equipment.name,
+                    'name': self._get_equipment_display_name(equipment),
                     'category': equipment.category_id.name,
                     'geometry_type': equipment.category_id.geometry_type,
                     'geom': self._get_geojson_from_equipment_id(equipment),
@@ -297,7 +314,8 @@ class MaintenanceGisController(http.Controller):
             'description': maintenance.description or '',
             'category': maintenance.category_id.name,
             'geometry_type': maintenance.category_id.geometry_type,
-            'equipment': maintenance.equipment_id.name,
+            'equipment': self._get_equipment_display_name(
+                maintenance.equipment_id),
             'equipment_id': maintenance.equipment_id.id,
             'request_date': maintenance.request_date,
             'stage': maintenance.stage_id.name,
@@ -389,7 +407,7 @@ class MaintenanceGisController(http.Controller):
             'equipments': equipments.mapped(
                 lambda eq: {
                     'id': eq.id,
-                    'name': eq.name,
+                    'name': self._get_equipment_display_name(eq),
                     'category_id': eq.category_id.id
                     if eq.category_id else False,
                 }),
