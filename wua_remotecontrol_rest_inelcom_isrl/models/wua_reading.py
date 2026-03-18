@@ -6,12 +6,19 @@ import requests
 from datetime import datetime
 import pytz
 import json
-from odoo import models, api, exceptions, _
+import base64
+from odoo import models, fields, api, exceptions, _
 import time
 
 
 class WuaReading(models.Model):
     _inherit = 'wua.reading'
+
+    remotecontrol_origin = fields.Selection(
+        selection_add=[
+            ('inelcom', 'Inelcom'),
+        ],
+    )
 
     MAX_NUMBER_OF_RETRIES = 3
     SECONDS_TO_SLEEP = 60
@@ -147,6 +154,52 @@ class WuaReading(models.Model):
                                        'last_api_response_hidrantes',
                                        hidrantes_response)
 
+    def save_inelcom_response_as_json(self, json_data, endpoint_name):
+        remotecontrol = self.env.ref(
+            'base_wua_remotecontrol_rest.'
+            'wua_remotecontrol_logger')
+        json_filename = "inelcom_{}_{}.json".format(
+            endpoint_name, fields.Datetime.now())
+        json_text = json.dumps(json_data)
+        encoded_data = base64.b64encode(
+            json_text.encode('utf-8')).decode('utf-8')
+        attachment = self.env['ir.attachment'].sudo().create({
+            'name': json_filename,
+            'type': 'binary',
+            'datas': encoded_data,
+            'datas_fname': json_filename,
+            'res_model': 'wua.remotecontrol',
+            'res_id': remotecontrol.id,
+        })
+        remotecontrol.message_post(body=_(
+            'Successfully retrieved readings from Inelcom (%s).'
+            ) % (endpoint_name),
+            attachment_ids=[attachment.id])
+        self.env.cr.commit()
+
+    def _get_readings_info_inelcom_from_json(self, json_data):
+        readings = []
+        for watermeter_info in json_data:
+            watermeter = watermeter_info['codContador']
+            volume = watermeter_info['valor'] / 1000.0
+            readings.append({
+                'watermeter': watermeter,
+                'volume': volume,
+                'remotecontrol_origin': 'inelcom',
+            })
+        return readings
+
+    # Overwrite hook for Wizard imports with a set datetime
+    def _get_reading_time_from_remotecontrol(self, reading, now):
+        inelcom_reading_date = self.env.context.get(
+            'inelcom_reading_date', False)
+        if (inelcom_reading_date and
+                reading.get('remotecontrol_origin', '') == 'inelcom'):
+            return inelcom_reading_date
+        else:
+            return super(WuaReading, self).\
+                _get_reading_time_from_remotecontrol(reading, now)
+
     # Implemented hook
     def populate_data_for_import_readings_inelcom(
         self, url_remotecontrol_rest, url_remotecontrol_rest_username,
@@ -179,6 +232,7 @@ class WuaReading(models.Model):
         readings = []
         error_message = ''
         error_watermeters = []
+        all_contadores = []
         tries = 0
         while (not readings and tries < self.MAX_NUMBER_OF_RETRIES):
             if (tries > 0):
@@ -199,12 +253,7 @@ class WuaReading(models.Model):
                         if resp_sector_ok:
                             for watermeter_info in \
                                     outputrest['listaContadores']:
-                                watermeter = watermeter_info['codContador']
-                                volume = watermeter_info['valor'] / 1000.0
-                                readings.append({
-                                    'watermeter': watermeter,
-                                    'volume': volume,
-                                    })
+                                all_contadores.append(watermeter_info)
                         else:
                             error_message = error_message + '. ' + \
                                 outputrest['textoError']
@@ -214,6 +263,14 @@ class WuaReading(models.Model):
                 error_message = _(' It is not possible to get a session id. ')
             if error_message != '':
                 error_message = error_message[2:]
+            if all_contadores:
+                try:
+                    self.save_inelcom_response_as_json(
+                        all_contadores, 'contadores')
+                except Exception:
+                    pass
+                readings = self._get_readings_info_inelcom_from_json(
+                    all_contadores)
         return [readings, error_message, error_watermeters]
 
     # Hook that will be implemeneted on every telecontrol

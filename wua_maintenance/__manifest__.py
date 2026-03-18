@@ -6,7 +6,7 @@
     "name": "Water Users Association: Maintenance",
     "summary": " In a water users association, maintenance helper of the "
                " entire set of WUA infrastructure.",
-    "version": '10.0.1.1.10',
+    "version": '10.0.1.1.11',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
@@ -40,6 +40,7 @@
         "wizard/wizard_massive_maintenance_requests.xml",
         "wizard/wizard_image_preview.xml",
         "wizard/wizard_massive_maintenance_plans.xml",
+        "wizard/wizard_export_images_zip.xml",
         "views/maintenance_equipment_view.xml",
         "views/maintenance_views.xml",
         "views/maintenance_plan_view.xml",

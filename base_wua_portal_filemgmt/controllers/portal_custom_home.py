@@ -90,8 +90,13 @@ class website_account(website_account):
         partner = request.env.user.partner_id
         partner = partner.parent_id or partner
         registry_model = request.env['res.letter']
-        domain = ['|', ('recipient_partner_id', '=', partner.id),
-                  ('sender_partner_id', '=', partner.id)]
+        domain = [
+            '&',
+            '|',
+            ('recipient_partner_id', '=', partner.id),
+            ('sender_partner_id', '=', partner.id),
+            ('state', '=', 'rec'),
+        ]
         if search and search_field:
             field_map = {
                 'registryname': 'name',
@@ -99,7 +104,6 @@ class website_account(website_account):
             }
             if search_field in field_map:
                 domain.append((field_map[search_field], 'ilike', search))
-        domain.append(('state', '=', 'rec'))
         registries = registry_model.search(domain)
         registries_count = len(registries)
         items_per_page = self._items_per_page

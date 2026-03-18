@@ -4,9 +4,7 @@
 
 from odoo import models, fields, api, exceptions, _
 from datetime import timedelta
-import logging
 import string
-from psycopg2 import ProgrammingError
 
 
 class MaintenanceEquipment(models.Model):
@@ -418,6 +416,36 @@ class MaintenanceEquipment(models.Model):
         sanitize=False,
     )
 
+    request_ids = fields.One2many(
+        string='Maintenance Requests',
+        comodel_name='maintenance.request',
+        inverse_name='equipment_id',
+    )
+
+    request_count = fields.Integer(
+        string='Request Count',
+        compute='_compute_request_count',
+        store=True,
+    )
+
+    request_open_count = fields.Integer(
+        string='Open Request Count',
+        compute='_compute_request_count',
+        store=True,
+    )
+
+    @api.depends('request_ids', 'request_ids.stage_id.done',
+                 'request_ids.active')
+    def _compute_request_count(self):
+        for equipment in self:
+            all_requests = self.env['maintenance.request'].with_context(
+                active_test=False).search([
+                    ('equipment_id', '=', equipment.id)])
+            equipment.request_count = len(all_requests)
+            equipment.request_open_count = len(
+                all_requests.filtered(
+                    lambda x: not x.stage_id.done and x.active))
+
     @api.model_cr
     def init(self):
         try:
@@ -735,7 +763,7 @@ class MaintenanceEquipment(models.Model):
                     ),
                     equipment_with_infrastructure_gis AS (
                         SELECT me.id AS equipment_id,
-                            postgis.ST_AsGeoJSON(gis.geom) AS geojson
+                            ST_AsGeoJSON(gis.geom) AS geojson
                         FROM maintenance_equipment me
                         INNER JOIN {base_table} bt ON me.id = bt.equipment_id
                         INNER JOIN {intermediate_table} it ON bt.{base_field}
@@ -771,7 +799,7 @@ class MaintenanceEquipment(models.Model):
                         JOIN category_hierarchy ch ON c.parent_id = ch.id
                     ),
                     equipment_with_infrastructure_gis AS (
-                        SELECT me.id AS equipment_id, postgis.ST_AsGeoJSON(gis.geom)
+                        SELECT me.id AS equipment_id, ST_AsGeoJSON(gis.geom)
                             AS geojson
                         FROM maintenance_equipment me
                         INNER JOIN {base_table} bt ON me.id = bt.equipment_id
@@ -792,16 +820,7 @@ class MaintenanceEquipment(models.Model):
                     gis_field=gis_field,
                     category_id=category_id,
                 )
-            try:
-                env.cr.execute(sql)
-            except ProgrammingError as e:
-                if 'st_asgeojson' in str(e).lower() or 'postgis' in str(e).lower():
-                    logging.getLogger(__name__).warning(
-                        'PostGIS ST_AsGeoJSON no disponible para categoría %s '
-                        '(tablas %s / %s): %s',
-                        category_id, base_table, gis_table, e)
-                else:
-                    raise
+            env.cr.execute(sql)
         cleanup_sql = """
             UPDATE maintenance_equipment
             SET geojson_geom = NULL, with_infrastructure_gis = FALSE
@@ -837,22 +856,18 @@ class MaintenanceEquipment(models.Model):
         ir_values = self.env['ir.values'].sudo()
         update_with_open = ir_values.get_default(
             'maintenance.config.settings',
-            'update_dates_with_open_requests'
+            'update_dates_with_open_requests',
         )
         if update_with_open is None:
             update_with_open = False
-
         for plan in plans:
             next_creation = fields.Date.from_string(plan.next_creation_date)
-
             if next_creation <= today:
                 equipment = plan.equipment_id
                 next_maintenance = fields.Date.from_string(
                     plan.next_maintenance_date)
-
                 period_start = min(next_creation, next_maintenance)
                 period_end = max(next_creation, next_maintenance)
-
                 next_requests = self.env['maintenance.request'].search([
                     ('stage_id.done', '=', False),
                     ('equipment_id', '=', equipment.id),
@@ -871,7 +886,6 @@ class MaintenanceEquipment(models.Model):
                         plan.next_creation_date = fields.Date.to_string(
                             next_creation + timedelta(days=plan.period))
                         plan._compute_next_maintenance()
-
 
     @api.multi
     def _compute_hydraulicsector(self):

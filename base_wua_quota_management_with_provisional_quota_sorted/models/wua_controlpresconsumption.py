@@ -8,8 +8,6 @@ from odoo import models, fields
 class WuaControlpresconsumption(models.Model):
     _inherit = 'wua.controlpresconsumption'
 
-    _in_create = False
-
     controlhydricmovement_ids = fields.One2many(
         string='Control Hydric-Movements',
         comodel_name='wua.controlhydricmovement',
@@ -19,13 +17,21 @@ class WuaControlpresconsumption(models.Model):
     # available the waterconnection_id field. This computed method is called
     # after the create method.
     def _compute_hydraulic_infrastructure_data(self):
-        create_controlhydricmovements = self.__class__._in_create
+        # Save the set of records being created BEFORE calling super,
+        # because super (provisional_quota module) will discard the ids
+        # from the set when it processes them.
+        creating_cps = getattr(self.env.all, '_creating_cps', None)
+        records_creating = set()
+        if creating_cps:
+            records_creating = set(
+                r.id for r in self if r.id in creating_cps)
         super(WuaControlpresconsumption,
               self)._compute_hydraulic_infrastructure_data()
-        if create_controlhydricmovements:
+        if records_creating:
             quota_model = self.env['wua.quota']
             for record in self:
-                if self.is_valid_controlpresconsumption(record):
+                if (record.id in records_creating and
+                        self.is_valid_controlpresconsumption(record)):
                     quota_model.create_controlhydricmovements_presconsumption(
                         record)
 

@@ -133,6 +133,9 @@ class ResPartner(models.Model):
                 'search_view_id': (search_view.id, search_view.name),
                 'domain': [('id', 'in', self.partner_aggregatequotas.ids)],
                 'target': 'current',
+                'context': {
+                    'search_default_active_agriculturalseason': True,
+                },
                 }
         return act_window
 

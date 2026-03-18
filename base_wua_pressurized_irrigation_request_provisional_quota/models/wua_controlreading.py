@@ -24,16 +24,40 @@ class WuaControlreading(models.Model):
         controlreading = super(WuaControlreading, self).create(vals)
         if (self.env.context.get('adjustement_volume') and
                 controlreading.controlpresconsumption_id):
-            # Use SQL to avoid triggering write and regeneration
-            # Don't use a class variablo for in create
+            adj_vol = self.env.context.get('adjustement_volume')
+            cp = controlreading.controlpresconsumption_id
+            # Use SQL to set adjustement_volume AND volume_real
+            # together. We bypass ORM write to avoid triggering
+            # the base write's sub/add_prorrated_value_to_subparcels
+            # (which needs controlperiod data that may not exist) and
+            # to avoid the provisional quota write's
+            # regenerate_particularpresconsumptions (which would
+            # recurse via _compute_hydraulic_infrastructure_data).
             self.env.cr.execute(
                 "UPDATE wua_controlpresconsumption "
-                "SET adjustement_volume = %s WHERE id = %s",
-                (self.env.context.get('adjustement_volume'),
-                 controlreading.controlpresconsumption_id.id))
-            # Invalidate cache to force recomputation
-            controlreading.controlpresconsumption_id.invalidate_cache(
+                "SET adjustement_volume = %s, "
+                "    volume_real = COALESCE(volume, 0) + %s "
+                "WHERE id = %s",
+                (adj_vol, adj_vol, cp.id))
+            cp.invalidate_cache(
                 ['adjustement_volume', 'volume_real'])
+            # Explicitly create particularpresconsumptions now that
+            # volume_real is correct in the DB. The deferred compute
+            # of _compute_hydraulic_infrastructure_data already ran
+            # during super().create() but was a no-op (volume_real
+            # was 0 at that point, so no ppcs were created).
+            cp.create_particularpresconsumptions()
+        # When creating a non-presresconsumption, non-initialization
+        # reading, handle any existing presresconsumption readings
+        # that need to be regenerated (posterior ones are deleted and
+        # recreated; prior ones are archived). Skip when called from
+        # save_controlreadings which handles this explicitly.
+        if (not vals.get('presresconsumption_id') and
+                not vals.get('initialization_reading') and
+                not self.env.context.get('skip_pr_handling') and
+                controlreading.watermeter_id.waterconnection_id):
+            self._handle_presresconsumption_readings_on_create(
+                controlreading)
         return controlreading
 
     def _create_controlreading_for_pr(
@@ -72,6 +96,102 @@ class WuaControlreading(models.Model):
         })
         presresconsumption.controlreading_id = controlreading
         return controlreading
+
+    def _unlink_presresconsumption_controlreadings(
+            self, controlreadings):
+        """Delete presresconsumption-linked controlreadings bypassing
+        the base unlink validations (is_last_reading and contiguous
+        range checks), which can fail during programmatic batch
+        cleanup when watermeter.last_controlreading_time doesn't
+        match the expected sequence (e.g. when different watering
+        durations cause reading times to be out of creation order).
+        """
+        if not controlreadings:
+            return
+        # Handle proration and hydric movements cleanup
+        for cr in controlreadings:
+            if cr.controlpresconsumption_id:
+                if cr.validated:
+                    cr.controlpresconsumption_id.\
+                        sub_prorrated_value_to_subparcels()
+                if (hasattr(cr.controlpresconsumption_id,
+                            'controlhydricmovement_ids') and
+                        cr.controlpresconsumption_id.
+                        controlhydricmovement_ids):
+                    cr.controlpresconsumption_id.\
+                        controlhydricmovement_ids.with_context(
+                            force_unlink=True).sudo().unlink()
+        # Collect IDs before SQL operations
+        cr_ids = controlreadings.ids
+        cp_ids = [
+            cp.id for cp in
+            controlreadings.mapped('controlpresconsumption_id')
+            if cp]
+        # Clear FK from controlreading to controlpresconsumption
+        # to avoid ON DELETE RESTRICT violation
+        self.env.cr.execute(
+            "UPDATE wua_controlreading "
+            "SET controlpresconsumption_id = NULL "
+            "WHERE id IN %s",
+            (tuple(cr_ids),))
+        # Delete controlpresconsumptions (this cascades to
+        # particularpresconsumptions via their CASCADE FK)
+        if cp_ids:
+            self.env.cr.execute(
+                "DELETE FROM wua_controlpresconsumption "
+                "WHERE id IN %s",
+                (tuple(cp_ids),))
+        # Delete controlreadings
+        self.env.cr.execute(
+            "DELETE FROM wua_controlreading WHERE id IN %s",
+            (tuple(cr_ids),))
+        # Invalidate ORM cache
+        self.env.invalidate_all()
+
+    def _handle_presresconsumption_readings_on_create(
+            self, controlreading):
+        """When a real (non-presresconsumption) reading is created,
+        handle existing presresconsumption readings for the same
+        watermeter:
+        - Archive prior ones (reading_time <= this reading) setting
+          adjustement_volume to 0
+        - Delete and recreate posterior ones (reading_time > this
+          reading) so their previous volume reference is correct
+        """
+        watermeter_id = controlreading.watermeter_id.id
+        reading_time = controlreading.reading_time
+        # Archive prior presresconsumption readings
+        prior_pr_readings = self.search([
+            ('watermeter_id', '=', watermeter_id),
+            ('presresconsumption_id', '!=', False),
+            ('reading_time', '<=', reading_time),
+            ('active', '=', True),
+        ])
+        if prior_pr_readings:
+            prior_pr_readings.mapped(
+                'controlpresconsumption_id').\
+                write({'adjustement_volume': 0.0})
+            self.archive_controlreadings(
+                prior_pr_readings.mapped('id'))
+        # Delete and recreate posterior presresconsumption readings
+        posterior_pr_readings = self.search([
+            ('watermeter_id', '=', watermeter_id),
+            ('presresconsumption_id', '!=', False),
+            ('reading_time', '>', reading_time),
+        ], order='reading_time desc')
+        if posterior_pr_readings:
+            presresconsumptions = posterior_pr_readings.mapped(
+                'presresconsumption_id')
+            # Unset FK (ondelete='restrict')
+            presresconsumptions.write({'controlreading_id': None})
+            self._unlink_presresconsumption_controlreadings(
+                posterior_pr_readings)
+            # Recreate in natural order (oldest to newest)
+            for pr in presresconsumptions.sorted(
+                    key=lambda r: r.request_time):
+                self._create_controlreading_for_pr(pr)
+            self._update_watermeter_last_reading(
+                controlreading.watermeter_id)
 
     # Inherit and overwrite method, now we will get the day of the reading_time
     # of the reading and check if there is any active controlreading related
@@ -158,12 +278,16 @@ class WuaControlreading(models.Model):
                             # Unset, because ondelete='restrict'
                             presresconsumption_ids.write(
                                 {'controlreading_id': None})
-                            # Ensure ordered by reading time desc because
-                            # newer must be deleted first, then we reverse
-                            # to recreate in natural order (oldest to newest)
-                            for control_reading in controlreadings_to_delete:
-                                control_reading.unlink()
-                            self.create({
+                            # Use helper to delete bypassing base
+                            # unlink validations (is_last_reading,
+                            # contiguous range) which can fail during
+                            # batch programmatic cleanup
+                            self.\
+                                _unlink_presresconsumption_controlreadings(
+                                    controlreadings_to_delete)
+                            self.with_context(
+                                skip_pr_handling=True,
+                            ).create({
                                 'watermeter_id': reading['watermeter_id'],
                                 'reading_time': reading_time,
                                 'volume': reading['volume'],
@@ -177,6 +301,12 @@ class WuaControlreading(models.Model):
                                 # Recreate controlreading for each
                                 # presresconsumption
                                 self._create_controlreading_for_pr(pr)
+                            # Fix watermeter last reading (base create
+                            # always sets it to the created reading's
+                            # time, which may not be the newest when
+                            # presresconsumption durations vary)
+                            self._update_watermeter_last_reading(
+                                watermeter)
             if update_log:
                 _logger = logging.getLogger(self.__class__.__name__)
                 _logger.info(_('Remote Control: Saved Controlreadings') +

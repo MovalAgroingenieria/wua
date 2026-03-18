@@ -5,6 +5,7 @@
 import datetime
 import json
 import logging
+import math
 import requests
 
 from odoo import http
@@ -23,13 +24,10 @@ class NDVIPointController(http.Controller):
             return request.make_response('', headers=[
                 ('Content-Type', 'text/plain'),
             ])
-
         db = kwargs.get('db')
         if db and not request.session.db:
             request.session.db = db
         try:
-            layer = kwargs.get('LAYER', 'NDVI')
-            crs = kwargs.get('CRS', 'EPSG:4326')
             time_range = kwargs.get('TIME', '')
             resolution_str = kwargs.get('RESOLUTION', '10m')
             bbox = kwargs.get('BBOX', '')
@@ -39,21 +37,21 @@ class NDVIPointController(http.Controller):
                     resolution = int(resolution_str.replace('m', ''))
                 except Exception:
                     resolution = 10
-
             if not time_range or '/' not in time_range:
+                err = (
+                    'TIME parameter required '
+                    '(format: YYYY-MM-DD/YYYY-MM-DD)')
                 return request.make_response(
-                    json.dumps({'error': 'TIME parameter required (format: YYYY-MM-DD/YYYY-MM-DD)'}),
-                    headers=[('Content-Type', 'application/json')]
+                    json.dumps({'error': err}),
+                    headers=[('Content-Type',
+                              'application/json')],
                 )
-
             start_date, end_date = time_range.split('/')
-
             if not bbox:
                 return request.make_response(
                     json.dumps({'error': 'BBOX parameter required'}),
-                    headers=[('Content-Type', 'application/json')]
+                    headers=[('Content-Type', 'application/json')],
                 )
-
             try:
                 bbox_parts = bbox.split(',')
                 lat1 = float(bbox_parts[0])
@@ -65,7 +63,7 @@ class NDVIPointController(http.Controller):
             except Exception:
                 return request.make_response(
                     json.dumps({'error': 'Invalid BBOX format'}),
-                    headers=[('Content-Type', 'application/json')]
+                    headers=[('Content-Type', 'application/json')],
                 )
 
             result = self._get_ndvi_timeseries_internal(
@@ -74,20 +72,20 @@ class NDVIPointController(http.Controller):
             if result.get('status') == 'error':
                 return request.make_response(
                     json.dumps({'error': result.get('error')}),
-                    headers=[('Content-Type', 'application/json')]
+                    headers=[('Content-Type', 'application/json')],
                 )
             fis_response = self._format_fis_response(
                 result.get('data', []), 'C4')
 
             return request.make_response(
                 json.dumps(fis_response),
-                headers=[('Content-Type', 'application/json')]
+                headers=[('Content-Type', 'application/json')],
             )
 
         except Exception as e:
             return request.make_response(
                 json.dumps({'error': str(e)}),
-                headers=[('Content-Type', 'application/json')]
+                headers=[('Content-Type', 'application/json')],
             )
 
     @http.route('/teledetection/point/timeseries', type='json', auth='user',
@@ -109,13 +107,13 @@ class NDVIPointController(http.Controller):
             except (ValueError, TypeError):
                 return {
                     'status': 'error',
-                    'error': 'Invalid coordinates. Must be numeric values.'
+                    'error': 'Invalid coordinates. Must be numeric values.',
                 }
 
             if not (-180 <= lon <= 180 and -90 <= lat <= 90):
                 return {
                     'status': 'error',
-                    'error': 'Coordinates out of valid range.'
+                    'error': 'Coordinates out of valid range.',
                 }
 
             model_ir_values = request.env['ir.values']
@@ -125,7 +123,7 @@ class NDVIPointController(http.Controller):
             if not enable_remotesensing:
                 return {
                     'status': 'error',
-                    'error': 'Remote sensing is disabled in configuration.'
+                    'error': 'Remote sensing is disabled in configuration.',
                 }
 
             if not end_date:
@@ -139,7 +137,7 @@ class NDVIPointController(http.Controller):
             if not access_token:
                 return {
                     'status': 'error',
-                    'error': 'Failed to obtain OAuth2 token.'
+                    'error': 'Failed to obtain OAuth2 token.',
                 }
 
             url_api_statistical = model_ir_values.get_default(
@@ -157,9 +155,16 @@ class NDVIPointController(http.Controller):
                     [lon + buffer, lat - buffer],
                     [lon + buffer, lat + buffer],
                     [lon - buffer, lat + buffer],
-                    [lon - buffer, lat - buffer]
-                ]]
+                    [lon - buffer, lat - buffer],
+                ]],
             }
+
+            # Convert resolution from metres to degrees
+            cos_lat = math.cos(math.radians(lat))
+            if cos_lat < 1e-10:
+                cos_lat = 1e-10
+            resx_deg = resolution / (111320.0 * cos_lat)
+            resy_deg = resolution / 110574.0
 
             request_body = {
                 "input": {
@@ -183,8 +188,8 @@ class NDVIPointController(http.Controller):
                         "of": "P1D",
                     },
                     "evalscript": evalscript,
-                    "resx": resolution,
-                    "resy": resolution,
+                    "resx": resx_deg,
+                    "resy": resy_deg,
                 },
             }
 
@@ -204,7 +209,7 @@ class NDVIPointController(http.Controller):
             except Exception as e:
                 return {
                     'status': 'error',
-                    'error': 'Request failed: ' + str(e)
+                    'error': 'Request failed: ' + str(e),
                 }
 
             if resp.status_code != 200:
@@ -215,7 +220,7 @@ class NDVIPointController(http.Controller):
                     pass
                 return {
                     'status': 'error',
-                    'error': error_msg
+                    'error': error_msg,
                 }
 
             try:
@@ -223,7 +228,7 @@ class NDVIPointController(http.Controller):
                 if response_data.get('status') != 'OK':
                     return {
                         'status': 'error',
-                        'error': 'API returned non-OK status'
+                        'error': 'API returned non-OK status',
                     }
 
                 time_series = []
@@ -267,20 +272,20 @@ class NDVIPointController(http.Controller):
                     'point': {'lon': lon, 'lat': lat},
                     'date_range': {
                         'start': start_date,
-                        'end': end_date
-                    }
+                        'end': end_date,
+                    },
                 }
 
             except Exception as e:
                 return {
                     'status': 'error',
-                    'error': 'Error parsing response: ' + str(e)
+                    'error': 'Error parsing response: ' + str(e),
                 }
 
         except Exception as e:
             return {
                 'status': 'error',
-                'error': 'Unexpected error: ' + str(e)
+                'error': 'Unexpected error: ' + str(e),
             }
 
     def _get_oauth_token(self):
@@ -311,7 +316,7 @@ class NDVIPointController(http.Controller):
             if response.status_code == 200:
                 token_data = response.json()
                 return token_data.get('access_token')
-        except Exception as e:
+        except Exception:
             pass
         return None
 
@@ -343,8 +348,10 @@ function evaluatePixel(samples) {
     let ndvi = (samples.B08 - samples.B04)/(samples.B08 + samples.B04)
 
     var validMask = 1
-    if (samples.SCL == 0 || samples.SCL == 1 || samples.SCL == 3 ||
-        samples.SCL == 8 || samples.SCL == 9 || samples.SCL == 10 || samples.SCL == 11) {
+    if (samples.SCL == 0 || samples.SCL == 1 ||
+        samples.SCL == 3 || samples.SCL == 8 ||
+        samples.SCL == 9 || samples.SCL == 10 ||
+        samples.SCL == 11) {
         validMask = 0
     }
 
@@ -371,10 +378,10 @@ function evaluatePixel(samples) {
                     'min': item.get('min'),
                     'max': item.get('max'),
                     'stDev': item.get('stdev'),
-                }
+                },
             }
             fis_data.append(fis_item)
 
         return {
-            layer_name: fis_data
+            layer_name: fis_data,
         }

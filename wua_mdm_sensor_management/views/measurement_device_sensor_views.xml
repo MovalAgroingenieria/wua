@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_mdm_sensor_view_form" model="ir.ui.view">
+        <field name="name">wua.mdm.sensor.view.form</field>
+        <field name="model">mdm.measurement.device.sensor</field>
+        <field name="inherit_id" ref="mdm_sensor_management.mdm_sensor_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/group" position="after">
+                <group string="Range Validation" name="range_validation">
+                        <field name="has_range_validation" string="Sensor Range Validation"/>
+                        <field name="has_custom_range"/>
+                        <field name="custom_min_value"
+                               attrs="{'invisible': [('has_custom_range', '=', False)]}"/>
+                        <field name="custom_max_value"
+                               attrs="{'invisible': [('has_custom_range', '=', False)]}"/>
+                </group>
+                <group string="Effective Range" name="effective_range">
+                        <field name="effective_has_validation" readonly="1"/>
+                        <field name="effective_min_value" readonly="1"/>
+                        <field name="effective_max_value" readonly="1"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

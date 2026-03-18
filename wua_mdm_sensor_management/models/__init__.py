@@ -6,5 +6,6 @@ from . import wua_parcel
 from . import measurement_device
 from . import measurement_device_sensor
 from . import measurement_device_sensor_type
+from . import measurement_device_sensor_reading
 from . import wua_parcel_sensor_reading
 from . import res_partner_sensor_reading

@@ -8,8 +8,6 @@ from odoo import models, fields, api
 class WuaControlpresconsumption(models.Model):
     _inherit = 'wua.controlpresconsumption'
 
-    _in_create = False
-
     product_id = fields.Many2one(
         string='Water Type',
         comodel_name='product.product',
@@ -56,16 +54,31 @@ class WuaControlpresconsumption(models.Model):
     def _compute_hydraulic_infrastructure_data(self):
         super(WuaControlpresconsumption,
               self)._compute_hydraulic_infrastructure_data()
-        if self.__class__._in_create:
-            self.__class__._in_create = False
+        creating_cps = getattr(self.env.all, '_creating_cps', None)
+        if creating_cps:
             for record in self:
-                record.create_particularpresconsumptions()
+                if record.id in creating_cps:
+                    creating_cps.discard(record.id)
+                    record.create_particularpresconsumptions()
 
     @api.model
     def create(self, vals):
         new_controlpresconsumption = \
             super(WuaControlpresconsumption, self).create(vals)
-        self.__class__._in_create = True
+        # Mark this cp as just created using a transaction-scoped set
+        # (stored on self.env.all, which is thread-local). The flag
+        # is set AFTER super().create() returns so that the first
+        # recompute of _compute_hydraulic_infrastructure_data (which
+        # fires during super().create() with waterconnection_id still
+        # empty) does NOT trigger ppc creation. The second recompute
+        # (triggered when the controlreading links to this cp and
+        # waterconnection_id is computed) WILL find the id and create
+        # ppcs.
+        creating_cps = getattr(self.env.all, '_creating_cps', None)
+        if creating_cps is None:
+            creating_cps = set()
+            self.env.all._creating_cps = creating_cps
+        creating_cps.add(new_controlpresconsumption.id)
         return new_controlpresconsumption
 
     @api.multi

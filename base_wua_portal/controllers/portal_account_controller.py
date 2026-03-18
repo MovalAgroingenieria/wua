@@ -31,6 +31,7 @@ class website_account(website_account):
             'parcel_count': parcel_count,
             'gis_viewer_link': gis_viewer_link,
             'liquidation_on_portal': liquidation_on_portal,
+            'partner': partner,
         })
         return response
 
@@ -45,16 +46,19 @@ class website_account(website_account):
 
     @http.route(['/my/account'], type='http', auth='user', website=True)
     def details(self, redirect=None, **post):
-        response = \
-            super(website_account, self).details(redirect=redirect, **post)
         partner = request.env.user.partner_id
         partner = partner.parent_id or partner
+        response = \
+            super(website_account, self).details(redirect=redirect, **post)
         mandates = request.env['account.banking.mandate'].sudo().search([
             ('partner_id', '=', partner.id),
         ])
         company = request.website.company_id
         response.qcontext.update({
             'company_email': company.email,
+            'is_owner': partner.is_owner,
+            'is_payer': partner.is_payer,
+            'is_lessee': partner.is_lessee,
         })
         if isinstance(response, dict):
             response.update({

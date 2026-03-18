@@ -2,9 +2,9 @@
    :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
    :alt: License: AGPL-3
 
-======================================================
+===============================================================
 Water Users Association Management: Invoicing Gravity Hierarchy
-======================================================
+===============================================================
 
 This module adds specific functionality for Invoicing Gravity Hierarchy Water User Associations.
 
