@@ -25,6 +25,7 @@ KC_LOWER_SATURATION = wua_config_settings.KC_LOWER_SATURATION
 KC_UPPER_SATURATION = wua_config_settings.KC_UPPER_SATURATION
 
 from odoo import api, SUPERUSER_ID
+from odoo.addons.base_wua.hooks import run_performance_indexes
 
 _logger = logging.getLogger(__name__)
 
@@ -32,23 +33,20 @@ _logger = logging.getLogger(__name__)
 def create_performance_indexes(cr):
     """Create indexes for models defined in this module."""
     indexes = [
-        ("wua_agriculturalseason_active_idx",
+        ("wua_agriculturalseason_active_idx", "wua_agriculturalseason",
          "CREATE INDEX IF NOT EXISTS wua_agriculturalseason_active_idx "
          "ON wua_agriculturalseason (active_agriculturalseason) "
          "WHERE active_agriculturalseason = true"),
         ("wua_monitoringperiod_agriculturalseason_state_idx",
+         "wua_monitoringperiod",
          "CREATE INDEX IF NOT EXISTS wua_monitoringperiod_agriculturalseason_state_idx "
          "ON wua_monitoringperiod (agriculturalseason_id, state)"),
-        ("wua_cropunit_agriculturalseason_parcel_idx",
+        ("wua_cropunit_agriculturalseason_parcel_idx", "wua_cropunit",
          "CREATE INDEX IF NOT EXISTS wua_cropunit_agriculturalseason_parcel_idx "
          "ON wua_cropunit (agriculturalseason_id, parcel_id, cultivation_id)"),
     ]
-    for name, sql in indexes:
-        try:
-            cr.execute(sql)
-        except Exception as e:
-            _logger.debug(
-                "base_wua_hydric_estimation: skip index %s (%s)", name, e)
+    run_performance_indexes(
+        cr, _logger, 'base_wua_hydric_estimation', indexes)
 
 
 def pre_init_hook(cr):

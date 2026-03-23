@@ -4,22 +4,19 @@
 
 import logging
 
+from odoo.addons.base_wua.hooks import run_performance_indexes
+
 _logger = logging.getLogger(__name__)
 
 
 def create_performance_indexes(cr):
     """Create indexes for models defined in this module."""
     indexes = [
-        ("wua_flowdata_flowmeter_date_idx",
+        ("wua_flowdata_flowmeter_date_idx", "wua_flowdata",
          "CREATE INDEX IF NOT EXISTS wua_flowdata_flowmeter_date_idx "
          "ON wua_flowdata (flowmeter_id, date) WHERE flowmeter_id IS NOT NULL"),
     ]
-    for name, sql in indexes:
-        try:
-            cr.execute(sql)
-        except Exception as e:
-            _logger.debug(
-                "base_wua_flowdata: skip index %s (%s)", name, e)
+    run_performance_indexes(cr, _logger, 'base_wua_flowdata', indexes)
 
 
 def post_init_hook(cr, registry):

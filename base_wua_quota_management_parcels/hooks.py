@@ -5,6 +5,7 @@
 import logging
 
 from odoo import api, SUPERUSER_ID
+from odoo.addons.base_wua.hooks import run_performance_indexes
 
 _logger = logging.getLogger(__name__)
 
@@ -12,16 +13,12 @@ _logger = logging.getLogger(__name__)
 def create_performance_indexes(cr):
     """Create indexes for models defined in this module."""
     indexes = [
-        ("wua_quotaperiod_line_parcel_idx",
+        ("wua_quotaperiod_line_parcel_idx", "wua_quotaperiod_line_parcel",
          "CREATE INDEX IF NOT EXISTS wua_quotaperiod_line_parcel_idx "
          "ON wua_quotaperiod_line_parcel (quotaperiodline_id, parcel_id)"),
     ]
-    for name, sql in indexes:
-        try:
-            cr.execute(sql)
-        except Exception as e:
-            _logger.debug(
-                "base_wua_quota_management_parcels: skip index %s (%s)", name, e)
+    run_performance_indexes(
+        cr, _logger, 'base_wua_quota_management_parcels', indexes)
 
 
 def post_init_hook(cr, registry):

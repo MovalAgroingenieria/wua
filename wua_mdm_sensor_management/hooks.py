@@ -4,6 +4,8 @@
 
 import logging
 
+from odoo.addons.base_wua.hooks import run_performance_indexes
+
 logger = logging.getLogger(__name__)
 
 def create_parcel_sensor_reading_view(cr):
@@ -217,16 +219,12 @@ def create_partner_sensor_reading_indexes(cr):
 def create_performance_indexes(cr):
     """Create indexes for models defined in this module."""
     indexes = [
-        ("mdm_device_parcellink_device_parcel_idx",
+        ("mdm_device_parcellink_device_parcel_idx", "mdm_device_parcellink",
          "CREATE INDEX IF NOT EXISTS mdm_device_parcellink_device_parcel_idx "
          "ON mdm_device_parcellink (device_id, parcel_id)"),
     ]
-    for name, sql in indexes:
-        try:
-            cr.execute(sql)
-        except Exception as e:
-            logger.debug(
-                "wua_mdm_sensor_management: skip index %s (%s)", name, e)
+    run_performance_indexes(
+        cr, logger, 'wua_mdm_sensor_management', indexes)
 
 
 def post_init_hook(cr, registry):

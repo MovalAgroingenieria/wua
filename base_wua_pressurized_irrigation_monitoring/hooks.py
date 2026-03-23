@@ -4,27 +4,24 @@
 
 import logging
 
+from odoo.addons.base_wua.hooks import run_performance_indexes
+
 _logger = logging.getLogger(__name__)
 
 
 def create_performance_indexes(cr):
     """Create indexes for models defined in this module."""
     indexes = [
-        ("wua_controlreading_reading_time_idx",
+        ("wua_controlreading_reading_time_idx", "wua_controlreading",
          "CREATE INDEX IF NOT EXISTS wua_controlreading_reading_time_idx "
          "ON wua_controlreading (watermeter_id, reading_time)"),
-        ("wua_controlreading_presresconsumption_idx",
+        ("wua_controlreading_presresconsumption_idx", "wua_controlreading",
          "CREATE INDEX IF NOT EXISTS wua_controlreading_presresconsumption_idx "
          "ON wua_controlreading (presresconsumption_id) "
          "WHERE presresconsumption_id IS NOT NULL"),
     ]
-    for name, sql in indexes:
-        try:
-            cr.execute(sql)
-        except Exception as e:
-            _logger.debug(
-                "base_wua_pressurized_irrigation_monitoring: skip index %s "
-                "(%s)", name, e)
+    run_performance_indexes(
+        cr, _logger, 'base_wua_pressurized_irrigation_monitoring', indexes)
 
 
 def post_init_hook(cr, registry):
