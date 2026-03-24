@@ -51,7 +51,7 @@ class WizardGenerateEstimatedReadings(models.TransientModel):
                 batch = groups[start:start + LAST_READING_SEARCH_BATCH]
                 domain = []
                 n = len(batch)
-                for _ in range(n - 1):
+                for i in range(n - 1):
                     domain.append('|')
                 for g in batch:
                     domain.append('&')
