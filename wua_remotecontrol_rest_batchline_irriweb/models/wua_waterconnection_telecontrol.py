@@ -166,20 +166,17 @@ class WuaWaterconnectionTelecontrol(models.Model):
 
     @api.model
     def create(self, vals):
-        telecontrol_info = super(WuaWaterconnectionTelecontrol, self).\
+        telecontrol_info = super(
+            WuaWaterconnectionTelecontrol, self).\
             create(vals)
-        telecontrol_info.waterconnection_id.write({
-            'last_data_time': telecontrol_info.data_time,
-            'last_total_volume': telecontrol_info.total_volume,
-            'last_waterflow': telecontrol_info.waterflow,
-            'last_valve_open': telecontrol_info.valve_open,
-            'last_valve_scheduled': telecontrol_info.valve_scheduled,
-            'last_valve_state': telecontrol_info.valve_state,
-            'last_valve_error': telecontrol_info.valve_error,
-            'last_valve_error_msg': telecontrol_info.valve_error_msg,
-            'last_watermeter_error': telecontrol_info.watermeter_error,
-            'last_watermeter_error_msg': telecontrol_info.watermeter_error_msg,
-        })
+        # Only write the extra field not handled by
+        # the base create (which already writes the
+        # 9 common last_* fields).
+        if telecontrol_info.valve_state:
+            telecontrol_info.waterconnection_id.write({
+                'last_valve_state':
+                    telecontrol_info.valve_state,
+            })
         return telecontrol_info
 
     def refine_waterconnection_telecontrol_info(self, wc_info):
@@ -215,40 +212,14 @@ class WuaWaterconnectionTelecontrol(models.Model):
                 resp.append(refined_wc_info)
         return resp
 
-    def save_waterconnection_telecontrol_info(self, wc_info,
-                                              update_log=True):
-        number_of_wc_info = len(wc_info)
-        if number_of_wc_info > 0:
-            for info in wc_info:
-                wc = self.env['wua.waterconnection'].browse(
-                    info['waterconnection_id'])
-                waterconnection_telecontrol_params = {
-                    'data_time': info['data_time'],
-                    'total_volume': info['total_volume'],
-                    'waterflow': info['waterflow'],
-                    'valve_open': info['valve_open'],
-                    'valve_scheduled': info['valve_scheduled'],
-                    'valve_state': info['valve_state'],
-                    'valve_error': info['valve_error'],
-                    'valve_error_msg': info['valve_error_msg'],
-                    'watermeter_error': info['watermeter_error'],
-                    'watermeter_error_msg': info['watermeter_error_msg'],
-                    'waterconnection_id': info['waterconnection_id'],
-                }
-                if (wc.telecontrol_ids and len(wc.telecontrol_ids) > 0):
-                    newest_info = wc.telecontrol_ids[-1]
-                    if (newest_info.data_time < info['data_time']):
-                        # WHILE For the case when MAX_COUNT_HIST get lower than
-                        # current data
-                        while (wc.telecontrol_ids and
-                                len(wc.telecontrol_ids) >=
-                                self.MAX_COUNT_HIST):
-                            # Unlink the last one
-                            wc.telecontrol_ids[0].unlink()
-                        self.create(waterconnection_telecontrol_params)
-                else:
-                    self.create(waterconnection_telecontrol_params)
-            if update_log:
-                _logger.info(
-                    'Remote Control: Saved Waterconnection '
-                    'Telecontrol Info... %s', number_of_wc_info)
+    def _get_telecontrol_extra_columns(self):
+        return ['valve_state']
+
+    def _get_telecontrol_extra_values(self, info):
+        return [info.get('valve_state')]
+
+    def _get_wc_extra_update_columns(self):
+        return ['last_valve_state']
+
+    def _get_wc_extra_update_values(self, info):
+        return [info.get('valve_state')]
