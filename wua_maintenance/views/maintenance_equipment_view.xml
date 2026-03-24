@@ -57,7 +57,10 @@
                                         [('geojson_geom','=',False)]}"/>
             </xpath>
             <xpath expr="//field[@name='name']" position="attributes">
-                <attribute name="attrs">{'readonly': [('is_wua', '=', True)]}</attribute>
+                <attribute name="attrs">{'readonly': [('is_wua', '=', True)], 'invisible': [('is_wua', '=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="before">
+                <field name="display_label" attrs="{'invisible': [('is_wua', '=', False)]}" readonly="1"/>
             </xpath>
             <xpath expr="//field[@name='category_id']" position="attributes">
                 <attribute name="attrs">{'readonly': [('is_wua', '=', True)]}</attribute>
@@ -149,6 +152,9 @@
         <field name="model">maintenance.equipment</field>
         <field name="inherit_id" ref="hr_maintenance.maintenance_equipment_view_search_inherit_hr" />
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="attributes">
+                <attribute name="filter_domain">['|','|','|','|',('name','ilike',self),('display_label','ilike',self),('model','ilike',self),('serial_no','ilike',self),('partner_ref', 'ilike', self)]</attribute>
+            </xpath>
             <xpath expr="//field[@name='owner_user_id']" position="after">
                 <filter string='Is WUA: Yes' name="filter_is_wua_true" domain="[('is_wua', '!=', False)]" />
                 <filter string='Is WUA: No' name="filter_is_wua_false" domain="[('is_wua', '!=', True)]" />

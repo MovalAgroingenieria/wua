@@ -21,7 +21,7 @@ class MaintenanceEquipment(models.Model):
     display_label = fields.Char(
         string='Name',
         compute='_compute_display_label',
-        store=False,
+        store=True,
     )
 
     tag_ids = fields.Many2many(
@@ -1122,6 +1122,9 @@ class MaintenanceEquipment(models.Model):
             record.tag_html = tags
 
     @api.multi
+    @api.depends('name', 'is_wua', 'category_id',
+                 'pumpunit_ids.pumpgroup_id.name',
+                 'pumpunit_ids.pumpunit_number')
     def _compute_display_label(self):
         pump_category_id = False
         try:
@@ -1133,8 +1136,8 @@ class MaintenanceEquipment(models.Model):
             name = record.name
             if (record.is_wua and pump_category_id and
                     record.category_id.id == pump_category_id and
-                    record.pumpunit_id):
-                pumpunit = record.pumpunit_id
+                    record.pumpunit_ids):
+                pumpunit = record.pumpunit_ids[0]
                 if pumpunit.pumpgroup_id:
                     name = pumpunit.pumpgroup_id.name + \
                         u' [nº ' + str(pumpunit.pumpunit_number) + ']'
