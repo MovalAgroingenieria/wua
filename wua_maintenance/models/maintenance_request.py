@@ -5,8 +5,11 @@
 from jinja2 import Template, TemplateError
 from datetime import datetime
 import json
+import logging
 from odoo import models, fields, api, _
 from bs4 import BeautifulSoup
+
+_logger = logging.getLogger(__name__)
 
 
 class MaintenanceRequest(models.Model):
@@ -458,6 +461,93 @@ class MaintenanceRequest(models.Model):
                     fields_with_paths.add(field.name)
                     path_to_name[field.field_path] = field.name
         return configs, fields_with_paths, path_to_name
+
+    @api.multi
+    def action_deduplicate_images(self):
+        """Remove duplicate attachments (ir.attachment)
+        from these requests. Duplicates are detected via
+        the built-in checksum field (SHA1).
+        For each request, only the first occurrence of
+        each checksum is kept.
+        Attachments linked to resolution fields on
+        resolved requests are always protected.
+        """
+        total_removed = 0
+        for request in self:
+            total_removed += (
+                request._deduplicate_attachments())
+        return total_removed
+
+    def _deduplicate_attachments(self):
+        """Deduplicate ir.attachment records linked to
+        this maintenance request.
+        Returns the number of removed duplicates.
+        """
+        self.ensure_one()
+        is_resolved = (
+            self.field_resolved or
+            (self.stage_id and self.stage_id.done))
+        protected_fields = (
+            'resolution_image_before',
+            'resolution_image_after',
+        )
+        domain = [
+            ('res_model', '=', 'maintenance.request'),
+            ('res_id', '=', self.id),
+        ]
+        attachments = self.env['ir.attachment'].search(
+            domain, order='id asc')
+        if len(attachments) <= 1:
+            return 0
+        seen_checksums = set()
+        to_remove = self.env['ir.attachment']
+        for att in attachments:
+            # Protect resolution attachments on
+            # resolved requests
+            if (is_resolved and att.res_field in
+                    protected_fields):
+                continue
+            if not att.checksum:
+                continue
+            if att.checksum in seen_checksums:
+                to_remove |= att
+            else:
+                seen_checksums.add(att.checksum)
+        count = len(to_remove)
+        if to_remove:
+            to_remove.unlink()
+        return count
+
+    @api.model
+    def _cron_deduplicate_images(self):
+        """Cron: deduplicate attachments on all
+        maintenance requests that have duplicate
+        checksums.
+        """
+        cr = self.env.cr
+        cr.execute(
+            "SELECT res_id"
+            " FROM ir_attachment"
+            " WHERE res_model = "
+            "'maintenance.request'"
+            " AND checksum IS NOT NULL"
+            " AND checksum != ''"
+            " GROUP BY res_id, checksum"
+            " HAVING COUNT(*) > 1")
+        rows = cr.fetchall()
+        if not rows:
+            _logger.info(
+                'Maintenance: No duplicate '
+                'attachments found.')
+            return
+        request_ids = list(set(r[0] for r in rows))
+        requests = self.browse(request_ids)
+        total_removed = (
+            requests.action_deduplicate_images())
+        _logger.info(
+            'Maintenance: Deduplicated attachments '
+            'in %s requests, removed %s duplicates.',
+            len(request_ids), total_removed)
 
     @api.multi
     def action_reset_field_data(self):

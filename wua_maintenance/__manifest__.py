@@ -34,6 +34,7 @@
         "data/maintenance_equipment_category_data.xml",
         "data/maintenance_kinds_data.xml",
         "data/maintenance_request_cron.xml",
+        "data/maintenance_request_dedup_cron.xml",
         "data/maintenance_cron.xml",
         "data/maintenance_request_notify_action.xml",
         "data/maintenance_request_notify_rule.xml",

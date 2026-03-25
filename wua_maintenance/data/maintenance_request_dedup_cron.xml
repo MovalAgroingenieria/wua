@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="wua_cron_deduplicate_request_images"
+                model="ir.cron">
+            <field name="name">Deduplicate maintenance request images</field>
+            <field name="nextcall" eval="(DateTime.now() + timedelta(days=1)).strftime('%Y-%m-%d 07:00:00')"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">maintenance.request</field>
+            <field name="function">_cron_deduplicate_images</field>
+            <field name="active" eval="True"/>
+        </record>
+
+    </data>
+
+</odoo>

@@ -879,7 +879,8 @@ class MaintenanceEquipment(models.Model):
                     ('equipment_id', '=', equipment.id),
                     ('maintenance_type', '=', 'preventive'),
                     ('maintenance_kind_id', '=', plan.maintenance_kind_id.id),
-                    ('request_date', '>=', fields.Date.to_string(period_start)),
+                    ('request_date', '>=',
+                     fields.Date.to_string(period_start)),
                     ('request_date', '<=', fields.Date.to_string(period_end))])
 
                 if not next_requests:
