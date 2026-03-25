@@ -6,7 +6,7 @@
     "name": "Water Users Association Management",
     "summary": "In a water users association, management of users "
                "and parcels",
-    "version": '10.0.1.1.4',
+    "version": '10.0.1.1.5',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
@@ -54,6 +54,7 @@
         "user_info_help_entries",
         "web_ir_actions_act_window_message",
     ],
+    "post_init_hook": "post_init_hook",
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",

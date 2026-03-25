@@ -9,6 +9,12 @@ class WuaWateringrequest(models.Model):
     _inherit = 'wua.wateringrequest'
     _description = 'Entity (watering request)'
 
+    CONFIG_KEY_SET_PRODUCT = (
+        'base_wua_invoicing_gravity_irrigation.'
+        'default_set_product_id_for_wateringrequest')
+    CONFIG_KEY_GRAVITY_PRODUCT = (
+        'base_wua_invoicing_gravity_irrigation.default_gravity_product_id')
+
     # Size of field "name".
     MAX_SIZE_PARTNER_CODE = 6
     MAX_WATERINGREQUEST_SUFFIX = 3
@@ -30,15 +36,16 @@ class WuaWateringrequest(models.Model):
 
     def _default_product_id(self):
         resp = None
-        default_set_product_id_for_wateringrequest = self.env['ir.values'].\
-            get_default('wua.irrigation.configuration',
-                        'default_set_product_id_for_wateringrequest')
-        if (default_set_product_id_for_wateringrequest):
-            default_product_id = self.env['ir.values'].get_default(
-                'wua.irrigation.configuration', 'default_gravity_product_id')
-            if default_product_id:
-                resp = default_product_id
-            else:
+        config = self.env['ir.config_parameter'].sudo()
+        set_product = config.get_param(self.CONFIG_KEY_SET_PRODUCT)
+        if set_product and set_product.lower() == 'true':
+            product_id_str = config.get_param(self.CONFIG_KEY_GRAVITY_PRODUCT)
+            if product_id_str:
+                try:
+                    resp = int(product_id_str)
+                except (TypeError, ValueError):
+                    resp = None
+            if resp is None:
                 categ_08_products = self.env['product.product'].search(
                     [('categ_id.productcategory_code', '=', 8)], order='id')
                 if len(categ_08_products) > 0:

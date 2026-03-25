@@ -39,10 +39,12 @@ class ResPartner(models.Model):
                             """ + where_clause + """
                             GROUP BY account_move_line.partner_id, act.type
                             """, where_params)
+        overdue_by_id = {}
         for pid, act_type, val in self._cr.fetchall():
-            partner = self.browse(pid)
             if act_type == 'receivable':
-                partner.credit_overdue = val
+                overdue_by_id[pid] = val
+        for record in self:
+            record.credit_overdue = overdue_by_id.get(record.id, 0)
 
     def _search_credit_overdue(self, operator, value):
         tables, where_clause, where_params = self.env['account.move.line'].\

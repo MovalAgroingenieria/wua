@@ -19,11 +19,13 @@ class WuaControlreading(models.Model):
         string='Water Meter',
         comodel_name='wua.watermeter',
         required=True,
+        index=True,
         ondelete='restrict')
 
     reading_time = fields.Datetime(
         string='Time',
-        required=True)
+        required=True,
+        index=True)
 
     controlpresconsumption_id = fields.Many2one(
         string='Consumption',

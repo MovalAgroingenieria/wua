@@ -2,23 +2,51 @@
 # 2025 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import DEFAULT_STANDARD_APPLICATION_EFFICIENCY
-from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import CONTROL_PERIODICITY
-from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import PERIOD_START_DAY
-from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import AUTOMATIC_CALCULATION
-from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import DEFAULT_KC_NDVI_A
-from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import DEFAULT_KC_NDVI_B
-from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import DEFAULT_KC_NDVI_C
-from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import MAX_OFFSET_ALTERNATIVE_NDVI
-from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import AERIAL_IMAGE_LAYERS
-from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import AERIAL_IMAGE_WIDTH
-from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import AERIAL_IMAGE_HEIGHT
-from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import AERIAL_IMAGE_ZOOM
-from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import AERIAL_IMAGE_FORMAT
-from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import HYDRIC_EST_NDVI_MODEL
-from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import KC_LOWER_SATURATION
-from odoo.addons.base_wua_hydric_estimation.models.wua_config_settings import KC_UPPER_SATURATION
+from odoo.addons.base_wua_hydric_estimation.models import wua_config_settings
+import logging
+
+# Short aliases for config keys (avoid E501 in call sites)
+DEFAULT_STANDARD_APPLICATION_EFFICIENCY = (
+    wua_config_settings.DEFAULT_STANDARD_APPLICATION_EFFICIENCY)
+CONTROL_PERIODICITY = wua_config_settings.CONTROL_PERIODICITY
+PERIOD_START_DAY = wua_config_settings.PERIOD_START_DAY
+AUTOMATIC_CALCULATION = wua_config_settings.AUTOMATIC_CALCULATION
+DEFAULT_KC_NDVI_A = wua_config_settings.DEFAULT_KC_NDVI_A
+DEFAULT_KC_NDVI_B = wua_config_settings.DEFAULT_KC_NDVI_B
+DEFAULT_KC_NDVI_C = wua_config_settings.DEFAULT_KC_NDVI_C
+MAX_OFFSET_ALTERNATIVE_NDVI = wua_config_settings.MAX_OFFSET_ALTERNATIVE_NDVI
+AERIAL_IMAGE_LAYERS = wua_config_settings.AERIAL_IMAGE_LAYERS
+AERIAL_IMAGE_WIDTH = wua_config_settings.AERIAL_IMAGE_WIDTH
+AERIAL_IMAGE_HEIGHT = wua_config_settings.AERIAL_IMAGE_HEIGHT
+AERIAL_IMAGE_ZOOM = wua_config_settings.AERIAL_IMAGE_ZOOM
+AERIAL_IMAGE_FORMAT = wua_config_settings.AERIAL_IMAGE_FORMAT
+HYDRIC_EST_NDVI_MODEL = wua_config_settings.HYDRIC_EST_NDVI_MODEL
+KC_LOWER_SATURATION = wua_config_settings.KC_LOWER_SATURATION
+KC_UPPER_SATURATION = wua_config_settings.KC_UPPER_SATURATION
+
 from odoo import api, SUPERUSER_ID
+from odoo.addons.base_wua.hooks import run_performance_indexes
+
+_logger = logging.getLogger(__name__)
+
+
+def create_performance_indexes(cr):
+    """Create indexes for models defined in this module."""
+    indexes = [
+        ("wua_agriculturalseason_active_idx", "wua_agriculturalseason",
+         "CREATE INDEX IF NOT EXISTS wua_agriculturalseason_active_idx "
+         "ON wua_agriculturalseason (active_agriculturalseason) "
+         "WHERE active_agriculturalseason = true"),
+        ("wua_monitoringperiod_agriculturalseason_state_idx",
+         "wua_monitoringperiod",
+         "CREATE INDEX IF NOT EXISTS wua_monitoringperiod_agriculturalseason_state_idx "
+         "ON wua_monitoringperiod (agriculturalseason_id, state)"),
+        ("wua_cropunit_agriculturalseason_parcel_idx", "wua_cropunit",
+         "CREATE INDEX IF NOT EXISTS wua_cropunit_agriculturalseason_parcel_idx "
+         "ON wua_cropunit (agriculturalseason_id, parcel_id, cultivation_id)"),
+    ]
+    run_performance_indexes(
+        cr, _logger, 'base_wua_hydric_estimation', indexes)
 
 
 def pre_init_hook(cr):
@@ -27,6 +55,7 @@ def pre_init_hook(cr):
 
 
 def post_init_hook(cr, registry):
+    create_performance_indexes(cr)
     env = api.Environment(cr, SUPERUSER_ID, {})
     _update_parameters(env)
     _update_wua_irrigationsystem(env)

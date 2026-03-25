@@ -19,15 +19,18 @@ class WuaParcel(models.Model):
 
     @api.multi
     def _compute_overdue(self):
+        if not self:
+            return
+        InvoiceLine = self.env['account.invoice.line']
+        lines = InvoiceLine.search([('parcel_id', 'in', self.ids)])
+        lines.mapped('invoice_id')
+        lines.mapped('invoice_id.overdue')
+        overdue_by_parcel = {}
+        for line in lines:
+            if line.invoice_id.overdue:
+                overdue_by_parcel[line.parcel_id.id] = True
         for record in self:
-            overdue = False
-            invoice_lines = self.env['account.invoice.line'].search(
-                [('parcel_id', '=', record.id)])
-            for invoice_line in invoice_lines:
-                if invoice_line.invoice_id.overdue:
-                    overdue = True
-                    break
-            record.overdue = overdue
+            record.overdue = overdue_by_parcel.get(record.id, False)
 
     @api.multi
     def action_see_invoice_lines(self):
@@ -60,12 +63,21 @@ class WuaParcelPartnerlink(models.Model):
 
     @api.multi
     def _compute_overdue(self):
+        if not self:
+            return
+        parcel_ids = self.mapped('parcel_id').ids
+        if not parcel_ids:
+            for record in self:
+                record.overdue = False
+            return
+        InvoiceLine = self.env['account.invoice.line']
+        lines = InvoiceLine.search([('parcel_id', 'in', parcel_ids)])
+        lines.mapped('invoice_id')
+        lines.mapped('invoice_id.overdue')
+        overdue_by_parcel = {}
+        for line in lines:
+            if line.invoice_id.overdue:
+                overdue_by_parcel[line.parcel_id.id] = True
         for record in self:
-            overdue = False
-            invoice_lines = self.env['account.invoice.line'].search(
-                [('parcel_id', '=', record.parcel_id.id)])
-            for invoice_line in invoice_lines:
-                if invoice_line.invoice_id.overdue:
-                    overdue = True
-                    break
-            record.overdue = overdue
+            record.overdue = overdue_by_parcel.get(
+                record.parcel_id.id, False)

@@ -279,11 +279,12 @@ class WuaInvoiceset(models.Model):
         return invoice_details_categ18
 
     def add_to_invoice_data_line_ref_to_other_types(
-            self, categ_code, invoice_data_line, data):
+            self, categ_code, invoice_data_line, data, parcels_by_id=None):
         if categ_code != 16 and categ_code != 17 and categ_code != 18:
             return super(WuaInvoiceset,
                          self).add_to_invoice_data_line_ref_to_other_types(
-                             categ_code, invoice_data_line, data)
+                             categ_code, invoice_data_line, data,
+                             parcels_by_id=parcels_by_id)
         if categ_code == 16:
             data['invoice_with_variable_surcharge_id'] = \
                 invoice_data_line['key1']

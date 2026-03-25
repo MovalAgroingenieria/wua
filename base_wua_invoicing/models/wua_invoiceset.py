@@ -3,11 +3,15 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import logging
+import time
 import datetime
+from collections import defaultdict
 from odoo import models, fields, api, exceptions, _
 from odoo.exceptions import UserError
 from operator import itemgetter
 from lxml import etree
+
+_logger = logging.getLogger(__name__)
 
 
 class WuaInvoiceset(models.Model):
@@ -21,6 +25,15 @@ class WuaInvoiceset(models.Model):
     SIZE_NUMERIC_CODE = 6
     SIZE_ANNUALSEQ_CODE = 4
     SIZE_INVOICESETLINE_SUFFIX = 2
+    # Commit every N invoices to avoid one huge
+    # transaction (index growth, cache).
+    COMMIT_EVERY_N_INVOICES = 200
+    # Log progress every N partners
+    # (step = min(MAX, max(1, total // DIVISOR))).
+    LOG_PROGRESS_PARTNERS_MAX_STEP = 100
+    LOG_PROGRESS_PARTNERS_DIVISOR = 20
+    # Log a milestone message every N partners during create_invoices.
+    LOG_MILESTONE_PARTNERS_EVERY = 500
 
     @api.model_cr
     def init(self):
@@ -348,14 +361,14 @@ class WuaInvoiceset(models.Model):
 
     @api.multi
     def calculate_invoiceset(self):
-        _logger = logging.getLogger(__name__)
         compute_management = self.env['ir.values'].sudo().get_default(
             'wua.invoicing.configuration', 'invoiceset_compute_management')
         for record in self:
             if (record.is_being_computed):
                 raise exceptions.UserError(_(
                     'The invoice-set is being computed. Please, wait.'))
-            _logger.info('Invoiceset ' + record.name + ': Calculus started')
+            _logger.debug('[invoiceset %s] Calculus started', record.name)
+            t_start = time.time()
             if (compute_management):
                 record.message_post(
                     body=_('Invoiceset calculus started'),
@@ -363,8 +376,19 @@ class WuaInvoiceset(models.Model):
                 record.is_being_computed = True
                 self.env.cr.commit()
             invoice_items = self.select_invoice_items(record)
+            if len(invoice_items) == 0:
+                _logger.debug(
+                    '[invoiceset %s] No invoice'
+                    ' items to process, skipping',
+                    record.name)
             if len(invoice_items) > 0:
                 invoice_details = self.calculate_invoice_details(invoice_items)
+                if len(invoice_details) == 0:
+                    _logger.debug(
+                        '[invoiceset %s] No invoice'
+                        ' details after calculation,'
+                        ' skipping',
+                        record.name)
                 if len(invoice_details) > 0:
                     invoices_data = self.group_invoice_details(invoice_details)
                     product_data = self.get_product_data(record.line_ids)
@@ -383,14 +407,14 @@ class WuaInvoiceset(models.Model):
                             'number_of_invoices': number_of_invoices,
                             'state': 'generated',
                             })
-                        # Hook: run after the calculation
                         self.after_calculate_invoiceset(record)
             if (compute_management):
                 record.message_post(
                     body=_('Invoiceset calculus ended'),
                 )
                 record.is_being_computed = False
-            _logger.info('Invoiceset ' + record.name + ': Calculus ended')
+            _logger.debug('[invoiceset %s] Calculus ended (total %.2fs)',
+                         record.name, time.time() - t_start)
 
     @api.multi
     def action_set_as_not_being_computed(self):
@@ -403,8 +427,8 @@ class WuaInvoiceset(models.Model):
         res = super(WuaInvoiceset, self).fields_view_get(
             view_id=view_id, view_type=view_type, toolbar=toolbar,
             submenu=submenu)
-        compute_management = self.env['ir.values'].get_default(
-            'base_wua_invoicing', 'compute_management')
+        compute_management = self.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration', 'invoiceset_compute_management')
         if view_type == 'form':
             doc = etree.XML(res['arch'])
             if not compute_management:
@@ -422,10 +446,15 @@ class WuaInvoiceset(models.Model):
     # - The list of ids of the linked items (parcels, partners, water
     #   connections, irrigation gates, or others).
     def select_invoice_items(self, invoiceset):
+        _logger.debug(
+            '[invoiceset %s] select_invoice_items: start (%s lines)',
+            invoiceset.name, len(invoiceset.line_ids))
+        t0 = time.time()
         invoice_items = []
         for line in invoiceset.line_ids:
             if line.categ_id and line.categ_id.is_wua_product_category:
                 productcategory_code = line.categ_id.productcategory_code
+                t_line = time.time()
                 if (productcategory_code == 1 or productcategory_code == 3 or
                    productcategory_code == 4):
                     item_ids = self.select_invoice_items_parcel_type(line)
@@ -441,6 +470,15 @@ class WuaInvoiceset(models.Model):
                     # Hook for categories defined in a daugther class.
                     item_ids = self.select_invoice_items_other_types(
                         productcategory_code, line)
+                _logger.debug(
+                    '[invoiceset %s] line'
+                    ' product_id=%s categ=%s'
+                    ' -> %s items in %.3fs',
+                    invoiceset.name,
+                    line.product_id.id,
+                    productcategory_code,
+                    len(item_ids) if item_ids else 0,
+                    time.time() - t_line)
                 if item_ids and len(item_ids) > 0:
                     item_ids.sort()
                     invoice_item = {
@@ -452,6 +490,11 @@ class WuaInvoiceset(models.Model):
         if len(invoice_items) > 0:
             invoice_items = sorted(invoice_items,
                                    key=itemgetter('categ_code', 'product_id'))
+        _logger.debug(
+            '[invoiceset %s] select_invoice_items:'
+            ' done in %.2fs -> %s invoice_items',
+            invoiceset.name, time.time() - t0,
+            len(invoice_items))
         return invoice_items
 
     def select_invoice_items_parcel_type(self, invoiceset_line):
@@ -511,45 +554,208 @@ class WuaInvoiceset(models.Model):
     #   categories #5 and #6).
     # - The product quantity.
     # - The invoice line description.
-    def calculate_invoice_details(self, invoice_items):
-        partnerlinks = self.env['wua.parcel.partnerlink'].search([])
-        invoice_details = []
+    def _collect_parcel_ids_for_partnerlinks(self, invoice_items):
+        """Collect parcel ids so partnerlink search covers all line types.
+
+        Extended categories (pressurized, gravity, crop planning, etc.)
+        resolve partnerlinks by parcel and often use *water_costs_percentage*.
+        Those parcels must be collected here; otherwise partnerlinks stay
+        empty and invoice calculation produces no lines.
+        """
+        parcel_ids = set()
+        ip_model = self.env['wua.parcel.irrigationpoint']
+        wc_cost_categ = self.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration', 'product_category_water_costs')
+        if wc_cost_categ is None:
+            wc_cost_categ = 10
         for invoice_item in invoice_items:
-            product_id = invoice_item['product_id']
             categ_code = invoice_item['categ_code']
-            item_ids = invoice_item['item_ids']
-            invoice_details_product = []
-            if categ_code == 1:
-                invoice_details_product = \
-                    self.calculate_invoice_details_categ01(
-                        product_id, categ_code, item_ids, partnerlinks)
-            elif categ_code == 2:
-                invoice_details_product = \
-                    self.calculate_invoice_details_categ02(
-                        product_id, categ_code, item_ids, partnerlinks)
-            elif categ_code == 3:
-                invoice_details_product = \
-                    self.calculate_invoice_details_categ03(
-                        product_id, categ_code, item_ids, partnerlinks)
-            elif categ_code == 4:
-                invoice_details_product = \
-                    self.calculate_invoice_details_categ04(
-                        product_id, categ_code, item_ids, partnerlinks)
-            elif categ_code == 5:
-                invoice_details_product = \
-                    self.calculate_invoice_details_categ05(
-                        product_id, categ_code, item_ids, partnerlinks)
+            item_ids = invoice_item.get('item_ids') or []
+            if not item_ids:
+                continue
+            if categ_code in (1, 3, 4):
+                parcel_ids.update(item_ids)
+            elif categ_code == 5 or categ_code == wc_cost_categ:
+                irrigationpoints = ip_model.search([
+                    ('type', '=', 'WC'),
+                    ('waterconnection_id', 'in', item_ids),
+                ])
+                parcel_ids.update(
+                    irrigationpoints.mapped('parcel_id').ids)
             elif categ_code == 6:
-                invoice_details_product = \
-                    self.calculate_invoice_details_categ06(
-                        product_id, categ_code, item_ids, partnerlinks)
-            else:
-                # Hook for categories defined in a daugther class.
-                invoice_details_product = \
-                    self.calculate_invoice_details_others_categ(
-                        product_id, categ_code, item_ids, partnerlinks)
-            if len(invoice_details_product) > 0:
-                invoice_details = invoice_details + invoice_details_product
+                irrigationpoints = ip_model.search([
+                    ('type', '=', 'IG'),
+                    ('irrigationgate_id', 'in', item_ids),
+                ])
+                parcel_ids.update(irrigationpoints.mapped('parcel_id').ids)
+            elif categ_code == 7:
+                pres = self.env['wua.presconsumption'].browse(item_ids)
+                wc_ids = pres.mapped('waterconnection_id').ids
+                if wc_ids:
+                    irrigationpoints = ip_model.search([
+                        ('type', '=', 'WC'),
+                        ('waterconnection_id', 'in', wc_ids),
+                    ])
+                    parcel_ids.update(
+                        irrigationpoints.mapped('parcel_id').ids)
+            elif categ_code == 8:
+                grav = self.env['wua.gravconsumption'].browse(item_ids)
+                ig_ids = grav.mapped('irrigationgate_id').ids
+                if ig_ids:
+                    irrigationpoints = ip_model.search([
+                        ('type', '=', 'IG'),
+                        ('irrigationgate_id', 'in', ig_ids),
+                    ])
+                    parcel_ids.update(
+                        irrigationpoints.mapped('parcel_id').ids)
+            elif categ_code == 9:
+                enrolled = self.env['wua.enrolledsubparcel'].browse(item_ids)
+                parcel_ids.update(enrolled.mapped('parcel_id').ids)
+            elif categ_code == 12:
+                fert = self.env['wua.fertconsumption'].browse(item_ids)
+                wc_ids = fert.mapped('waterconnection_id').ids
+                if wc_ids:
+                    irrigationpoints = ip_model.search([
+                        ('type', '=', 'WC'),
+                        ('waterconnection_id', 'in', wc_ids),
+                    ])
+                    parcel_ids.update(
+                        irrigationpoints.mapped('parcel_id').ids)
+        return parcel_ids
+
+    def calculate_invoice_details(self, invoice_items):
+        _logger.debug(
+            '[invoiceset] calculate_invoice_details:'
+            ' start (%s items)',
+            len(invoice_items))
+        t0 = time.time()
+        parcel_ids = self._collect_parcel_ids_for_partnerlinks(
+            invoice_items)
+        pl_obj = self.env['wua.parcel.partnerlink']
+        partnerlinks = pl_obj
+        if parcel_ids:
+            # Include water_costs_percentage: pressurized / crop / WC-cost
+            # products use it; omitting it made partnerlinks empty and broke
+            # calculate_invoice_details_* for those categories.
+            partnerlinks = pl_obj.search([
+                '&',
+                ('parcel_id', 'in', list(parcel_ids)),
+                '|', '|',
+                ('other_costs_percentage', '>', 0),
+                ('ownership_percentage', '>', 0),
+                ('water_costs_percentage', '>', 0),
+            ])
+        _logger.debug(
+            '[invoiceset] partnerlinks loaded:'
+            ' %s (%.2fs)',
+            len(partnerlinks), time.time() - t0)
+        invoice_details = []
+        self._translation_cache = {}
+        try:
+            for idx, invoice_item in enumerate(invoice_items):
+                product_id = invoice_item['product_id']
+                categ_code = invoice_item['categ_code']
+                item_ids = invoice_item['item_ids']
+                _logger.debug(
+                    '[invoiceset] calculate_invoice'
+                    '_details: processing item'
+                    ' %s/%s product_id=%s categ=%s'
+                    ' item_ids_count=%s',
+                    idx + 1, len(invoice_items),
+                    product_id, categ_code,
+                    len(item_ids))
+                invoice_details_product = []
+                t_categ = time.time()
+                if categ_code == 1:
+                    _logger.debug(
+                        '[invoiceset] calling'
+                        ' calculate_invoice_details'
+                        '_categ01 product_id=%s'
+                        ' item_ids=%s',
+                        product_id, len(item_ids))
+                    invoice_details_product = \
+                        self.calculate_invoice_details_categ01(
+                            product_id, categ_code, item_ids, partnerlinks)
+                elif categ_code == 2:
+                    _logger.debug(
+                        '[invoiceset] calling'
+                        ' calculate_invoice_details'
+                        '_categ02 product_id=%s'
+                        ' item_ids=%s',
+                        product_id, len(item_ids))
+                    invoice_details_product = \
+                        self.calculate_invoice_details_categ02(
+                            product_id, categ_code, item_ids, partnerlinks)
+                elif categ_code == 3:
+                    _logger.debug(
+                        '[invoiceset] calling'
+                        ' calculate_invoice_details'
+                        '_categ03 product_id=%s'
+                        ' item_ids=%s',
+                        product_id, len(item_ids))
+                    invoice_details_product = \
+                        self.calculate_invoice_details_categ03(
+                            product_id, categ_code, item_ids, partnerlinks)
+                elif categ_code == 4:
+                    _logger.debug(
+                        '[invoiceset] calling'
+                        ' calculate_invoice_details'
+                        '_categ04 product_id=%s'
+                        ' item_ids=%s',
+                        product_id, len(item_ids))
+                    invoice_details_product = \
+                        self.calculate_invoice_details_categ04(
+                            product_id, categ_code, item_ids, partnerlinks)
+                elif categ_code == 5:
+                    _logger.debug(
+                        '[invoiceset] calling'
+                        ' calculate_invoice_details'
+                        '_categ05 product_id=%s'
+                        ' item_ids=%s',
+                        product_id, len(item_ids))
+                    invoice_details_product = \
+                        self.calculate_invoice_details_categ05(
+                            product_id, categ_code, item_ids, partnerlinks)
+                elif categ_code == 6:
+                    _logger.debug(
+                        '[invoiceset] calling'
+                        ' calculate_invoice_details'
+                        '_categ06 product_id=%s'
+                        ' item_ids=%s',
+                        product_id, len(item_ids))
+                    invoice_details_product = \
+                        self.calculate_invoice_details_categ06(
+                            product_id, categ_code, item_ids, partnerlinks)
+                else:
+                    # Hook for categories defined in a daugther class.
+                    _logger.debug(
+                        '[invoiceset] calling'
+                        ' calculate_invoice_details'
+                        '_others_categ product_id=%s'
+                        ' categ=%s item_ids=%s',
+                        product_id, categ_code,
+                        len(item_ids))
+                    invoice_details_product = \
+                        self.calculate_invoice_details_others_categ(
+                            product_id, categ_code, item_ids, partnerlinks)
+                _logger.debug(
+                    '[invoiceset] calculate_invoice'
+                    '_details item %s/%s categ=%s'
+                    ' product_id=%s -> %s details'
+                    ' in %.2fs',
+                    idx + 1, len(invoice_items),
+                    categ_code, product_id,
+                    len(invoice_details_product),
+                    time.time() - t_categ)
+                if len(invoice_details_product) > 0:
+                    invoice_details = invoice_details + invoice_details_product
+        finally:
+            if hasattr(self, '_translation_cache'):
+                del self._translation_cache
+        _logger.debug(
+            '[invoiceset] calculate_invoice_details:'
+            ' done in %.2fs -> %s total details',
+            time.time() - t0, len(invoice_details))
         return invoice_details
 
     def calculate_invoice_details_categ01(self, product_id, categ_code,
@@ -558,17 +764,22 @@ class WuaInvoiceset(models.Model):
         parcels = self.env['wua.parcel'].browse(item_ids).filtered(
             lambda x: x.is_billable_expenses is True)
         area_measurement_name = self.get_area_measurement_name()
+        partnerlinks_by_parcel = defaultdict(list)
+        for pl in partnerlinks:
+            partnerlinks_by_parcel[pl.parcel_id.id].append(pl)
+        product = (self.env['product.product'].browse(
+            product_id) if product_id else None)
         for parcel in parcels:
-            partnerlinks_of_parcel = partnerlinks.filtered(
-                lambda x: x.parcel_id.id == parcel.id and
-                x.other_costs_percentage > 0)
+            partnerlinks_of_parcel = [
+                pl for pl in partnerlinks_by_parcel.get(parcel.id, [])
+                if pl.other_costs_percentage > 0]
             if len(partnerlinks_of_parcel) > 0:
                 for partnerlink in partnerlinks_of_parcel:
                     partner_id = partnerlink.partner_id.id
                     profile = partnerlink.profile
                     parcel_code = parcel.name
                     area_official = self._get_parcel_area_for_invoicing(
-                        parcel, product_id)
+                        parcel, product_id, product=product)
                     area_official_str = ('%.4f' % area_official).\
                         replace('.', ',')
                     percentage = partnerlink.other_costs_percentage
@@ -672,11 +883,18 @@ class WuaInvoiceset(models.Model):
     def calculate_invoice_details_categ02(self, product_id, categ_code,
                                           item_ids, partnerlinks):
         invoice_details_categ02 = []
-        description = ''
-        product = self.env['product.product'].browse(product_id)
+        if not item_ids:
+            return invoice_details_categ02
+        partner_ids = list(item_ids)
+        partners = self.env['res.partner'].browse(partner_ids)
+        partners.mapped('lang')
+        partner_by_id = {p.id: p for p in partners}
+        product = (self.env['product.product'].browse(
+            product_id) if product_id else None)
         for item in item_ids:
-            if product:
-                partner = self.env['res.partner'].browse(item)
+            partner = partner_by_id.get(item)
+            description = ''
+            if product and partner:
                 description = product.with_context(lang=partner.lang).name
             result = {
                 'partner_id': item,
@@ -693,10 +911,11 @@ class WuaInvoiceset(models.Model):
     # Function for future modules to modify the area of the parcel used by the
     # invoicing
     # Only affects products of category 3, 4
-    def _get_parcel_area_for_invoicing(self, parcel, product_id):
+    def _get_parcel_area_for_invoicing(self, parcel, product_id, product=None):
         area_to_return = parcel.area_official
-        product = self.env['product.product'].browse(product_id)
-        if (product.parcel_area_to_be_invoiced):
+        if product is None and product_id:
+            product = self.env['product.product'].browse(product_id)
+        if product and product.parcel_area_to_be_invoiced:
             # Selection field parcel_area_to_be_invoiced must have the same
             # value as the area field name: This make extensions easier
             area_to_return = getattr(
@@ -723,15 +942,21 @@ class WuaInvoiceset(models.Model):
         default_irrigationditch_label = _('Irrigationditch')
         default_parcel_label = _('Parcel')
         default_cost_label = _('cost:')
+        partnerlinks_by_parcel = defaultdict(list)
+        for pl in partnerlinks:
+            partnerlinks_by_parcel[pl.parcel_id.id].append(pl)
+        product = (
+            self.env['product.product'].browse(product_id)
+            if product_id else None)
         for parcel in parcels:
             owner_percentage = (
-                self.env['product.product'].browse(
-                    product_id).product_tmpl_id.allow_ownerhsip_percentage and
-                parcel.use_ownership_percentage_on_invoicing)
+                product and product.product_tmpl_id.
+                allow_ownerhsip_percentage and parcel.
+                use_ownership_percentage_on_invoicing)
             # Conditional Owners content
-            owners_of_parcel = partnerlinks.filtered(
-                lambda x: x.parcel_id.id == parcel.id and
-                x.ownership_percentage > 0.0)
+            owners_of_parcel = [
+                pl for pl in partnerlinks_by_parcel.get(parcel.id, [])
+                if pl.ownership_percentage > 0.0]
             if (owner_percentage):
                 partnerlinks_of_parcel = parcel.partnerlink_ids.filtered(
                     lambda x: x.ownership_percentage > 0.0)
@@ -746,7 +971,7 @@ class WuaInvoiceset(models.Model):
                     profile = partnerlink.profile
                     parcel_code = parcel.name
                     area_official = self._get_parcel_area_for_invoicing(
-                        parcel, product_id)
+                        parcel, product_id, product=product)
                     area_official_str = ('%.4f' % area_official).\
                         replace('.', ',')
                     # Calculate area according to Invoicing Area setting
@@ -834,14 +1059,16 @@ class WuaInvoiceset(models.Model):
                     invoice_details_categ03.append(result)
         return invoice_details_categ03
 
-    def get_description_categ04(self, parcel, partnerlink, product_id):
+    def get_description_categ04(
+            self, parcel, partnerlink,
+            product_id, product=None):
         description = ''
         area_measurement_name = self.get_area_measurement_name()
         alter_invoicing_behavior = self.get_alter_invoicing_behavior()
         # Parecel info
         parcel_code = parcel.name
         area_official = self._get_parcel_area_for_invoicing(
-            parcel, product_id)
+            parcel, product_id, product=product)
         # Partnerlink info
         profile = partnerlink.profile
         percentage = partnerlink.ownership_percentage
@@ -895,16 +1122,22 @@ class WuaInvoiceset(models.Model):
         parcels = self.env['wua.parcel'].browse(item_ids).filtered(
             lambda x: x.is_billable_expenses is True)
         alter_invoicing_behavior = self.get_alter_invoicing_behavior()
+        partnerlinks_by_parcel = defaultdict(list)
+        for pl in partnerlinks:
+            partnerlinks_by_parcel[pl.parcel_id.id].append(pl)
+        product = (
+            self.env['product.product'].browse(product_id)
+            if product_id else None)
         # Get Invoicing Area settings
         for parcel in parcels:
-            partnerlinks_of_parcel = partnerlinks.filtered(
-                lambda x: x.parcel_id.id == parcel.id and
-                x.ownership_percentage > 0)
+            partnerlinks_of_parcel = [
+                pl for pl in partnerlinks_by_parcel.get(parcel.id, [])
+                if pl.ownership_percentage > 0]
             if len(partnerlinks_of_parcel) > 0:
                 for partnerlink in partnerlinks_of_parcel:
                     partner_id = partnerlink.partner_id.id
                     area_official = self._get_parcel_area_for_invoicing(
-                        parcel, product_id)
+                        parcel, product_id, product=product)
                     # Calculate area according to Invoicing Area setting
                     if alter_invoicing_behavior:
                         area_invoicing_measurement_equivalence = \
@@ -920,7 +1153,7 @@ class WuaInvoiceset(models.Model):
                         quantity = area_official * (percentage / 100)
                     # Set description according to Invoicing Area setting
                     description = self.get_description_categ04(
-                        parcel, partnerlink, product_id)
+                        parcel, partnerlink, product_id, product=product)
                     result = {
                         'partner_id': partner_id,
                         'product_id': product_id,
@@ -936,10 +1169,13 @@ class WuaInvoiceset(models.Model):
     # Return ID of the only payer (if there's only one)
     def have_same_payer_other_costs(self, parcels, partnerlinks):
         payers = []
+        partnerlinks_by_parcel = defaultdict(list)
+        for pl in partnerlinks:
+            partnerlinks_by_parcel[pl.parcel_id.id].append(pl)
         for parcel in parcels:
-            partnerlinks_of_parcel = partnerlinks.filtered(
-                lambda x: x.parcel_id.id == parcel.id and
-                x.other_costs_percentage > 0)
+            partnerlinks_of_parcel = [
+                pl for pl in partnerlinks_by_parcel.get(parcel.id, [])
+                if pl.other_costs_percentage > 0]
             for partnerlink in partnerlinks_of_parcel:
                 if (len(payers) == 1 and partnerlink.partner_id.id not in
                         payers):
@@ -954,23 +1190,25 @@ class WuaInvoiceset(models.Model):
         waterconnections = self.env['wua.waterconnection'].browse(item_ids)
         irrigationpoints = self.env['wua.parcel.irrigationpoint'].search(
             [('type', '=', 'WC')])
+        irrigationpoints_by_wc = defaultdict(list)
+        for ip in irrigationpoints:
+            irrigationpoints_by_wc[ip.waterconnection_id.id].append(ip)
+        partnerlinks_by_parcel = defaultdict(list)
+        for pl in partnerlinks:
+            partnerlinks_by_parcel[pl.parcel_id.id].append(pl)
         area_measurement_name = self.get_area_measurement_name()
-        # precision = self.env['decimal.precision'].precision_get(
-        #     'Product Unit of Measure')
-        # The invoice line quantity always has an accuracy equal to 2
         precision = 2
-        # Checked if want to group the waterconnection details if same payer
-        # of other costs
         grouped_same_payer = self.env['ir.values'].get_default(
             'wua.invoicing.configuration',
             'group_detail_lines_of_wc_if_same_payer')
+        partner_cache = {}
         for waterconnection in waterconnections:
             waterconnection_code = waterconnection.name
-            irrigationpoints_of_waterconnection = irrigationpoints.filtered(
-                lambda x: x.waterconnection_id.id == waterconnection.id)
-            parcels_of_waterconnection = \
-                [x.parcel_id for x in irrigationpoints_of_waterconnection
-                 if x.parcel_id.is_billable_expenses]
+            irrigationpoints_of_waterconnection = irrigationpoints_by_wc.get(
+                waterconnection.id, [])
+            parcels_of_waterconnection = [
+                x.parcel_id for x in irrigationpoints_of_waterconnection
+                if x.parcel_id.is_billable_expenses]
             number_of_parcels = len(parcels_of_waterconnection)
             if number_of_parcels > 0:
                 total_area_official = \
@@ -988,7 +1226,11 @@ class WuaInvoiceset(models.Model):
                     if (payer_id):
                         group_parcels = True
                 if (group_parcels and not total_area_official == 0):
-                    partner_payer = self.env['res.partner'].browse(payer_id)
+                    if payer_id not in partner_cache:
+                        partner_cache[payer_id] = (
+                            self.env['res.partner']
+                            .browse(payer_id))
+                    partner_payer = partner_cache[payer_id]
                     biggest_parcel = max(parcels_of_waterconnection,
                                          key=lambda x: x.area_official)
                     default_waterconnection_label = _('Water Connection')
@@ -1024,9 +1266,10 @@ class WuaInvoiceset(models.Model):
                                 waterconnection_quantity
                         waterconnection_quantity_str = \
                             '%.2f' % (waterconnection_quantity * 100)
-                        partnerlinks_of_parcel = partnerlinks.filtered(
-                            lambda x: x.parcel_id.id == parcel.id and
-                            x.other_costs_percentage > 0)
+                        partnerlinks_of_parcel = [
+                            pl for pl in partnerlinks_by_parcel.get(
+                                parcel.id, [])
+                            if pl.other_costs_percentage > 0]
                         if len(partnerlinks_of_parcel) > 0:
                             for partnerlink in partnerlinks_of_parcel:
                                 partner_id = partnerlink.partner_id.id
@@ -1089,14 +1332,20 @@ class WuaInvoiceset(models.Model):
         irrigationgates = self.env['wua.irrigationgate'].browse(item_ids)
         irrigationpoints = self.env['wua.parcel.irrigationpoint'].search(
             [('type', '=', 'IG')])
+        irrigationpoints_by_ig = defaultdict(list)
+        for ip in irrigationpoints:
+            irrigationpoints_by_ig[ip.irrigationgate_id.id].append(ip)
+        partnerlinks_by_parcel = defaultdict(list)
+        for pl in partnerlinks:
+            partnerlinks_by_parcel[pl.parcel_id.id].append(pl)
         area_measurement_name = self.get_area_measurement_name()
         for irrigationgate in irrigationgates:
             irrigationgate_code = irrigationgate.name
-            irrigationpoints_of_irrigationgate = irrigationpoints.filtered(
-                lambda x: x.irrigationgate_id.id == irrigationgate.id)
-            parcels_of_irrigationgate = \
-                [x.parcel_id for x in irrigationpoints_of_irrigationgate
-                 if x.parcel_id.is_billable_expenses]
+            irrigationpoints_of_irrigationgate = irrigationpoints_by_ig.get(
+                irrigationgate.id, [])
+            parcels_of_irrigationgate = [
+                x.parcel_id for x in irrigationpoints_of_irrigationgate
+                if x.parcel_id.is_billable_expenses]
             if len(parcels_of_irrigationgate) > 0:
                 total_area_official = \
                     sum(x.area_official for x in parcels_of_irrigationgate)
@@ -1105,9 +1354,9 @@ class WuaInvoiceset(models.Model):
                         continue
                     irrigationgate_quantity = \
                         parcel.area_official / total_area_official
-                    partnerlinks_of_parcel = partnerlinks.filtered(
-                        lambda x: x.parcel_id.id == parcel.id and
-                        x.other_costs_percentage > 0)
+                    partnerlinks_of_parcel = [
+                        pl for pl in partnerlinks_by_parcel.get(parcel.id, [])
+                        if pl.other_costs_percentage > 0]
                     if len(partnerlinks_of_parcel) > 0:
                         for partnerlink in partnerlinks_of_parcel:
                             partner_id = partnerlink.partner_id.id
@@ -1166,6 +1415,12 @@ class WuaInvoiceset(models.Model):
     # Hook.
     def calculate_invoice_details_others_categ(self, product_id, categ_code,
                                                item_ids, partnerlinks):
+        _logger.debug(
+            '[invoiceset] calculate_invoice'
+            '_details_others_categ (base)'
+            ' product_id=%s categ=%s'
+            ' item_ids=%s -> returning []',
+            product_id, categ_code, len(item_ids))
         return []
 
     # This method receives a list of results dictionaries, and it
@@ -1178,41 +1433,112 @@ class WuaInvoiceset(models.Model):
     #   dictionaries assigned to the current partner.
     # The returned list of final dictionaries is sorted by partner code.
     def group_invoice_details(self, invoice_details):
-        invoices_data = []
-        partner_ids = []
+        _logger.debug(
+            '[invoiceset] group_invoice_details:'
+            ' start (%s details)',
+            len(invoice_details))
+        t0 = time.time()
+        details_by_partner_id = defaultdict(list)
         for item in invoice_details:
-            partner_ids.append(item['partner_id'])
-        partner_ids = list(set(partner_ids))
-        partners = self.env['res.partner'].browse(partner_ids).sorted(
-            key=lambda x: x.partner_code)
-        for partner in partners:
-            result = {
-                'partner_id': partner.id,
-                'partner_code': partner.partner_code,
-                'account_id': partner.property_account_receivable_id.id,
-                'payment_term_id': partner.property_payment_term_id.id,
-                'payment_mode_id': partner.customer_payment_mode_id.id,
-                'customer_invoice_transmit_method_id':
-                    partner.customer_invoice_transmit_method_id.id,
-                'detail': filter(
-                    lambda x: x['partner_id'] == partner.id, invoice_details),
+            details_by_partner_id[item['partner_id']].append(item)
+        _logger.debug(
+            '[invoiceset] group_invoice_details:'
+            ' index by partner_id done in'
+            ' %.2fs -> %s partners',
+            time.time() - t0,
+            len(details_by_partner_id))
+        partner_ids = list(details_by_partner_id.keys())
+        invoices_data = []
+        if partner_ids:
+            read_fields = [
+                'id', 'partner_code',
+                'property_account_receivable_id',
+                'property_payment_term_id',
+                'customer_payment_mode_id',
+                'customer_invoice_transmit_method_id',
+            ]
+            _logger.debug(
+                '[invoiceset] group_invoice_details:'
+                ' about to read %s partners'
+                ' (fields: %s)',
+                len(partner_ids), len(read_fields))
+            t_read = time.time()
+            partners_read = self.env['res.partner'].search_read(
+                [('id', 'in', partner_ids)], read_fields)
+            _logger.debug(
+                '[invoiceset] group_invoice_details:'
+                ' read done in %.2fs -> %s rows',
+                time.time() - t_read,
+                len(partners_read))
+            t_sort = time.time()
+            partners_read.sort(
+                key=lambda r: (
+                    r.get('partner_code') or '',
+                    r['id']))
+            _logger.debug(
+                '[invoiceset] group_invoice_details:'
+                ' sort done in %.2fs',
+                time.time() - t_sort)
+            t_build = time.time()
+            for r in partners_read:
+                result = {
+                    'partner_id': r['id'],
+                    'partner_code': r.get(
+                        'partner_code',
+                    ),
+                    'account_id': r.get(
+                        'property_account_receivable_id',
+                    ) or False,
+                    'payment_term_id': r.get(
+                        'property_payment_term_id',
+                    ) or False,
+                    'payment_mode_id': r.get(
+                        'customer_payment_mode_id',
+                    ) or False,
+                    'customer_invoice_transmit_method_id':
+                        r.get(
+                            'customer_invoice'
+                            '_transmit_method_id',
+                        ) or False,
+                    'detail': details_by_partner_id[
+                        r['id']],
                 }
-            invoices_data.append(result)
+                invoices_data.append(result)
+            _logger.debug(
+                '[invoiceset] group_invoice_details:'
+                ' build list done in %.2fs',
+                time.time() - t_build)
+        _logger.debug(
+            '[invoiceset] group_invoice_details:'
+            ' done in %.2fs -> %s partners',
+            time.time() - t0, len(invoices_data))
         return invoices_data
 
-    # Get the product list with their data.
     def get_product_data(self, invoiceset_lines):
+        _logger.debug(
+            '[invoiceset] get_product_data:'
+            ' start (%s lines)',
+            len(invoiceset_lines))
+        t0 = time.time()
         product_data = []
         for line in invoiceset_lines:
+            product = line.product_id
+            account_id = (
+                product.property_account_income_id.id or product.categ_id.
+                property_account_income_categ_id.id)
             item = {
-                'product_id': line.product_id.id,
+                'product_id': product.id,
                 'price_unit': line.price_unit,
-                'account_id': line.product_id.property_account_income_id.id or
-                line.product_id.categ_id.property_account_income_categ_id.id,
-                'tax_ids': [x.id for x in line.taxes_id],
-                'uom_id': line.product_id.uom_id.id,
+                'account_id': account_id,
+                'tax_ids': [
+                    x.id for x in line.taxes_id],
+                'uom_id': product.uom_id.id,
                 }
             product_data.append(item)
+        _logger.debug(
+            '[invoiceset] get_product_data:'
+            ' done in %.2fs -> %s products',
+            time.time() - t0, len(product_data))
         return product_data
 
     # Get price and account of a product.
@@ -1228,21 +1554,121 @@ class WuaInvoiceset(models.Model):
     # group_invoice_details method, and it creates the invoices of
     # invoice set (second parameter).
     def create_invoices(self, invoices_data, record, product_data):
+        _logger.debug(
+            '[invoiceset %s] create_invoices:'
+            ' start (%s partners)',
+            record.name, len(invoices_data))
+        t0 = time.time()
         number_of_invoices = 0
         paymentterms = self.env['account.payment.term']
-        partners = self.env['res.partner']
-        mandates = self.env['account.banking.mandate']
-        for invoice_data in invoices_data:
+        invoiceset_id = record.id
+        product_ids = [p['product_id'] for p in product_data]
+        _logger.debug(
+            '[invoiceset %s] create_invoices:'
+            ' preloading analytic defaults'
+            ' for %s products',
+            record.name, len(product_ids))
+        t_pre = time.time()
+        analytic_by_product = {}
+        if product_ids:
+            for ad in self.env[
+                    'account.analytic.default'].search(
+                    [('product_id', 'in', product_ids)]):
+                if (ad.product_id.id not in
+                        analytic_by_product and ad.analytic_id):
+                    analytic_by_product[
+                        ad.product_id.id
+                    ] = ad.analytic_id.id
+        _logger.debug(
+            '[invoiceset %s] create_invoices:'
+            ' analytic defaults loaded in %.2fs',
+            record.name, time.time() - t_pre)
+        product_convert = {}
+        for p in self.env['product.product'].browse(
+                product_ids):
+            product_convert[p.id] = getattr(
+                p, 'invoicing_conversion_factor', 1.0)
+        price_account_by_product = {
+            p['product_id']: p for p in product_data}
+        ir_vals = self.env['ir.values']
+        log_max = ir_vals.get_default(
+            'wua.invoicing.configuration', 'log_progress_partners_max_step')
+        log_div = ir_vals.get_default(
+            'wua.invoicing.configuration', 'log_progress_partners_divisor')
+        if log_max is None:
+            log_max = self.LOG_PROGRESS_PARTNERS_MAX_STEP
+        if log_div is None:
+            log_div = self.LOG_PROGRESS_PARTNERS_DIVISOR
+        log_every = min(
+            log_max,
+            max(1, len(invoices_data) // log_div),
+        ) if invoices_data else 1
+        partner_ids = list(set(
+            invoice_data['partner_id']
+            for invoice_data in invoices_data))
+        partners = self.env['res.partner'].browse(partner_ids)
+        partners.mapped('lang')
+        payment_modes = partners.mapped('customer_payment_mode_id')
+        if payment_modes:
+            payment_modes.mapped('payment_type')
+            for pm in payment_modes:
+                if pm and pm.payment_method_id:
+                    getattr(pm.payment_method_id, 'mandate_required', False)
+        partner_by_id = {p.id: p for p in partners}
+        valid_mandates = self.env['account.banking.mandate'].search([
+            ('state', '=', 'valid'),
+            ('partner_id', 'in', partner_ids),
+        ])
+        mandate_by_partner = {}
+        for m in valid_mandates:
+            if m.partner_id.id not in mandate_by_partner:
+                mandate_by_partner[m.partner_id.id] = m.id
+        # Precompute date_due per payment_term to avoid browse+compute in loop
+        record_ref = self.env['wua.invoiceset'].browse(
+            invoiceset_id)
+        date_invoice_ref = record_ref.date_invoiceset
+        date_due_default = record_ref.date_due_invoiceset  # noqa: F841
+        company_currency_id = record_ref.company_id.currency_id.id
+        default_term_id = (
+            record_ref
+            .property_payment_term_invoiceset_id.id)
+        payment_term_ids = set()
+        for inv_data in invoices_data:
+            pt = default_term_id or inv_data.get('payment_term_id')
+            if pt:
+                payment_term_ids.add(pt)
+        date_due_by_term = {}
+        for pt_id in payment_term_ids:
+            pterm = paymentterms.browse(pt_id)
+            if pterm:
+                pterm_list = pterm.with_context(
+                    currency_id=company_currency_id).compute(
+                    value=1, date_ref=date_invoice_ref)[0]
+                date_due_by_term[pt_id] = max(line[0] for line in pterm_list)
+            else:
+                date_due_by_term[pt_id] = date_invoice_ref
+        for inv_idx, invoice_data in enumerate(invoices_data):
+            t_inv = time.time()
             lines = []
+            # Prefetch parcels for "other" categ lines (e.g. gravity categ 8)
+            # to avoid N+1 in add_to_invoice_data_line_ref_to_other_types
+            other_categ_parcel_ids = set()
+            for invoice_data_line in invoice_data['detail']:
+                cc = invoice_data_line.get('categ_code')
+                if cc not in (1, 2, 5, 6) and invoice_data_line.get('key2'):
+                    other_categ_parcel_ids.add(invoice_data_line['key2'])
+            parcels_by_id = {}
+            if other_categ_parcel_ids:
+                parcels = self.env['wua.parcel'].browse(
+                    list(other_categ_parcel_ids))
+                parcels_by_id = dict(
+                    (p.id, p) for p in parcels)
             for invoice_data_line in invoice_data['detail']:
                 product_id = invoice_data_line['product_id']
-                price_account = self.get_price_account_product(
-                    product_data, product_id)
-                # Check if quantity have a conversion factor
-                product = self.env['product.product'].browse(product_id)
-                invoice_data_line['quantity'] = \
-                    invoice_data_line['quantity'] * \
-                    product.invoicing_conversion_factor
+                price_account = price_account_by_product.get(product_id)
+                invoice_data_line['quantity'] = (
+                    invoice_data_line['quantity'] *
+                    product_convert.get(product_id, 1.0))
                 if price_account:
                     data = {
                         'product_id': product_id,
@@ -1253,15 +1679,11 @@ class WuaInvoiceset(models.Model):
                         'account_id': price_account['account_id'],
                         'invoice_line_tax_ids':
                         [(4, x) for x in price_account['tax_ids']],
-                        'invoiceset_id': record.id,
-                        }
-                    # Check if account analytic default exists for product
-                    # variant and in that case add the account_analytic
-                    analytic_default = self.env['account.analytic.default'].\
-                        search([('product_id', '=', product_id)])
-                    if (analytic_default and len(analytic_default) > 0):
-                        analytic_id = analytic_default[0].analytic_id.id
-                        data['account_analytic_id'] = analytic_id
+                        'invoiceset_id': invoiceset_id,
+                    }
+                    if product_id in analytic_by_product:
+                        data['account_analytic_id'] = (
+                            analytic_by_product[product_id])
                     categ_code = invoice_data_line['categ_code']
                     if categ_code == 1 or categ_code == 3 or categ_code == 4:
                         data = self.add_to_invoice_data_line_ref_to_parcel(
@@ -1278,28 +1700,25 @@ class WuaInvoiceset(models.Model):
                     else:
                         data = \
                             self.add_to_invoice_data_line_ref_to_other_types(
-                                categ_code, invoice_data_line, data)
+                                categ_code, invoice_data_line, data,
+                                parcels_by_id=parcels_by_id)
                     data = self.add_to_invoice_data_line_other_data(
                         categ_code, invoice_data_line, data)
                     lines.append((0, 0, data))
             if (len(lines) > 0 and (not self.is_invoice_zero(lines))):
                 partner_id = invoice_data['partner_id']
+                # Re-browse after possible invalidate_all to get fresh record
+                record = self.env['wua.invoiceset'].browse(invoiceset_id)
                 date_invoice = record.date_invoiceset
                 date_due = record.date_due_invoiceset
                 payment_term_id = record.property_payment_term_invoiceset_id.id
                 if not payment_term_id:
                     payment_term_id = invoice_data['payment_term_id']
                 if not date_due:
-                    if payment_term_id:
-                        pterm = paymentterms.browse(payment_term_id)
-                        if pterm:
-                            pterm_list = pterm.with_context(
-                                currency_id=self.company_id.currency_id.id).\
-                                compute(value=1, date_ref=date_invoice)[0]
-                            date_due = max(line[0] for line in pterm_list)
-                    else:
-                        date_due = date_invoice
-                lang = self.env['res.partner'].browse(partner_id).lang
+                    date_due = date_due_by_term.get(
+                        payment_term_id, date_invoice)
+                partner = partner_by_id.get(partner_id)
+                lang = partner.lang if partner else None
                 note1 = record.with_context({'lang': lang}).note1_invoiceset
                 note2 = record.with_context({'lang': lang}).note2_invoiceset
                 invoice_vals = {
@@ -1312,23 +1731,20 @@ class WuaInvoiceset(models.Model):
                     'date_due': date_due,
                     'transmit_method_id':
                         invoice_data['customer_invoice_transmit_method_id'],
-                    'invoiceset_id': record.id,
+                    'invoiceset_id': invoiceset_id,
                     'note1': note1,
                     'note2': note2,
                     'invoice_line_ids': lines,
                     }
-                partner = partners.browse(partner_id)
                 mandate_id = 0
-                if (partner.customer_payment_mode_id.
-                   payment_type == 'inbound' and partner.
-                   customer_payment_mode_id.
-                   payment_method_id.mandate_required):
-                    mandates_of_partner_id = mandates.search([
-                        ('state', '=', 'valid'),
-                        ('partner_id', '=', partner_id),
-                    ])
-                    if mandates_of_partner_id:
-                        mandate_id = mandates_of_partner_id[0].id
+                pm = (
+                    partner.customer_payment_mode_id
+                    if partner else None)
+                if (pm and getattr(pm, 'payment_type', None) == 'inbound' and
+                    getattr(pm, 'payment_method_id', None) and getattr(
+                        pm.payment_method_id, 'mandate_required', False)):
+                    mandate_id = mandate_by_partner.get(
+                        partner_id, 0) or 0
                 if mandate_id > 0:
                     invoice_vals.update({'mandate_id': mandate_id})
                 partner_shipping_id = partner.address_get(
@@ -1338,6 +1754,55 @@ class WuaInvoiceset(models.Model):
                                          partner_shipping_id})
                 self.env['account.invoice'].create(invoice_vals)
                 number_of_invoices = number_of_invoices + 1
+                # Periodic commit to keep transaction
+                # short and limit cache growth
+                commit_every = self.env['ir.values'].get_default(
+                    'wua.invoicing.configuration', 'commit_every_n_invoices')
+                if commit_every is None:
+                    commit_every = self.COMMIT_EVERY_N_INVOICES
+                try:
+                    commit_every = int(commit_every)
+                except (TypeError, ValueError):
+                    commit_every = self.COMMIT_EVERY_N_INVOICES
+                if commit_every < 1:
+                    commit_every = self.COMMIT_EVERY_N_INVOICES
+                if (number_of_invoices % commit_every == 0):
+                    self.env.cr.commit()
+                    self.env.invalidate_all()
+                if number_of_invoices == 1:
+                    _logger.debug(
+                        '[invoiceset %s]'
+                        ' create_invoices: first'
+                        ' invoice created in %.2fs',
+                        record.name,
+                        time.time() - t_inv)
+            if (inv_idx + 1) % log_every == 0 or (
+                    inv_idx + 1) == len(invoices_data):
+                _logger.debug(
+                    '[invoiceset %s] create_invoices:'
+                    ' %s/%s partners processed'
+                    ' (%.2fs so far)',
+                    record.name, inv_idx + 1,
+                    len(invoices_data),
+                    time.time() - t0)
+            milestone_every = self.env['ir.values'].get_default(
+                'wua.invoicing.configuration', 'log_milestone_partners_every')
+            if milestone_every is None:
+                milestone_every = self.LOG_MILESTONE_PARTNERS_EVERY
+            if ((inv_idx + 1) % milestone_every == 0 and
+                    (inv_idx + 1) < len(invoices_data)):
+                _logger.debug(
+                    '[invoiceset %s] create_invoices:'
+                    ' milestone %s partners'
+                    ' -> %s invoices (%.2fs)',
+                    record.name, inv_idx + 1,
+                    number_of_invoices,
+                    time.time() - t0)
+        _logger.debug(
+            '[invoiceset %s] create_invoices:'
+            ' done in %.2fs -> %s invoices created',
+            record.name, time.time() - t0,
+            number_of_invoices)
         return number_of_invoices
 
     def add_to_invoice_data_line_ref_to_parcel(self, invoice_data_line, data):
@@ -1362,7 +1827,7 @@ class WuaInvoiceset(models.Model):
 
     # Hook
     def add_to_invoice_data_line_ref_to_other_types(
-            self, categ_code, invoice_data_line, data):
+            self, categ_code, invoice_data_line, data, parcels_by_id=None):
         return data
 
     # Hook
@@ -1377,38 +1842,67 @@ class WuaInvoiceset(models.Model):
     # - The product id.
     # - The total cumulative quantity.
     def get_total_product_quantities(self, invoice_details):
-        total_product_quantities = []
-        product_ids = []
+        _logger.debug(
+            '[invoiceset]'
+            ' get_total_product_quantities:'
+            ' start (%s details)',
+            len(invoice_details))
+        t0 = time.time()
+        quantity_by_product_id = {}
         for item in invoice_details:
-            product_ids.append(item['product_id'])
-        product_ids = list(set(product_ids))
-        for product_id in product_ids:
-            result = {
-                'product_id': product_id,
-                'quantity': sum(x['quantity'] for x in invoice_details
-                                if x['product_id'] == product_id),
-                }
-            total_product_quantities.append(result)
+            pid = item['product_id']
+            quantity_by_product_id[pid] = (
+                quantity_by_product_id.get(pid, 0) + item['quantity'])
+        total_product_quantities = [
+            {'product_id': p_id, 'quantity': q}
+            for p_id, q in quantity_by_product_id.items()
+        ]
+        _logger.debug(
+            '[invoiceset]'
+            ' get_total_product_quantities:'
+            ' done in %.2fs -> %s products',
+            time.time() - t0,
+            len(total_product_quantities))
         return total_product_quantities
 
     # This method update the total quantity for each invoice-set line.
     def update_invoiceset_quantities(self, invoiceset,
                                      total_product_quantities):
+        _logger.debug(
+            '[invoiceset %s]'
+            ' update_invoiceset_quantities:'
+            ' start (%s lines)',
+            invoiceset.name,
+            len(invoiceset.line_ids))
+        t0 = time.time()
+        quantity_by_product_id = dict(
+            (x['product_id'], x['quantity']) for x in total_product_quantities)
         for line in invoiceset.line_ids:
-            quantities_filtered = filter(
-                lambda x: x['product_id'] == line.product_id.id,
-                total_product_quantities)
-            if len(quantities_filtered) == 1:
-                quantity = quantities_filtered[0]['quantity']
+            quantity = quantity_by_product_id.get(line.product_id.id)
+            if quantity is not None:
                 line.quantity = quantity
+        _logger.debug(
+            '[invoiceset %s]'
+            ' update_invoiceset_quantities:'
+            ' done in %.2fs',
+            invoiceset.name, time.time() - t0)
 
     # This method update the amount_untaxed, amount_tax and
     # amount_total fields of a invoice-set.
     def update_invoiceset_amounts(self, invoiceset):
+        _logger.debug(
+            '[invoiceset %s] update_invoiceset_amounts: start',
+            invoiceset.name)
+        t0 = time.time()
         amount_untaxed = \
             sum(line.amount_untaxed for line in invoiceset.line_ids)
         amount_tax = \
             sum(line.amount_tax for line in invoiceset.line_ids)
+        _logger.debug(
+            '[invoiceset %s]'
+            ' update_invoiceset_amounts:'
+            ' done in %.2fs',
+            invoiceset.name, time.time() - t0)
         return {
             'amount_untaxed': amount_untaxed,
             'amount_tax': amount_tax,
@@ -1417,6 +1911,10 @@ class WuaInvoiceset(models.Model):
 
     # Run after the calculation (hook).
     def after_calculate_invoiceset(self, invoiceset):
+        _logger.debug(
+            '[invoiceset %s] after_calculate_invoiceset: start',
+            invoiceset.name)
+        t0 = time.time()
         for line in invoiceset.line_ids:
             if line.categ_id.productcategory_code in [1, 3, 4]:
                 unselected_parcel_lines = \
@@ -1442,6 +1940,11 @@ class WuaInvoiceset(models.Model):
                         lambda x: x.selected is False)
                 if unselected_irrigationgate_lines:
                     unselected_irrigationgate_lines.unlink()
+        _logger.debug(
+            '[invoiceset %s]'
+            ' after_calculate_invoiceset:'
+            ' done in %.2fs',
+            invoiceset.name, time.time() - t0)
 
     @api.multi
     def cancel_invoiceset(self):
@@ -1451,8 +1954,10 @@ class WuaInvoiceset(models.Model):
                     raise exceptions.UserError(_(
                         'You cannot cancel an invoice-set if there is a '
                         'invoice which is not draft or cancelled.'))
+        if self.ids:
             self.env['account.invoice'].search(
-                [('invoiceset_id', '=', record.id)]).unlink()
+                [('invoiceset_id', 'in', self.ids)]).unlink()
+        for record in self:
             for line in record.line_ids:
                 line.quantity = 0
             invoiceset_vals = {
@@ -1575,6 +2080,11 @@ class WuaInvoiceset(models.Model):
         return resp
 
     def get_value_from_translation(self, module, src, lang):
+        cache = getattr(self, '_translation_cache', None)
+        if cache is not None:
+            key = (module, src, lang)
+            if key in cache:
+                return cache[key]
         resp = src
         translations = self.env['ir.translation']
         condition = [('lang', '=', lang),
@@ -1583,6 +2093,8 @@ class WuaInvoiceset(models.Model):
         filtered_translations = translations.search(condition)
         if len(filtered_translations) > 0:
             resp = filtered_translations[0].value
+        if cache is not None:
+            cache[(module, src, lang)] = resp
         return resp
 
 

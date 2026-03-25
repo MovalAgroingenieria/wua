@@ -49,7 +49,7 @@ class MaintenanceGisController(http.Controller):
             intermediate_field = mapping['intermediate_field']
             intermediate_gis_field = mapping['intermediate_gis_field']
             sql_query = """
-                SELECT ST_AsGeoJSON(gis.geom)
+                SELECT postgis.ST_AsGeoJSON(gis.geom)
                 FROM maintenance_equipment me
                 INNER JOIN %(base_table)s bt ON me.id = bt.equipment_id
             """ % {

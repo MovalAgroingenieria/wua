@@ -43,7 +43,8 @@ class ResPartner(models.Model):
 
     is_wua_partner = fields.Boolean(
         string="WUA Partner",
-        default=False)
+        default=False,
+        index=True)
 
     partner_code = fields.Integer(
         string="Code",
@@ -53,7 +54,8 @@ class ResPartner(models.Model):
 
     name_alias = fields.Char(
         string='Name Alias',
-        index=True,)
+        index=True,
+    )
 
     customer = fields.Boolean(default=True)
 

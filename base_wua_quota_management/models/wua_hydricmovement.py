@@ -135,7 +135,8 @@ class WuaHydricmovement(models.Model):
         ('neg_output_next_quota', 'Negative output to next quota')],
         string='Type',
         required=True,
-        readonly=True)
+        readonly=True,
+        index=True)
 
     is_consumption = fields.Boolean(
         string='Is consumption',

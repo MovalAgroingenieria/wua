@@ -5,7 +5,7 @@
 {
     "name": "Water Users Association: Base Flow Data",
     "summary": "Collect flow data in a standardized format",
-    "version": '10.0.1.1.0',
+    "version": '10.0.1.1.1',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
@@ -14,6 +14,7 @@
         "base_wua_infrastructure_primary",
         "base_wua_irrigation_measurement",
     ],
+    "post_init_hook": "post_init_hook",
     "data": [
         "security/ir.model.access.csv",
         "views/resources.xml",

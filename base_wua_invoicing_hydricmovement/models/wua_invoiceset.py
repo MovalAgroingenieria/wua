@@ -104,16 +104,20 @@ class WuaInvoiceset(models.Model):
         hydricmovement_ids = []
         quota_pres_consumption_ids = []
         quota_irrigationreport_ids = []
-        for record in self:
+        if self.ids:
             hydricmovements = self.env['wua.hydricmovement'].search(
-                [('invoiceset_id', '=', record.id)])
+                [('invoiceset_id', 'in', self.ids)])
+            hydricmovements.mapped('presconsumption_id')
+            hydricmovements.mapped('irrigationreport_id')
             for hydricmovement in hydricmovements:
                 hydricmovement_ids.append(hydricmovement.id)
-                if hydricmovement.presconsumption_id.\
+                if hydricmovement.presconsumption_id and \
+                        hydricmovement.presconsumption_id.\
                         invoiced_consumption_quota:
                     quota_pres_consumption_ids.append(
                         hydricmovement.presconsumption_id.id)
-                if hydricmovement.irrigationreport_id.\
+                if hydricmovement.irrigationreport_id and \
+                        hydricmovement.irrigationreport_id.\
                         invoiced_irrigationreport_quota:
                     quota_irrigationreport_ids.append(
                         hydricmovement.irrigationreport_id.id)
@@ -134,11 +138,15 @@ class WuaInvoiceset(models.Model):
                     }
                 hydricmovements.write(vals)
             if quota_pres_consumption_ids:
+                quota_pres_consumption_ids = list(
+                    set(quota_pres_consumption_ids))
                 quota_pres_consumptions = self.env['wua.presconsumption'].\
                     browse(quota_pres_consumption_ids)
                 quota_pres_consumptions.write(
                     {'invoiced_consumption_quota': False})
             if quota_irrigationreport_ids:
+                quota_irrigationreport_ids = list(
+                    set(quota_irrigationreport_ids))
                 quota_irrigationreports = self.env['wua.irrigationreport'].\
                     browse(quota_irrigationreport_ids)
                 quota_irrigationreports.write(
@@ -231,24 +239,30 @@ class WuaInvoiceset(models.Model):
             self.env['ir.values'].get_default(
                 'wua.invoicing.configuration',
                 'invoicing_hydricmovement_grouped_by_wc')
-        # Hydricmovement ONLY related to presconsumption
-        # hmove == 14 and key1 == waterconnection_id ?
-        # hmove == 14 and hydricmovement-_id.type == pres_consumption
-        invoice_details_categ14 = filter(
-            lambda x: x['categ_code'] in [14] and
-            self.env['wua.hydricmovement'].browse(x['hydricmovement_id']).
-            type == 'pres_consumption', invoice_details)
+        # Hydricmovement ONLY related to presconsumption: filter by type
+        # without N+1 (browse all hydricmovement ids once).
+        details_categ14 = [x for x in invoice_details if x['categ_code'] == 14]
+        invoice_details_categ14 = []
+        if details_categ14:
+            hm_ids = list(set(x['hydricmovement_id'] for x in details_categ14))
+            hydricmovements = self.env['wua.hydricmovement'].browse(hm_ids)
+            pres_consumption_ids = set(
+                hm.id for hm in hydricmovements if hm.type == 'pres_consumption')
+            invoice_details_categ14 = [
+                x for x in details_categ14
+                if x['hydricmovement_id'] in pres_consumption_ids]
         if (grouped_hydricmovements and invoice_details_categ14):
             invoice_details_to_group = invoice_details_to_group + \
                 invoice_details_categ14
         return invoice_details_to_group
 
     def add_to_invoice_data_line_ref_to_other_types(
-            self, categ_code, invoice_data_line, data):
+            self, categ_code, invoice_data_line, data, parcels_by_id=None):
         if categ_code != 14:
             return super(WuaInvoiceset,
                          self).add_to_invoice_data_line_ref_to_other_types(
-                             categ_code, invoice_data_line, data)
+                             categ_code, invoice_data_line, data,
+                             parcels_by_id=parcels_by_id)
         data['waterconnection_id'] = invoice_data_line['key1']
         data['presconsumption_id'] = invoice_data_line['key2']
         data['hydricmovement_id'] = invoice_data_line['hydricmovement_id']

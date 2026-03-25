@@ -2486,11 +2486,13 @@ class WuaParcelIrrigationpoint(models.Model):
         ],
         default='WC',
         string='Type',
-        required=True)
+        required=True,
+        index=True)
 
     waterconnection_id = fields.Many2one(
         string='Water Connection Id.',
         comodel_name='wua.waterconnection',
+        index=True,
         ondelete='restrict')
 
     irrigationshed_id = fields.Many2one(
@@ -2510,6 +2512,7 @@ class WuaParcelIrrigationpoint(models.Model):
     irrigationgate_id = fields.Many2one(
         string='Irrigation Gate Id.',
         comodel_name='wua.irrigationgate',
+        index=True,
         ondelete='restrict')
 
     irrigationditch_id = fields.Many2one(

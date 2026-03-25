@@ -2,6 +2,7 @@
 # 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+from collections import Counter
 from lxml import etree
 import datetime
 import pytz
@@ -161,13 +162,20 @@ class WuaPresconsumption(models.Model):
 
     @api.depends('reading_ids')
     def _compute_reading_id(self):
+        # Batch: one search for all readings linked to these presconsumptions
+        if not self.ids:
+            return
+        readings = self.env['wua.reading'].search([
+            ('presconsumption_id', 'in', self.ids)])
+        # Only set reading_id when exactly one reading per presconsumption
+        count_by_pres = Counter(r.presconsumption_id.id for r in readings)
+        reading_by_pres = {}
+        for r in readings:
+            if count_by_pres[r.presconsumption_id.id] == 1:
+                reading_by_pres[r.presconsumption_id.id] = r.id
         for record in self:
-            reading_id = None
-            filtered_readings = self.env['wua.reading'].search([
-                ('presconsumption_id', '=', record.id)])
-            if len(filtered_readings) == 1:
-                reading_id = filtered_readings[0].id
-                record.reading_id = reading_id
+            rid = reading_by_pres.get(record.id)
+            record.reading_id = rid if rid else False
 
     @api.depends('initial_volume', 'end_volume')
     def _compute_volume(self):
@@ -176,6 +184,12 @@ class WuaPresconsumption(models.Model):
 
     @api.depends('reading_id')
     def _compute_watermeter_id(self):
+        # Batch: prefetch reading_id.watermeter_id and relations
+        readings = self.mapped('reading_id')
+        if readings:
+            readings.mapped('watermeter_id')
+            readings.mapped('watermeter_id').mapped('state')
+            readings.mapped('watermeter_id').mapped('waterconnection_id')
         for record in self:
             if record.reading_id.watermeter_id:
                 correct_watermeter_id = \
@@ -191,6 +205,12 @@ class WuaPresconsumption(models.Model):
 
     @api.depends('watermeter_id')
     def _compute_hydraulic_infrastructure_data(self):
+        # Batch: prefetch watermeter -> waterconnection, irrigationshed, hydraulicsector
+        watermeters = self.mapped('watermeter_id')
+        if watermeters:
+            watermeters.mapped('waterconnection_id')
+            watermeters.mapped('irrigationshed_id')
+            watermeters.mapped('hydraulicsector_id')
         for record in self:
             waterconnection_id_value = None
             irrigationshed_id_value = None
@@ -213,6 +233,10 @@ class WuaPresconsumption(models.Model):
 
     @api.depends('reading_end_time', 'waterconnection_id')
     def _compute_name(self):
+        # Batch: prefetch waterconnection_id.name
+        waterconnections = self.mapped('waterconnection_id')
+        if waterconnections:
+            waterconnections.mapped('name')
         for record in self:
             value = ''
             if record.waterconnection_id and record.reading_end_time:
@@ -222,10 +246,14 @@ class WuaPresconsumption(models.Model):
 
     @api.depends('reading_id', 'reading_id.validated')
     def _compute_validated(self):
+        # Batch: prefetch reading_id.validated
+        readings = self.mapped('reading_id')
+        if readings:
+            readings.mapped('validated')
         for record in self:
             validated = False
-            if record.reading_id.validated:
-                validated = True
+            if record.reading_id:
+                validated = record.reading_id.validated
             record.validated = validated
 
     @api.model

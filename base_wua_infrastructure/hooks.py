@@ -2,10 +2,27 @@
 # 2021 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import logging
+
 from odoo import api, SUPERUSER_ID, tools
+from odoo.addons.base_wua.hooks import run_performance_indexes
+
+_logger = logging.getLogger(__name__)
+
+
+def create_performance_indexes(cr):
+    """Create indexes for models defined in this module."""
+    indexes = [
+        ("wua_parcel_irrigationpoint_parcel_id_type_idx",
+         "wua_parcel_irrigationpoint",
+         "CREATE INDEX IF NOT EXISTS wua_parcel_irrigationpoint_parcel_id_type_idx "
+         "ON wua_parcel_irrigationpoint (parcel_id, type)"),
+    ]
+    run_performance_indexes(cr, _logger, 'base_wua_infrastructure', indexes)
 
 
 def post_init_hook(cr, registry):
+    create_performance_indexes(cr)
     env = api.Environment(cr, SUPERUSER_ID, {})
     tools.drop_view_if_exists(env.cr, 'res_partner_waterconnection')
     env.cr.execute("""

@@ -77,10 +77,26 @@ class WuaInvoiceset(models.Model):
         return invoice_details_with_irrigation_report
 
     def group_invoice_details_with_irrigation_report(self, invoice_details):
+        if not invoice_details:
+            return []
+        partner_ids = list(set(d['partner_id'] for d in invoice_details))
+        partners = self.env['res.partner'].browse(partner_ids)
+        partners.mapped('partner_code')
+        partners.mapped('property_account_receivable_id')
+        partners.mapped('property_payment_term_id')
+        partners.mapped('customer_payment_mode_id')
+        partners.mapped('customer_invoice_transmit_method_id')
+        partners.mapped('irrigationreport_payment_mode_id')
+        partners.mapped('irrigationreport_mandate_required')
+        partners.mapped('irrigationreport_mandate_id')
+        partner_by_id = dict((p.id, p) for p in partners)
+        irrigationreport_ids = list(set(d['key1'] for d in invoice_details))
+        irrigationreports = self.env['wua.irrigationreport'].browse(
+            irrigationreport_ids)
+        irrigationreport_by_id = dict((r.id, r) for r in irrigationreports)
         invoices_data = []
         for invoice_detail in invoice_details:
-            partner = self.env['res.partner'].browse(
-                invoice_detail['partner_id'])
+            partner = partner_by_id.get(invoice_detail['partner_id'])
             if partner:
                 payment_mode_id = partner.customer_payment_mode_id.id
                 result = {
@@ -102,7 +118,7 @@ class WuaInvoiceset(models.Model):
                     'ir.values'].get_default(
                     'wua.invoicing.configuration',
                     'irrigationreport_separate_invoicing_by_wc')
-                irrigationreport = self.env['wua.irrigationreport'].browse(
+                irrigationreport = irrigationreport_by_id.get(
                     invoice_detail['key1'])
                 if (separate_invoicing):
                     if (irrigationreport_separate_invoicing_by_wc and
@@ -288,11 +304,12 @@ class WuaInvoiceset(models.Model):
         return invoice_details_categ11
 
     def add_to_invoice_data_line_ref_to_other_types(
-            self, categ_code, invoice_data_line, data):
+            self, categ_code, invoice_data_line, data, parcels_by_id=None):
         if categ_code != 11:
             return super(WuaInvoiceset,
                          self).add_to_invoice_data_line_ref_to_other_types(
-                             categ_code, invoice_data_line, data)
+                             categ_code, invoice_data_line, data,
+                             parcels_by_id=parcels_by_id)
         data['irrigationreport_id'] = invoice_data_line['key1']
         data['intake_id'] = invoice_data_line['key2']
         return data

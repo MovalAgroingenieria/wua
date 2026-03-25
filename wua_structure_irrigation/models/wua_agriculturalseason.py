@@ -46,6 +46,7 @@ class WuaAgriculturalseason(models.Model):
         string="Active",
         required=True,
         default=False,
+        index=True,
         help="Indicate if this agricultural season is active")
 
     _sql_constraints = [

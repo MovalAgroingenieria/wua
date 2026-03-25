@@ -15,20 +15,17 @@ class AccountInvoice(models.Model):
             if (invoice_line.categ_id.productcategory_code == 7 and
                invoice_line.waterconnection_ids_str and
                len(invoice_line.waterconnection_ids_str) > 0):
-                waterconnections_ids = \
-                    invoice_line.waterconnection_ids_str.split(',')
+                waterconnections_ids.extend(
+                    invoice_line.waterconnection_ids_str.split(','))
         if waterconnections_ids:
             waterconnections_ids = list(set(map(int, waterconnections_ids)))
             invoiceset_id = invoice_lines[0].invoiceset_id.id
-            consumptions = []
-            for waterconnection_id in waterconnections_ids:
-                consumptions_of_current_wc = \
-                    self.env['wua.presconsumption'].search(
-                        [('waterconnection_id', '=', waterconnection_id),
-                         ('invoiceset_id', '=', invoiceset_id)],
-                        order='reading_end_time')
-                if consumptions_of_current_wc:
-                    consumptions.extend(consumptions_of_current_wc)
+            consumptions = self.env['wua.presconsumption'].search(
+                [('waterconnection_id', 'in', waterconnections_ids),
+                 ('invoiceset_id', '=', invoiceset_id)],
+                order='reading_end_time')
+            consumptions.mapped('waterconnection_id')
+            consumptions.mapped('watermeter_id')
             for consumption in consumptions:
                 item = {
                     'waterconnection': consumption.waterconnection_id.name,
