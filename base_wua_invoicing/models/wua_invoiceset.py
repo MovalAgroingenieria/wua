@@ -427,8 +427,8 @@ class WuaInvoiceset(models.Model):
         res = super(WuaInvoiceset, self).fields_view_get(
             view_id=view_id, view_type=view_type, toolbar=toolbar,
             submenu=submenu)
-        compute_management = self.env['ir.values'].get_default(
-            'base_wua_invoicing', 'compute_management')
+        compute_management = self.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration', 'invoiceset_compute_management')
         if view_type == 'form':
             doc = etree.XML(res['arch'])
             if not compute_management:
@@ -555,10 +555,19 @@ class WuaInvoiceset(models.Model):
     # - The product quantity.
     # - The invoice line description.
     def _collect_parcel_ids_for_partnerlinks(self, invoice_items):
-        """Collect parcel ids referenced by invoice_items for categ 1-6.
-        Used to load only needed partnerlinks instead of all.
+        """Collect parcel ids so partnerlink search covers all line types.
+
+        Extended categories (pressurized, gravity, crop planning, etc.)
+        resolve partnerlinks by parcel and often use *water_costs_percentage*.
+        Those parcels must be collected here; otherwise partnerlinks stay
+        empty and invoice calculation produces no lines.
         """
         parcel_ids = set()
+        ip_model = self.env['wua.parcel.irrigationpoint']
+        wc_cost_categ = self.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration', 'product_category_water_costs')
+        if wc_cost_categ is None:
+            wc_cost_categ = 10
         for invoice_item in invoice_items:
             categ_code = invoice_item['categ_code']
             item_ids = invoice_item.get('item_ids') or []
@@ -566,23 +575,52 @@ class WuaInvoiceset(models.Model):
                 continue
             if categ_code in (1, 3, 4):
                 parcel_ids.update(item_ids)
-            elif categ_code == 5:
-                ip_obj = self.env[
-                    'wua.parcel.irrigationpoint']
-                irrigationpoints = ip_obj.search([
+            elif categ_code == 5 or categ_code == wc_cost_categ:
+                irrigationpoints = ip_model.search([
                     ('type', '=', 'WC'),
                     ('waterconnection_id', 'in', item_ids),
                 ])
                 parcel_ids.update(
                     irrigationpoints.mapped('parcel_id').ids)
             elif categ_code == 6:
-                ip_obj = self.env[
-                    'wua.parcel.irrigationpoint']
-                irrigationpoints = ip_obj.search([
+                irrigationpoints = ip_model.search([
                     ('type', '=', 'IG'),
                     ('irrigationgate_id', 'in', item_ids),
                 ])
                 parcel_ids.update(irrigationpoints.mapped('parcel_id').ids)
+            elif categ_code == 7:
+                pres = self.env['wua.presconsumption'].browse(item_ids)
+                wc_ids = pres.mapped('waterconnection_id').ids
+                if wc_ids:
+                    irrigationpoints = ip_model.search([
+                        ('type', '=', 'WC'),
+                        ('waterconnection_id', 'in', wc_ids),
+                    ])
+                    parcel_ids.update(
+                        irrigationpoints.mapped('parcel_id').ids)
+            elif categ_code == 8:
+                grav = self.env['wua.gravconsumption'].browse(item_ids)
+                ig_ids = grav.mapped('irrigationgate_id').ids
+                if ig_ids:
+                    irrigationpoints = ip_model.search([
+                        ('type', '=', 'IG'),
+                        ('irrigationgate_id', 'in', ig_ids),
+                    ])
+                    parcel_ids.update(
+                        irrigationpoints.mapped('parcel_id').ids)
+            elif categ_code == 9:
+                enrolled = self.env['wua.enrolledsubparcel'].browse(item_ids)
+                parcel_ids.update(enrolled.mapped('parcel_id').ids)
+            elif categ_code == 12:
+                fert = self.env['wua.fertconsumption'].browse(item_ids)
+                wc_ids = fert.mapped('waterconnection_id').ids
+                if wc_ids:
+                    irrigationpoints = ip_model.search([
+                        ('type', '=', 'WC'),
+                        ('waterconnection_id', 'in', wc_ids),
+                    ])
+                    parcel_ids.update(
+                        irrigationpoints.mapped('parcel_id').ids)
         return parcel_ids
 
     def calculate_invoice_details(self, invoice_items):
@@ -596,11 +634,16 @@ class WuaInvoiceset(models.Model):
         pl_obj = self.env['wua.parcel.partnerlink']
         partnerlinks = pl_obj
         if parcel_ids:
+            # Include water_costs_percentage: pressurized / crop / WC-cost
+            # products use it; omitting it made partnerlinks empty and broke
+            # calculate_invoice_details_* for those categories.
             partnerlinks = pl_obj.search([
+                '&',
                 ('parcel_id', 'in', list(parcel_ids)),
-                '|',
+                '|', '|',
                 ('other_costs_percentage', '>', 0),
                 ('ownership_percentage', '>', 0),
+                ('water_costs_percentage', '>', 0),
             ])
         _logger.debug(
             '[invoiceset] partnerlinks loaded:'
@@ -1585,6 +1628,7 @@ class WuaInvoiceset(models.Model):
             invoiceset_id)
         date_invoice_ref = record_ref.date_invoiceset
         date_due_default = record_ref.date_due_invoiceset  # noqa: F841
+        company_currency_id = record_ref.company_id.currency_id.id
         default_term_id = (
             record_ref
             .property_payment_term_invoiceset_id.id)
@@ -1598,7 +1642,7 @@ class WuaInvoiceset(models.Model):
             pterm = paymentterms.browse(pt_id)
             if pterm:
                 pterm_list = pterm.with_context(
-                    currency_id=self.company_id.currency_id.id).compute(
+                    currency_id=company_currency_id).compute(
                     value=1, date_ref=date_invoice_ref)[0]
                 date_due_by_term[pt_id] = max(line[0] for line in pterm_list)
             else:
@@ -1715,6 +1759,12 @@ class WuaInvoiceset(models.Model):
                 commit_every = self.env['ir.values'].get_default(
                     'wua.invoicing.configuration', 'commit_every_n_invoices')
                 if commit_every is None:
+                    commit_every = self.COMMIT_EVERY_N_INVOICES
+                try:
+                    commit_every = int(commit_every)
+                except (TypeError, ValueError):
+                    commit_every = self.COMMIT_EVERY_N_INVOICES
+                if commit_every < 1:
                     commit_every = self.COMMIT_EVERY_N_INVOICES
                 if (number_of_invoices % commit_every == 0):
                     self.env.cr.commit()
