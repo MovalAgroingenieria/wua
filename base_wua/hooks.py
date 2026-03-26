@@ -27,6 +27,8 @@ def run_performance_indexes(cr, logger, module_name, indexes):
     """
     Create indexes from a list of (index_name, table_name, sql).
     Skips when the table does not exist; logs at debug on skip or error.
+    Uses SAVEPOINTs so that a failed CREATE INDEX does not abort the
+    whole transaction (e.g. column not yet created by a dependent module).
     Reusable by other wua modules for their own index lists.
     """
     for name, table_name, sql in indexes:
@@ -35,9 +37,14 @@ def run_performance_indexes(cr, logger, module_name, indexes):
                 "%s: skip index %s (table %s does not exist)",
                 module_name, name, table_name)
             continue
+        savepoint = "sp_idx_%s" % name
         try:
+            cr.execute("SAVEPOINT %s" % savepoint)
             cr.execute(sql)
+            cr.execute("RELEASE SAVEPOINT %s" % savepoint)
         except Exception as e:
+            cr.execute("ROLLBACK TO SAVEPOINT %s" % savepoint)
+            cr.execute("RELEASE SAVEPOINT %s" % savepoint)
             logger.debug("%s: skip index %s (%s)", module_name, name, e)
 
 
