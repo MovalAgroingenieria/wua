@@ -5,7 +5,7 @@
     "name": "Hierarchical Infrastructure for Pressurized Irrigation",
     "summary": "Hierarchical infrastructure management, for "
                "pressurized irrigation",
-    "version": '10.0.1.1.3',
+    "version": '10.0.1.1.4',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",

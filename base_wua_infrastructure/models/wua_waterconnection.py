@@ -150,14 +150,15 @@ class WuaWaterconnection(models.Model):
                         self.env.ref('base_wua.cultivation_135'):
                     record.with_cultivation = True
 
-    @api.depends('irrigationpoint_ids')
+    @api.depends('irrigationpoint_ids', 'irrigationpoint_ids.active')
     def _compute_number_of_parcels(self):
         for record in self:
             record.number_of_parcels = \
                 len(record.irrigationpoint_ids)
 
     @api.depends('irrigationpoint_ids',
-                 'irrigationpoint_ids.parcel_id.with_gis_parcel')
+                 'irrigationpoint_ids.parcel_id.with_gis_parcel',
+                 'irrigationpoint_ids.active')
     def _compute_with_some_gis_parcel(self):
         for record in self:
             some_gis_parcel = False
@@ -168,7 +169,8 @@ class WuaWaterconnection(models.Model):
             record.with_some_gis_parcel = some_gis_parcel
 
     @api.depends('irrigationpoint_ids',
-                 'irrigationpoint_ids.parcel_area_official')
+                 'irrigationpoint_ids.parcel_area_official',
+                 'irrigationpoint_ids.active')
     def _compute_total_affected_area_official(self):
         for record in self:
             record.total_affected_area_official = \

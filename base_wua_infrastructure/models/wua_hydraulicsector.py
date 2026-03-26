@@ -86,27 +86,29 @@ class WuaHydraulicsector(models.Model):
         index=True,
         ondelete='restrict')
 
-    @api.depends('irrigationshed_ids')
+    @api.depends('irrigationshed_ids', 'irrigationshed_ids.active')
     def _compute_number_of_irrigationsheds(self):
         for record in self:
             record.number_of_irrigationsheds = \
                 len(record.irrigationshed_ids)
 
-    @api.depends('waterconnection_ids')
+    @api.depends('waterconnection_ids', 'waterconnection_ids.active')
     def _compute_number_of_waterconnections(self):
         for record in self:
             record.number_of_waterconnections = \
                 len(record.waterconnection_ids)
 
     @api.depends('irrigationshed_ids',
-                 'irrigationshed_ids.number_of_parcels')
+                 'irrigationshed_ids.number_of_parcels',
+                 'irrigationshed_ids.active')
     def _compute_number_of_parcels(self):
         for record in self:
             record.number_of_parcels = \
                 sum(record.mapped('irrigationshed_ids.number_of_parcels'))
 
     @api.depends('irrigationshed_ids',
-                 'irrigationshed_ids.total_affected_area_official')
+                 'irrigationshed_ids.total_affected_area_official',
+                 'irrigationshed_ids.active')
     def _compute_total_affected_area_official(self):
         for record in self:
             record.total_affected_area_official = \

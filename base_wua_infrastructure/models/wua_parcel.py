@@ -104,7 +104,7 @@ class WuaParcel(models.Model):
         string='Number of water payers',
         compute='_compute_number_of_waterpayers')
 
-    @api.depends('irrigationpoint_ids')
+    @api.depends('irrigationpoint_ids', 'irrigationpoint_ids.active')
     def _compute_number_of_irrigationpoints(self):
         if len(self) == 1:
             self.number_of_irrigationpoints = len(self.irrigationpoint_ids)
@@ -113,7 +113,7 @@ class WuaParcel(models.Model):
                 parcel.number_of_irrigationgates = \
                     len(parcel.irrigationpoint_ids)
 
-    @api.depends('irrigationpoint_ids')
+    @api.depends('irrigationpoint_ids', 'irrigationpoint_ids.active')
     def _compute_hydraulic_infrastructure_type(self):
         for record in self:
             hydraulic_infrastructure_type = 0
@@ -135,7 +135,8 @@ class WuaParcel(models.Model):
                 hydraulic_infrastructure_type
 
     @api.depends('irrigationpoint_ids',
-                 'irrigationpoint_ids.hydraulicsector_id')
+                 'irrigationpoint_ids.hydraulicsector_id',
+                 'irrigationpoint_ids.active')
     def _compute_hydraulicsector_id(self):
         for record in self:
             irrigation_points = record.irrigationpoint_ids
@@ -148,7 +149,7 @@ class WuaParcel(models.Model):
                         break
             record.hydraulicsector_id = hydraulicsector_id
 
-    @api.depends('irrigationpoint_ids')
+    @api.depends('irrigationpoint_ids', 'irrigationpoint_ids.active')
     def _compute_irrigationditch_id(self):
         for record in self:
             irrigation_points = record.irrigationpoint_ids
@@ -161,7 +162,7 @@ class WuaParcel(models.Model):
                         break
             record.irrigationditch_id = irrigationditch_id
 
-    @api.depends('irrigationpointwc_ids')
+    @api.depends('irrigationpointwc_ids', 'irrigationpointwc_ids.active')
     def _compute_track_irrigationpointwc_ids(self):
         for record in self:
             track_irrigationpointwc_ids = ''
@@ -2280,7 +2281,8 @@ class WuaParcel(models.Model):
             }
         return act_window
 
-    @api.depends('irrigationpoint_ids', 'irrigationpoint_ids.with_pumping')
+    @api.depends('irrigationpoint_ids', 'irrigationpoint_ids.with_pumping',
+                 'irrigationpoint_ids.active')
     def _compute_with_pumping(self):
         for record in self:
             with_pumping = False

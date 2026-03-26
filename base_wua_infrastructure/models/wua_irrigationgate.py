@@ -139,7 +139,7 @@ class WuaIrrigationgate(models.Model):
             else:
                 record.gis_googlemaps_link = ''
 
-    @api.depends('irrigationpoint_ids')
+    @api.depends('irrigationpoint_ids', 'irrigationpoint_ids.active')
     def _compute_number_of_parcels(self):
         irrigationgate_recordset = []
         if len(self) == 1:
@@ -151,7 +151,8 @@ class WuaIrrigationgate(models.Model):
                 len(irrigationgate.irrigationpoint_ids)
 
     @api.depends('irrigationpoint_ids',
-                 'irrigationpoint_ids.parcel_area_official')
+                 'irrigationpoint_ids.parcel_area_official',
+                 'irrigationpoint_ids.active')
     def _compute_total_affected_area_official(self):
         irrigationgate_recordset = []
         if len(self) == 1:
@@ -169,7 +170,8 @@ class WuaIrrigationgate(models.Model):
             # irrigationgate.total_affected_area_official = total_area
 
     @api.depends('irrigationpoint_ids',
-                 'irrigationpoint_ids.parcel_area_official_hec')
+                 'irrigationpoint_ids.parcel_area_official_hec',
+                 'irrigationpoint_ids.active')
     def _compute_total_affected_area_official_hec(self):
         irrigationgate_recordset = []
         if len(self) == 1:
