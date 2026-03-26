@@ -191,21 +191,23 @@ class WuaIrrigationshed(models.Model):
                 url_for_record = ''
             record.gis_viewer_link = url_for_record
 
-    @api.depends('waterconnection_ids')
+    @api.depends('waterconnection_ids', 'waterconnection_ids.active')
     def _compute_number_of_waterconnections(self):
         for record in self:
             record.number_of_waterconnections = \
                 len(record.waterconnection_ids)
 
     @api.depends('waterconnection_ids',
-                 'waterconnection_ids.number_of_parcels')
+                 'waterconnection_ids.number_of_parcels',
+                 'waterconnection_ids.active')
     def _compute_number_of_parcels(self):
         for record in self:
             record.number_of_parcels = \
                 sum(record.mapped('waterconnection_ids.number_of_parcels'))
 
     @api.depends('waterconnection_ids',
-                 'waterconnection_ids.total_affected_area_official')
+                 'waterconnection_ids.total_affected_area_official',
+                 'waterconnection_ids.active')
     def _compute_total_affected_area_official(self):
         for record in self:
             record.total_affected_area_official = \
