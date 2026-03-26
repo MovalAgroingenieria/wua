@@ -14,6 +14,19 @@ from lxml import etree
 _logger = logging.getLogger(__name__)
 
 
+def _many2one_id_from_read(value):
+    """Return integer id for a Many2one from search_read / read (or False).
+
+    Odoo search_read returns Many2one fields as [id, name] or (id, name);
+    account.invoice.create expects a bare id for account_id, etc.
+    """
+    if not value:
+        return False
+    if isinstance(value, (list, tuple)):
+        return value[0] if value else False
+    return value
+
+
 class WuaInvoiceset(models.Model):
     _inherit = 'mail.thread'
     _name = 'wua.invoiceset'
@@ -1486,20 +1499,18 @@ class WuaInvoiceset(models.Model):
                     'partner_code': r.get(
                         'partner_code',
                     ),
-                    'account_id': r.get(
-                        'property_account_receivable_id',
-                    ) or False,
-                    'payment_term_id': r.get(
-                        'property_payment_term_id',
-                    ) or False,
-                    'payment_mode_id': r.get(
-                        'customer_payment_mode_id',
-                    ) or False,
+                    'account_id': _many2one_id_from_read(
+                        r.get('property_account_receivable_id')),
+                    'payment_term_id': _many2one_id_from_read(
+                        r.get('property_payment_term_id')),
+                    'payment_mode_id': _many2one_id_from_read(
+                        r.get('customer_payment_mode_id')),
                     'customer_invoice_transmit_method_id':
-                        r.get(
-                            'customer_invoice'
-                            '_transmit_method_id',
-                        ) or False,
+                        _many2one_id_from_read(
+                            r.get(
+                                'customer_invoice'
+                                '_transmit_method_id',
+                            )),
                     'detail': details_by_partner_id[
                         r['id']],
                 }

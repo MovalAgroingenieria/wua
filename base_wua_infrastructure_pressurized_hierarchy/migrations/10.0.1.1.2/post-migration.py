@@ -12,19 +12,22 @@ def migrate(cr, version):
          ALTER TABLE wua_infrastructure_configuration DROP CONSTRAINT
          wua_infrastructure_configuration_valid_max_levels_pressurized_i;''')
 
+    # Sufijo alineado con Odoo: waterpipe_06_id … waterpipe_09_id, luego
+    # waterpipe_10_id … (no waterpipe_010_id).
     for i in range(6, 40):
+        suffix = '%02d' % i
         query = '''
             ALTER TABLE wua_parcel
-              ADD COLUMN IF NOT EXISTS waterpipe_0%s_id INT;
+              ADD COLUMN IF NOT EXISTS waterpipe_%s_id INT;
             ALTER TABLE wua_parcel
-              DROP CONSTRAINT IF EXISTS "wua_parcel_waterpipe_0%s_id_fkey";
+              DROP CONSTRAINT IF EXISTS "wua_parcel_waterpipe_%s_id_fkey";
             ALTER TABLE wua_parcel
-              ADD CONSTRAINT "wua_parcel_waterpipe_0%s_id_fkey"
-              FOREIGN KEY (waterpipe_0%s_id) REFERENCES wua_waterpipe(id)
+              ADD CONSTRAINT "wua_parcel_waterpipe_%s_id_fkey"
+              FOREIGN KEY (waterpipe_%s_id) REFERENCES wua_waterpipe(id)
               ON DELETE SET NULL;
-            CREATE INDEX IF NOT EXISTS "wua_parcel_waterpipe_0%s_id_index"
-              ON wua_parcel USING btree(waterpipe_0%s_id);
-                ''' % (i, i, i, i, i, i)
+            CREATE INDEX IF NOT EXISTS "wua_parcel_waterpipe_%s_id_index"
+              ON wua_parcel USING btree(waterpipe_%s_id);
+                ''' % (suffix, suffix, suffix, suffix, suffix, suffix)
         env.cr.execute(query)
 
     env.cr.execute('''
