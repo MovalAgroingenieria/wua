@@ -15,10 +15,10 @@ def create_performance_indexes(cr):
         ("wua_controlreading_reading_time_idx", "wua_controlreading",
          "CREATE INDEX IF NOT EXISTS wua_controlreading_reading_time_idx "
          "ON wua_controlreading (watermeter_id, reading_time)"),
-        ("wua_controlreading_presresconsumption_idx", "wua_controlreading",
-         "CREATE INDEX IF NOT EXISTS wua_controlreading_presresconsumption_idx "
-         "ON wua_controlreading (presresconsumption_id) "
-         "WHERE presresconsumption_id IS NOT NULL"),
+        ("wua_controlreading_controlpresconsumption_idx", "wua_controlreading",
+         "CREATE INDEX IF NOT EXISTS wua_controlreading_controlpresconsumption_idx "
+         "ON wua_controlreading (controlpresconsumption_id) "
+         "WHERE controlpresconsumption_id IS NOT NULL"),
     ]
     run_performance_indexes(
         cr, _logger, 'base_wua_pressurized_irrigation_monitoring', indexes)

@@ -14,7 +14,7 @@ def create_performance_indexes(cr):
     indexes = [
         ("wua_flowdata_flowmeter_date_idx", "wua_flowdata",
          "CREATE INDEX IF NOT EXISTS wua_flowdata_flowmeter_date_idx "
-         "ON wua_flowdata (flowmeter_id, date) WHERE flowmeter_id IS NOT NULL"),
+         "ON wua_flowdata (flowmeter_id, time) WHERE flowmeter_id IS NOT NULL"),
     ]
     run_performance_indexes(cr, _logger, 'base_wua_flowdata', indexes)
 
