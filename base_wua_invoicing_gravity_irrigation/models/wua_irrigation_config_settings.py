@@ -27,27 +27,6 @@ class WuaIrrigationConfiguration(models.TransientModel):
         help='if the parcel has a irrigation worker, the price of water '
              'will be increase in this value')
 
-    @api.model
-    def default_get(self, fields_list):
-        res = super(WuaIrrigationConfiguration, self).default_get(
-            fields_list)
-        from .wua_wateringrequest import WuaWateringrequest as Wr
-        config = self.env['ir.config_parameter'].sudo()
-        if 'default_gravity_product_id' in (fields_list or []):
-            val = config.get_param(Wr.CONFIG_KEY_GRAVITY_PRODUCT)
-            if val:
-                try:
-                    res['default_gravity_product_id'] = int(val)
-                except (TypeError, ValueError):
-                    pass
-        if 'default_set_product_id_for_wateringrequest' in (
-                fields_list or []):
-            val = config.get_param(Wr.CONFIG_KEY_SET_PRODUCT)
-            if val is not None:
-                res['default_set_product_id_for_wateringrequest'] = (
-                    val.lower() == 'true')
-        return res
-
     @api.multi
     def set_default_values(self):
         super(WuaIrrigationConfiguration, self).set_default_values()
@@ -55,14 +34,10 @@ class WuaIrrigationConfiguration(models.TransientModel):
         values.set_default('wua.irrigation.configuration',
                            'overprice_with_irrigation_worker',
                            self.overprice_with_irrigation_worker)
-        config = self.env['ir.config_parameter'].sudo()
-        from .wua_wateringrequest import (
-            WuaWateringrequest as Wr,
-        )
-        if self.default_gravity_product_id:
-            config.set_param(
-                Wr.CONFIG_KEY_GRAVITY_PRODUCT,
-                str(self.default_gravity_product_id.id))
-        config.set_param(
-            Wr.CONFIG_KEY_SET_PRODUCT,
-            str(self.default_set_product_id_for_wateringrequest))
+        values.set_default('wua.irrigation.configuration',
+                           'default_gravity_product_id',
+                           self.default_gravity_product_id.id
+                           if self.default_gravity_product_id else False)
+        values.set_default('wua.irrigation.configuration',
+                           'default_set_product_id_for_wateringrequest',
+                           self.default_set_product_id_for_wateringrequest)

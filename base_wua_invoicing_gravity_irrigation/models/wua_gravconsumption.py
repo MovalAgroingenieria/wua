@@ -19,16 +19,12 @@ class WuaGravconsumption(models.Model):
         MAX_SIZE_NUMBER + 2 + MAX_WATERINGREQUEST_SUFFIX + 1
 
     def _default_product_id(self):
-        from .wua_wateringrequest import WuaWateringrequest as Wr
         resp = None
-        config = self.env['ir.config_parameter'].sudo()
-        val = config.get_param(Wr.CONFIG_KEY_GRAVITY_PRODUCT)
-        if val:
-            try:
-                resp = int(val)
-            except (TypeError, ValueError):
-                pass
-        if resp is None:
+        default_product_id = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'default_gravity_product_id')
+        if default_product_id:
+            resp = default_product_id
+        else:
             categ_08_products = self.env['product.product'].search(
                 [('categ_id.productcategory_code', '=', 8)], order='id')
             if len(categ_08_products) > 0:
