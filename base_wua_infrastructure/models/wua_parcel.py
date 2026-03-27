@@ -106,12 +106,8 @@ class WuaParcel(models.Model):
 
     @api.depends('irrigationpoint_ids', 'irrigationpoint_ids.active')
     def _compute_number_of_irrigationpoints(self):
-        if len(self) == 1:
-            self.number_of_irrigationpoints = len(self.irrigationpoint_ids)
-        else:
-            for parcel in self:
-                parcel.number_of_irrigationgates = \
-                    len(parcel.irrigationpoint_ids)
+        for parcel in self:
+            parcel.number_of_irrigationpoints = len(parcel.irrigationpoint_ids)
 
     @api.depends('irrigationpoint_ids', 'irrigationpoint_ids.active')
     def _compute_hydraulic_infrastructure_type(self):
