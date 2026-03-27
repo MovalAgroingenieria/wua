@@ -240,8 +240,7 @@ def migrate(cr, version):
         records._compute_total_affected_area_official_hec()
 
     # wua.parcel fields that depend on irrigationpoint_ids
-    all_parcel_ids = env['wua.parcel'].with_context(
-        active_test=False).search([]).ids
+    all_parcel_ids = env['wua.parcel'].search([]).ids
     parcels = env['wua.parcel'].browse(all_parcel_ids)
     parcels._compute_number_of_irrigationpoints()
     parcels._compute_hydraulic_infrastructure_type()
@@ -251,5 +250,5 @@ def migrate(cr, version):
     parcels._compute_with_pumping()
     _logger.info(
         "Stored fields recalculated successfully "
-        "considering only active records."
+        "considering only active records.",
     )
