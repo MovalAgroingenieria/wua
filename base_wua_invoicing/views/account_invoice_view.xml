@@ -182,7 +182,7 @@
                 <field name="name"/>
                 <field name="quantity"/>
                 <field name="price_unit"/>
-                <field name="price_subtotal" sum="Total"/>
+                <field name="price_subtotal_signed" sum="Total"/>
             </tree>
         </field>
     </record>
@@ -240,7 +240,7 @@
                 <field name="name"/>
                 <field name="quantity"/>
                 <field name="price_unit"/>
-                <field name="price_subtotal" sum="Total"/>
+                <field name="price_subtotal_signed" sum="Total"/>
             </tree>
         </field>
     </record>
@@ -251,7 +251,7 @@
     <field name="arch" type="xml">
             <pivot string="Invoice Lines" display_quantity="true">
                 <field name="product_id"/>
-                <field name="price_subtotal" type="measure"/>
+                <field name="price_subtotal_signed" type="measure"/>
             </pivot>
     </field>
     </record>
@@ -305,7 +305,7 @@
                 <field name="name"/>
                 <field name="quantity" sum="Total Quantity"/>
                 <field name="price_unit"/>
-                <field name="price_subtotal" sum="Total"/>
+                <field name="price_subtotal_signed" sum="Total"/>
             </tree>
         </field>
     </record>
@@ -359,7 +359,7 @@
                 <field name="name"/>
                 <field name="quantity"/>
                 <field name="price_unit"/>
-                <field name="price_subtotal" sum="Total"/>
+                <field name="price_subtotal_signed" sum="Total"/>
             </tree>
         </field>
     </record>
@@ -370,7 +370,7 @@
         <field name="arch" type="xml">
             <pivot string="Invoice Lines" display_quantity="true">
                 <field name="partner_id"/>
-                <field name="price_subtotal" type="measure"/>
+                <field name="price_subtotal_signed" type="measure"/>
             </pivot>
         </field>
     </record>
@@ -381,7 +381,7 @@
         <field name="arch" type="xml">
             <graph string="Invoice Lines">
                 <field name="partner_id"/>
-                <field name="price_subtotal" type="measure"/>
+                <field name="price_subtotal_signed" type="measure"/>
             </graph>
         </field>
     </record>
