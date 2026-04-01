@@ -446,7 +446,7 @@ class WuaWaterconnection(models.Model):
             'context': {
                 'active_model': 'wua.waterconnection',
                 'active_ids': self.ids,
-            }
+            },
         }
 
 

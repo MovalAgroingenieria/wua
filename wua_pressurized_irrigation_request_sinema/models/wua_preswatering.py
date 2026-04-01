@@ -166,12 +166,17 @@ class WuaPresreswatering(models.Model):
     @api.multi
     def validate_presresconsumptions(self):
         self.ensure_one()
-        # if self.waterconnections_without_remotecontrol_msg:
-        #     raise exceptions.UserError(_(
-        #         'There are waterconnections without SIEMENS ID'))
+        selected_consumptions = self.presresconsumption_ids.filtered(
+            lambda x: x.selected)
+        if not selected_consumptions:
+            self.message_post(body=_(
+                'No selected consumptions found. '
+                'Skipping SINEMA communication.'))
+            return super(WuaPresreswatering, self,
+                         ).validate_presresconsumptions()
         siemens_data = {}
-        for consumption in self.presresconsumption_ids.filtered(
-                lambda x: x.selected and x.waterconnection_id.siemens_id):
+        for consumption in selected_consumptions.filtered(
+                lambda x: x.waterconnection_id.siemens_id):
             siemens_id = consumption.waterconnection_id.siemens_id
             if siemens_id not in siemens_data:
                 siemens_data[siemens_id] = {
@@ -199,10 +204,19 @@ class WuaPresreswatering(models.Model):
             super(WuaPresreswatering, self).validate_presresconsumptions()
 
     def _process_issued_nominal_flows(self, presresconsumptions, preswatering):
+        selected_consumptions = self.presresconsumption_ids.filtered(
+            lambda x: x.selected)
+        if not selected_consumptions:
+            self.message_post(body=_(
+                'No selected consumptions found. '
+                'Skipping SINEMA communication.'))
+            return super(WuaPresreswatering, self,
+                         )._process_issued_nominal_flows(
+                presresconsumptions, preswatering)
         for presresconsumption in presresconsumptions:
             siemens_data = {}
-            for consumption in self.presresconsumption_ids.filtered(
-                    lambda x: x.selected and x.waterconnection_id.siemens_id):
+            for consumption in selected_consumptions.filtered(
+                    lambda x: x.waterconnection_id.siemens_id):
                 siemens_id = consumption.waterconnection_id.siemens_id
                 if siemens_id not in siemens_data:
                     siemens_data[siemens_id] = []

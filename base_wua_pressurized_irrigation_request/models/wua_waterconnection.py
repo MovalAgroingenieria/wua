@@ -46,24 +46,24 @@ class WuaWaterconnection(models.Model):
 
         id_tree_view = self.env.ref(
             'base_wua_pressurized_irrigation_request.'
-            'wua_presresconsumption_view_tree'
+            'wua_presresconsumption_view_tree',
         ).id
         calendar_view = self.env.ref(
             'base_wua_pressurized_irrigation_request.'
-            'wua_presresconsumption_view_calendar'
+            'wua_presresconsumption_view_calendar',
         ).id
         pivot_view = self.env.ref(
             'base_wua_pressurized_irrigation_request.'
-            'wua_presresconsumption_view_pivot'
+            'wua_presresconsumption_view_pivot',
         ).id
         graph_view = self.env.ref(
             'base_wua_pressurized_irrigation_request.'
-            'wua_presresconsumption_view_graph'
+            'wua_presresconsumption_view_graph',
         ).id
 
         search_view = self.env.ref(
             'base_wua_pressurized_irrigation_request.'
-            'wua_presresconsumption_view_search'
+            'wua_presresconsumption_view_search',
         )
         search_view_id = search_view.id
         search_view_name = search_view.name or 'Search'
