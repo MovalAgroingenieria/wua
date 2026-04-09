@@ -3,7 +3,7 @@
         <record id="email_template_preswateringrequest_update" model="mail.template">
             <field name="name">Preswatering Request Update Notification</field>
             <field name="model_id" ref="base_wua_pressurized_irrigation_request.model_wua_preswateringrequest"/>
-            <field name="subject">Your Preswatering Request has been Updated</field>
+            <field name="subject">Your Preswatering Request (${object.initial_date}) has been Updated</field>
             <field name="email_from">${(user.email or 'no-reply@yourdomain.com')|safe}</field>
             <field name="email_to">${object.partner_id.email|safe}</field>
             <field name="lang">es_ES</field>
