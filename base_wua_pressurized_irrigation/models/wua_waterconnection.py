@@ -134,6 +134,7 @@ class WuaWaterconnection(models.Model):
         index=True,
         default=lambda self: self.get_default_state(),
         ondelete='restrict',
+        track_visibility='onchange',
     )
 
     is_state_close = fields.Boolean(
