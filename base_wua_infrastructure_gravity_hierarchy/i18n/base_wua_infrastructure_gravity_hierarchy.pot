@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-28 12:52+0000\n"
-"PO-Revision-Date: 2024-05-28 12:52+0000\n"
+"POT-Creation-Date: 2026-04-09 10:27+0000\n"
+"PO-Revision-Date: 2026-04-09 10:27+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,7 +21,7 @@ msgid "<strong>Gravity&amp;nbsp;Irrigation</strong>"
 msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:546
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:532
 #: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:413
 #, python-format
 msgid "A ditch cannot be supplied by itself."
@@ -34,7 +34,7 @@ msgid "A non-main ditch must be supplied by another."
 msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:455
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:441
 #, python-format
 msgid "A non-main drainage ditch must drain to another."
 msgstr ""
@@ -157,7 +157,7 @@ msgid "Drained to"
 msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:441
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:427
 #, python-format
 msgid "Empty Value."
 msgstr ""
@@ -180,6 +180,11 @@ msgstr ""
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model,name:base_wua_infrastructure_gravity_hierarchy.model_wua_irrigationgate
 msgid "Entity (irrigation gate)"
+msgstr ""
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model,name:base_wua_infrastructure_gravity_hierarchy.model_wua_invoiceset_line
+msgid "Entity (line of a WUA invoice set)"
 msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
@@ -278,6 +283,7 @@ msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_parcel_irrigationditch_direct_id
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_parcel_view_search
 msgid "Irrigation Ditch"
 msgstr ""
 
@@ -634,11 +640,6 @@ msgid "Level 9 Irrigation Ditch"
 msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: model:ir.model,name:base_wua_infrastructure_gravity_hierarchy.model_wua_invoiceset_line
-msgid "Line of a WUA invoice set"
-msgstr ""
-
-#. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_is_main
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_irrigationditch_is_main
 msgid "Main"
@@ -690,7 +691,7 @@ msgid "Parcel"
 msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:656
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:642
 #: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:486
 #: model:ir.actions.server,name:base_wua_infrastructure_gravity_hierarchy.wua_drainageditch_parcels_action_gh
 #: model:ir.actions.server,name:base_wua_infrastructure_gravity_hierarchy.wua_irrigationditch_parcels_action_gh
@@ -1036,13 +1037,13 @@ msgid "The \"Max. Levels\" value has to be between 1 and 30."
 msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:539
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:525
 #, python-format
 msgid "The character \"/\" cannot be used in the name of the drainage ditch."
 msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:483
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:469
 #: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:394
 #: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:407
 #, python-format
@@ -1050,14 +1051,14 @@ msgid "The character \"/\" cannot be used in the name of the irrigation ditch."
 msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:479
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:556
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:465
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:542
 #, python-format
 msgid "The drainage ditch code already exists."
 msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:446
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:432
 #, python-format
 msgid "The drainage ditch code must be a positive value."
 msgstr ""
@@ -1074,13 +1075,13 @@ msgid "The main ditch cannot be supplied by any other."
 msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:452
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:438
 #, python-format
 msgid "The main drainage ditch cannot drains to any other."
 msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:464
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:450
 #, python-format
 msgid "You cannot create a drainage ditch that depends on a ditch of the highest level (%s)."
 msgstr ""
@@ -1090,4 +1091,3 @@ msgstr ""
 #, python-format
 msgid "You cannot create a irrigation ditch that depends on a ditch of the highest level (%s)."
 msgstr ""
-
