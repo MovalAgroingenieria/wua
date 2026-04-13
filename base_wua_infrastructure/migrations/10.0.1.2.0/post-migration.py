@@ -240,12 +240,17 @@ def migrate(cr, version):
         records._compute_total_affected_area_official_hec()
 
     # wua.parcel fields that depend on irrigationpoint_ids
+    # NOTE: _compute_irrigationditch_id and
+    # _compute_hydraulic_infrastructure_type are NOT called here because
+    # downstream modules (e.g. base_wua_infrastructure_gravity_hierarchy)
+    # override them with different dependencies. Calling them at this
+    # point (before downstream modules load) would use the base compute
+    # method instead of the override, producing wrong values. Each
+    # downstream module must handle recomputation in its own migration.
     all_parcel_ids = env['wua.parcel'].search([]).ids
     parcels = env['wua.parcel'].browse(all_parcel_ids)
     parcels._compute_number_of_irrigationpoints()
-    parcels._compute_hydraulic_infrastructure_type()
     parcels._compute_hydraulicsector_id()
-    parcels._compute_irrigationditch_id()
     parcels._compute_track_irrigationpointwc_ids()
     parcels._compute_with_pumping()
     _logger.info(
