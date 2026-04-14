@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- wua.parcel — add from_irriweb_census field + search filter  -->
+    <!-- ============================================================ -->
+
+    <record id="wua_parcel_census_flag_view_form" model="ir.ui.view">
+        <field name="name">wua.parcel.census.flag.form</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id" ref="base_wua.wua_parcel_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='cadastral_sector']" position="before">
+                <field name="from_irriweb_census" readonly="1" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_parcel_census_flag_view_tree" model="ir.ui.view">
+        <field name="name">wua.parcel.census.flag.tree</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id" ref="base_wua.wua_parcel_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="from_irriweb_census" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_parcel_census_flag_view_search" model="ir.ui.view">
+        <field name="name">wua.parcel.census.flag.search</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id" ref="base_wua.wua_parcel_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='inactive']" position="before">
+                <separator/>
+                <filter string="From IrriWEB Census"
+                        name="from_irriweb_census"
+                        domain="[('from_irriweb_census','=',True)]"/>
+                <filter string="Not from IrriWEB Census"
+                        name="not_from_irriweb_census"
+                        domain="[('from_irriweb_census','=',False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- res.partner — add from_irriweb_census field + search filter -->
+    <!-- ============================================================ -->
+
+    <record id="res_partner_census_flag_view_form" model="ir.ui.view">
+        <field name="name">res.partner.census.flag.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base_wua.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_code']" position="after">
+                <field name="from_irriweb_census" readonly="1" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="res_partner_census_flag_view_search" model="ir.ui.view">
+        <field name="name">res.partner.census.flag.search</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base_wua.view_partner_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='inactive']" position="before">
+                <separator/>
+                <filter string="From IrriWEB Census"
+                        name="from_irriweb_census"
+                        domain="[('from_irriweb_census','=',True)]"/>
+                <filter string="Not from IrriWEB Census"
+                        name="not_from_irriweb_census"
+                        domain="[('from_irriweb_census','=',False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- wua.census.sync.log.line — Tree -->
+    <!-- ============================================================ -->
+
+    <record id="wua_census_sync_log_line_view_tree" model="ir.ui.view">
+        <field name="name">wua.census.sync.log.line.tree</field>
+        <field name="model">wua.census.sync.log.line</field>
+        <field name="arch" type="xml">
+            <tree colors="red:level == 'error';orange:level == 'warning';blue:level == 'toma'"
+                  create="false" delete="false">
+                <field name="endpoint"/>
+                <field name="external_code"/>
+                <field name="level"/>
+                <field name="message"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- wua.census.sync.log — Tree -->
+    <!-- ============================================================ -->
+
+    <record id="wua_census_sync_log_view_tree" model="ir.ui.view">
+        <field name="name">wua.census.sync.log.tree</field>
+        <field name="model">wua.census.sync.log</field>
+        <field name="arch" type="xml">
+            <tree colors="red:state == 'error';orange:state == 'partial';green:state == 'success'"
+                  create="false" delete="false"
+                  default_order="date_start desc">
+                <field name="name"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="trigger"/>
+                <field name="state"/>
+                <field name="error_count"/>
+                <field name="warning_count"/>
+                <field name="toma_count"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- wua.census.sync.log — Form -->
+    <!-- ============================================================ -->
+
+    <record id="wua_census_sync_log_view_form" model="ir.ui.view">
+        <field name="name">wua.census.sync.log.form</field>
+        <field name="model">wua.census.sync.log</field>
+        <field name="arch" type="xml">
+            <form duplicate="0" create="false">
+                <field name="id" invisible="1"/>
+                <header>
+                    <field name="state" widget="statusbar"
+                           options="{'clickable': False}"/>
+                </header>
+                <sheet>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="name"/>
+                            <field name="trigger"/>
+                            <field name="error_count"/>
+                            <field name="warning_count"/>
+                            <field name="toma_count"/>
+                            <field name="partner_warning_count"/>
+                            <field name="parcel_warning_count"/>
+                            <field name="partnerlink_warning_count"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="summary_page" string="Summary">
+                                <field name="summary"/>
+                            </page>
+                            <page name="tomas_page" string="Tomas">
+                                <field name="toma_line_ids" nolabel="1">
+                                    <tree colors="blue:level == 'toma'"
+                                          create="false" delete="false">
+                                        <field name="endpoint"/>
+                                        <field name="external_code"/>
+                                        <field name="level"/>
+                                        <field name="message"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="partner_warnings_page" string="Warn. Socios">
+                                <field name="partner_warning_line_ids" nolabel="1">
+                                    <tree colors="orange:level == 'warning_partner'"
+                                          create="false" delete="false">
+                                        <field name="endpoint"/>
+                                        <field name="external_code"/>
+                                        <field name="level" invisible="1"/>
+                                        <field name="message"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="parcel_warnings_page" string="Warn. Parcelas">
+                                <field name="parcel_warning_line_ids" nolabel="1">
+                                    <tree colors="orange:level == 'warning_parcel'"
+                                          create="false" delete="false">
+                                        <field name="endpoint"/>
+                                        <field name="external_code"/>
+                                        <field name="level" invisible="1"/>
+                                        <field name="message"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="partnerlink_warnings_page" string="Warn. Partnerlinks">
+                                <field name="partnerlink_warning_line_ids" nolabel="1">
+                                    <tree colors="orange:level == 'warning_partnerlink'"
+                                          create="false" delete="false">
+                                        <field name="endpoint"/>
+                                        <field name="external_code"/>
+                                        <field name="level" invisible="1"/>
+                                        <field name="message"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- wua.census.sync.log — Search -->
+    <!-- ============================================================ -->
+
+    <record id="wua_census_sync_log_view_search" model="ir.ui.view">
+        <field name="name">wua.census.sync.log.search</field>
+        <field name="model">wua.census.sync.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <filter string="Success" name="filter_success"
+                        domain="[('state', '=', 'success')]"/>
+                <filter string="Partial" name="filter_partial"
+                        domain="[('state', '=', 'partial')]"/>
+                <filter string="Error" name="filter_error"
+                        domain="[('state', '=', 'error')]"/>
+                <separator/>
+                <filter string="Manual" name="filter_manual"
+                        domain="[('trigger', '=', 'manual')]"/>
+                <filter string="Scheduled" name="filter_cron"
+                        domain="[('trigger', '=', 'cron')]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Actions -->
+    <!-- ============================================================ -->
+
+    <record id="wua_census_sync_log_action" model="ir.actions.act_window">
+        <field name="name">Census Sync Logs</field>
+        <field name="res_model">wua.census.sync.log</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Menu (under the existing Batchline configuration menu) -->
+    <!-- ============================================================ -->
+
+    <menuitem id="wua_census_sync_log_menu"
+              name="Census Sync Logs (Batchline)"
+              parent="wua_structure_irrigation.base_wua_irrigation_configuration_menu"
+              action="wua_census_sync_log_action"
+              sequence="10"/>
+
+</odoo>

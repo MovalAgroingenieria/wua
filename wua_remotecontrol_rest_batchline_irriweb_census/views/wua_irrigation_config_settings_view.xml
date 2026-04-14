@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_irrigation_config_settings_census_batchline_view_form"
+            model="ir.ui.view">
+        <field name="name">wua.irrigation.configuration.census.batchline</field>
+        <field name="model">wua.irrigation.configuration</field>
+        <field name="inherit_id"
+               ref="wua_remotecontrol_rest_batchline_irriweb.wua_irrigation_config_settings_view_form"/>
+        <field name="arch" type="xml">
+
+            <!-- New group just after the parent batchline group -->
+            <xpath expr="//group[@name='remote_control_batchline']"
+                   position="after">
+                <group name="census_batchline"
+                       string="Census REST API (IrriWEB)"
+                       attrs="{'invisible': [('enable_remotecontrol', '=', False)]}">
+                    <field name="url_census_rest_batchline"
+                           attrs="{'invisible': [('enable_remotecontrol', '=', False)]}"/>
+                    <field name="census_apikey_header_batchline"
+                           attrs="{'invisible': [('enable_remotecontrol', '=', False)]}"/>
+                    <field name="census_apikey_value_batchline"
+                           attrs="{'invisible': [('enable_remotecontrol', '=', False)]}"/>
+                    <button name="action_census_sync_batchline"
+                            type="object"
+                            string="Sync Partner &amp; Parcel Census from IrriWEB"
+                            class="oe_highlight"
+                            attrs="{'invisible': [('enable_remotecontrol', '=', False)]}"
+                            confirm="This will fetch all partners and parcels from IrriWEB and synchronize them into Odoo. Continue?"/>
+                </group>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>
