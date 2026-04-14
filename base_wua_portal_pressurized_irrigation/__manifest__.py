@@ -16,10 +16,12 @@
         "base_wua_pressurized_irrigation",
     ],
     "data": [
+        "data/wua_irrigation_config_settings_data.xml",
         "security/security.xml",
         "security/ir.model.access.csv",
         "views/website_portal_templates.xml",
         "views/portal_irrigationmanagement_templates.xml",
+        "views/wua_irrigation_config_settings_view.xml",
     ],
     "installable": True,
     "application": False,

@@ -29,9 +29,14 @@ class website_account(website_account):
             request.env['wua.presconsumption'].search_count([
                 ('waterconnection_id', 'in', waterconnections),
             ])
+        show_irrigation_events_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.irrigation.configuration',
+            'show_irrigation_events_on_portal')
         response.qcontext.update({
             'readings_count': readings_count,
             'presconsumptions_count': presconsumptions_count,
+            'show_irrigation_events_on_portal':
+                show_irrigation_events_on_portal
         })
         return response
 

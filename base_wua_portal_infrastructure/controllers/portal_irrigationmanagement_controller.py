@@ -20,12 +20,18 @@ class PortalIrrigationManagement(http.Controller):
             'wua.invoicing.configuration',
             'liquidation_on_portal'
         )
+        show_irrigation_events_on_portal = request.env['ir.values'].sudo().get_default(
+            'wua.irrigation.configuration',
+            'show_irrigation_events_on_portal'
+        )
         values = {
             'company': request.website.company_id,
             'user': request.env.user,
             'partner': partner,
             'waterconnection_count': waterconnection_count,
-            'liquidation_on_portal': liquidation_on_portal
+            'liquidation_on_portal': liquidation_on_portal,
+            'show_irrigation_events_on_portal':
+                show_irrigation_events_on_portal
         }
         return values
 
