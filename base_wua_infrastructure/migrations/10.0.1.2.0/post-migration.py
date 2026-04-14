@@ -11,7 +11,7 @@ _logger = logging.getLogger(__name__)
 
 def migrate(cr, version):
     _logger.info(
-        "Recalculating stored fields considering only active records..."
+        "Recalculating stored fields considering only active records...",
     )
     # =========================================================================
     # 1) wua.waterconnection (depends on active irrigationpoints)

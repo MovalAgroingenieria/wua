@@ -427,7 +427,7 @@ class WuaInvoiceset(models.Model):
                 )
                 record.is_being_computed = False
             _logger.debug('[invoiceset %s] Calculus ended (total %.2fs)',
-                         record.name, time.time() - t_start)
+                          record.name, time.time() - t_start)
 
     @api.multi
     def action_set_as_not_being_computed(self):

@@ -224,16 +224,22 @@ class WuaIrrigationReport(models.Model):
                 irrigationreport_img
         else:
             irrigationreport_img = ''
+        watering_element_type = False
+        watering_element_id = False
+        watering_element_name = ''
         if (irrigationreport.irrigationshed_id):
             watering_element_type = 'irrigationshed'
-            watering_element = irrigationreport.irrigationshed_id
+            watering_element_id = irrigationreport.irrigationshed_id.id
+            watering_element_name = irrigationreport.irrigationshed_id.name
         elif (irrigationreport.flowdivider_id):
             watering_element_type = 'flowdivider'
-            watering_element = irrigationreport.flowdivider_id
+            watering_element_id = irrigationreport.flowdivider_id.id
+            watering_element_name = irrigationreport.flowdivider_id.name
         elif (irrigationreport.irrigationgate_id):
             watering_element_type = 'irrigationgate'
-            watering_element = irrigationreport.irrigationgate_id
-        return {
+            watering_element_id = irrigationreport.irrigationgate_id.id
+            watering_element_name = irrigationreport.irrigationgate_id.name
+        result = {
             'id': irrigationreport.id,
             'partner': irrigationreport.partner_id.id,
             'partner_name': irrigationreport.partner_id.name,
@@ -243,8 +249,8 @@ class WuaIrrigationReport(models.Model):
             'intake': irrigationreport.intake_id.id,
             'intake_name': irrigationreport.intake_id.name,
             'watering_element_type': watering_element_type,
-            'watering_element': watering_element.id,
-            'watering_element_name': watering_element.name,
+            'watering_element': watering_element_id,
+            'watering_element_name': watering_element_name,
             'volume': irrigationreport.volume,
             'adjustement_volume': irrigationreport.adjustement_volume,
             'volume_real': irrigationreport.volume_real,
@@ -265,6 +271,7 @@ class WuaIrrigationReport(models.Model):
             'credit_overdue': float(
                 irrigationreport.partner_id.credit_overdue),
         }
+        return result
 
     @api.model
     def create_field_irrigationreport(self, data):
