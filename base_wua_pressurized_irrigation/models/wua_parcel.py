@@ -350,11 +350,177 @@ class WuaParcel(models.Model):
                 gis_tertiarypipe_ok = False
         return gis_tertiarypipe_ok
 
+    def check_gis_irrigationdelivery_created(self):
+        resp = False
+        self.env.cr.execute("""
+            SELECT EXISTS(SELECT * FROM information_schema.tables
+            WHERE table_name='wua_gis_irrigationdelivery')
+            """)
+        if self.env.cr.fetchone()[0]:
+            resp = True
+        return resp
+
+    def create_wua_gis_irrigationdelivery_table(self):
+        gis_irrigationdelivery_table_created = \
+            self.check_gis_irrigationdelivery_created()
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        if (not gis_irrigationdelivery_table_created and
+                extension_schema_postgis_created):
+            self.env.cr.execute("""
+                CREATE SEQUENCE IF NOT EXISTS
+                    public.wua_gis_irrigationdelivery_gid_seq
+                    INCREMENT 1
+                    START 1
+                    MINVALUE 1
+                    MAXVALUE 2147483647
+                    CACHE 1;
+            """)
+            self.env.cr.execute("""
+                CREATE TABLE IF NOT EXISTS public.wua_gis_irrigationdelivery
+                    (
+                        gid integer NOT NULL DEFAULT nextval(
+                            'wua_gis_irrigationdelivery_gid_seq'::regclass),
+                        name character varying(254)
+                            COLLATE pg_catalog."default",
+                        geom postgis.geometry(Point,25830),
+                        UNIQUE(name),
+                        CONSTRAINT wua_gis_irrigationdelivery_pkey
+                            PRIMARY KEY (gid)
+                    );
+            """)
+            self.env.cr.execute("""
+                CREATE INDEX IF NOT EXISTS
+                wua_gis_irrigationdelivery_idx
+                    ON public.wua_gis_irrigationdelivery
+                    USING gist (geom);
+            """)
+            self.env.cr.commit()
+        self.grant_gis_privileges('wua_gis_irrigationdelivery')
+
+    def create_irrigationdelivery_triggers(self):
+        gis_irrigationdelivery_table_created = \
+            self.check_gis_irrigationdelivery_created()
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        if (gis_irrigationdelivery_table_created and
+                extension_schema_postgis_created):
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_gis_irrigdlv_update_on_wua_irrigdlv()
+                    RETURNS trigger AS
+                $BODY$
+                BEGIN
+                IF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
+                    UPDATE public.wua_irrigationdelivery SET
+                        with_gis_irrigationdelivery = False
+                    WHERE name = OLD.name;
+                END IF;
+                IF TG_OP = 'UPDATE' OR TG_OP = 'INSERT' THEN
+                    UPDATE public.wua_irrigationdelivery SET
+                        with_gis_irrigationdelivery = True
+                    WHERE name = NEW.name;
+                END IF;
+                RETURN NULL;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS
+                    wua_gis_irrigationdelivery_write_trigger ON
+                    public.wua_gis_irrigationdelivery;
+                DROP TRIGGER IF EXISTS
+                    wua_gis_irrigationdelivery_create_unlink_trigger ON
+                    public.wua_gis_irrigationdelivery;
+
+                CREATE TRIGGER wua_gis_irrigationdelivery_write_trigger
+                AFTER UPDATE OF name ON
+                public.wua_gis_irrigationdelivery FOR EACH ROW WHEN
+                (OLD.name IS DISTINCT FROM NEW.name)
+                EXECUTE PROCEDURE
+                    wua_gis_irrigdlv_update_on_wua_irrigdlv();
+
+                CREATE TRIGGER
+                    wua_gis_irrigationdelivery_create_unlink_trigger
+                AFTER INSERT OR DELETE ON
+                public.wua_gis_irrigationdelivery FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_gis_irrigdlv_update_on_wua_irrigdlv();
+            """)
+            self.env.cr.commit()
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_irrigdlv_update_on_wua_irrigdlv() RETURNS
+                    trigger AS
+                $BODY$
+                BEGIN
+                    UPDATE wua_irrigationdelivery SET
+                        with_gis_irrigationdelivery =
+                        (SELECT NEW.name IN
+                            (SELECT name FROM wua_gis_irrigationdelivery))
+                    WHERE name = NEW.name;
+                RETURN NULL;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS
+                    wua_irrigationdelivery_write_trigger ON
+                    public.wua_irrigationdelivery;
+                DROP TRIGGER IF EXISTS
+                    wua_irrigationdelivery_create_trigger ON
+                    public.wua_irrigationdelivery;
+                CREATE TRIGGER wua_irrigationdelivery_write_trigger
+                AFTER UPDATE OF name ON
+                public.wua_irrigationdelivery FOR EACH ROW WHEN
+                (OLD.name IS DISTINCT FROM
+                    NEW.name)
+                EXECUTE PROCEDURE
+                    wua_irrigdlv_update_on_wua_irrigdlv();
+                CREATE TRIGGER wua_irrigationdelivery_create_trigger
+                AFTER INSERT ON
+                public.wua_irrigationdelivery FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_irrigdlv_update_on_wua_irrigdlv();
+            """)
+            self.env.cr.commit()
+
+    def set_gis_fields_irrigationdelivery(self):
+        gis_irrigationdelivery_ok = \
+            self.check_gis_irrigationdelivery_created()
+        if gis_irrigationdelivery_ok:
+            try:
+                self.env.cr.savepoint()
+                self.env.cr.execute("""
+                    UPDATE public.wua_irrigationdelivery
+                    SET with_gis_irrigationdelivery = FALSE
+                """)
+                self.env.cr.execute("""
+                    UPDATE public.wua_irrigationdelivery ww1
+                    SET with_gis_irrigationdelivery = TRUE
+                    FROM public.wua_gis_irrigationdelivery wgw1 WHERE
+                    ww1.name = wgw1.name;
+                """)
+                self.env.cr.commit()
+                self.env.invalidate_all()
+            except Exception:
+                self.env.cr.rollback()
+                gis_irrigationdelivery_ok = False
+        return gis_irrigationdelivery_ok
+
     # Expand original method
     def set_gis_fields(self):
         gis_parcels_ok = super(WuaParcel, self).set_gis_fields()
         gis_tertiarypipe_ok = self.set_gis_fields_tertiarypipe()
-        return gis_parcels_ok and gis_tertiarypipe_ok
+        gis_irrigationdelivery_ok = self.set_gis_fields_irrigationdelivery()
+        return gis_parcels_ok and gis_tertiarypipe_ok and \
+            gis_irrigationdelivery_ok
 
 
 class WuaParcelIrrigationpointWC(models.Model):

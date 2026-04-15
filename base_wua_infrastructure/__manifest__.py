@@ -41,6 +41,7 @@
         "views/wua_building_view.xml",
         "views/wua_irrigationstretch_view.xml",
         "views/wua_infrastructure_material_view.xml",
+        "views/wua_track_view.xml",
         "reports/wua_partner_infrastructure_report.xml",
         "reports/wua_parcel_report.xml",
         "reports/wua_waterconnection_technical_sheet_report.xml",

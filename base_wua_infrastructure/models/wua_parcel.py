@@ -1787,10 +1787,170 @@ class WuaParcel(models.Model):
         gis_drainagevalve_ok = self.set_gis_fields_drainagevalve()
         # irrigation stretch GIS
         gis_irrigationstretch_ok = self.set_gis_fields_irrigationstretch()
+        # track GIS
+        gis_track_ok = self.set_gis_fields_track()
         return gis_parcels_ok and gis_irrigationshed_ok and \
             gis_irrigationditch_ok and gis_airvalve_ok and gis_valve_ok and \
             gis_drainagevalve_ok and gis_flowdivider_ok and \
-            gis_building_ok and gis_irrigationstretch_ok
+            gis_building_ok and gis_irrigationstretch_ok and gis_track_ok
+
+    def check_gis_track_table_created(self):
+        self.env.cr.execute("""
+            SELECT EXISTS (
+                SELECT * FROM information_schema.tables
+                WHERE table_name = 'wua_gis_track'
+            )
+        """)
+        return self.env.cr.fetchone()[0]
+
+    def create_wua_gis_track_table(self):
+        gis_table_created = self.check_gis_track_table_created()
+        postgis_ready = self.check_extension_and_schema_postgis_created()
+
+        if not gis_table_created and postgis_ready:
+            self.env.cr.execute("""
+                CREATE SEQUENCE IF NOT EXISTS
+                    public.wua_gis_track_gid_seq
+                    INCREMENT 1
+                    START 1
+                    MINVALUE 1
+                    MAXVALUE 2147483647
+                    CACHE 1;
+            """)
+            self.env.cr.execute("""
+                CREATE TABLE IF NOT EXISTS public.wua_gis_track (
+                    gid integer NOT NULL DEFAULT nextval(
+                        'wua_gis_track_gid_seq'::regclass),
+                    name character varying(254)
+                        COLLATE pg_catalog."default",
+                    geom postgis.geometry(MultiPolygon,25830),
+                    UNIQUE(name),
+                    CONSTRAINT wua_gis_track_pkey
+                        PRIMARY KEY (gid)
+                );
+            """)
+            self.env.cr.execute("""
+                CREATE INDEX IF NOT EXISTS
+                    wua_gis_track_idx ON public.wua_gis_track
+                    USING gist (geom);
+            """)
+            self.env.cr.commit()
+        self.grant_gis_privileges('wua_gis_track')
+
+    def create_track_triggers(self):
+        gis_table_created = self.check_gis_track_table_created()
+        postgis_ready = self.check_extension_and_schema_postgis_created()
+
+        if gis_table_created and postgis_ready:
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_gis_track_update_on_wua_track()
+                    RETURNS trigger AS
+                $BODY$
+                BEGIN
+                    IF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
+                        UPDATE public.wua_track SET
+                            with_gis_track = False
+                        WHERE name = OLD.name;
+                    END IF;
+                    IF TG_OP = 'UPDATE' OR TG_OP = 'INSERT' THEN
+                        UPDATE public.wua_track SET
+                            with_gis_track = True
+                        WHERE name = NEW.name;
+                    END IF;
+                    RETURN NULL;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_gis_track_write_trigger ON
+                    public.wua_gis_track;
+                DROP TRIGGER IF EXISTS
+                    wua_gis_track_create_unlink_trigger ON
+                    public.wua_gis_track;
+
+                CREATE TRIGGER wua_gis_track_write_trigger
+                AFTER UPDATE OF name ON
+                public.wua_gis_track FOR EACH ROW WHEN
+                (OLD.name IS DISTINCT FROM NEW.name)
+                EXECUTE PROCEDURE
+                    wua_gis_track_update_on_wua_track();
+
+                CREATE TRIGGER wua_gis_track_create_unlink_trigger
+                AFTER INSERT OR DELETE ON
+                public.wua_gis_track FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_gis_track_update_on_wua_track();
+            """)
+            self.env.cr.commit()
+
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_track_update_on_wua_track()
+                    RETURNS trigger AS
+                $BODY$
+                BEGIN
+                    UPDATE public.wua_track SET
+                        with_gis_track = (
+                            SELECT NEW.name IN (
+                                SELECT name FROM wua_gis_track
+                            )
+                        )
+                    WHERE name = NEW.name;
+                    RETURN NEW;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_track_write_trigger ON
+                    public.wua_track;
+                DROP TRIGGER IF EXISTS wua_track_create_trigger ON
+                    public.wua_track;
+
+                CREATE TRIGGER wua_track_write_trigger
+                AFTER UPDATE OF name ON
+                public.wua_track FOR EACH ROW WHEN
+                (OLD.name IS DISTINCT FROM NEW.name)
+                EXECUTE PROCEDURE
+                    wua_track_update_on_wua_track();
+
+                CREATE TRIGGER wua_track_create_trigger
+                AFTER INSERT ON
+                public.wua_track FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_track_update_on_wua_track();
+            """)
+            self.env.cr.commit()
+
+    def set_gis_fields_track(self):
+        gis_ok = self.check_gis_track_table_created()
+        if gis_ok:
+            try:
+                self.env.cr.savepoint()
+                self.env.cr.execute("""
+                    UPDATE public.wua_track
+                    SET with_gis_track = FALSE
+                """)
+                self.env.cr.execute("""
+                    UPDATE public.wua_track wt1
+                    SET with_gis_track = TRUE
+                    FROM public.wua_gis_track wgt1
+                    WHERE wt1.name = wgt1.name;
+                """)
+                self.env.cr.commit()
+                self.env.invalidate_all()
+            except Exception:
+                self.env.cr.rollback()
+                gis_ok = False
+        return gis_ok
 
     def populate_irrigationgates_to_add(self, vals):
         irrigationgates_to_add = []

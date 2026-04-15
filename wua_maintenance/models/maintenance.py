@@ -349,6 +349,30 @@ class MaintenanceEquipment(models.Model):
         string='Tertiary Pipe',
     )
 
+    irrigationdelivery_ids = fields.One2many(
+        comodel_name='wua.irrigationdelivery',
+        inverse_name='equipment_id',
+        string='Irrigation Deliveries',
+    )
+
+    irrigationdelivery_id = fields.Many2one(
+        comodel_name='wua.irrigationdelivery',
+        compute='_compute_irrigationdelivery_id',
+        string='Irrigation Delivery',
+    )
+
+    track_ids = fields.One2many(
+        comodel_name='wua.track',
+        inverse_name='equipment_id',
+        string='Tracks',
+    )
+
+    track_id = fields.Many2one(
+        comodel_name='wua.track',
+        compute='_compute_track_id',
+        string='Track',
+    )
+
     irrigationstretch_ids = fields.One2many(
         string='Irrigation Stretches',
         comodel_name='wua.irrigationstretch',
@@ -733,6 +757,25 @@ class MaintenanceEquipment(models.Model):
                 'intermediate_gis_field': False,
             },
             env.ref(
+                'wua_maintenance.equipment_category_irrigationdelivery').id: {
+                'base_table': 'wua_irrigationdelivery',
+                'base_field': 'name',
+                'gis_table': 'wua_gis_irrigationdelivery',
+                'gis_field': 'name',
+                'intermediate_table': False,
+                'intermediate_field': False,
+                'intermediate_gis_field': False,
+            },
+            env.ref('wua_maintenance.equipment_category_track').id: {
+                'base_table': 'wua_track',
+                'base_field': 'name',
+                'gis_table': 'wua_gis_track',
+                'gis_field': 'name',
+                'intermediate_table': False,
+                'intermediate_field': False,
+                'intermediate_gis_field': False,
+            },
+            env.ref(
                 'wua_maintenance.equipment_category_irrigationstretch').id: {
                 'base_table': 'wua_irrigationstretch',
                 'base_field': 'name',
@@ -1106,6 +1149,20 @@ class MaintenanceEquipment(models.Model):
                 tertiarypipe_id = record.tertiarypipe_ids[0]
             record.tertiarypipe_id = tertiarypipe_id
 
+    def _compute_irrigationdelivery_id(self):
+        for record in self:
+            irrigationdelivery_id = None
+            if record.irrigationdelivery_ids:
+                irrigationdelivery_id = record.irrigationdelivery_ids[0]
+            record.irrigationdelivery_id = irrigationdelivery_id
+
+    def _compute_track_id(self):
+        for record in self:
+            track_id = None
+            if record.track_ids:
+                track_id = record.track_ids[0]
+            record.track_id = track_id
+
     def _compute_irrigationstretch_id(self):
         for record in self:
             irrigationstretch_id = None
@@ -1266,6 +1323,12 @@ class MaintenanceEquipment(models.Model):
             self.env.ref(
                 'wua_maintenance.equipment_category_irrigationstretch').id:
                 ('wua.irrigationstretch', _('Irrigation Stretch')),
+            self.env.ref(
+                'wua_maintenance.equipment_category_irrigationdelivery').id:
+                ('wua.irrigationdelivery', _('Irrigation Delivery')),
+            self.env.ref(
+                'wua_maintenance.equipment_category_track').id:
+                ('wua.track', _('Track')),
         }
         res_model, name = category_mapping.get(
             current_equipment.category_id.id, (None, None))

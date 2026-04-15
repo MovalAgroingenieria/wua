@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <!-- Form view -->
+    <record id="wua_irrigationdelivery_view_form" model="ir.ui.view">
+        <field name="name">Irrigation Delivery (form view)</field>
+        <field name="model">wua.irrigationdelivery</field>
+        <field name="arch" type="xml">
+            <form string="Irrigation Delivery" duplicate="false">
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <field name="parcel_count" invisible="1"/>
+                        <button name="action_view_supplied_parcels"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-moval-parcel">
+                            <field name="parcel_count" widget="statinfo" string="Parcels"/>
+                        </button>
+
+                        <!-- GIS fields -->
+                        <field name="gis_viewer_link" invisible="1"/>
+                        <field name="with_gis_irrigationdelivery" invisible="1"/>
+                        <button name="action_see_gis_viewer"
+                                type="object"
+                                class="oe_stat_button"
+                                string="GIS Viewer"
+                                icon="fa-map-marker"
+                                attrs="{'invisible':
+                                    ['|',('gis_viewer_link','=',False),
+                                    ('with_gis_irrigationdelivery','=',False)]}"/>
+                    </div>
+
+                    <group name="master_data">
+                        <group name="left">
+                            <field name="name"/>
+                            <field name="description"/>
+                            <field name="material"/>
+                            <field name="diameter"/>
+                            <field name="nominal_pressure"/>
+                        </group>
+                        <group name="right">
+                            <field name="waterconnection_id"/>
+                            <field name="irrigationshed_id" readonly="1"/>
+                            <field name="watermeter_id" readonly="1"/>
+                            <field name="hydraulicsector_id" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Technical Notes">
+                            <field name="technical_notes"/>
+                        </page>
+                        <page string="General Notes">
+                            <field name="general_notes"/>
+                        </page>
+                        <page string="Photo">
+                            <group>
+                                <field name="photo" widget="image" class="oe_img_259_160" filename="name"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tree view -->
+    <record id="wua_irrigationdelivery_view_tree" model="ir.ui.view">
+        <field name="name">Irrigation Delivery (tree view)</field>
+        <field name="model">wua.irrigationdelivery</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_pressurized_irrigation_irrigationdelivery_view_tree">
+                <field name="name"/>
+                <field name="gis_viewer_link" invisible="1"/>
+                <field name="with_gis_irrigationdelivery" invisible="1"/>
+                <button name="action_see_gis_viewer"
+                        type="object"
+                        class="oe_stat_button"
+                        string="GIS Viewer"
+                        icon="fa-map-marker"
+                        attrs="{'invisible': ['|', ('gis_viewer_link', '=', False), ('with_gis_irrigationdelivery', '=', False)]}"/>
+                <field name="hydraulicsector_id"/>
+                <field name="waterconnection_id"/>
+                <field name="irrigationshed_id"/>
+                <field name="watermeter_id"/>
+                <field name="diameter"/>
+                <field name="nominal_pressure"/>
+                <field name="material"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Search view -->
+    <record id="wua_irrigationdelivery_view_search" model="ir.ui.view">
+        <field name="name">Irrigation Delivery (search view)</field>
+        <field name="model">wua.irrigationdelivery</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="waterconnection_id"/>
+                <field name="irrigationshed_id"/>
+                <field name="watermeter_id"/>
+                <field name="hydraulicsector_id"/>
+                <group expand="0" string="Group By">
+                    <filter string="Water Connection" context="{'group_by':'waterconnection_id'}"/>
+                    <filter string="Irrigation Shed" context="{'group_by':'irrigationshed_id'}"/>
+                    <filter string="Water Meter" context="{'group_by':'watermeter_id'}"/>
+                    <filter string="Hydraulic Sector" context="{'group_by':'hydraulicsector_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="wua_irrigationdelivery_action" model="ir.actions.act_window">
+        <field name="name">Irrigation Deliveries</field>
+        <field name="res_model">wua.irrigationdelivery</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids" eval="[(5, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('wua_irrigationdelivery_view_tree')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('wua_irrigationdelivery_view_form')})]"/>
+        <field name="search_view_id" ref="wua_irrigationdelivery_view_search"/>
+    </record>
+
+    <!-- Menu item -->
+    <menuitem id="wua_irrigationdelivery_menu"
+              name="Irrigation Deliveries"
+              parent="base_wua_infrastructure.base_wua_infrastructure_pressurized_irrigation_menu"
+              action="wua_irrigationdelivery_action"
+              sequence="9"/>
+
+</odoo>

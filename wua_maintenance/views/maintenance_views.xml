@@ -362,6 +362,23 @@
         </field>
     </record>
 
+    <record id="wua_irrigationdelivery_view_form" model="ir.ui.view">
+        <field name="name">Irrigation Deliveries (form view)</field>
+        <field name="model">wua.irrigationdelivery</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation.wua_irrigationdelivery_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_gis_viewer']" position="after">
+                <field name="equipment_id" invisible="1"/>
+                <button name="action_get_equipment" type="object" class="oe_stat_button" icon="fa-gear" groups="base_wua.group_wua_user" attrs="{'invisible': [('equipment_id','=',None)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Associated</span>
+                        <span class="o_stat_text">Equipment</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
     <record id="wua_irrigationstretch_view_form" model="ir.ui.view">
         <field name="name">Irrigation Stretch (form view)</field>
         <field name="model">wua.irrigationstretch</field>
@@ -459,6 +476,24 @@
         <field name="name">Power Line Supports (form view)</field>
         <field name="model">wua.powerlinesupport</field>
         <field name="inherit_id" ref="base_wua_infrastructure_energy.wua_powerlinesupport_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_gis_viewer']" position="after">
+                <field name="equipment_id" invisible="1" />
+                <button name="action_get_equipment" type="object" class="oe_stat_button" icon="fa-gear"
+                        groups="base_wua.group_wua_user" attrs="{'invisible': [('equipment_id', '=', None)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Associated</span>
+                        <span class="o_stat_text">Equipment</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_track_view_form" model="ir.ui.view">
+        <field name="name">Tracks (form view)</field>
+        <field name="model">wua.track</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_track_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//button[@name='action_see_gis_viewer']" position="after">
                 <field name="equipment_id" invisible="1" />

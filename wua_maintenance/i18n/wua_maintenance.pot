@@ -64,6 +64,7 @@ msgstr ""
 #: model:ir.ui.view,arch_db:wua_maintenance.wua_flowdivider_view_form
 #: model:ir.ui.view,arch_db:wua_maintenance.wua_flowmeter_view_form
 #: model:ir.ui.view,arch_db:wua_maintenance.wua_intake_view_form
+#: model:ir.ui.view,arch_db:wua_maintenance.wua_irrigationdelivery_view_form
 #: model:ir.ui.view,arch_db:wua_maintenance.wua_irrigationditch_view_form
 #: model:ir.ui.view,arch_db:wua_maintenance.wua_irrigationgate_view_form
 #: model:ir.ui.view,arch_db:wua_maintenance.wua_irrigationshed_view_form
@@ -77,6 +78,7 @@ msgstr ""
 #: model:ir.ui.view,arch_db:wua_maintenance.wua_pumpunit_view_form
 #: model:ir.ui.view,arch_db:wua_maintenance.wua_reservoir_view_form
 #: model:ir.ui.view,arch_db:wua_maintenance.wua_tertiarypipe_view_form
+#: model:ir.ui.view,arch_db:wua_maintenance.wua_track_view_form
 #: model:ir.ui.view,arch_db:wua_maintenance.wua_valve_view_form
 #: model:ir.ui.view,arch_db:wua_maintenance.wua_waterconnection_view_form
 #: model:ir.ui.view,arch_db:wua_maintenance.wua_watermeter_view_form
@@ -251,11 +253,13 @@ msgstr ""
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_team_active
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_building_active
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_infrastructureitem_active
+#: model:ir.model.fields,field_description:wua_maintenance.field_wua_irrigationdelivery_active
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_irrigationstretch_active
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_powerline_active
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_powerlinesupport_active
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_processingcentre_active
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_tertiarypipe_active
+#: model:ir.model.fields,field_description:wua_maintenance.field_wua_track_active
 #: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_category_view_search
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_kind_view_search
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_team_view_search
@@ -717,6 +721,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_flowmeter_equipment_id
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_infrastructureitem_equipment_id
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_intake_equipment_id
+#: model:ir.model.fields,field_description:wua_maintenance.field_wua_irrigationdelivery_equipment_id
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_irrigationditch_equipment_id
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_irrigationgate_equipment_id
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_irrigationshed_equipment_id
@@ -730,6 +735,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_pumpunit_equipment_id
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_reservoir_equipment_id
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_tertiarypipe_equipment_id
+#: model:ir.model.fields,field_description:wua_maintenance.field_wua_track_equipment_id
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_valve_equipment_id
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_waterconnection_equipment_id
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_watermeter_equipment_id
@@ -1029,6 +1035,11 @@ msgstr ""
 #. module: wua_maintenance
 #: model:maintenance.equipment.category,name:wua_maintenance.equipment_category_intake
 msgid "INTAKE"
+msgstr ""
+
+#. module: wua_maintenance
+#: model:maintenance.equipment.category,name:wua_maintenance.equipment_category_irrigationdelivery
+msgid "IRRIGATION DELIVERIES"
 msgstr ""
 
 #. module: wua_maintenance
@@ -1835,6 +1846,11 @@ msgid "Style Preview"
 msgstr ""
 
 #. module: wua_maintenance
+#: model:maintenance.equipment.category,name:wua_maintenance.equipment_category_track
+msgid "TRACKS"
+msgstr ""
+
+#. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_tag_html
 msgid "Tag HTML"
 msgstr ""
@@ -1898,6 +1914,19 @@ msgstr ""
 #. module: wua_maintenance
 #: model:ir.model.fields,help:wua_maintenance.field_maintenance_equipment_category_extradata_template_resolved
 msgid "The template after resolve variables using random item."
+msgstr ""
+
+#. module: wua_maintenance
+#: code:addons/wua_maintenance/models/maintenance.py:1269
+#: model:ir.model,name:wua_maintenance.model_wua_track
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_track_id
+#, python-format
+msgid "Track"
+msgstr ""
+
+#. module: wua_maintenance
+#: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_track_ids
+msgid "Tracks"
 msgstr ""
 
 #. module: wua_maintenance

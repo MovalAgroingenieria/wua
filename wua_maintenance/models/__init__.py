@@ -34,4 +34,6 @@ from . import wua_powerline
 from . import wua_powerlinesupport
 from . import mdm_measurement_device
 from . import wua_tertiarypipe
+from . import wua_irrigationdelivery
+from . import wua_track
 from . import wua_irrigationstretch
