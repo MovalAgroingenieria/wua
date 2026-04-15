@@ -305,10 +305,15 @@ class WuaWateringrequest(models.Model):
                         subparcel_id = gravconsumption[2]['subparcel_id']
                         subparcel_data = subparcels.browse(subparcel_id)
                         if subparcel_data.parcel_id.allow_multiple_waterings:
-                            parcels_multiplewaterings_new.append({
-                                'parcel_id': subparcel_data.parcel_id.id,
-                                'last_number': 0,
-                                })
+                            parcel_id = subparcel_data.parcel_id.id
+                            parcels = filter(
+                                lambda x: x['parcel_id'] == parcel_id,
+                                parcels_multiplewaterings_new)
+                            if len(parcels) == 0:
+                                parcels_multiplewaterings_new.append({
+                                    'parcel_id': parcel_id,
+                                    'last_number': 0,
+                                    })
                 if len(parcels_multiplewaterings_new) > 0:
                     # Get a list of dictionaries for parcels with multiple
                     # waterings allowed; for each dictionary, the key is
@@ -323,7 +328,7 @@ class WuaWateringrequest(models.Model):
                                     gravconsumption[1])
                             if (gravconsumption_data.parcel_id.
                                allow_multiple_waterings):
-                                parcel_id = gravconsumption_data.parcel_id
+                                parcel_id = gravconsumption_data.parcel_id.id
                                 parcels = filter(
                                     lambda x: x['parcel_id'] == parcel_id,
                                     parcels_multiplewaterings_preexist)
@@ -335,7 +340,7 @@ class WuaWateringrequest(models.Model):
                                             gravconsumption_data.number
                                 else:
                                     parcels_multiplewaterings_preexist.append({
-                                        'parcel_id': parcel_id.id,
+                                        'parcel_id': parcel_id,
                                         'last_number':
                                             gravconsumption_data.number,
                                         })
