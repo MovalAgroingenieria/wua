@@ -271,6 +271,27 @@
         </field>
     </record>
 
+    <record id="wua_repair_quotas_hydricmovements_action"
+            model="ir.actions.server">
+        <field name="name">Repair quotas (hydric movements)</field>
+        <field name="model_id"
+               ref="base_wua_quota_management.model_wua_quota"/>
+        <field name="state">code</field>
+        <field name="code">
+          if context.get('active_ids'):
+              action = env['wua.quota'].repair_quotas_hydricmovements(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_repair_quotas_hydricmovements_action"
+            model="ir.values">
+        <field name="name">Repair quotas (hydric movements)</field>
+        <field name="model">wua.quota</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_repair_quotas_hydricmovements_action'))"/>
+    </record>
+
     <record id="wua_quota_ggregatevalue_action" model="ir.actions.act_window">
         <field name="name">Aggregated Quotas</field>
         <field name="res_model">wua.quota.aggregatevalue</field>

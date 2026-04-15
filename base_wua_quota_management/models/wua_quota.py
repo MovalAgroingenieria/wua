@@ -510,12 +510,35 @@ class WuaQuota(models.Model):
         self._create_hydricmovements_of_preexisting_other_consumptions(
             quotaperiod)
 
+    # Manual repair action for selected quotas.
+    def repair_quotas_hydricmovements(self, active_quotas):
+        if (not self.env.user.has_group(
+                'base_wua_quota_management.group_wua_quota_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        quotas = self.env['wua.quota'].browse(active_quotas)
+        if not quotas:
+            raise exceptions.UserError(_(
+                'No quotas selected.'))
+        self._refresh_hydricmovements_values(quotas)
+        for quota in (quotas or []):
+            self.refresh_quota(quota)
+
+    def _refresh_hydricmovements_values(self, quotas):
+        hydricmovements = self.env['wua.hydricmovement'].search(
+            [('quota_id', 'in', quotas.ids)],
+            order='quota_id, event_time, id')
+        if hydricmovements:
+            hydricmovements.sudo()._compute_accounting_volume()
+            hydricmovements.sudo()._compute_balance()
+
     # For client classes (individual inputs, cessions, etc), when the
     # computed methods are not fired.
     def refresh_quota(self, quota):
         quota.sudo()._compute_accumulated_input()
         quota.sudo()._compute_accumulated_consumption()
         quota.sudo()._compute_balance()
+        quota.sudo()._compute_available_quota_percentage()
 
     def _get_water_payers_by_parcel(self, wc):
         parcels_data = []
