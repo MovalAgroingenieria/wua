@@ -627,6 +627,37 @@
             <field name="readonly">True</field>
         </record>
 
+        <record id="equipment_category_irrigationdelivery_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Code</field>
+            <field name="field_type">text</field>
+            <field name="field_path">name</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_irrigationdelivery"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_irrigationdelivery_waterconnection" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Water Connection</field>
+            <field name="field_type">many2one</field>
+            <field name="field_path">waterconnection_id</field>
+            <field name="required">True</field>
+            <field name="gis_path"></field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_irrigationdelivery"/>
+            <field name="related_category_id" ref="wua_maintenance.equipment_category_waterconnection"/>
+            <field name="readonly">True</field>
+        </record>
+
+        <record id="equipment_category_track_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
+            <field name="name">Identifier</field>
+            <field name="field_type">text</field>
+            <field name="field_path">name</field>
+            <field name="required">True</field>
+            <field name="gis_path">name</field>
+            <field name="maintenance_category_id" ref="wua_maintenance.equipment_category_track"/>
+            <field name="readonly">True</field>
+        </record>
+
         <!-- Pressuresensor -->
 
         <record id="equipment_category_pressuresensor_name" model="maintenance.equipment.category.dynamic.field" forcecreate="False">
