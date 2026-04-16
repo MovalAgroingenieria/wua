@@ -2408,8 +2408,13 @@ class WuaInvoicesetLine(models.Model):
                 raise exceptions.UserError(_('Error when updating records.'))
 
     def populate_items_select_partner(self):
-        partners = self.env['res.partner'].search(
-            [('is_wua_partner', '=', True)])
+        domain = []
+        wua_partner_query = ''
+        if (not self.product_id.show_all_partners):
+            domain = [('is_wua_partner', '=', True)]
+            wua_partner_query = ' AND is_wua_partner=TRUE'
+        partners = self.env['res.partner'].search(domain, limit=1)
+
         if len(partners) > 0:
             user_id = self.env.user.id
             invoicesetline_id = self.id
@@ -2428,9 +2433,8 @@ class WuaInvoicesetLine(models.Model):
                     parcel_owner_area, parcel_lessee_number,
                     parcel_lessee_area, parcel_payer_number,
                     parcel_payer_area, number_of_votes
-                    FROM res_partner WHERE active=TRUE and
-                    is_wua_partner=TRUE
-                    """, (user_id, user_id, invoicesetline_id))
+                    FROM res_partner WHERE active=TRUE
+                    """ + wua_partner_query, (user_id, user_id, invoicesetline_id))
                 self.env.cr.commit()
                 self.env.invalidate_all()
                 self.configured_line = True
