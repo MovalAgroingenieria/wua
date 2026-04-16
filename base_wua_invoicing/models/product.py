@@ -180,6 +180,11 @@ class ProductTemplate(models.Model):
              "invoicesets. ",
     )
 
+    show_all_partners = fields.Boolean(
+        string='Show All Partners',
+        default=False,
+    )
+
     @api.depends('categ_id')
     def _compute_is_wua_product(self):
         for record in self:
@@ -282,6 +287,13 @@ class ProductProduct(models.Model):
         string='Show All Registers on Invoiceset',
         compute='_compute_show_all_registers_on_invoiceset',
         store=True,
+    )
+
+    show_all_partners = fields.Boolean(
+        string='Show All Partners',
+        related='product_tmpl_id.show_all_partners',
+        store=True,
+        readonly=True,
     )
 
     @api.multi
