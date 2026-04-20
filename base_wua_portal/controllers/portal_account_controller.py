@@ -27,11 +27,20 @@ class website_account(website_account):
             'wua.invoicing.configuration',
             'liquidation_on_portal',
         )
+        domain = [
+            ('type', 'in', ['out_invoice', 'out_refund']),
+            ('message_partner_ids', 'child_of',
+             [partner.commercial_partner_id.id]),
+            ('state', 'in', ['open', 'paid', 'cancel'])
+        ]
+        accountInvoice = request.env['account.invoice'].sudo()
+        invoice_count = accountInvoice.search_count(domain)
         response.qcontext.update({
             'parcel_count': parcel_count,
             'gis_viewer_link': gis_viewer_link,
             'liquidation_on_portal': liquidation_on_portal,
             'partner': partner,
+            'invoice_count': invoice_count,
         })
         return response
 

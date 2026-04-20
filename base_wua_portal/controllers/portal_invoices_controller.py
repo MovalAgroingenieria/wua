@@ -40,7 +40,7 @@ class PortalInvoices(http.Controller):
         if fields is None:
             fields = ['name', 'create_date']
         groups = []
-        for group in request.env[model]._read_group_raw(
+        for group in request.env[model].sudo()._read_group_raw(
                 domain, fields=fields, groupby=groupby, orderby=order):
             dates, label = group[groupby]
             date_begin, date_end = dates.split('/')
@@ -59,7 +59,7 @@ class PortalInvoices(http.Controller):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
         partner = partner.parent_id or partner
-        AccountInvoice = request.env['account.invoice']
+        AccountInvoice = request.env['account.invoice'].sudo()
 
         domain = [
             ('type', 'in', ['out_invoice', 'out_refund']),
@@ -112,7 +112,7 @@ class PortalInvoices(http.Controller):
     @http.route(['/my/invoices/pdf/<int:invoice_id>'], type='http',
                 auth="user", website=True)
     def portal_get_invoice(self, invoice_id=None, **kw):
-        invoice = request.env['account.invoice'].browse([invoice_id])
+        invoice = request.env['account.invoice'].sudo().browse([invoice_id])
         try:
             invoice.check_access_rights('read')
             invoice.check_access_rule('read')
@@ -130,3 +130,39 @@ class PortalInvoices(http.Controller):
              'attachment; filename=%s.pdf;' % invoice_name)
         ]
         return request.make_response(pdf, headers=pdfhttpheaders)
+
+    @http.route(['/my/invoices/pdf_multi'], type='http', auth="user", website=True, csrf=False)
+    def portal_get_invoice(self, invoice_ids=None, **post):
+
+        invoice_ids = request.httprequest.form.getlist('invoice_ids')
+        if not invoice_ids:
+            return request.redirect('/my/invoices')
+
+        invoice_ids = [int(i) for i in invoice_ids]
+
+        invoices = request.env['account.invoice'].sudo().browse(invoice_ids)
+
+        try:
+            invoices.check_access_rights('read')
+            invoices.check_access_rule('read')
+        except AccessError:
+            return request.render("website.403")
+
+        pdf = request.env['report'].sudo().get_pdf(
+            invoice_ids,
+            'account.report_invoice'
+        )
+
+        # filename logic
+        if len(invoices) == 1 and invoices[0].number:
+            filename = invoices[0].number.replace('/', '_') + '.pdf'
+        else:
+            filename = "Invoices.pdf"
+
+        headers = [
+            ('Content-Type', 'application/pdf'),
+            ('Content-Length', len(pdf)),
+            ('Content-Disposition', 'attachment; filename=%s;' % filename),
+        ]
+
+        return request.make_response(pdf, headers=headers)
