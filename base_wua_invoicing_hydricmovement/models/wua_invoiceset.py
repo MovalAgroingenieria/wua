@@ -162,7 +162,8 @@ class WuaInvoiceset(models.Model):
         hydricmovement_ids = []
         for hydricmovement in \
             invoiceset_line.line_hydricmovement_ids.filtered(
-                lambda x: x.selected is True):
+                lambda x: x.selected is True and
+                x.hydricmovement_id.partner_id.active):
             hydricmovement_ids.append(
                 hydricmovement.hydricmovement_id.id)
         return hydricmovement_ids
@@ -366,6 +367,27 @@ class WuaInvoiceset(models.Model):
                         lambda x: x.selected is False)
                 if unselected_hydricmovements:
                     unselected_hydricmovements.unlink()
+                # Warn about selected movements with archived partners
+                skipped = line.line_hydricmovement_ids.filtered(
+                    lambda x: x.selected is True and
+                    not x.hydricmovement_id.partner_id.active)
+                if skipped:
+                    rows = u''
+                    for s in skipped:
+                        hm = s.hydricmovement_id
+                        rows += u'<li>%s &mdash; %s (%.2f m\xb3)</li>' % (
+                            hm.partner_id.display_name or u'',
+                            hm.name or u'',
+                            hm.volume or 0.0,
+                        )
+                    msg = _(
+                        'The following hydric movements have been excluded '
+                        'from invoicing because their partner is archived:'
+                    )
+                    invoiceset.message_post(
+                        body=u'<p><strong>\u26a0 %s</strong></p>'
+                             u'<ul>%s</ul>' % (msg, rows),
+                    )
 
 
 class WuaInvoicesetLine(models.Model):

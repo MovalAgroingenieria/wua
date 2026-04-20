@@ -2420,7 +2420,8 @@ class WuaInvoicesetLine(models.Model):
             invoicesetline_id = self.id
             try:
                 self.env.cr.savepoint()
-                self.env.cr.execute("""
+                self.env.cr.execute(
+                    """
                     INSERT INTO wua_invoiceset_line_partner (id, create_uid,
                     write_uid, create_date, write_date, invoicesetline_id,
                     selected, partner_id, is_company, is_owner, is_lessee,
@@ -2434,7 +2435,8 @@ class WuaInvoicesetLine(models.Model):
                     parcel_lessee_area, parcel_payer_number,
                     parcel_payer_area, number_of_votes
                     FROM res_partner WHERE active=TRUE
-                    """ + wua_partner_query, (user_id, user_id, invoicesetline_id))
+                    """ + wua_partner_query,
+                    (user_id, user_id, invoicesetline_id))
                 self.env.cr.commit()
                 self.env.invalidate_all()
                 self.configured_line = True
