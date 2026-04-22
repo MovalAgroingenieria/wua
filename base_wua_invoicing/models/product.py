@@ -137,6 +137,12 @@ class ProductTemplate(models.Model):
         store=True,
     )
 
+    partner_selected_by_default = fields.Boolean(
+        string='Partner Selected by Default',
+        default=True,
+        store=True,
+    )
+
     show_all_registers_on_invoiceset = fields.Boolean(
         string='Show All Registers on Invoiceset',
         default=False,
@@ -281,6 +287,13 @@ class ProductProduct(models.Model):
         string='Parcel Selected by Default',
         compute='_compute_parcel_selected_by_default',
         store=True,
+    )
+
+    partner_selected_by_default = fields.Boolean(
+        string='Partner Selected by Default',
+        related='product_tmpl_id.partner_selected_by_default',
+        store=True,
+        readonly=True,
     )
 
     show_all_registers_on_invoiceset = fields.Boolean(

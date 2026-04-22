@@ -2414,12 +2414,17 @@ class WuaInvoicesetLine(models.Model):
             domain = [('is_wua_partner', '=', True)]
             wua_partner_query = ' AND is_wua_partner=TRUE'
         partners = self.env['res.partner'].search(domain, limit=1)
-
         if len(partners) > 0:
             user_id = self.env.user.id
             invoicesetline_id = self.id
             try:
                 self.env.cr.savepoint()
+                selected = 'TRUE'
+                if self.product_id.productcategory_code in (2,):
+                    if self.product_id.partner_selected_by_default:
+                        selected = 'TRUE'
+                    else:
+                        selected = 'FALSE'
                 self.env.cr.execute(
                     """
                     INSERT INTO wua_invoiceset_line_partner (id, create_uid,
@@ -2429,7 +2434,8 @@ class WuaInvoicesetLine(models.Model):
                     parcel_lessee_number, parcel_lessee_area,
                     parcel_payer_number, parcel_payer_area, number_of_votes)
                     SELECT nextval('wua_invoiceset_line_partner_id_seq'), %s,
-                    %s, now(), now(), %s, TRUE, id, is_company, is_owner,
+                    %s, now(), now(), %s, """ + selected + """, id,
+                    is_company, is_owner,
                     is_lessee, is_payer, parcel_owner_number,
                     parcel_owner_area, parcel_lessee_number,
                     parcel_lessee_area, parcel_payer_number,
