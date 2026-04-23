@@ -6,7 +6,7 @@
     "name": "Water Users Association: Invoicing of Pressure Consumptions",
     "summary": "In a water users association, global invoicing "
                "based on a selection of pressure irrigation consumptions",
-    "version": '10.0.1.1.3',
+    "version": '10.0.1.1.4',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",

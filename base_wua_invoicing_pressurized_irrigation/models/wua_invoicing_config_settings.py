@@ -32,6 +32,24 @@ class WuaInvoicingConfiguration(models.TransientModel):
         help='If marked, consumption section will be printed on invoice',
     )
 
+    apply_min_consumption_threshold_per_wc = fields.Boolean(
+        string='Apply min. consumption threshold per WC',
+        default=False,
+        help='If enabled, when consumptions are grouped per water '
+             'connection, those water connections whose total consumption '
+             'is below the threshold will be excluded from invoicing '
+             '(consumptions will remain available for future invoice sets).',
+    )
+
+    min_consumption_threshold_per_wc = fields.Float(
+        string='Min. consumption threshold per WC (m³)',
+        digits=(32, 4),
+        default=0.0,
+        help='Default threshold (in m³) below which the total consumption '
+             'of a water connection is excluded from invoicing. Can be '
+             'overridden per invoice-set line.',
+    )
+
     @api.multi
     def set_default_values(self):
         super(WuaInvoicingConfiguration, self).set_default_values()
@@ -48,3 +66,9 @@ class WuaInvoicingConfiguration(models.TransientModel):
         values.set_default('wua.invoicing.configuration',
                            'print_consumption_section',
                            self.print_consumption_section)
+        values.set_default('wua.invoicing.configuration',
+                           'apply_min_consumption_threshold_per_wc',
+                           self.apply_min_consumption_threshold_per_wc)
+        values.set_default('wua.invoicing.configuration',
+                           'min_consumption_threshold_per_wc',
+                           self.min_consumption_threshold_per_wc)

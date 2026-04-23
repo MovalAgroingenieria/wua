@@ -1,6 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <record id="wua_edit_invoiceset_line_view_tree_categ07" model="ir.ui.view">
+        <field name="name">Invoice-Set Lines (categ 07 threshold)</field>
+        <field name="model">wua.invoiceset.line</field>
+        <field name="inherit_id"
+               ref="base_wua_invoicing.wua_edit_invoiceset_line_view_tree"/>
+        <field name="arch" type="xml">
+            <field name="linkable_unit_type" position="before">
+                <field name="invoiceset_state" invisible="1"/>
+            </field>
+            <field name="linkable_unit_type" position="after">
+                <field name="min_consumption_threshold_per_wc"
+                       attrs="{'invisible':
+                                [('linkable_unit_type', 'not in',
+                                  ['presconsumption', 'hydricmovement'])],
+                               'readonly':
+                                [('invoiceset_state', 'not in',
+                                  ['draft', False])]}"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="wua_invoiceset_line_view_form_categ07" model="ir.ui.view">
+        <field name="name">Invoice-Set Lines (categ 07 threshold form)</field>
+        <field name="model">wua.invoiceset.line</field>
+        <field name="inherit_id"
+               ref="base_wua_invoicing.wua_invoiceset_line_view_form"/>
+        <field name="arch" type="xml">
+            <field name="linkable_unit_type" position="before">
+                <field name="invoiceset_state" invisible="1"/>
+            </field>
+            <field name="linkable_unit_type" position="after">
+                <field name="min_consumption_threshold_per_wc"
+                       attrs="{'invisible':
+                                [('linkable_unit_type', 'not in',
+                                  ['presconsumption', 'hydricmovement'])],
+                               'readonly':
+                                [('invoiceset_state', 'not in',
+                                  ['draft', False])]}"/>
+            </field>
+        </field>
+    </record>
+
     <record id="wua_invoiceset_line_presconsumption_view_tree" model="ir.ui.view" >
         <field name="name">Invoice-set line for pressure consumptions (tree view)</field>
         <field name="model">wua.invoiceset.line.presconsumption</field>
@@ -55,7 +97,7 @@
                     <filter string="Water Meter"
                      name="water_meter"
                      context="{'group_by':'watermeter_id'}"/>
-                </group>                
+                </group>
             </search>
         </field>
     </record>
@@ -69,7 +111,7 @@
                 action = env['wua.invoiceset.line.presconsumption'].browse(context['active_ids']).add_to_invoiceset()
         </field>
     </record>
-    
+
     <record id="wua_action_add_presconsumption_to_invoiceset" model="ir.values">
         <field name="name">Add pressure consumption to invoice set</field>
         <field name="model">wua.invoiceset.line.presconsumption</field>
@@ -87,7 +129,7 @@
                 action = env['wua.invoiceset.line.presconsumption'].browse(context['active_ids']).remove_from_invoiceset()
         </field>
     </record>
-    
+
     <record id="wua_action_remove_presconsumption_to_invoiceset" model="ir.values">
         <field name="name">Remove pressure consumption from invoice set</field>
         <field name="model">wua.invoiceset.line.presconsumption</field>

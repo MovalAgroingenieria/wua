@@ -16,6 +16,9 @@
                     <field name ="print_consumption_section"/>
                     <field name="group_wc_lines_on_report"
                            attrs="{'invisible': [('invoicing_based_on_wc', '=', True)]}"/>
+                    <field name="apply_min_consumption_threshold_per_wc"/>
+                    <field name="min_consumption_threshold_per_wc"
+                           attrs="{'invisible': [('apply_min_consumption_threshold_per_wc', '=', False)]}"/>
 
                 </group>
             </xpath>

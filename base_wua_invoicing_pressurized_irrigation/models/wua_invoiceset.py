@@ -35,12 +35,41 @@ class WuaInvoiceset(models.Model):
             return super(WuaInvoiceset,
                          self).select_invoice_items_other_types(
                              productcategory_code, invoiceset_line)
-        presconsumption_ids = []
-        for presconsumption in \
-            invoiceset_line.line_presconsumption_ids.filtered(
-                lambda x: x.selected is True):
-            presconsumption_ids.append(presconsumption.presconsumption_id.id)
+        selected_lines = invoiceset_line.line_presconsumption_ids.filtered(
+            lambda x: x.selected is True)
+        threshold = self._get_min_consumption_threshold_per_wc(
+            invoiceset_line)
+        if threshold > 0 and selected_lines:
+            wc_volumes = defaultdict(float)
+            for pl in selected_lines:
+                wc_volumes[pl.waterconnection_id.id] += \
+                    pl.presconsumption_id.volume_real
+            below_threshold_wc_ids = set(
+                wc_id for wc_id, vol in wc_volumes.items()
+                if vol < threshold)
+            if below_threshold_wc_ids:
+                lines_to_unselect = selected_lines.filtered(
+                    lambda x: x.waterconnection_id.id in
+                    below_threshold_wc_ids)
+                if lines_to_unselect:
+                    lines_to_unselect.write({'selected': False})
+                    selected_lines = selected_lines - lines_to_unselect
+        presconsumption_ids = [
+            pl.presconsumption_id.id for pl in selected_lines]
         return presconsumption_ids
+
+    def _get_min_consumption_threshold_per_wc(self, invoiceset_line):
+        """Return the threshold (m³) to apply for the given invoice-set line.
+
+        Returns 0.0 if the global flag is disabled. Otherwise, it applies the
+        value configured on the invoice-set line.
+        """
+        apply_threshold = self.env['ir.values'].get_default(
+            'wua.invoicing.configuration',
+            'apply_min_consumption_threshold_per_wc')
+        if not apply_threshold:
+            return 0.0
+        return invoiceset_line.min_consumption_threshold_per_wc or 0.0
 
     def calculate_invoice_details_others_categ(self, product_id, categ_code,
                                                item_ids, partnerlinks):
@@ -561,6 +590,12 @@ class WuaInvoicesetLine(models.Model):
     _inherit = 'wua.invoiceset.line'
     _description = 'Entity (line of a WUA invoice set)'
 
+    @api.model
+    def _default_min_consumption_threshold_per_wc(self):
+        return self.env['ir.values'].get_default(
+            'wua.invoicing.configuration',
+            'min_consumption_threshold_per_wc') or 0.0
+
     linkable_unit_type = fields.Selection(selection_add=[
         ('presconsumption', 'Pressure Consumptions')],
     )
@@ -569,6 +604,24 @@ class WuaInvoicesetLine(models.Model):
         string='Lines for pressure consumptions',
         comodel_name='wua.invoiceset.line.presconsumption',
         inverse_name='invoicesetline_id',
+    )
+
+    invoiceset_state = fields.Selection(
+        related='invoiceset_id.state',
+        string='Invoice Set State',
+        readonly=True,
+    )
+
+    min_consumption_threshold_per_wc = fields.Float(
+        string='Min. Consumption per WC (m³)',
+        digits=(32, 4),
+        default=_default_min_consumption_threshold_per_wc,
+        help=(
+            'If global parameter "Apply min. consumption threshold per WC" '
+            'is enabled, the consumptions grouped per water connection '
+            'whose total consumption is below this threshold will not be '
+            'invoiced. Use 0 to disable the threshold for this line.'
+        ),
     )
 
     @api.depends('line_presconsumption_ids')
