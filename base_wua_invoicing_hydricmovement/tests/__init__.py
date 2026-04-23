@@ -4,3 +4,4 @@
 
 from . import test_wua_invoiceset
 from . import test_wua_waterconnection
+from . import test_min_consumption_threshold

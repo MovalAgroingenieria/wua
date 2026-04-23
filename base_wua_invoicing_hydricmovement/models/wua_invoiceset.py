@@ -2,7 +2,7 @@
 # Cpyright 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-import datetime
+from collections import defaultdict
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError, UserError
 
@@ -159,14 +159,47 @@ class WuaInvoiceset(models.Model):
             return super(WuaInvoiceset,
                          self).select_invoice_items_other_types(
                              productcategory_code, invoiceset_line)
-        hydricmovement_ids = []
-        for hydricmovement in \
-            invoiceset_line.line_hydricmovement_ids.filtered(
-                lambda x: x.selected is True and
-                x.hydricmovement_id.partner_id.active):
-            hydricmovement_ids.append(
-                hydricmovement.hydricmovement_id.id)
+        selected_lines = invoiceset_line.line_hydricmovement_ids.filtered(
+            lambda x: x.selected is True and
+            x.hydricmovement_id.partner_id.active)
+        threshold = self._get_min_consumption_threshold_per_wc(
+            invoiceset_line)
+        if threshold > 0 and selected_lines:
+            pres_lines = selected_lines.filtered(
+                lambda x: x.hydricmovement_id.type == 'pres_consumption' and
+                x.hydricmovement_id.presconsumption_id.waterconnection_id)
+            if pres_lines:
+                wc_volumes = defaultdict(float)
+                for hl in pres_lines:
+                    wc_id = hl.hydricmovement_id.\
+                        presconsumption_id.waterconnection_id.id
+                    wc_volumes[wc_id] += hl.hydricmovement_id.volume
+                below_threshold_wc_ids = set(
+                    wc_id for wc_id, vol in wc_volumes.items()
+                    if vol < threshold)
+                if below_threshold_wc_ids:
+                    lines_to_unselect = pres_lines.filtered(
+                        lambda x: x.hydricmovement_id.presconsumption_id.
+                        waterconnection_id.id in below_threshold_wc_ids)
+                    if lines_to_unselect:
+                        lines_to_unselect.write({'selected': False})
+                        selected_lines = selected_lines - lines_to_unselect
+        hydricmovement_ids = [
+            hl.hydricmovement_id.id for hl in selected_lines]
         return hydricmovement_ids
+
+    def _get_min_consumption_threshold_per_wc(self, invoiceset_line):
+        """Return the threshold (m³) to apply for the given invoice-set line.
+
+        Returns 0.0 if the global flag is disabled. Otherwise, it applies the
+        value configured on the invoice-set line.
+        """
+        apply_threshold = self.env['ir.values'].get_default(
+            'wua.invoicing.configuration',
+            'apply_min_consumption_threshold_per_wc')
+        if not apply_threshold:
+            return 0.0
+        return invoiceset_line.min_consumption_threshold_per_wc or 0.0
 
     def get_hydricmovement_description(self, hydricmovement):
         description = ""
@@ -248,7 +281,8 @@ class WuaInvoiceset(models.Model):
             hm_ids = list(set(x['hydricmovement_id'] for x in details_categ14))
             hydricmovements = self.env['wua.hydricmovement'].browse(hm_ids)
             pres_consumption_ids = set(
-                hm.id for hm in hydricmovements if hm.type == 'pres_consumption')
+                hm.id for hm in hydricmovements if
+                hm.type == 'pres_consumption')
             invoice_details_categ14 = [
                 x for x in details_categ14
                 if x['hydricmovement_id'] in pres_consumption_ids]
