@@ -13,56 +13,150 @@
         </xpath>
 
         <xpath expr="//div[@name='notification_title']" position="replace">
-            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;" name="registry_main_data_title">
-                <t t-if="report_style == 'light'">
-                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
-                        <div style="float: left; width: 32px;"><span class="fa fa-authdnie-eoffice"/></div>
-                        <div style="float: left; display: inline;"><strong>Notification</strong></div>
-                        <div style="float: right; display: inline;"><strong><span t-field="o.name"/></strong></div>
-                    </div>
-                </t>
-                <t t-else="">
-                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
-                        <div style="float: left; width: 32px;"><span class="fa fa-authdnie-eoffice"/></div>
-                        <div style="float: left; display: inline;"><strong>Notification</strong></div>
-                        <div style="float: right; display: inline;"><strong><span t-field="o.name"/></strong></div>
-                    </div>
-                </t>
-            </div>
+            <t t-if="o.communication_number == 1">
+                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;" name="registry_main_data_title">
+                    <t t-if="report_style == 'light'">
+                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-authdnie-eoffice"/></div>
+                            <div style="float: left; display: inline;"><strong>Notification</strong></div>
+                            <div style="float: right; display: inline;"><strong><span t-field="o.name"/></strong></div>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-authdnie-eoffice"/></div>
+                            <div style="float: left; display: inline;"><strong>Notification</strong></div>
+                            <div style="float: right; display: inline;"><strong><span t-field="o.name"/></strong></div>
+                        </div>
+                    </t>
+                </div>
+            </t>
+            <t t-else="">
+                <div name="notification_title" style="border-bottom: 1px solid black;">
+                    <span><b>N O T I F I C A T I O N</b></span>
+                    <div style="float: right; display: inline;"><b><span t-field="o.name"/></b></div>
+                </div>
+            </t>
         </xpath>
 
         <xpath expr="//div[@name='issue_title']" position="replace">
-            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;" name="registry_main_data_title">
-                <t t-if="report_style == 'light'">
-                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
-                        <div style="float: left; width: 32px;"><span class="fa fa-file"/></div>
-                        <div style="float: left; display: inline;"><strong>Issue</strong></div>
-                    </div>
-                </t>
-                <t t-else="">
-                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
-                        <div style="float: left; width: 32px;"><span class="fa fa-file"/></div>
-                        <div style="float: left; display: inline;"><strong>Issue</strong></div>
-                    </div>
-                </t>
-            </div>
+            <t t-if="o.communication_number == 1">
+                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;" name="registry_main_data_title">
+                    <t t-if="report_style == 'light'">
+                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-file"/></div>
+                            <div style="float: left; display: inline;"><strong>Issue</strong></div>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-file"/></div>
+                            <div style="float: left; display: inline;"><strong>Issue</strong></div>
+                        </div>
+                    </t>
+                </div>
+            </t>
+            <t t-else="">
+                <div name="issue_title" style="border-bottom: 1px solid black;">
+                    <div><b>I S S U E</b></div>
+                </div>
+            </t>
         </xpath>
 
         <xpath expr="//div[@name='text_title']" position="replace">
-            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;" name="registry_main_data_title">
-                <t t-if="report_style == 'light'">
-                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
-                        <div style="float: left; width: 32px;"><span class="fa fa-file-text"/></div>
-                        <div style="float: left; display: inline;"><strong>Text</strong></div>
-                    </div>
-                </t>
-                <t t-else="">
-                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
-                        <div style="float: left; width: 32px;"><span class="fa fa-file-text"/></div>
-                        <div style="float: left; display: inline;"><strong>Text</strong></div>
-                    </div>
-                </t>
-            </div>
+            <t t-if="o.communication_number == 1">
+                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;" name="registry_main_data_title">
+                    <t t-if="report_style == 'light'">
+                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-file-text"/></div>
+                            <div style="float: left; display: inline;"><strong>Text</strong></div>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-file-text"/></div>
+                            <div style="float: left; display: inline;"><strong>Text</strong></div>
+                        </div>
+                    </t>
+                </div>
+            </t>
+            <t t-else="">
+                <div name="text_title" style="margin-top:24px;; border-bottom: 1px solid black;">
+                    <div><b>T E X T</b></div>
+                </div>
+            </t>
+        </xpath>
+
+        <xpath expr="//div[@name='exposition_title']" position="replace">
+            <t t-if="o.communication_number == 1">
+                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;" name="registry_main_data_title">
+                    <t t-if="report_style == 'light'">
+                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-file-text-o"/></div>
+                            <div style="float: left; display: inline;"><strong>Exposition</strong></div>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-file-text-o"/></div>
+                            <div style="float: left; display: inline;"><strong>Exposition</strong></div>
+                        </div>
+                    </t>
+                </div>
+            </t>
+            <t t-else="">
+                <div name="exposition_title" style="margin-top:24px;; border-bottom: 1px solid black;">
+                    <div><b>E X P O S I T I O N</b></div>
+                </div>
+            </t>
+        </xpath>
+
+        <xpath expr="//div[@name='request_title']" position="replace">
+            <t t-if="o.communication_number == 1">
+                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;" name="registry_main_data_title">
+                    <t t-if="report_style == 'light'">
+                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-file-text-o"/></div>
+                            <div style="float: left; display: inline;"><strong>Request</strong></div>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-file-text-o"/></div>
+                            <div style="float: left; display: inline;"><strong>Request</strong></div>
+                        </div>
+                    </t>
+                </div>
+            </t>
+            <t t-else="">
+                <div name="request_title" style="margin-top:24px;; border-bottom: 1px solid black;">
+                    <div><b>R E Q U E S T</b></div>
+                </div>
+            </t>
+        </xpath>
+
+        <xpath expr="//div[@name='resolution_title']" position="replace">
+            <t t-if="o.communication_number == 1">
+                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;" name="registry_main_data_title">
+                    <t t-if="report_style == 'light'">
+                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-file-text-o"/></div>
+                            <div style="float: left; display: inline;"><strong>Resolution</strong></div>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-file-text-o"/></div>
+                            <div style="float: left; display: inline;"><strong>Resolution</strong></div>
+                        </div>
+                    </t>
+                </div>
+            </t>
+            <t t-else="">
+                <div name="resolution_title" style="margin-top:24px;; border-bottom: 1px solid black;">
+                    <div><b>R E S O L U T I O N</b></div>
+                </div>
+            </t>
         </xpath>
 
     </template>
