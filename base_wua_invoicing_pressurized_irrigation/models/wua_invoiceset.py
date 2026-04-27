@@ -349,7 +349,8 @@ class WuaInvoiceset(models.Model):
                 invoice_details_categ07.append(result)
         return invoice_details_categ07
 
-    def get_detail_of_presconsumption(self, presconsumption, partner_id, lang=None):
+    def get_detail_of_presconsumption(
+            self, presconsumption, partner_id, lang=None):
         resp = ''
         if lang is None:
             lang = self.env['res.partner'].browse(partner_id).lang

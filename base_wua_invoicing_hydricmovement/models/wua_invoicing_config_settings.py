@@ -26,7 +26,7 @@ class WuaInvoicingConfiguration(models.TransientModel):
     invoicing_hydricmovement_selected_default = fields.Boolean(
         string='Invoicing of Hydric Movements selected by default',
         default=False,
-        help='If enabled, the hydric movements will be selected by default '
+        help='If enabled, the hydric movements will be selected by default ',
     )
 
     @api.multi

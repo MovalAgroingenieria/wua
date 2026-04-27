@@ -168,7 +168,7 @@
                                                     product=line.product_id,
                                                     partner=line.invoice_id.partner_id
                                                 )"/>
-                                            <t t-set="sign" t-value="-1 if line.invoice_id.type == 'out_refund' else 1"/>
+                                            <t t-set="sign" t-value="-1 if line.invoice_id.type in ('out_refund', 'in_refund') else 1"/>
                                             <t t-set="line_subtotal" t-value="tax_data['total_excluded'] * sign"/>
                                             <t t-set="line_tax_amount" t-value="(tax_data['total_included'] - tax_data['total_excluded']) * sign"/>
                                             <t t-set="line_total" t-value="tax_data['total_included'] * sign"/>
@@ -251,7 +251,7 @@
                                                                 product=l.product_id,
                                                                 partner=l.invoice_id.partner_id
                                                             )"/>
-                                                        <t t-set="sign" t-value="-1 if l.invoice_id.type == 'out_refund' else 1"/>
+                                                        <t t-set="sign" t-value="-1 if l.invoice_id.type in ('out_refund', 'in_refund') else 1"/>
                                                         <t t-set="line_subtotal" t-value="tax_data['total_excluded'] * sign"/>
                                                         <t t-set="line_total" t-value="tax_data['total_included'] * sign"/>
                                                         <t t-set="product_total_qty" t-value="product_total_qty + (l.quantity * sign)"/>

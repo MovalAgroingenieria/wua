@@ -416,7 +416,7 @@ class WuaInvoiceset(models.Model):
                         )
                     msg = _(
                         'The following hydric movements have been excluded '
-                        'from invoicing because their partner is archived:'
+                        'from invoicing because their partner is archived:',
                     )
                     invoiceset.message_post(
                         body=u'<p><strong>\u26a0 %s</strong></p>'

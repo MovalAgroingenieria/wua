@@ -82,21 +82,31 @@
                                     </thead>
                                     <tbody>
                                         <t t-set="total_quantity" t-value="0"/>
+                                        <t t-set="total_subtotal" t-value="0"/>
                                         <t t-set="total_amount" t-value="0"/>
                                         <t t-foreach="wizard.invoice_line_ids.filtered(lambda line: line.waterconnection_id.id == connection.id)" t-as="line">
-                                            <t t-set="line_tax_amount" t-value="sum(line.price_subtotal * tax.amount / 100 for tax in line.invoice_line_tax_ids)"/>
-                                            <t t-set="line_total" t-value="line.price_subtotal + line_tax_amount"/>
-
-                                            <t t-set="total_quantity" t-value="total_quantity + line.quantity"/>
+                                            <t t-set="sign" t-value="-1 if line.invoice_id.type in ('out_refund', 'in_refund') else 1"/>
+                                            <t t-set="tax_data"
+                                                t-value="line.invoice_line_tax_ids.compute_all(
+                                                    line.price_unit,
+                                                    line.invoice_id.currency_id,
+                                                    line.quantity,
+                                                    product=line.product_id,
+                                                    partner=line.invoice_id.partner_id
+                                                )"/>
+                                            <t t-set="line_subtotal" t-value="tax_data['total_excluded'] * sign"/>
+                                            <t t-set="line_total" t-value="tax_data['total_included'] * sign"/>
+                                            <t t-set="total_quantity" t-value="total_quantity + (line.quantity * sign)"/>
+                                            <t t-set="total_subtotal" t-value="total_subtotal + line_subtotal"/>
                                             <t t-set="total_amount" t-value="total_amount + line_total"/>
                                             <tr>
                                                 <td name="invoice_id"><span t-field="line.invoice_id"/></td>
                                                 <td name="line_date"><span t-field="line.date_invoice"/></td>
                                                 <td name="lineset"><span t-field="line.invoiceset_id"/></td>
                                                 <td name="line_product"><span t-field="line.product_id"/></td>
-                                                <td name="line_quantity"><span t-field="line.quantity"/></td>
+                                                <td name="line_quantity"><span t-esc="wizard.env['wua.parcel'].transform_float_to_locale((line.quantity * sign), 2)"/></td>
                                                 <td name="line_price"><span t-field="line.price_unit"/></td>
-                                                <td name="line_subtotal"><span t-esc="wizard.env['wua.parcel'].transform_float_to_locale(line.quantity * line.price_unit, 2)"/></td>
+                                                <td name="line_subtotal"><span t-esc="wizard.env['wua.parcel'].transform_float_to_locale(line_subtotal, 2)"/></td>
                                                 <td name="line_tax"><t t-foreach="line.invoice_line_tax_ids" t-as="tax"><span t-field="tax.name"/></t></td>
                                                 <td name="line_total"><span t-esc="wizard.env['wua.parcel'].transform_float_to_locale(line_total, 2)"/></td>
                                             </tr>
@@ -106,7 +116,7 @@
                                             <td><strong>Total</strong></td>
                                             <td><span t-esc="wizard.env['wua.parcel'].transform_float_to_locale(total_quantity,2)"/></td>
                                             <td></td>
-                                            <td></td>
+                                            <td><span t-esc="wizard.env['wua.parcel'].transform_float_to_locale(total_subtotal,2)"/></td>
                                             <td></td>
                                             <td><span t-esc="wizard.env['wua.parcel'].transform_float_to_locale(total_amount,2)"/></td>
                                         </tr>
