@@ -387,7 +387,7 @@ class WuaInvoiceset(models.Model):
                 presconsumption.reading_end_time, '%d/%m/%y')
         initial_volume = round(presconsumption.initial_volume)
         end_volume = round(presconsumption.end_volume)
-        volume = end_volume - initial_volume
+        volume = round(presconsumption.volume_real)
         resp = waterconnection_label + ' ' + \
             presconsumption.waterconnection_id.name + '. ' + \
             initial_reading_label + ': ' + reading_initial_time + ' ' + \
