@@ -29,11 +29,24 @@ class WizardGenerateEstimatedReadings(models.TransientModel):
             return {'type': 'ir.actions.act_window_close'}
         t0 = time.time()
         waterconnections = self.env['wua.waterconnection'].browse(active_ids)
-        without_meter = waterconnections.filtered(lambda c: not c.watermeter_id)
+        eligible = waterconnections.filtered(
+            lambda c: c.with_estimated_readings)
+        skipped = waterconnections - eligible
+        if skipped:
+            _logger.info(
+                'wizard generate_estimated_readings: skipped %s connections '
+                'without "Estimated Readings" flag',
+                len(skipped))
+        if not eligible:
+            raise UserError(_(
+                'None of the selected Water connections has the '
+                '"Estimated Readings" flag enabled.'))
+        without_meter = eligible.filtered(lambda c: not c.watermeter_id)
         if without_meter:
             raise UserError(
                 _('The following Water connections need a Water meter: %s')
                 % ', '.join(without_meter.mapped('display_name')))
+        active_ids = eligible.ids
         Reading = self.env['wua.reading']
         t1 = time.time()
         groups = Reading.read_group(
@@ -42,7 +55,8 @@ class WizardGenerateEstimatedReadings(models.TransientModel):
             ['waterconnection_id'],
         )
         _logger.info(
-            'wizard generate_estimated_readings: read_group %s groups in %.2fs',
+            'wizard generate_estimated_readings: read_group %s groups in '
+            '%.2fs',
             len(groups), time.time() - t1)
         last_volume = {}
         if groups:
@@ -55,14 +69,19 @@ class WizardGenerateEstimatedReadings(models.TransientModel):
                     domain.append('|')
                 for g in batch:
                     domain.append('&')
-                    domain.append(('waterconnection_id', '=', g['waterconnection_id'][0]))
+                    domain.append(
+                        ('waterconnection_id', '=',
+                         g['waterconnection_id'][0]))
                     domain.append(('reading_time', '=', g['reading_time']))
                 last_recs = Reading.search(domain)
                 for r in last_recs:
                     last_volume[r.waterconnection_id.id] = r.volume
             _logger.info(
-                'wizard generate_estimated_readings: search last_recs %s rows in %d batches in %.2fs',
-                len(last_volume), (len(groups) + LAST_READING_SEARCH_BATCH - 1) // LAST_READING_SEARCH_BATCH,
+                'wizard generate_estimated_readings: search last_recs %s '
+                'rows in %d batches in %.2fs',
+                len(last_volume), (
+                    len(groups) + LAST_READING_SEARCH_BATCH - 1) //
+                LAST_READING_SEARCH_BATCH,
                 time.time() - t2)
         t3 = time.time()
         conn_data = self.env['wua.waterconnection'].search_read(
@@ -70,9 +89,11 @@ class WizardGenerateEstimatedReadings(models.TransientModel):
             ['id', 'watermeter_id', 'estimated_monthly_consumption'],
         )
         _logger.info(
-            'wizard generate_estimated_readings: search_read conn_data %s rows in %.2fs',
+            'wizard generate_estimated_readings: search_read conn_data %s rows'
+            ' in %.2fs',
             len(conn_data), time.time() - t3)
-        # Precompute previous-reading data per watermeter to avoid 2 search() per create()
+        # Precompute previous-reading data per watermeter to avoid 2 search()
+        # per create()
         wc_to_wm = {}
         init_watermeter_ids = set()
         for row in conn_data:
@@ -95,7 +116,8 @@ class WizardGenerateEstimatedReadings(models.TransientModel):
             }
         Reading = Reading.with_context(
             estimated_wizard_previous_reading=previous_by_wm,
-            estimated_wizard_init_watermeter_ids=frozenset(init_watermeter_ids),
+            estimated_wizard_init_watermeter_ids=frozenset(
+                init_watermeter_ids),
             estimated_wizard_skip_watermeter_write=True,
             estimated_wizard_defer_perunitareas=True,
         )
@@ -123,7 +145,8 @@ class WizardGenerateEstimatedReadings(models.TransientModel):
             created += 1
             if created % log_every == 0:
                 _logger.info(
-                    'wizard generate_estimated_readings: created %s readings in %.2fs so far',
+                    'wizard generate_estimated_readings: created %s readings '
+                    'in %.2fs so far',
                     created, time.time() - t4)
         # Batch update watermeters and per-unit areas (deferred from create())
         if created:
@@ -143,7 +166,8 @@ class WizardGenerateEstimatedReadings(models.TransientModel):
                 ])
                 # Prefetch for watermeter update
                 created_readings.mapped('presconsumption_volume_real')
-                # One update per watermeter (same meter may appear in several readings)
+                # One update per watermeter (same meter may appear in several
+                # readings)
                 done_wm = set()
                 for reading in created_readings:
                     wm = reading.watermeter_id
@@ -153,22 +177,28 @@ class WizardGenerateEstimatedReadings(models.TransientModel):
                     wm.write({
                         'last_reading_time': reading.reading_time,
                         'last_reading_value': reading.volume,
-                        'last_reading_consumption': reading.presconsumption_volume_real or 0,
+                        'last_reading_consumption':
+                        reading.presconsumption_volume_real or 0,
                         'last_reading_type': reading.reading_type,
                     })
-                presconsumptions = created_readings.mapped('presconsumption_id')
+                presconsumptions = created_readings.mapped(
+                    'presconsumption_id')
                 for pres in presconsumptions:
                     pres.update_volume_perunitareas()
                 _logger.info(
-                    'wizard generate_estimated_readings: batch update watermeters + perunitareas in %.2fs',
+                    'wizard generate_estimated_readings: batch update '
+                    'watermeters + perunitareas in %.2fs',
                     time.time() - t5)
         create_elapsed = time.time() - t4
         _logger.info(
-            'wizard generate_estimated_readings: created %s readings in %.2fs (%.3fs per record)',
-            created, create_elapsed, create_elapsed / created if created else 0)
+            'wizard generate_estimated_readings: created %s readings in %.2fs '
+            '(%.3fs per record)',
+            created, create_elapsed, create_elapsed / created if created else
+            0)
         total_elapsed = time.time() - t0
         _logger.info(
-            'wizard generate_estimated_readings: total %.2fs for %s connections, %s readings',
+            'wizard generate_estimated_readings: total %.2fs for %s '
+            'connections, %s readings',
             total_elapsed, len(active_ids), created)
         return {
             'type': 'ir.actions.act_window',

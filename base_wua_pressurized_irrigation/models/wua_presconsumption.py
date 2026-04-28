@@ -143,6 +143,13 @@ class WuaPresconsumption(models.Model):
         string="Presconsumption Cancelled",
         default=False)
 
+    is_estimated = fields.Boolean(
+        string='Estimated Consumption',
+        store=True,
+        compute='_compute_is_estimated',
+        help='True when the end reading of this consumption is of type '
+             'Estimated Reading.')
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing Consumption.'),
         ('valid_reading_limits',
@@ -177,6 +184,23 @@ class WuaPresconsumption(models.Model):
             rid = reading_by_pres.get(record.id)
             record.reading_id = rid if rid else False
 
+    @api.depends('reading_id', 'reading_id.reading_type',
+                 'reading_ids', 'reading_ids.reading_type',
+                 'reading_ids.reading_time', 'reading_end_time')
+    def _compute_is_estimated(self):
+        for record in self:
+            is_estimated = False
+            if record.reading_id:
+                is_estimated = (
+                    record.reading_id.reading_type == '01_estimated')
+            elif record.reading_ids and record.reading_end_time:
+                end_reading = record.reading_ids.filtered(
+                    lambda r: r.reading_time == record.reading_end_time)
+                if end_reading:
+                    is_estimated = (
+                        end_reading[0].reading_type == '01_estimated')
+            record.is_estimated = is_estimated
+
     @api.depends('initial_volume', 'end_volume')
     def _compute_volume(self):
         for record in self:
@@ -205,7 +229,8 @@ class WuaPresconsumption(models.Model):
 
     @api.depends('watermeter_id')
     def _compute_hydraulic_infrastructure_data(self):
-        # Batch: prefetch watermeter -> waterconnection, irrigationshed, hydraulicsector
+        # Batch: prefetch watermeter -> waterconnection, irrigationshed,
+        # hydraulicsector
         watermeters = self.mapped('watermeter_id')
         if watermeters:
             watermeters.mapped('waterconnection_id')

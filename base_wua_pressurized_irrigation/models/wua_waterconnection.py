@@ -117,6 +117,14 @@ class WuaWaterconnection(models.Model):
         default=0,
     )
 
+    with_estimated_readings = fields.Boolean(
+        string='Estimated Readings',
+        default=False,
+        help='If checked, this water connection is configured to receive '
+             'estimated readings. The Estimated monthly consumption must '
+             'then be greater than zero.',
+    )
+
     last_reading_type = fields.Selection(
         [
             ('01_estimated', 'Estimated Reading'),
@@ -150,6 +158,15 @@ class WuaWaterconnection(models.Model):
          'CHECK(estimated_monthly_consumption >= 0)',
          'The estimated monthly consumption must be positive.'),
     ]
+
+    @api.constrains('with_estimated_readings', 'estimated_monthly_consumption')
+    def _check_estimated_readings_consumption(self):
+        for record in self:
+            if (record.with_estimated_readings and
+                    record.estimated_monthly_consumption <= 0):
+                raise exceptions.ValidationError(_(
+                    'When Estimated Readings is enabled, the Estimated '
+                    'monthly consumption must be greater than zero.'))
 
     @api.depends('irrigationshed_id', 'irrigationshed_id.zone_id')
     def _compute_zone_id(self):

@@ -44,6 +44,7 @@
                             <field name="hydraulicsector_id"/>
                             <field name="reading_id"/>
                             <field name="validated"/>
+                            <field name="is_estimated"/>
                         </group>
                     </group>
                     <group name="slave_data">
@@ -75,6 +76,7 @@
                 <field name="volume_perunitareaandday"/>
                 <field name="reading_id"/>
                 <field name="validated" string="Valid consumption"/>
+                <field name="is_estimated" invisible="1"/>
             </tree>
         </field>
     </record>
@@ -93,6 +95,7 @@
                 <field name="volume_real"/>
                 <field name="reading_id"/>
                 <field name="validated" string="Valid consumption"/>
+                <field name="is_estimated" invisible="1"/>
             </tree>
         </field>
     </record>
@@ -114,6 +117,11 @@
                  domain="[('validated','=',True)]"/>
                 <filter string="Validated Consumption: No" name="isvalidatedno"
                  domain="[('validated','=',False)]"/>
+                <separator/>
+                <filter string="Estimated Consumption" name="isestimated"
+                 domain="[('is_estimated','=',True)]"/>
+                <filter string="Real Consumption" name="isnotestimated"
+                 domain="[('is_estimated','=',False)]"/>
                 <group expand="0" string="Group By">
                     <filter string="Agricultural Season"
                      name="agriculturalseason"
@@ -130,6 +138,9 @@
                     <filter string="Reading Date"
                      name="readingendtime"
                      context="{'group_by':'reading_end_time:month'}"/>
+                    <filter string="Estimated Consumption"
+                     name="groupisestimated"
+                     context="{'group_by':'is_estimated'}"/>
                 </group>
             </search>
         </field>
@@ -149,6 +160,7 @@
                 <field name="volume_perunitarea"/>
                 <field name="reading_id"/>
                 <field name="validated" string="Valid Consumption"/>
+                <field name="is_estimated" invisible="1"/>
             </tree>
         </field>
     </record>
@@ -166,6 +178,11 @@
                  domain="[('validated','=',True)]"/>
                 <filter string="Validated Consumption: No" name="isvalidatedno"
                  domain="[('validated','=',False)]"/>
+                <separator/>
+                <filter string="Estimated Consumption" name="isestimated"
+                 domain="[('is_estimated','=',True)]"/>
+                <filter string="Real Consumption" name="isnotestimated"
+                 domain="[('is_estimated','=',False)]"/>
                 <group expand="0" string="Group By">
                   <filter string="Agricultural Season"
                     name="agriculturalseason"

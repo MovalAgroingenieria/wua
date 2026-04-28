@@ -76,6 +76,7 @@
                 <field name="last_reading_time"/>
                 <field name="average_consumption"/>
                 <field name="estimated_monthly_consumption"/>
+                <field name="with_estimated_readings"/>
                 <field name="last_reading_type"/>
                 <newline/>
                 <field name="last_reading_value"/>
@@ -158,6 +159,7 @@
                 <field name="last_reading_consumption" string="Last Reading (consumption)"/>
                 <field name="average_consumption"/>
                 <field name="estimated_monthly_consumption" invisible="1"/>
+                <field name="with_estimated_readings" invisible="1"/>
                 <field name="last_reading_type"/>
                 <field name="waterconnection_state_id" string="State"/>
                 <field name="is_state_close" invisible="1"/>
@@ -177,6 +179,11 @@
                  domain="[('with_watermeter','=',True)]"/>
                 <filter string="Without water meter" name="withoutwatermeter"
                  domain="[('with_watermeter','=',False)]"/>
+                <separator/>
+                <filter string="With Estimated Readings" name="with_estimated_readings"
+                 domain="[('with_estimated_readings','=',True)]"/>
+                <filter string="Without Estimated Readings" name="without_estimated_readings"
+                 domain="[('with_estimated_readings','=',False)]"/>
                 <separator/>
                 <filter string="Closed" name="closed"
                  domain="[('is_state_close','=',True)]"/>
