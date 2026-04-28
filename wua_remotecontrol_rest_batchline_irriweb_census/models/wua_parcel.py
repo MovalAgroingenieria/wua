@@ -232,57 +232,70 @@ class WuaParcel(models.Model):
         Returns ``True`` if a new record was created, ``False`` otherwise.
         """
         extra_code = vals.get('extra_code') or ''
-        if not extra_code:
+        if not extra_code or extra_code == '0':
             msg = _(
-                'IrriWEB record identificador=%s has empty nombre '
-                '\u2014 parcel skipped.') % (vals.get('id_irriweb') or '?')
+                'IrriWEB record identificador=%s has invalid nombre "%s" '
+                '\u2014 parcel skipped.') % (
+                    vals.get('id_irriweb') or '?', extra_code)
             _logger.warning(u'Batchline census: %s', msg)
             if warn_sink is not None:
                 warn_sink.append(('warning_parcel', msg))
             return False
 
-        # --- Look up existing parcel by extra_code ---
+        # --- Look up existing parcels by extra_code ---
+        # Relation is 1:N: one IrriWEB nombre can correspond to several Odoo
+        # sub-parcels (different cadastral references sharing the same IrriWEB
+        # parcel).  We must update ALL of them, not just the first one found.
         if existing_parcel_by_extra_code is not None:
-            existing_parcel = existing_parcel_by_extra_code.get(extra_code)
+            existing_parcels = existing_parcel_by_extra_code.get(
+                extra_code) or []
         else:
-            existing_parcel = self.with_context(active_test=False).search(
-                [('extra_code', '=', extra_code)], limit=1) or False
+            existing_parcels = self.with_context(active_test=False).search(
+                [('extra_code', '=', extra_code)])
 
-        if existing_parcel:
-            # Case 1: parcel already exists (may be manual or from a
-            # previous sync run).  Do NOT touch from_irriweb_census — it
-            # already holds the correct value set at creation time.
+        if existing_parcels:
+            # Case 1: one or more Odoo parcels share this extra_code (may be
+            # manual entries or from a previous sync run).  Iterate ALL of
+            # them so every sub-parcel receives the partner / water updates.
+            # Do NOT touch from_irriweb_census — it already holds the value
+            # set at creation time.
             ctx = {'no_update_partners': True, 'no_test': True}
-            update_vals = {}
-            # Fill rurallocation_id from IrriWEB 'paraje' only when the parcel
-            # does not have one yet.
-            if not existing_parcel.rurallocation_id:
-                farm_location = _clean(remote.get('paraje') or '')
-                if farm_location:
-                    rl_id = self._get_or_create_rurallocation(farm_location)
-                    if rl_id:
-                        update_vals['rurallocation_id'] = rl_id
-            # Only call write() when there is actually something to update.
-            # write({}) still fires base_wua's subparcel-area constraint, which
-            # can fail on parcels whose existing data is already inconsistent.
-            if update_vals:
-                try:
-                    with self.env.cr.savepoint():
-                        existing_parcel.with_context(**ctx).write(update_vals)
-                except UserError as e:
-                    msg = _('Parcel "%s": could not update fields %s — '
-                            'pre-existing data inconsistency: %s') % (
-                                existing_parcel.name,
-                                list(update_vals.keys()),
-                                e.name)
-                    _logger.warning(u'Batchline census sync: %s', msg)
-                    if warn_sink is not None:
-                        warn_sink.append(('warning_parcel', msg))
-            self._sync_batchline_parcel_partnerlinks(
-                existing_parcel, remote, warn_sink=warn_sink)
-            self._sync_batchline_parcel_waterconnections(
-                existing_parcel, remote, toma_sink=toma_sink,
-                wc_cache=wc_cache)
+            for existing_parcel in existing_parcels:
+                update_vals = {}
+                # Reactivate if the parcel was previously archived.
+                if not existing_parcel.active:
+                    update_vals['active'] = True
+                # Fill rurallocation_id from IrriWEB 'paraje' only when the
+                # parcel does not have one yet.
+                if not existing_parcel.rurallocation_id:
+                    farm_location = _clean(remote.get('paraje') or '')
+                    if farm_location:
+                        rl_id = self._get_or_create_rurallocation(
+                            farm_location)
+                        if rl_id:
+                            update_vals['rurallocation_id'] = rl_id
+                # Only call write() when there is actually something to update.
+                # write({}) still fires base_wua's subparcel-area constraint,
+                # which can fail on parcels with pre-existing inconsistencies.
+                if update_vals:
+                    try:
+                        with self.env.cr.savepoint():
+                            existing_parcel.with_context(**ctx).write(
+                                update_vals)
+                    except UserError as e:
+                        msg = _('Parcel "%s": could not update fields %s — '
+                                'pre-existing data inconsistency: %s') % (
+                                    existing_parcel.name,
+                                    list(update_vals.keys()),
+                                    e.name)
+                        _logger.warning(u'Batchline census sync: %s', msg)
+                        if warn_sink is not None:
+                            warn_sink.append(('warning_parcel', msg))
+                self._sync_batchline_parcel_partnerlinks(
+                    existing_parcel, remote, warn_sink=warn_sink)
+                self._sync_batchline_parcel_waterconnections(
+                    existing_parcel, remote, toma_sink=toma_sink,
+                    wc_cache=wc_cache)
             return False
 
         # Case 2: not found → create a new parcel from IrriWEB.
@@ -306,7 +319,8 @@ class WuaParcel(models.Model):
 
         # Add to cache so subsequent records in the same run find it via Case 1.
         if existing_parcel_by_extra_code is not None:
-            existing_parcel_by_extra_code[parcel.extra_code] = parcel
+            existing_parcel_by_extra_code.setdefault(
+                parcel.extra_code, []).append(parcel)
 
         self._sync_batchline_parcel_partnerlinks(
             parcel, remote, warn_sink=warn_sink)
@@ -778,15 +792,21 @@ class WuaParcel(models.Model):
         # Pre-load existing parcels by extra_code for O(1) lookup.
         # extra_code = IrriWEB nombre — this is the pivot/link key.
         all_existing_parcels = self.with_context(active_test=False).search([])
-        existing_parcel_by_extra_code = {
-            p.extra_code: p for p in all_existing_parcels if p.extra_code
-        }
+
+        # dict value is a list so that 1:N (one IrriWEB nombre → several Odoo
+        # sub-parcels) is handled correctly: ALL sub-parcels are updated.
+        existing_parcel_by_extra_code = {}
+        for _p in all_existing_parcels:
+            if _p.extra_code and _p.extra_code != '0':
+                existing_parcel_by_extra_code.setdefault(
+                    _p.extra_code, []).append(_p)
         # Snapshot of pre-existing Odoo extra_codes used after the loop to
         # detect parcels that exist in Odoo but are absent from IrriWEB.
         odoo_extra_codes_before = set(existing_parcel_by_extra_code.keys())
         _logger.info(
             'Batchline census sync (parcels): %d existing parcels pre-loaded '
-            'by extra_code', len(existing_parcel_by_extra_code))
+            '(%d unique extra_codes)',
+            len(all_existing_parcels), len(existing_parcel_by_extra_code))
 
         # Build the set of extra_codes present in IrriWEB so we can warn
         # about Odoo parcels that have no counterpart in IrriWEB.
@@ -899,22 +919,29 @@ class WuaParcel(models.Model):
                         batch_end, total),
                 })
 
-        # Warn about Odoo parcels that have no counterpart in IrriWEB.
-        # These parcels are left untouched; the warning is for traceability.
+        # Archive Odoo parcels that have no counterpart in IrriWEB.
+        # Only act on active parcels — already-archived ones are silently
+        # skipped to avoid log noise on every sync run.
         for ec in sorted(odoo_extra_codes_before):
             if ec not in irriweb_extra_codes:
-                orphan = existing_parcel_by_extra_code.get(ec)
-                msg = _(
-                    'Parcel extra_code="%s" (id=%d) exists in Odoo but '
-                    'has no matching record in IrriWEB \u2014 no action '
-                    'taken.') % (ec, orphan.id if orphan else 0)
-                warnings += 1
-                warning_parcel += 1
-                _logger.warning(u'Batchline census: %s', msg)
-                if log:
-                    Partner._census_sync_log_line(
-                        log, _ENDPOINT_PARCELS, ec, msg,
-                        level='warning_parcel')
+                orphans = existing_parcel_by_extra_code.get(ec) or []
+                for orphan in orphans:
+                    if not orphan.active:
+                        continue
+                    orphan.with_context(no_update_partners=True,
+                                        no_test=True).write(
+                        {'active': False})
+                    msg = _(
+                        'Parcel extra_code="%s" (id=%d) exists in Odoo '
+                        'but has no matching record in IrriWEB \u2014 '
+                        'archived.') % (ec, orphan.id)
+                    warnings += 1
+                    warning_parcel += 1
+                    _logger.warning(u'Batchline census: %s', msg)
+                    if log:
+                        Partner._census_sync_log_line(
+                            log, _ENDPOINT_PARCELS, ec, msg,
+                            level='warning_parcel')
 
         _logger.info(
             'Batchline census sync (parcels) finished: created=%d, '
