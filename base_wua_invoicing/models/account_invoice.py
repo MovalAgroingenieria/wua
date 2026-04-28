@@ -174,6 +174,30 @@ class AccountInvoice(models.Model):
                     line.quantity = -line.quantity
                 record.compute_taxes()
 
+    @api.multi
+    def action_set_as_customer_invoice(self):
+        invoices_invalid = self.filtered(
+            lambda x: x.state != 'open' or x.type != 'out_refund',
+        )
+        if invoices_invalid:
+            invoice_ids = ', '.join(
+                [str(invoice.number or invoice.id) for invoice in
+                 invoices_invalid],
+            )
+            raise UserError(_(
+                """The following invoice IDs
+                are not open refunds
+                and cannot be processed: %s""",
+            ) % invoice_ids)
+        for record in self:
+            record.action_invoice_cancel()
+            record.action_invoice_draft()
+            record.type = 'out_invoice'
+            for line in record.invoice_line_ids:
+                if line.quantity < 0:
+                    line.quantity = -line.quantity
+            record.compute_taxes()
+
 
 class AccountInvoiceLine(models.Model):
     _inherit = 'account.invoice.line'
