@@ -203,33 +203,33 @@ class WuaReading(models.Model):
                     continue
                 processed_keys.add(key)
                 try:
-                    is_negative, negative_volume = \
-                        self.is_negative_reading(reading, reading_time)
-                    if is_negative:
-                        self.env['wua.negative.reading'].create({
-                            'watermeter_id': reading['watermeter_id'],
-                            'reading_time': reading_time,
-                            'volume': reading['volume'],
-                            'presconsumption_volume': negative_volume,
-                            'from_remotecontrol': True,
-                            'remotecontrol_origin':
-                                reading['remotecontrol_origin'],
+                    with self.env.cr.savepoint():
+                        is_negative, negative_volume = \
+                            self.is_negative_reading(reading, reading_time)
+                        if is_negative:
+                            self.env['wua.negative.reading'].create({
+                                'watermeter_id': reading['watermeter_id'],
+                                'reading_time': reading_time,
+                                'volume': reading['volume'],
+                                'presconsumption_volume': negative_volume,
+                                'from_remotecontrol': True,
+                                'remotecontrol_origin':
+                                    reading['remotecontrol_origin'],
+                                })
+                            number_of_negative_readings = \
+                                number_of_negative_readings + 1
+                        else:
+                            self.create({
+                                'watermeter_id': reading['watermeter_id'],
+                                'reading_time': reading_time,
+                                'volume': reading['volume'],
+                                'initialization_reading': False,
+                                'from_import': False,
+                                'validated': False,
+                                'remotecontrol_origin':
+                                    reading['remotecontrol_origin'],
                             })
-                        number_of_negative_readings = \
-                            number_of_negative_readings + 1
-                    else:
-                        self.create({
-                            'watermeter_id': reading['watermeter_id'],
-                            'reading_time': reading_time,
-                            'volume': reading['volume'],
-                            'initialization_reading': False,
-                            'from_import': False,
-                            'validated': False,
-                            'remotecontrol_origin':
-                                reading['remotecontrol_origin'],
-                        })
                 except Exception as e:
-                    self.env.cr.rollback()
                     number_of_failed_readings += 1
                     wm_name = reading.get(
                         'watermeter_name', str(reading['watermeter_id']))
