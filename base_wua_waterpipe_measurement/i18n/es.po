@@ -508,11 +508,22 @@ msgid "The reading end time can't be lower than the reading start time."
 msgstr "El tiempo de lectura final no puede ser inferior al tiempo de lectura inicial."
 
 #. module: base_wua_waterpipe_measurement
-#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:189
-#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:209
+#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:0
 #, python-format
-msgid "The reading time is minor than the time of the previous reading."
-msgstr "El tiempo de lectura es menor al de la lectura anterior."
+msgid "The new reading time (%s) for flow meter '%s' is earlier than or equal to the last existing reading (%s). Readings must be entered in chronological order."
+msgstr "La fecha/hora de la nueva lectura (%s) para el caudalímetro '%s' es anterior o igual a la última lectura existente (%s). Las lecturas deben introducirse en orden cronológico."
+
+#. module: base_wua_waterpipe_measurement
+#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:0
+#, python-format
+msgid "There is no previous reading for flow meter '%s' before %s. The first reading of a flow meter must be marked as 'Initialization reading'."
+msgstr "No existe ninguna lectura previa para el caudalímetro '%s' antes de %s. La primera lectura de un caudalímetro debe marcarse como 'Lectura de inicialización'."
+
+#. module: base_wua_waterpipe_measurement
+#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:0
+#, python-format
+msgid "The new initialization reading time (%s) for flow meter '%s' is earlier than the last existing reading (%s). Readings must be entered in chronological order."
+msgstr "La fecha/hora de la nueva lectura de inicialización (%s) para el caudalímetro '%s' es anterior a la última lectura existente (%s). Las lecturas deben introducirse en orden cronológico."
 
 #. module: base_wua_waterpipe_measurement
 #: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:274

@@ -187,9 +187,23 @@ class WuaWaterpipeflowreading(models.Model):
                 limit=1, order='reading_time desc')
             if (not last_reading or not previous_reading or last_reading.id !=
                     previous_reading.id):
-                raise exceptions.UserError(_('The reading time is minor '
-                                             'than the time of the previous '
-                                             'reading.'))
+                flowmeter_label = (flowmeter.display_name
+                                   if flowmeter else vals['flowmeter_id'])
+                if last_reading:
+                    raise exceptions.UserError(_(
+                        "The new reading time (%s) for flow meter '%s' is "
+                        "earlier than or equal to the last existing reading "
+                        "(%s). Readings must be entered in chronological "
+                        "order.") % (
+                            reading_end_time,
+                            flowmeter_label,
+                            last_reading.reading_time))
+                else:
+                    raise exceptions.UserError(_(
+                        "There is no previous reading for flow meter '%s' "
+                        "before %s. The first reading of a flow meter must "
+                        "be marked as 'Initialization reading'.") % (
+                            flowmeter_label, reading_end_time))
             else:
                 reading_initial_time = previous_reading[0].reading_time
                 initial_volume = previous_reading[0].volume
@@ -207,9 +221,16 @@ class WuaWaterpipeflowreading(models.Model):
                 limit=1, order='reading_time desc')
             if (last_reading and (
                     last_reading.reading_time > reading_end_time)):
-                raise exceptions.UserError(_('The reading time is minor '
-                                             'than the time of the previous '
-                                             'reading.'))
+                flowmeter_label = (flowmeter.display_name
+                                   if flowmeter else vals['flowmeter_id'])
+                raise exceptions.UserError(_(
+                    "The new initialization reading time (%s) for flow "
+                    "meter '%s' is earlier than the last existing reading "
+                    "(%s). Readings must be entered in chronological "
+                    "order.") % (
+                        reading_end_time,
+                        flowmeter_label,
+                        last_reading.reading_time))
         if new_waterpipeconsumption is not None:
             vals['waterpipeconsumption_id'] = new_waterpipeconsumption.id
         # Updating the "last_reading_time" and "last_reading_value" fields
