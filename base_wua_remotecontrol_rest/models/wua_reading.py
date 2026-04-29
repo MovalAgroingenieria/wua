@@ -143,35 +143,54 @@ class WuaReading(models.Model):
 
     def refine_readings(self, readings):
         resp = []
+        _logger = logging.getLogger(self.__class__.__name__)
         watermeters = self.env['wua.watermeter']
         for reading in readings:
             filtered_watermeter = watermeters.search(
                 [('name', '=', reading['watermeter'])])
-            if filtered_watermeter:
-                reading_volume = self.round_reading_volume(reading['volume'])
-                watermeter = filtered_watermeter[0]
-                if (watermeter.state == 'active' and
-                   watermeter.waterconnection_id):
-                    refined_reading = {
-                        'watermeter_id': watermeter.id,
-                        'watermeter_name': watermeter.name,
-                        'waterconnection_id': watermeter.waterconnection_id.id,
-                        'irrigationshed_id': watermeter.irrigationshed_id.id,
-                        'hydraulicsector_id': watermeter.hydraulicsector_id.id,
-                        'volume': reading_volume,
-                        'remotecontrol_origin':
-                            reading.get('remotecontrol_origin', 'unknown'),
-                        }
-                    resp.append(refined_reading)
+            if not filtered_watermeter:
+                _logger.warning(
+                    'Remote Control: water meter code %r not found in DB,'
+                    ' reading discarded.', reading['watermeter'])
+                continue
+            reading_volume = self.round_reading_volume(reading['volume'])
+            watermeter = filtered_watermeter[0]
+            if watermeter.state != 'active':
+                _logger.warning(
+                    'Remote Control: water meter %r is not active,'
+                    ' reading discarded.', watermeter.name)
+            elif not watermeter.waterconnection_id:
+                _logger.warning(
+                    'Remote Control: water meter %r has no water connection,'
+                    ' reading discarded.', watermeter.name)
+            else:
+                refined_reading = {
+                    'watermeter_id': watermeter.id,
+                    'watermeter_name': watermeter.name,
+                    'waterconnection_id': watermeter.waterconnection_id.id,
+                    'irrigationshed_id': watermeter.irrigationshed_id.id,
+                    'hydraulicsector_id': watermeter.hydraulicsector_id.id,
+                    'volume': reading_volume,
+                    'remotecontrol_origin':
+                        reading.get('remotecontrol_origin', 'unknown'),
+                    }
+                resp.append(refined_reading)
+        if readings and not resp:
+            _logger.warning(
+                'Remote Control: %d raw readings received from telecontrol'
+                ' but all were discarded during refinement.', len(readings))
         return resp
 
     def _get_reading_time_from_remotecontrol(self, reading, now):
         return now
 
     def save_readings(self, readings, update_log=True):
+        _logger = logging.getLogger(self.__class__.__name__)
         number_of_readings = len(readings)
         number_of_negative_readings = 0
         number_of_skipped_readings = 0
+        number_of_failed_readings = 0
+        failed_watermeter_names = []
         processed_keys = set()
         now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         if number_of_readings > 0:
@@ -183,51 +202,74 @@ class WuaReading(models.Model):
                     number_of_skipped_readings += 1
                     continue
                 processed_keys.add(key)
-                is_negative, negative_volume = \
-                    self.is_negative_reading(reading, reading_time)
-                if is_negative:
-                    self.env['wua.negative.reading'].create({
-                        'watermeter_id': reading['watermeter_id'],
-                        'reading_time': reading_time,
-                        'volume': reading['volume'],
-                        'presconsumption_volume': negative_volume,
-                        'from_remotecontrol': True,
-                        'remotecontrol_origin':
-                            reading['remotecontrol_origin'],
+                try:
+                    is_negative, negative_volume = \
+                        self.is_negative_reading(reading, reading_time)
+                    if is_negative:
+                        self.env['wua.negative.reading'].create({
+                            'watermeter_id': reading['watermeter_id'],
+                            'reading_time': reading_time,
+                            'volume': reading['volume'],
+                            'presconsumption_volume': negative_volume,
+                            'from_remotecontrol': True,
+                            'remotecontrol_origin':
+                                reading['remotecontrol_origin'],
+                            })
+                        number_of_negative_readings = \
+                            number_of_negative_readings + 1
+                    else:
+                        self.create({
+                            'watermeter_id': reading['watermeter_id'],
+                            'reading_time': reading_time,
+                            'volume': reading['volume'],
+                            'initialization_reading': False,
+                            'from_import': False,
+                            'validated': False,
+                            'remotecontrol_origin':
+                                reading['remotecontrol_origin'],
                         })
-                    number_of_negative_readings = \
-                        number_of_negative_readings + 1
-                else:
-                    self.create({
-                        'watermeter_id': reading['watermeter_id'],
-                        'reading_time': reading_time,
-                        'volume': reading['volume'],
-                        'initialization_reading': False,
-                        'from_import': False,
-                        'validated': False,
-                        'remotecontrol_origin':
-                            reading['remotecontrol_origin'],
-                    })
+                except Exception as e:
+                    self.env.cr.rollback()
+                    number_of_failed_readings += 1
+                    wm_name = reading.get(
+                        'watermeter_name', str(reading['watermeter_id']))
+                    failed_watermeter_names.append(wm_name)
+                    _logger.warning(
+                        'Remote Control: Could not save reading for water'
+                        ' meter %r (time=%s, vol=%s): %s',
+                        wm_name, reading_time, reading.get('volume'), e)
             if update_log:
-                _logger = logging.getLogger(self.__class__.__name__)
-                _logger.info(_('Remote Control: Saved readings') + '... ' +
-                             str(number_of_readings))
+                _logger.info(
+                    _('Remote Control: Saved readings') + '... ' +
+                    str(number_of_readings))
                 if number_of_skipped_readings:
                     _logger.warning(
                         _('Remote Control: Skipped %s duplicated readings '
                           '(same water meter and reading time received more '
                           'than once in the same batch).') %
                         number_of_skipped_readings)
+                if number_of_failed_readings:
+                    _logger.warning(
+                        'Remote Control: Failed to save %s readings: %s',
+                        number_of_failed_readings,
+                        ', '.join(failed_watermeter_names))
             remotecontrol = self.env.ref(
                 'base_wua_remotecontrol_rest.wua_remotecontrol_logger')
+            body = (
+                "Readings from remote control: %s<br/>"
+                "Negative readings: %s<br/>"
+                "Skipped duplicated readings: %s" % (
+                    number_of_readings,
+                    number_of_negative_readings,
+                    number_of_skipped_readings))
+            if number_of_failed_readings:
+                body += "<br/>Failed readings (chronological error): "\
+                    "%s (%s)" % (
+                        number_of_failed_readings,
+                        ', '.join(failed_watermeter_names))
             remotecontrol.message_post(
                 subject=_('Remote Control: Readings Saved'),
-                body="Readings from remote control: %s<br/>"
-                     "Negative readings: %s<br/>"
-                     "Skipped duplicated readings: %s" % (
-                         number_of_readings,
-                         number_of_negative_readings,
-                         number_of_skipped_readings),
+                body=body,
                 message_type='email',
                 subtype='mail.mt_comment',
             )
