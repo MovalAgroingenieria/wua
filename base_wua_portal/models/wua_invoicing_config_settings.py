@@ -18,6 +18,7 @@ class WuaInvoicingConfiguration(models.TransientModel):
 
     @api.multi
     def set_default_values(self):
+        super(WuaInvoicingConfiguration, self).set_default_values()
         values = self.env['ir.values'].sudo()
         values.set_default('wua.invoicing.configuration',
                            'liquidation_on_portal',
