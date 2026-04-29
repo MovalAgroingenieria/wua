@@ -322,7 +322,8 @@ class WuaWaterpipeflowreading(models.Model):
             new_last_reading_value = new_last_reading.volume
         vals_flowmeter = {
             'last_waterpipeflowreading_time': new_last_reading_time,
-            'last_waterpipeflowreading_value': new_last_reading_value, }
+            'last_waterpipeflowreading_value': new_last_reading_value,
+        }
         flowmeter.write(vals_flowmeter)
         return resp
 
