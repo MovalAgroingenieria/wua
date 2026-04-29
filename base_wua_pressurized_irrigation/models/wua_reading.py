@@ -327,9 +327,27 @@ class WuaReading(models.Model):
                     limit=1, order='reading_time desc')
                 if (not last_reading or not previous_reading or last_reading.id !=
                         previous_reading.id):
-                    raise exceptions.UserError(_('The reading time is minor '
-                                                 'than the time of the previous '
-                                                 'reading.'))
+                    watermeter = self.env['wua.watermeter'].browse(
+                        vals['watermeter_id'])
+                    watermeter_label = (
+                        watermeter.display_name
+                        if watermeter else vals['watermeter_id'])
+                    if last_reading:
+                        raise exceptions.UserError(_(
+                            "The new reading time (%s) for water meter '%s'"
+                            " is earlier than or equal to the last existing"
+                            " reading (%s). Readings must be entered in"
+                            " chronological order.") % (
+                                reading_end_time,
+                                watermeter_label,
+                                last_reading.reading_time))
+                    else:
+                        raise exceptions.UserError(_(
+                            "There is no previous reading for water meter"
+                            " '%s' before %s. The first reading of a water"
+                            " meter must be marked as 'Initialization"
+                            " reading'.") % (
+                                watermeter_label, reading_end_time))
                 reading_initial_time = previous_reading[0].reading_time
                 initial_volume = previous_reading[0].volume
                 presconsumption_vals = {
@@ -349,9 +367,19 @@ class WuaReading(models.Model):
                     limit=1, order='reading_time desc')
                 if (last_reading and last_reading.reading_time >
                         reading_end_time):
-                    raise exceptions.UserError(_('The reading time is minor '
-                                                 'than the time of the previous '
-                                                 'reading.'))
+                    watermeter = self.env['wua.watermeter'].browse(
+                        vals['watermeter_id'])
+                    watermeter_label = (
+                        watermeter.display_name
+                        if watermeter else vals['watermeter_id'])
+                    raise exceptions.UserError(_(
+                        "The new initialization reading time (%s) for water"
+                        " meter '%s' is earlier than the last existing"
+                        " reading (%s). Readings must be entered in"
+                        " chronological order.") % (
+                            reading_end_time,
+                            watermeter_label,
+                            last_reading.reading_time))
         if new_presconsumption is not None:
             vals['presconsumption_id'] = new_presconsumption.id
         # Updating the "last_reading_time" and "last_reading_value" fields
@@ -557,9 +585,9 @@ class WuaReading(models.Model):
             limit=1, order='reading_time desc')
         if previous_reading:
             previous_volume = previous_reading[0].volume
-        if previous_volume > current_volume:
-            is_negative = True
-            negative_volume = current_volume - previous_volume
+            if previous_volume > current_volume:
+                is_negative = True
+                negative_volume = current_volume - previous_volume
         return is_negative, negative_volume
 
     def validate_readings(self, active_readings):
