@@ -2957,10 +2957,16 @@ msgid "The reading end time must be greather than or equal to reading initial ti
 msgstr "El temps de finalització de la lectura ha de ser superior o igual al temps inicial de lectura."
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:236
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:0
 #, python-format
-msgid "The reading time is minor than the time of the previous reading."
-msgstr "El temps de lectura és menor que el temps de la lectura anterior."
+msgid "The new reading time (%s) for water meter '%s' is earlier than or equal to the last existing reading (%s). Readings must be entered in chronological order."
+msgstr "La data/hora de la nova lectura (%s) per al comptador '%s' és anterior o igual a la darrera lectura existent (%s). Les lectures s'han d'introduir en ordre cronològic."
+
+#. module: base_wua_pressurized_irrigation_monitoring
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:0
+#, python-format
+msgid "There is no previous reading for water meter '%s' before %s. The first reading of a water meter must be marked as 'Initialization reading'."
+msgstr "No existeix cap lectura prèvia per al comptador '%s' abans de %s. La primera lectura d'un comptador s'ha de marcar com a 'Lectura d'inicialització'."
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: sql_constraint:wua.controlreading:0

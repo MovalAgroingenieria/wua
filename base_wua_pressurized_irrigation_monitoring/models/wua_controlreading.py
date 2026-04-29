@@ -225,6 +225,7 @@ class WuaControlreading(models.Model):
         new_controlpresconsumption = None
         reading_end_time = vals['reading_time']
         end_volume = vals['volume']
+        watermeter = self.env['wua.watermeter'].browse(vals['watermeter_id'])
         # New consumption.
         if not vals['initialization_reading']:
             reading_initial_time = reading_end_time
@@ -237,9 +238,26 @@ class WuaControlreading(models.Model):
                 reading_initial_time = previous_reading[0].reading_time
                 initial_volume = previous_reading[0].volume
             else:
-                raise exceptions.UserError(_('The reading time is minor '
-                                             'than the time of the previous '
-                                             'reading.'))
+                last_reading = self.env['wua.controlreading'].search(
+                    [('watermeter_id', '=', vals['watermeter_id'])],
+                    limit=1, order='reading_time desc')
+                watermeter_label = (watermeter.display_name
+                                    if watermeter else vals['watermeter_id'])
+                if last_reading:
+                    raise exceptions.UserError(_(
+                        "The new reading time (%s) for water meter '%s' is "
+                        "earlier than or equal to the last existing reading "
+                        "(%s). Readings must be entered in chronological "
+                        "order.") % (
+                            reading_end_time,
+                            watermeter_label,
+                            last_reading.reading_time))
+                else:
+                    raise exceptions.UserError(_(
+                        "There is no previous reading for water meter '%s' "
+                        "before %s. The first reading of a water meter must "
+                        "be marked as 'Initialization reading'.") % (
+                            watermeter_label, reading_end_time))
             controlpresconsumption_vals = {
                 'reading_initial_time': reading_initial_time,
                 'initial_volume': initial_volume,
@@ -253,7 +271,6 @@ class WuaControlreading(models.Model):
             vals['controlpresconsumption_id'] = new_controlpresconsumption.id
         # Updating the "last_controlreading_time" and
         # "last_controlreading_value" fields of the watermeter.
-        watermeter = self.env['wua.watermeter'].browse(vals['watermeter_id'])
         if watermeter:
             vals_watermeter = {
                 'last_controlreading_time': reading_end_time,
@@ -568,14 +585,21 @@ class WuaControlreading(models.Model):
     def save_controlreadings(self, readings, update_log=True):
         number_of_readings = len(readings)
         number_of_negative_readings = 0
+        number_of_skipped_readings = 0
+        processed_watermeter_ids = set()
         controlperiod_ids = []
         if number_of_readings > 0:
             reading_time = datetime.datetime.now().strftime(
                 '%Y-%m-%d %H:%M:%S')
             controlperiod_model = self.env['wua.controlperiod']
             for reading in readings:
+                watermeter_id = reading['watermeter_id']
+                if watermeter_id in processed_watermeter_ids:
+                    number_of_skipped_readings += 1
+                    continue
+                processed_watermeter_ids.add(watermeter_id)
                 previous_reading = self.env['wua.controlreading'].search_count(
-                    [('watermeter_id', '=', reading['watermeter_id'])])
+                    [('watermeter_id', '=', watermeter_id)])
                 if not previous_reading:
                     self.create({
                         'watermeter_id': reading['watermeter_id'],
@@ -614,13 +638,21 @@ class WuaControlreading(models.Model):
                 _logger.info(_('Remote Control: Saved Controlreadings') +
                              '... ' +
                              str(number_of_readings))
+                if number_of_skipped_readings:
+                    _logger.warning(
+                        _('Remote Control: Skipped %s duplicated readings '
+                          '(same water meter received more than once in the '
+                          'same batch).') % number_of_skipped_readings)
             remotecontrol = self.env.ref(
                 'base_wua_remotecontrol_rest.wua_remotecontrol_logger')
             remotecontrol.message_post(
                 subject=_('Remote Control: Controlreadings Saved'),
                 body="Controlreadings from remote control: %s<br/>"
-                     "Negative controlreadings: %s" % (
-                         number_of_readings, number_of_negative_readings),
+                     "Negative controlreadings: %s<br/>"
+                     "Skipped duplicated readings: %s" % (
+                         number_of_readings,
+                         number_of_negative_readings,
+                         number_of_skipped_readings),
                 message_type='email',
                 subtype='mail.mt_comment',
             )
