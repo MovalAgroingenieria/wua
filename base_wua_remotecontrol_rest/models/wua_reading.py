@@ -171,11 +171,18 @@ class WuaReading(models.Model):
     def save_readings(self, readings, update_log=True):
         number_of_readings = len(readings)
         number_of_negative_readings = 0
+        number_of_skipped_readings = 0
+        processed_keys = set()
         now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         if number_of_readings > 0:
             for reading in readings:
                 reading_time = self._get_reading_time_from_remotecontrol(
                     reading, now)
+                key = (reading['watermeter_id'], reading_time)
+                if key in processed_keys:
+                    number_of_skipped_readings += 1
+                    continue
+                processed_keys.add(key)
                 is_negative, negative_volume = \
                     self.is_negative_reading(reading, reading_time)
                 if is_negative:
@@ -205,13 +212,22 @@ class WuaReading(models.Model):
                 _logger = logging.getLogger(self.__class__.__name__)
                 _logger.info(_('Remote Control: Saved readings') + '... ' +
                              str(number_of_readings))
+                if number_of_skipped_readings:
+                    _logger.warning(
+                        _('Remote Control: Skipped %s duplicated readings '
+                          '(same water meter and reading time received more '
+                          'than once in the same batch).') %
+                        number_of_skipped_readings)
             remotecontrol = self.env.ref(
                 'base_wua_remotecontrol_rest.wua_remotecontrol_logger')
             remotecontrol.message_post(
                 subject=_('Remote Control: Readings Saved'),
                 body="Readings from remote control: %s<br/>"
-                     "Negative readings: %s" % (
-                         number_of_readings, number_of_negative_readings),
+                     "Negative readings: %s<br/>"
+                     "Skipped duplicated readings: %s" % (
+                         number_of_readings,
+                         number_of_negative_readings,
+                         number_of_skipped_readings),
                 message_type='email',
                 subtype='mail.mt_comment',
             )
