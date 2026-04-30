@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
-from odoo import models, fields, api, exceptions, _
+from odoo import models, fields, exceptions, _
 
 
 class WizardInitReading(models.TransientModel):
@@ -44,16 +44,19 @@ class WizardInitReading(models.TransientModel):
             'volume': vals['final_value'],
             'notes': vals['notes'],
             'initialization_reading': False,
+            'reading_type': '02_real_worker',
         })
         model.create({
             'watermeter_id': vals['watermeter_id'],
             'waterconnection_id': vals['waterconnection_id'],
             'reading_time': fields.Datetime.to_string(
-                fields.Datetime.from_string(vals['date']) + datetime.timedelta(seconds=1)
+                fields.Datetime.from_string(vals['date']) +
+                datetime.timedelta(seconds=1),
             ),
             'volume': vals['init_value'],
             'notes': vals['notes'],
             'initialization_reading': True,
+            'reading_type': '02_real_worker',
         })
 
     def action_generate_init_readings(self):
@@ -61,7 +64,7 @@ class WizardInitReading(models.TransientModel):
         wc = self.waterconnection_id
         if not wc.watermeter_id:
             raise exceptions.UserError(
-                _('This waterconnection has no watermeter assigned.')
+                _('This waterconnection has no watermeter assigned.'),
             )
         vals = {
             'watermeter_id': wc.watermeter_id.id,

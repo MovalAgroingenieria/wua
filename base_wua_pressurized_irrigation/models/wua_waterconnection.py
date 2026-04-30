@@ -371,6 +371,7 @@ class WuaWaterconnection(models.Model):
                 'volume': last_reading_value,
                 'volume_real': last_reading_consumption,
                 'initialization_reading': True,
+                'reading_type': '02_real_worker',
             }
             self.env['wua.reading'].create(
                 vals_new_initialization_reading)
