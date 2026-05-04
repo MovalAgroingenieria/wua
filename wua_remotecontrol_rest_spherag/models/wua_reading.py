@@ -125,28 +125,23 @@ class WuaReading(models.Model):
         readings = []
         error_message = ''
         error_watermeters = []
-
         watermeters = self._get_spherag_watermeters()
         if not watermeters:
             error_message = _('No watermeters configured with '
                               'Spherag telecontrol')
             return readings, error_message, error_watermeters
-
         element_ids = watermeters.mapped(
             'waterconnection_id.spherag_flow_accumulated_element_id')
         target_elements = self._build_spherag_target_elements(watermeters)
-
         if not target_elements:
             error_message = _('Could not build Spherag target elements '
                               'from configured watermeters')
             return readings, error_message, error_watermeters
-
         last_readings = self._get_spherag_last_readings(
             element_ids, target_elements=target_elements)
         if not last_readings:
             error_message = _('No readings found in Spherag system')
             return readings, error_message, error_watermeters
-
         for wm in watermeters:
             element_id = \
                 wm.waterconnection_id.spherag_flow_accumulated_element_id
@@ -157,11 +152,9 @@ class WuaReading(models.Model):
                 error_message += _(
                     'No reading found for Spherag element ID: %s') % element_id
                 continue
-
             reading_data = last_readings[element_id]
             reading_date = reading_data.get('date')
             volume = reading_data.get('value', 0.0)
-
             if reading_date and self._is_reading_newer_spherag(
                     reading_date, wm.last_reading_time):
                 readings.append({
