@@ -265,6 +265,15 @@ class WuaParcel(models.Model):
                 # Reactivate if the parcel was previously archived.
                 if not existing_parcel.active:
                     update_vals['active'] = True
+                # IrriWEB is the master data source — always update area and
+                # parcel type from IrriWEB values.
+                irriweb_area = float(vals.get('area_official') or 0.0)
+                if irriweb_area and existing_parcel.area_official != irriweb_area:
+                    update_vals['area_official'] = irriweb_area
+                irriweb_parcel_type = vals.get('parcel_type')
+                if (irriweb_parcel_type and
+                        existing_parcel.parcel_type != irriweb_parcel_type):
+                    update_vals['parcel_type'] = irriweb_parcel_type
                 # Fill rurallocation_id from IrriWEB 'paraje' only when the
                 # parcel does not have one yet.
                 if not existing_parcel.rurallocation_id:
