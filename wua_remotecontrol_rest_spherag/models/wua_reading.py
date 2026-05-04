@@ -46,7 +46,6 @@ class WuaReading(models.Model):
                 spherag_data = json.loads(wc.spherag_data or '{}')
             except Exception:
                 spherag_data = {}
-
             system_id = spherag_data.get('system_id')
             imei = spherag_data.get('imei')
             chart_type_id = spherag_data.get(
