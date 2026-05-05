@@ -178,6 +178,12 @@ class WuaPreswateringrequest(models.Model):
         string='Recurrence End Date',
     )
 
+    recurrence_end_date_warning = fields.Text(
+        string='Recurrence End Date Warning',
+        compute='_compute_recurrence_end_date_warning',
+        store=False,
+    )
+
     recurrence_alredy_created = fields.Boolean(
         string='Recurrence Alredy Created',
         default=False,
@@ -186,6 +192,22 @@ class WuaPreswateringrequest(models.Model):
     from_recurrence = fields.Boolean(
         string='From Recurrence',
         default=False,
+    )
+
+    source_preswateringrequest_id = fields.Many2one(
+        string='Source Request',
+        comodel_name='wua.preswateringrequest',
+        readonly=True,
+        index=True,
+        ondelete='set null',
+    )
+
+    propagated_from_preswateringrequest_id = fields.Many2one(
+        string='Last Propagated From Request',
+        comodel_name='wua.preswateringrequest',
+        readonly=True,
+        index=True,
+        ondelete='set null',
     )
 
     _sql_constraints = [
@@ -365,6 +387,30 @@ class WuaPreswateringrequest(models.Model):
                 modification_deadline_message
             record.modification_deadline = modification_deadline
 
+    @api.depends('is_recurrence', 'recurrence_end_date')
+    def _compute_recurrence_end_date_warning(self):
+        for record in self:
+            warning = ''
+            if record.is_recurrence and record.recurrence_end_date:
+                today = fields.Date.context_today(record)
+                if record.recurrence_end_date < today:
+                    record.recurrence_end_date_warning = warning
+                    continue
+                period = self.env['wua.preswateringperiod'].search([
+                    ('initial_date', '<=', record.recurrence_end_date),
+                    ('end_date', '>=', record.recurrence_end_date),
+                ], limit=1)
+                if not period:
+                    warning = '* ' + _(
+                        'The recurrence end date is not inside any '
+                        'irrigation period. Requests outside open periods '
+                        'will be skipped.')
+                elif period.state != '01_open':
+                    warning = '* ' + _(
+                        'The recurrence end date is in a closed period. '
+                        'Requests in closed periods will be skipped.')
+            record.recurrence_end_date_warning = warning
+
     def _copy_single_request(self, request, copy_date):
         copy_date_str = copy_date.strftime('%Y-%m-%d')
         if not request.partner_id or not request.partner_id.active:
@@ -381,6 +427,7 @@ class WuaPreswateringrequest(models.Model):
             'initial_date': copy_date_str,
             'partner_id': request.partner_id.id,
             'from_recurrence': True,
+            'source_preswateringrequest_id': request.id,
             'user_id': request.user_id.id,
         }
         # Ensure only the waterconnections of the partner are copied
@@ -419,14 +466,28 @@ class WuaPreswateringrequest(models.Model):
             ('recurrence_alredy_created', '=', False),
         ])
         for record in preswaternigrequests:
+            if not record.recurrence_end_date:
+                record.recurrence_alredy_created = True
+                continue
+            if record.recurrence_interval <= 0:
+                record.recurrence_alredy_created = True
+                continue
             current_date = datetime.datetime.strptime(
                 str(record.initial_date), '%Y-%m-%d')
             current_date += timedelta(days=record.recurrence_interval)
             end_date = datetime.datetime.strptime(
                 str(record.recurrence_end_date), '%Y-%m-%d')
             while current_date <= end_date:
-                self._copy_single_request(record, current_date)
-                current_date += timedelta(days=record.recurrence_interval)
+                copy_date_str = current_date.strftime('%Y-%m-%d')
+                period = self.env['wua.preswateringperiod'].search([
+                    ('initial_date', '<=', copy_date_str),
+                    ('end_date', '>=', copy_date_str),
+                ], limit=1)
+                if period and period.state == '01_open':
+                    self._copy_single_request(record, current_date)
+                    current_date += timedelta(days=record.recurrence_interval)
+                else:
+                    current_date += timedelta(days=record.recurrence_interval)
             record.recurrence_alredy_created = True
 
     @api.multi
@@ -599,6 +660,7 @@ class WuaPreswateringrequest(models.Model):
                     tracking_disable=True,
                 ).write({
                     'presresconsumption_ids': presresconsumption_vals,
+                    'propagated_from_preswateringrequest_id': record.id,
                 })
             consumptions = record.presresconsumption_ids.mapped(
                 lambda x: {

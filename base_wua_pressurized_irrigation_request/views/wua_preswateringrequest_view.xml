@@ -31,10 +31,18 @@
                             border-color:red;border-width:1px; border-style:solid;padding: 10px 200px">
                            <span class="blink_text">( CREDIT OVERDUE )</span>
                         </div>
+
                     </div>
                     <div name="modification_message_container" attrs="{'invisible': [('modification_deadline_message', '=', False)]}" style="display: inline-block; margin-top: 10px;">
                         <div class="panel-body" style="background:#e6f7ff; border-radius:4px; font-weight: bold; color:#007bff; border-color:#007bff; border-width:1px; border-style:solid; padding: 10px 20px;">
                             <field name="modification_deadline_message" nolabel="1"/>
+                        </div>
+                    </div>
+                    <div name="recurrence_warning_container"
+                        attrs="{'invisible': ['|', ('is_recurrence', '=', False), '|', ('recurrence_end_date_warning', '=', False), ('recurrence_end_date_warning', '=', '')]}"
+                        style="display: inline-block; margin-top: 10px;">
+                        <div class="panel-body" style="background:#ffe6e6; border-radius:4px; font-weight: bold; color:red; border-color:red; border-width:1px; border-style:solid; padding: 10px 20px;">
+                            <field name="recurrence_end_date_warning" nolabel="1" readonly="1"/>
                         </div>
                     </div>
                     <group name="master_data">
@@ -49,6 +57,12 @@
                             <field name="user_id" required="1" readonly="1" attrs="{'readonly':[('state','=','02_validated')]}"/>
                             <field name="is_portal_user" readonly="1" attrs="{'readonly':[('state','=','02_validated')]}"/>
                             <field name="from_recurrence" invisible="1"/>
+                            <field name="source_preswateringrequest_id"
+                                readonly="1"
+                                attrs="{'invisible': [('source_preswateringrequest_id', '=', False)]}"/>
+                            <field name="propagated_from_preswateringrequest_id"
+                                readonly="1"
+                                attrs="{'invisible': [('propagated_from_preswateringrequest_id', '=', False)]}"/>
                             <field name="recurrence_alredy_created" invisible="1"/>
                             <field name="is_recurrence" attrs="{'readonly':['|', ('state','=','02_validated'), ('recurrence_alredy_created','=',True)],
                                                                 'invisible':[('from_recurrence','=',True)]}"/>
@@ -146,6 +160,15 @@
                         domain="[('state', '=', '01_draft')]"/>
                 <filter string="Validated" name="state_validated"
                         domain="[('state', '=', '02_validated')]"/>
+                <separator/>
+                <filter string="Recurrent" name="is_recurrence_true"
+                    domain="[('is_recurrence', '=', True)]"/>
+                <filter string="Recurrence Already Applied"
+                    name="recurrence_alredy_created_true"
+                    domain="[('recurrence_alredy_created', '=', True)]"/>
+                <filter string="From a Recurring Request"
+                    name="from_recurrence_true"
+                    domain="[('from_recurrence', '=', True)]"/>
                 <separator/>
                 <group expand="0" string="Group By">
                     <filter string="Watering Period" name="watering_period"

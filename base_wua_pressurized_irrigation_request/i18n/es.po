@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-11 14:21+0000\n"
-"PO-Revision-Date: 2025-11-11 14:21+0000\n"
+"POT-Creation-Date: 2026-05-05 13:50+0000\n"
+"PO-Revision-Date: 2026-05-05 13:50+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -247,11 +247,6 @@ msgstr "<span>Firma</span>"
 
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.report_wua_preswateringrequest_document
-msgid "<span>Start Date:</span>"
-msgstr "<span>Fecha inicio:</span>"
-
-#. module: base_wua_pressurized_irrigation_request
-#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.report_wua_preswateringrequest_document
 msgid "<strong>Conformity</strong>"
 msgstr "<strong>Conformidad</strong>"
 
@@ -269,6 +264,11 @@ msgstr "<strong>Notas</strong>"
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.report_wua_preswateringrequest_document
 msgid "<strong>Preswatering Request</strong>"
 msgstr "<strong>Solicitud de riego a presión</strong>"
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_presresconsumption_view_search
+msgid "Active Campaign"
+msgstr "Campaña Activa"
 
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_total_affected_area_official_hec
@@ -341,7 +341,7 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:251
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:276
 #, python-format
 msgid "Cannot create preswaterinrequests on a closed period "
 msgstr "No se puede crear una solicitud de riegos de presión en un periodo cerrado "
@@ -513,6 +513,11 @@ msgid "Currency"
 msgstr "Moneda"
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_current_user_is_portal
+msgid "Current User is Portal"
+msgstr "Usuario actual es de portal"
+
+#. module: base_wua_pressurized_irrigation_request
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringperiod_condition_ids
 msgid "Default Conditions"
 msgstr "Condiciones por defecto"
@@ -633,6 +638,11 @@ msgstr "Caudal de solicitudes de riego en litros por segundo"
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringrequest_from_recurrence
 msgid "From Recurrence"
+msgstr "De una solictud recurrente"
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringrequest_view_search
+msgid "From a Recurring Request"
 msgstr "De una solictud recurrente"
 
 #. module: base_wua_pressurized_irrigation_request
@@ -790,6 +800,11 @@ msgid "Last Modified on"
 msgstr "Última modificación en"
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringrequest_propagated_from_preswateringrequest_id
+msgid "Last Propagated From Request"
+msgstr "Última propagación"
+
+#. module: base_wua_pressurized_irrigation_request
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wizard_copy_preswateringrequests_write_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wizard_generate_preswateringperiods_write_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_write_uid
@@ -845,7 +860,7 @@ msgid "Modification Message"
 msgstr "Mensaje Modificación"
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_presresconsumption.py:493
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_presresconsumption.py:498
 #, python-format
 msgid "Modifications allowed until {}"
 msgstr "Modificaciones permitidas hasta {}"
@@ -975,6 +990,7 @@ msgid "Open"
 msgstr "Abierto"
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_presresconsumption_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringperiod_view_form
 msgid "Open Period"
 msgstr "Abrir periodo"
@@ -1148,7 +1164,7 @@ msgstr "Solicitudes riego a presión"
 
 #. module: base_wua_pressurized_irrigation_request
 #: code:addons/base_wua_pressurized_irrigation_request/models/res_partner.py:78
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringperiod.py:299
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringperiod.py:302
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_irrigation_config_settings_view_form
 #, python-format
 msgid "Preswatering Requests"
@@ -1202,6 +1218,11 @@ msgid "Recurrence"
 msgstr "Recurrente"
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringrequest_view_search
+msgid "Recurrence Already Applied"
+msgstr "Recurrencia ya aplicada"
+
+#. module: base_wua_pressurized_irrigation_request
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringrequest_recurrence_alredy_created
 msgid "Recurrence Alredy Created"
 msgstr "Recurrencia ya aplicada"
@@ -1212,9 +1233,19 @@ msgid "Recurrence End Date"
 msgstr "Fin recurrencia"
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringrequest_recurrence_end_date_warning
+msgid "Recurrence End Date Warning"
+msgstr "Mnesaje de aviso fecha fin"
+
+#. module: base_wua_pressurized_irrigation_request
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringrequest_recurrence_interval
 msgid "Recurrence Interval (days)"
 msgstr "Intervalo de copia (días)"
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringrequest_view_search
+msgid "Recurrent"
+msgstr "Recurrente"
 
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_rejected
@@ -1284,7 +1315,7 @@ msgid "Selected"
 msgstr "Seleccionado"
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:486
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:489
 #, python-format
 msgid "Selection of presresconsumption for the calculation process"
 msgstr "Selección de consumos de solicitud para el proceso de cálculo"
@@ -1305,6 +1336,11 @@ msgstr "Cambiar a borrador"
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringrequest_view_form
 msgid "Signature"
 msgstr "Firma"
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringrequest_source_preswateringrequest_id
+msgid "Source Request"
+msgstr "Solicitud Origen"
 
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringrequest_initial_date
@@ -1336,7 +1372,7 @@ msgid "Sum"
 msgstr "Sumatorio"
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:621
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:624
 #, python-format
 msgid "The conditions %s are not met."
 msgstr "No se cumplen las condiciones %s ."
@@ -1375,7 +1411,7 @@ msgid "The interval must be greater than 0."
 msgstr "El intervalo debe ser mayor que 0."
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:225
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:250
 #, python-format
 msgid "The modification deadline has passed. Modifications are not allowed after %s."
 msgstr "El plazo para realizar modificaciones ha vencido. No se permiten modificaciones después de %s."
@@ -1392,7 +1428,19 @@ msgid "The range of dates must be within the agricultural season."
 msgstr "El rango de fechas debe estar dentro de la campaña."
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:201
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:409
+#, python-format
+msgid "The recurrence end date is in a closed period. Requests in closed periods will be skipped."
+msgstr "La fecha de fin de recurrencia está en un periodo cerrado. No se generarán las solicitudes en el periodo cerrado"
+
+#. module: base_wua_pressurized_irrigation_request
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:404
+#, python-format
+msgid "The recurrence end date is not inside any irrigation period. Requests outside open periods will be skipped."
+msgstr "La fecha de fin de recurrencia no está dentro de ningún periodo. Las solicitudes fuera de periodo no se generarán."
+
+#. module: base_wua_pressurized_irrigation_request
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:226
 #, python-format
 msgid "The request code \"%s\" already exists for irrigator \"%s\" on date %s.\n"
 "Please change the date or the irrigator."
@@ -1411,7 +1459,7 @@ msgid "The start date of the preswatering (%s) must be within the period (%s - %
 msgstr "La fecha de inicio de la planificación de riego (%s) debe encontrarse dentro del periodo (%s - %s)."
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:237
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:262
 #, python-format
 msgid "The start date of the watering request (%s) must be within the period (%s - %s)."
 msgstr "La fecha de inicio de la solicitud de riego (%s) debe estar dentro del periodo (%s - %s)."
@@ -1429,6 +1477,12 @@ msgstr "El período de riego está fuera de la campaña."
 #, python-format
 msgid "The watering period is overlapped on another period."
 msgstr "El período de riego se solapa con otro período."
+
+#. module: base_wua_pressurized_irrigation_request
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:444
+#, python-format
+msgid "There are no consumptions to show."
+msgstr "No hay consumos a mostrar."
 
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringrequest_partner_edit_view_tree
@@ -1496,7 +1550,7 @@ msgid "Waterconnection id domain"
 msgstr "Dominio toma"
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:326
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:351
 #, python-format
 msgid "Waterconnection: %s, Flow: %s %s, Duration: %s h, Volumen: %s m³"
 msgstr "Toma: %s, Caudal: %s %s, Duración: %s min, Volumen: %s m³"
@@ -1557,13 +1611,13 @@ msgid "Year"
 msgstr "Año"
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:552
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:622
 #, python-format
 msgid "You cannot delete a closed press watering request."
 msgstr "No puedes borrar una solicitud con periodo cerrado."
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_presresconsumption.py:581
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_presresconsumption.py:592
 #, python-format
 msgid "You cannot delete a presresconsumption in a granted or issued state. First you must delete the watering."
 msgstr "No puede eliminar un consumo en estado concedido o servido. Debe eliminar primero la planificación de riego asociada."
@@ -1575,26 +1629,26 @@ msgid "You cannot delete a preswatering if there are issued consumptions."
 msgstr "No puede borrar una planificación de riego si ya hay algún consumo servido."
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:555
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:625
 #, python-format
 msgid "You cannot delete a validated press watering request."
 msgstr "No se puede eliminar una solicitud validada."
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:536
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:606
 #, python-format
 msgid "You do not have permission to change the state to draft."
 msgstr "Usted no tiene permiso para cambiar el estado a borrador."
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:446
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:456
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:514
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:524
 #, python-format
 msgid "You do not have permission to edit data."
 msgstr "No tienes permiso para editar estos datos."
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:543
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:613
 #, python-format
 msgid "You do not have permission to validate requests."
 msgstr "Usted no tiene permiso para validar las solicitudes."
