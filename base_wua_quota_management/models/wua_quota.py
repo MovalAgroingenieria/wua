@@ -830,6 +830,23 @@ class WuaQuota(models.Model):
                                 '%Y-%m-%d %H:%M:%S')
                         if quota and hydric_consumption['volume'] > 0:
                             quota = quota[0]
+                            duplicated_hmovement = self.env[
+                                'wua.hydricmovement'].search([
+                                    ('type', '=', 'irrig_report'),
+                                    ('irrigationreport_id', '=',
+                                     irrigationreport.id),
+                                    ('quota_id', '=', quota.id),
+                                ], limit=1)
+                            if duplicated_hmovement:
+                                _logger.warning(
+                                    'Skipping duplicated hydric movement '
+                                    'creation for irrigation report %s and '
+                                    'quota %s (existing id %s)',
+                                    irrigationreport.id,
+                                    quota.id,
+                                    duplicated_hmovement.id,
+                                )
+                                continue
                             self.env['wua.hydricmovement'].sudo().create({
                                 'quota_id': quota.id,
                                 'event_time': event_time,
