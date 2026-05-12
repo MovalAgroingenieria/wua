@@ -6,7 +6,7 @@
     "name": "Water Users Association: Interface with Spherag REST API",
     "summary": "In a water users association, interface of Moval Regadio with "
                "the Spherag system, based on a REST API",
-    "version": '10.0.1.0.1',
+    "version": '10.0.1.0.2',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingenieria",
