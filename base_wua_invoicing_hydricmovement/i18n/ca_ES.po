@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-19 14:33+0000\n"
-"PO-Revision-Date: 2025-02-19 14:33+0000\n"
+"POT-Creation-Date: 2026-05-12 05:31+0000\n"
+"PO-Revision-Date: 2026-05-12 05:31+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -31,9 +31,9 @@ msgid "Adjust. (m³)"
 msgstr "Aj. Reg. (m³)"
 
 #. module: base_wua_invoicing_hydricmovement
-#: model:product.template,name:base_wua_invoicing_hydricmovement.product_14
-msgid "Agua Trasvase (Cupo)"
-msgstr "Agua Trasvase (Cupo)"
+#: model:ir.model.fields,field_description:base_wua_invoicing_hydricmovement.field_wua_invoicing_configuration_apply_min_consumption_threshold_across_superproducts
+msgid "Apply minimum consumption threshold across superproducts"
+msgstr "Aplicar llindar de consum mínim entre superproductes"
 
 #. module: base_wua_invoicing_hydricmovement
 #: model:ir.model.fields,field_description:base_wua_invoicing_hydricmovement.field_wua_hydricmovement_number_of_invoices
@@ -58,8 +58,8 @@ msgstr "Categoria"
 
 #. module: base_wua_invoicing_hydricmovement
 #: model:ir.model,name:base_wua_invoicing_hydricmovement.model_wua_invoicing_configuration
-msgid "Configuration of base_wua_invoicing module"
-msgstr "Configuration of base_wua_invoicing module"
+msgid "Configuration of invoicing behavior for wua portal"
+msgstr "Configuració del comportament de facturació per al portal WUA"
 
 #. module: base_wua_invoicing_hydricmovement
 #: model:ir.model.fields,field_description:base_wua_invoicing_hydricmovement.field_wua_invoiceset_line_hydricmovement_create_uid
@@ -104,12 +104,12 @@ msgstr "Element (categoria de productes)"
 #. module: base_wua_invoicing_hydricmovement
 #: model:ir.model,name:base_wua_invoicing_hydricmovement.model_product_template
 msgid "Entity (WUA Product Template)"
-msgstr "Entity (WUA Product Template)"
+msgstr "Element (WUA Product Template)"
 
 #. module: base_wua_invoicing_hydricmovement
 #: model:ir.model,name:base_wua_invoicing_hydricmovement.model_wua_invoiceset
 msgid "Entity (invoice set)"
-msgstr "Element (facture lot)"
+msgstr "Element (lot)"
 
 #. module: base_wua_invoicing_hydricmovement
 #: model:ir.model,name:base_wua_invoicing_hydricmovement.model_wua_invoiceset_line
@@ -135,10 +135,10 @@ msgstr "Element (toma)"
 #: code:addons/base_wua_invoicing_hydricmovement/models/wua_invoiceset.py:96
 #, python-format
 msgid "Error when updating hydric movement invoice info: {}"
-msgstr "Error when updating hydric movement invoice info: {}"
+msgstr "Error en actualitzar la informació de factura del moviment hídric: {}"
 
 #. module: base_wua_invoicing_hydricmovement
-#: code:addons/base_wua_invoicing_hydricmovement/models/wua_invoiceset.py:460
+#: code:addons/base_wua_invoicing_hydricmovement/models/wua_invoiceset.py:577
 #: code:addons/base_wua_invoicing_hydricmovement/models/wua_quotaperiod.py:44
 #, python-format
 msgid "Error when updating records."
@@ -180,7 +180,7 @@ msgid "Hydric movement"
 msgstr "Moviment hídric"
 
 #. module: base_wua_invoicing_hydricmovement
-#: code:addons/base_wua_invoicing_hydricmovement/models/wua_invoiceset.py:524
+#: code:addons/base_wua_invoicing_hydricmovement/models/wua_invoiceset.py:619
 #: model:ir.model.fields,field_description:base_wua_invoicing_hydricmovement.field_wua_invoiceset_line_hydricmovement_hydricmovement_id
 #, python-format
 msgid "Hydricmovement"
@@ -210,6 +210,11 @@ msgstr "Si està actiu, s'agruparan per presa els moviments hídrics basats en c
 #: model:ir.model.fields,help:base_wua_invoicing_hydricmovement.field_wua_invoicing_configuration_invoicing_hydricmovement_selected_default
 msgid "If enabled, the hydric movements will be selected by default "
 msgstr "Si està activat, els moviments hidràtics seran seleccionats de manera predeterminada"
+
+#. module: base_wua_invoicing_hydricmovement
+#: model:ir.model.fields,help:base_wua_invoicing_hydricmovement.field_wua_invoicing_configuration_apply_min_consumption_threshold_across_superproducts
+msgid "If enabled, the minimum consumption threshold is evaluated globally per water connection, summing volumes from different superproducts. If disabled, the threshold is evaluated per superproduct (current behavior)."
+msgstr "Si està activat, el llindar de consum mínim s'avalua de forma global per presa d'aigua, sumant volums de diferents superproductes. Si està desactivat, el llindar s'avalua per superproducte (comportament actual)."
 
 #. module: base_wua_invoicing_hydricmovement
 #: selection:wua.invoiceset.line.hydricmovement,type:0
@@ -333,17 +338,17 @@ msgstr "S’ha d’associar amb altres productes associats al superproducte"
 #. module: base_wua_invoicing_hydricmovement
 #: model:ir.model.fields,field_description:base_wua_invoicing_hydricmovement.field_wua_invoiceset_line_hydricmovement___last_update
 msgid "Last Modified on"
-msgstr "Última modificació el "
+msgstr "Darrera modificació el"
 
 #. module: base_wua_invoicing_hydricmovement
 #: model:ir.model.fields,field_description:base_wua_invoicing_hydricmovement.field_wua_invoiceset_line_hydricmovement_write_uid
 msgid "Last Updated by"
-msgstr "Última actualització per"
+msgstr "Darrera Actualització per"
 
 #. module: base_wua_invoicing_hydricmovement
 #: model:ir.model.fields,field_description:base_wua_invoicing_hydricmovement.field_wua_invoiceset_line_hydricmovement_write_date
 msgid "Last Updated on"
-msgstr "Última actualització el"
+msgstr "Darrera Actualització el"
 
 #. module: base_wua_invoicing_hydricmovement
 #: model:ir.model.fields,field_description:base_wua_invoicing_hydricmovement.field_wua_invoiceset_line_hydricmovement_invoicesetline_id
@@ -437,9 +442,15 @@ msgid "Superproduct"
 msgstr "Supraproducte"
 
 #. module: base_wua_invoicing_hydricmovement
+#: code:addons/base_wua_invoicing_hydricmovement/models/wua_invoiceset.py:464
+#, python-format
+msgid "The following hydric movements have been excluded from invoicing because their partner is archived:"
+msgstr "Els moviments hídrics següents han estat exclosos de la facturació perquè el seu soci està arxivat:"
+
+#. module: base_wua_invoicing_hydricmovement
 #: model:ir.model.fields,field_description:base_wua_invoicing_hydricmovement.field_wua_invoiceset_line_hydricmovement_event_time
 msgid "Time"
-msgstr "Data"
+msgstr "Temps"
 
 #. module: base_wua_invoicing_hydricmovement
 #: model:ir.model.fields,field_description:base_wua_invoicing_hydricmovement.field_wua_invoiceset_line_hydricmovement_type
@@ -518,14 +529,14 @@ msgid "Water Connection"
 msgstr "Toma"
 
 #. module: base_wua_invoicing_hydricmovement
-#: code:addons/base_wua_invoicing_hydricmovement/models/wua_invoiceset.py:622
-#: code:addons/base_wua_invoicing_hydricmovement/models/wua_invoiceset.py:633
+#: model:product.template,name:base_wua_invoicing_hydricmovement.product_14
+msgid "Water of hydric movements"
+msgstr "Aigua de Movements hìdrics"
+
+#. module: base_wua_invoicing_hydricmovement
+#: code:addons/base_wua_invoicing_hydricmovement/models/wua_invoiceset.py:717
+#: code:addons/base_wua_invoicing_hydricmovement/models/wua_invoiceset.py:728
 #, python-format
 msgid "You cannot add or remove because the invoice set state is 'generated'."
 msgstr "No podeu afegir ni eliminar perquè l'estat de conjunt de factures està 'generat'."
 
-#. module: base_wua_invoicing_hydricmovement
-#: code:addons/base_wua_invoicing_hydricmovement/models/wua_invoiceset.py
-#, python-format
-msgid "The following hydric movements have been excluded from invoicing because their partner is archived:"
-msgstr "Els moviments hídrics següents han estat exclosos de la facturació perquè el seu soci està arxivat:"

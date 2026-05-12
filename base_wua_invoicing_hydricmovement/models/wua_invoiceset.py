@@ -169,14 +169,10 @@ class WuaInvoiceset(models.Model):
                 lambda x: x.hydricmovement_id.type == 'pres_consumption' and
                 x.hydricmovement_id.presconsumption_id.waterconnection_id)
             if pres_lines:
-                wc_volumes = defaultdict(float)
-                for hl in pres_lines:
-                    wc_id = hl.hydricmovement_id.\
-                        presconsumption_id.waterconnection_id.id
-                    wc_volumes[wc_id] += hl.hydricmovement_id.volume
-                below_threshold_wc_ids = set(
-                    wc_id for wc_id, vol in wc_volumes.items()
-                    if vol < threshold)
+                wc_volumes = self._calculate_wc_volumes_from_lines(
+                    pres_lines)
+                below_threshold_wc_ids = self.\
+                    _get_wc_ids_below_threshold(wc_volumes, threshold)
                 if below_threshold_wc_ids:
                     lines_to_unselect = pres_lines.filtered(
                         lambda x: x.hydricmovement_id.presconsumption_id.
@@ -188,9 +184,60 @@ class WuaInvoiceset(models.Model):
             hl.hydricmovement_id.id for hl in selected_lines]
         return hydricmovement_ids
 
+    def _calculate_wc_volumes_from_lines(self, pres_lines):
+        """Calculate volume aggregation per water connection (and optionally
+        per superproduct).
+
+        Returns a dict mapping:
+        - (wc_id,) for global mode (across superproducts)
+        - (wc_id, superproduct_id) for per-superproduct mode
+
+        Args:
+            pres_lines: Recordset of `wua.invoiceset.line.hydricmovement`
+        """
+        apply_global = self.env['ir.values'].get_default(
+            'wua.invoicing.configuration',
+            'apply_min_consumption_threshold_across_superproducts')
+
+        wc_volumes = defaultdict(float)
+        for hl in pres_lines:
+            wc_id = hl.hydricmovement_id.\
+                presconsumption_id.waterconnection_id.id
+            if apply_global:
+                # Global mode: sum all superproducts for each WC
+                key = (wc_id,)
+            else:
+                # Per-superproduct mode: distinguish by superproduct
+                superproduct_id = \
+                    hl.hydricmovement_id.superproduct_id.id or 0
+                key = (wc_id, superproduct_id)
+            wc_volumes[key] += hl.hydricmovement_id.volume
+        return wc_volumes
+
+    def _get_wc_ids_below_threshold(self, wc_volumes, threshold):
+        """Return set of water connection IDs that fall below threshold.
+
+        In global mode, a WC is excluded if its total volume (across all
+        superproducts) is below threshold.
+
+        In per-superproduct mode, a (WC, superproduct) pair is excluded if
+        that combination's volume is below threshold. The result includes
+        only the WC IDs that have at least one pair below threshold.
+
+        Args:
+            wc_volumes: Dict from _calculate_wc_volumes_from_lines()
+            threshold: Float threshold in m³
+        """
+        below_threshold_keys = set(
+            key for key, vol in wc_volumes.items()
+            if vol < threshold)
+        if not below_threshold_keys:
+            return set()
+        # Extract WC IDs (first element of tuple)
+        return set(key[0] for key in below_threshold_keys)
+
     def _get_min_consumption_threshold_per_wc(self, invoiceset_line):
         """Return the threshold (m³) to apply for the given invoice-set line.
-
         Returns 0.0 if the global flag is disabled. Otherwise, it applies the
         value configured on the invoice-set line.
         """

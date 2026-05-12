@@ -21,7 +21,7 @@ class _FakeLineHydricmovement(object):
 
     def __init__(self, hydricmovement_id, waterconnection_id, volume,
                  hm_type='pres_consumption', selected=True,
-                 partner_active=True):
+                 partner_active=True, superproduct_id=None):
         self.selected = selected
         wc_ns = _FakeNS(id=waterconnection_id) if waterconnection_id \
             else _FakeNS(id=False)
@@ -38,6 +38,7 @@ class _FakeLineHydricmovement(object):
             partner_id=_FakeNS(active=partner_active),
             invoiceset_id=_FakeNS(id=1),
             invoiced_hydricmovement=True,
+            superproduct_id=_FakeNS(id=superproduct_id or 0),
         )
 
 
@@ -90,9 +91,10 @@ class TestMinConsumptionThresholdHmov(SavepointCase):
 
     def setUp(self):
         super(TestMinConsumptionThresholdHmov, self).setUp()
-        self._set_config(apply_flag=False, global_threshold=0.0)
+        self._set_config(apply_flag=False, global_threshold=0.0,
+                         global_mode=False)
 
-    def _set_config(self, apply_flag, global_threshold):
+    def _set_config(self, apply_flag, global_threshold, global_mode=False):
         self.IrValues.set_default(
             'wua.invoicing.configuration',
             'apply_min_consumption_threshold_per_wc',
@@ -101,6 +103,10 @@ class TestMinConsumptionThresholdHmov(SavepointCase):
             'wua.invoicing.configuration',
             'min_consumption_threshold_per_wc',
             global_threshold)
+        self.IrValues.set_default(
+            'wua.invoicing.configuration',
+            'apply_min_consumption_threshold_across_superproducts',
+            global_mode)
 
     # ---------------------------------------------------------------
     # Filter behavior on categ 14 (hydric movements of type
@@ -217,3 +223,122 @@ class TestMinConsumptionThresholdHmov(SavepointCase):
             14, second_ils)
         self.assertEqual(sorted(second_result), [1, 2, 3])
         self.assertTrue(all(l.selected for l in second_lines))
+
+    # ---------------------------------------------------------------
+    # Global threshold mode (across superproducts)
+    # ---------------------------------------------------------------
+    def test_global_mode_sums_different_superproducts(self):
+        """In global mode, different superproducts for the same WC are
+        summed together when evaluating threshold."""
+        self._set_config(apply_flag=True, global_threshold=100.0,
+                         global_mode=True)
+        lines = [
+            # WC 10, superproduct 101 (e.g., desaladora), 30 m³
+            _FakeLineHydricmovement(
+                hydricmovement_id=1, waterconnection_id=10, volume=30.0,
+                superproduct_id=101),
+            # WC 10, superproduct 102 (e.g., trasvase), 75 m³
+            _FakeLineHydricmovement(
+                hydricmovement_id=2, waterconnection_id=10, volume=75.0,
+                superproduct_id=102),
+            # WC 20, superproduct 101, 50 m³ (below threshold)
+            _FakeLineHydricmovement(
+                hydricmovement_id=3, waterconnection_id=20, volume=50.0,
+                superproduct_id=101),
+        ]
+        ils = _FakeInvoicesetLine(lines)
+        result = self.Invoiceset.select_invoice_items_other_types(14, ils)
+        # WC 10: 30+75=105 >= 100, include both
+        # WC 20: 50 < 100, exclude
+        self.assertEqual(sorted(result), [1, 2])
+        self.assertTrue(lines[0].selected)
+        self.assertTrue(lines[1].selected)
+        self.assertFalse(lines[2].selected)
+
+    def test_non_global_mode_distinguishes_superproducts(self):
+        """In non-global mode (default), superproducts are distinguished:
+        each (WC, superproduct) pair is evaluated separately."""
+        self._set_config(apply_flag=True, global_threshold=100.0,
+                         global_mode=False)
+        lines = [
+            # WC 10, superproduct 101, 30 m³
+            _FakeLineHydricmovement(
+                hydricmovement_id=1, waterconnection_id=10, volume=30.0,
+                superproduct_id=101),
+            # WC 10, superproduct 102, 75 m³
+            _FakeLineHydricmovement(
+                hydricmovement_id=2, waterconnection_id=10, volume=75.0,
+                superproduct_id=102),
+        ]
+        ils = _FakeInvoicesetLine(lines)
+        result = self.Invoiceset.select_invoice_items_other_types(14, ils)
+        # WC 10 + superproduct 101: 30 < 100, exclude
+        # WC 10 + superproduct 102: 75 < 100, exclude
+        self.assertEqual(result, [])
+        self.assertFalse(lines[0].selected)
+        self.assertFalse(lines[1].selected)
+
+    def test_global_mode_handles_zero_threshold(self):
+        """With threshold=0, all movements pass in both modes."""
+        self._set_config(apply_flag=True, global_threshold=0.0,
+                         global_mode=True)
+        lines = [
+            _FakeLineHydricmovement(
+                hydricmovement_id=1, waterconnection_id=10, volume=0.0,
+                superproduct_id=101),
+            _FakeLineHydricmovement(
+                hydricmovement_id=2, waterconnection_id=10, volume=0.0,
+                superproduct_id=102),
+        ]
+        ils = _FakeInvoicesetLine(lines)
+        result = self.Invoiceset.select_invoice_items_other_types(14, ils)
+        # Threshold is 0, so threshold filter is bypassed
+        self.assertEqual(sorted(result), [1, 2])
+        self.assertTrue(all(l.selected for l in lines))
+
+    def test_global_mode_mixed_desaladora_trasvase(self):
+        """Real scenario: desaladora + trasvase on same WC should sum
+        together to evaluate threshold."""
+        self._set_config(apply_flag=True, global_threshold=50.0,
+                         global_mode=True)
+        lines = [
+            # Desaladora (superproduct 5)
+            _FakeLineHydricmovement(
+                hydricmovement_id=1, waterconnection_id=1, volume=20.0,
+                superproduct_id=5),
+            # Trasvase (superproduct 6)
+            _FakeLineHydricmovement(
+                hydricmovement_id=2, waterconnection_id=1, volume=35.0,
+                superproduct_id=6),
+        ]
+        ils = _FakeInvoicesetLine(lines)
+        result = self.Invoiceset.select_invoice_items_other_types(14, ils)
+        # Total for WC 1: 20+35=55 >= 50, both included
+        self.assertEqual(sorted(result), [1, 2])
+        self.assertTrue(all(l.selected for l in lines))
+
+    def test_global_mode_multiple_wc_with_different_supraproducts(self):
+        """Multiple water connections with different superproducts;
+        global mode applies independently to each WC."""
+        self._set_config(apply_flag=True, global_threshold=100.0,
+                         global_mode=True)
+        lines = [
+            _FakeLineHydricmovement(
+                hydricmovement_id=1, waterconnection_id=10, volume=40.0,
+                superproduct_id=101),
+            _FakeLineHydricmovement(
+                hydricmovement_id=2, waterconnection_id=10, volume=70.0,
+                superproduct_id=102),
+            _FakeLineHydricmovement(
+                hydricmovement_id=3, waterconnection_id=20, volume=50.0,
+                superproduct_id=101),
+            _FakeLineHydricmovement(
+                hydricmovement_id=4, waterconnection_id=20, volume=60.0,
+                superproduct_id=102),
+        ]
+        ils = _FakeInvoicesetLine(lines)
+        result = self.Invoiceset.select_invoice_items_other_types(14, ils)
+        # WC 10: 40+70=110 >= 100, include both
+        # WC 20: 50+60=110 >= 100, include both
+        self.assertEqual(sorted(result), [1, 2, 3, 4])
+        self.assertTrue(all(l.selected for l in lines))

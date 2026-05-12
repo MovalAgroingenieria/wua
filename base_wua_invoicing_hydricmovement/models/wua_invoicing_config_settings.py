@@ -29,6 +29,15 @@ class WuaInvoicingConfiguration(models.TransientModel):
         help='If enabled, the hydric movements will be selected by default ',
     )
 
+    apply_min_consumption_threshold_across_superproducts = fields.Boolean(
+        string='Apply minimum consumption threshold across superproducts',
+        default=False,
+        help='If enabled, the minimum consumption threshold is evaluated '
+             'globally per water connection, summing volumes from different '
+             'superproducts. If disabled, the threshold is evaluated per '
+             'superproduct (current behavior).',
+    )
+
     @api.multi
     def set_default_values(self):
         super(WuaInvoicingConfiguration, self).set_default_values()
@@ -49,3 +58,7 @@ class WuaInvoicingConfiguration(models.TransientModel):
             'wua.invoicing.configuration',
             'invoicing_hydricmovement_selected_default',
             self.invoicing_hydricmovement_selected_default)
+        values.set_default(
+            'wua.invoicing.configuration',
+            'apply_min_consumption_threshold_across_superproducts',
+            self.apply_min_consumption_threshold_across_superproducts)
