@@ -2,8 +2,6 @@
 # 2024 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 import pytz
-import datetime
-
 from odoo import models, fields
 
 
@@ -13,7 +11,8 @@ class WuaWaterconnection(models.Model):
     def _compute_last_invoiced_presconsumption(self):
         if not self.ids:
             return
-        # Batch: one search for quota presconsumptions (latest per waterconnection)
+        # Batch: one search for quota presconsumptions (latest per
+        # waterconnection)
         quota_presconsumptions = self.env['wua.presconsumption'].search([
             ('waterconnection_id', 'in', self.ids),
             ('invoiced_consumption_quota', '=', True),
@@ -24,7 +23,8 @@ class WuaWaterconnection(models.Model):
             wc_id = p.waterconnection_id.id
             if wc_id not in quota_by_wc:
                 quota_by_wc[wc_id] = p
-        # One SQL for last invoiced (reading_end_time, volume_real) per waterconnection
+        # One SQL for last invoiced (reading_end_time, volume_real) per .
+        # waterconnection
         self.env.cr.execute("""
             SELECT DISTINCT ON (waterconnection_id)
                 waterconnection_id, reading_end_time, volume_real
@@ -33,7 +33,8 @@ class WuaWaterconnection(models.Model):
             ORDER BY waterconnection_id, reading_end_time DESC
         """, (tuple(self.ids),))
         invoiced_rows = self.env.cr.dictfetchall()
-        invoiced_by_wc = {row['waterconnection_id']: row for row in invoiced_rows}
+        invoiced_by_wc = {
+            row['waterconnection_id']: row for row in invoiced_rows}
         # Build display string per record
         for record in self:
             last_invoiced_presconsumption = ''
@@ -41,7 +42,8 @@ class WuaWaterconnection(models.Model):
             if (not invoiced_row or
                     invoiced_row.get('reading_end_time') is None or
                     invoiced_row.get('volume_real') is None):
-                record.last_invoiced_presconsumption = last_invoiced_presconsumption
+                record.last_invoiced_presconsumption = \
+                    last_invoiced_presconsumption
                 continue
             last_reading_end_time = fields.Datetime.from_string(
                 invoiced_row['reading_end_time'])
@@ -67,4 +69,5 @@ class WuaWaterconnection(models.Model):
                 transform_date_to_locale(date_str)
             last_invoiced_presconsumption = date_str_localized + \
                 ' ' + hour_str + ', ' + last_volume_real_str + ' m³'
-            record.last_invoiced_presconsumption = last_invoiced_presconsumption
+            record.last_invoiced_presconsumption = \
+                last_invoiced_presconsumption

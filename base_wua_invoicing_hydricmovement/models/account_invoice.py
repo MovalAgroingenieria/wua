@@ -34,7 +34,8 @@ class AccountInvoice(models.Model):
             # mapped to the pressure consumption).
             # if invoice_line.categ_id.productcategory_code == 14 and \
             #         invoice_line.presconsumption_id and \
-            #         invoice_line.hydricmovement_id.type == 'pres_consumption':
+            #         invoice_line.hydricmovement_id.type == \
+            #               'pres_consumption':
             #     pres_consumption_ids.append(invoice_line.presconsumption_id.id)
             if invoice_line.categ_id.productcategory_code == 14 and \
                     invoice_line.presconsumption_id:

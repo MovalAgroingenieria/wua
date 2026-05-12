@@ -352,6 +352,15 @@ class MaintenanceRequest(models.Model):
 
     @api.model
     def create(self, vals):
+        is_import = self.env.context.get('import_file')
+        create_model = self
+        if is_import:
+            create_model = self.with_context(
+                tracking_disable=True,
+                mail_create_nosubscribe=True,
+                mail_notify_force_send=False,
+                mail_auto_subscribe_no_notify=True,
+            )
         model_ir_sequence = self.env['ir.sequence'].sudo()
         sequence_maintenance_request_code = None
         sequence_maintenance_request_code_id = \
@@ -364,7 +373,7 @@ class MaintenanceRequest(models.Model):
         if sequence_maintenance_request_code:
             vals['sequence'] = model_ir_sequence.next_by_code(
                 sequence_maintenance_request_code.code)
-        new_request = super(MaintenanceRequest, self).create(vals)
+        new_request = super(MaintenanceRequest, create_model).create(vals)
         # Assign default category if created_on_field is True
         if (new_request.created_on_field):
             default_team = self.env['maintenance.team'].search([
@@ -375,7 +384,14 @@ class MaintenanceRequest(models.Model):
             if not new_request.category_id:
                 new_request.category_id = self.env.ref(
                     'wua_maintenance.equipment_category_field')
-        new_request._add_maintenance_team_followers()
+        if is_import:
+            new_request.with_context(
+                tracking_disable=True,
+                mail_notify_force_send=False,
+                mail_auto_subscribe_no_notify=True,
+            )._add_maintenance_team_followers()
+        else:
+            new_request._add_maintenance_team_followers()
         return new_request
 
     def _resolve_field_path(self, record, field_path):
