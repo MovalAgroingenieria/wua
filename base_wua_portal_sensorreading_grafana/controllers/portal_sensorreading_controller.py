@@ -2,7 +2,7 @@
 # 2025 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import http, exceptions, _
+from odoo import http
 from odoo.http import request
 from odoo.addons.base_wua_portal_sensorreading.controllers.\
     portal_sensorreading_controller import website_sensorreadings
@@ -14,9 +14,6 @@ class website_sensorreadings_grafana(website_sensorreadings):
         # Get grafana url
         grafana_url = request.env["ir.values"].get_default(
             "board.grafana.configuration", "grafana_url")
-        if (not grafana_url):
-            raise exceptions.ValidationError(
-                _("The grafana configuration parameters have not been set."))
         # Get configured dashboards
         if view == 'grafana-histogram':
             portal_user_sensorreading_dashboard_id = \
@@ -34,9 +31,6 @@ class website_sensorreadings_grafana(website_sensorreadings):
         # Get sensorreading dashboard
         portal_user_sensorreading_dashboard_path = \
             portal_user_sensorreading_dashboard.sudo().dashboard_path
-        if not portal_user_sensorreading_dashboard_path:
-            raise exceptions.ValidationError(
-                _("The Grafana Portal UserSensorreading dashboard not found."))
         # Get datasource
         grafana_default_datasource = request.env["ir.values"].get_default(
             "board.grafana.configuration", "grafana_default_datasource")
@@ -44,7 +38,9 @@ class website_sensorreadings_grafana(website_sensorreadings):
             db_name = grafana_default_datasource
         else:
             db_name = request.env.cr.dbname
-        frame_url = grafana_url + portal_user_sensorreading_dashboard_path
+        frame_url = False
+        if grafana_url and portal_user_sensorreading_dashboard_path:
+            frame_url = grafana_url + portal_user_sensorreading_dashboard_path
         if portal_user_sensorreading_dashboard.sudo().frame_width:
             frame_width = \
                 portal_user_sensorreading_dashboard.sudo().frame_width
@@ -171,21 +167,22 @@ class website_sensorreadings_grafana(website_sensorreadings):
         frame_id = "portal_user_sensorreading_grafana"
         db_name, frame_url, frame_width, frame_height = \
             self.get_grafana_dashboard_configuration(view)
-        datasource = "var-datasource=" + db_name
-        partner_var = "var-partner_id=" + str(partner.id)
-        frame_url = frame_url + "&" + datasource + "&" + partner_var
+        if frame_url:
+            datasource = "var-datasource=" + db_name
+            partner_var = "var-partner_id=" + str(partner.id)
+            frame_url = frame_url + "&" + datasource + "&" + partner_var
 
-        # Limit type of sensors
-        request.env.cr.execute("""
-            SELECT DISTINCT type_id
-            FROM res_partner_sensor_reading
-            WHERE partner_id = %s;""", (partner.id,))
-        type_ids = [row[0] for row in request.env.cr.fetchall() if row[0]]
-        if len(type_ids) > 0:
-            type_var = ''
-            for type_id in type_ids:
-                type_var += "&var-sensor_type_ids=" + str(type_id)
-            frame_url = frame_url + type_var
+            # Limit type of sensors
+            request.env.cr.execute("""
+                SELECT DISTINCT type_id
+                FROM res_partner_sensor_reading
+                WHERE partner_id = %s;""", (partner.id,))
+            type_ids = [row[0] for row in request.env.cr.fetchall() if row[0]]
+            if len(type_ids) > 0:
+                type_var = ''
+                for type_id in type_ids:
+                    type_var += "&var-sensor_type_ids=" + str(type_id)
+                frame_url = frame_url + type_var
 
         # Set frame values
         values.update({
