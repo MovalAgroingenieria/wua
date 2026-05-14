@@ -913,18 +913,12 @@ class MaintenanceEquipment(models.Model):
             next_creation = fields.Date.from_string(plan.next_creation_date)
             if next_creation <= today:
                 equipment = plan.equipment_id
-                next_maintenance = fields.Date.from_string(
-                    plan.next_maintenance_date)
-                period_start = min(next_creation, next_maintenance)
-                period_end = max(next_creation, next_maintenance)
                 next_requests = self.env['maintenance.request'].search([
                     ('stage_id.done', '=', False),
                     ('equipment_id', '=', equipment.id),
                     ('maintenance_type', '=', 'preventive'),
-                    ('maintenance_kind_id', '=', plan.maintenance_kind_id.id),
-                    ('request_date', '>=',
-                     fields.Date.to_string(period_start)),
-                    ('request_date', '<=', fields.Date.to_string(period_end))])
+                    ('maintenance_kind_id', '=',
+                     plan.maintenance_kind_id.id)])
 
                 if not next_requests:
                     equipment._create_new_request(plan)
