@@ -3374,6 +3374,19 @@ class WuaParcelSubparcel(models.Model):
             result.append((record.id, name))
         return result
 
+    @api.model
+    def name_search(self, name='', args=None, operator='ilike', limit=100):
+        if args is None:
+            args = []
+        domain = args[:]
+        if name:
+            domain = ['|', '|',
+                      ('name', operator, name),
+                      ('subparcel_code', operator, name),
+                      ('parcel_id.name', operator, name)] + domain
+        recs = self.search(domain, limit=limit)
+        return recs.name_get()
+
     def get_value_from_translation(self, module, src):
         resp = src
         lang = self.env.context.get('lang')

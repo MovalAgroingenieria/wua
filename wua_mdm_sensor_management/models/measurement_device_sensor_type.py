@@ -3,8 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import logging
-from odoo import models, fields, api, _
-from odoo.exceptions import UserError
+from odoo import models, fields, api
 
 _logger = logging.getLogger(__name__)
 
@@ -48,9 +47,10 @@ class MeasurementDeviceSensorType(models.Model):
     @api.multi
     def write(self, vals):
         range_fields_changed = bool(
-            {'has_range_validation', 'min_value', 'max_value'} & set(vals)
+            {'has_range_validation', 'min_value', 'max_value'} & set(vals),
         )
-        disabling = 'has_range_validation' in vals and not vals['has_range_validation']
+        disabling = 'has_range_validation' in vals and not vals[
+            'has_range_validation']
         if disabling:
             vals['min_value'] = 0.0
             vals['max_value'] = 0.0
@@ -64,7 +64,7 @@ class MeasurementDeviceSensorType(models.Model):
             for record in self:
                 _logger.info(
                     'write: range fields changed on type %s (%s), '
-                    'triggering reading recompute', record.id, record.name
+                    'triggering reading recompute', record.id, record.name,
                 )
                 record.action_recompute_readings_range_status()
         return res
@@ -83,17 +83,17 @@ class MeasurementDeviceSensorType(models.Model):
         self.ensure_one()
         Reading = self.env['mdm.measurement.device.sensor.reading']
         readings = Reading.search(
-            [('sensor_id.type_id', '=', self.id)]
+            [('sensor_id.type_id', '=', self.id)],
         )
         if not readings:
             _logger.info(
                 'action_recompute_readings_range_status: no readings found '
-                'for sensor type %s (%s)', self.id, self.name
+                'for sensor type %s (%s)', self.id, self.name,
             )
             return
         _logger.info(
             'action_recompute_readings_range_status: processing %d readings '
-            'for sensor type %s (%s)', len(readings), self.id, self.name
+            'for sensor type %s (%s)', len(readings), self.id, self.name,
         )
         ids_normal = []
         ids_low = []
@@ -104,7 +104,8 @@ class MeasurementDeviceSensorType(models.Model):
             sid = record.sensor_id.id
             if sid not in sensor_cache:
                 sensor_cache[sid] = {
-                    'has_validation': record.sensor_id.effective_has_validation,
+                    'has_validation':
+                    record.sensor_id.effective_has_validation,
                     'min_value': record.sensor_id.effective_min_value,
                     'max_value': record.sensor_id.effective_max_value,
                 }
@@ -123,34 +124,34 @@ class MeasurementDeviceSensorType(models.Model):
                 "UPDATE mdm_measurement_device_sensor_reading "
                 "SET range_status = 'normal', is_out_of_range = false "
                 "WHERE id = ANY(%s)",
-                (ids_normal,)
+                (ids_normal,),
             )
         if ids_low:
             cr.execute(
                 "UPDATE mdm_measurement_device_sensor_reading "
                 "SET range_status = 'low', is_out_of_range = true "
                 "WHERE id = ANY(%s)",
-                (ids_low,)
+                (ids_low,),
             )
         if ids_high:
             cr.execute(
                 "UPDATE mdm_measurement_device_sensor_reading "
                 "SET range_status = 'high', is_out_of_range = true "
                 "WHERE id = ANY(%s)",
-                (ids_high,)
+                (ids_high,),
             )
         if ids_unchecked:
             cr.execute(
                 "UPDATE mdm_measurement_device_sensor_reading "
                 "SET range_status = 'unchecked', is_out_of_range = false "
                 "WHERE id = ANY(%s)",
-                (ids_unchecked,)
+                (ids_unchecked,),
             )
         readings.invalidate_cache(
-            ['is_out_of_range', 'range_status'], readings.ids
+            ['is_out_of_range', 'range_status'], readings.ids,
         )
         _logger.info(
             'action_recompute_readings_range_status: done. '
             'normal=%d low=%d high=%d unchecked=%d',
-            len(ids_normal), len(ids_low), len(ids_high), len(ids_unchecked)
+            len(ids_normal), len(ids_low), len(ids_high), len(ids_unchecked),
         )

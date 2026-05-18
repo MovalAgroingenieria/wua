@@ -70,7 +70,8 @@ class MdmMeasurementDeviceSensor(models.Model):
 
     @api.onchange('has_range_validation')
     def _onchange_has_range_validation(self):
-        """Auto-enable custom range when sensor-level validation is activated."""
+        """Auto-enable custom range when sensor-level validation is
+        activated."""
         if self.has_range_validation:
             self.has_custom_range = True
 
@@ -93,7 +94,7 @@ class MdmMeasurementDeviceSensor(models.Model):
             for record in self:
                 _logger.info(
                     'write: range fields changed on sensor %s (%s), '
-                    'triggering reading recompute', record.id, record.name
+                    'triggering reading recompute', record.id, record.name,
                 )
                 record.action_recompute_sensor_readings_range_status()
         return res
@@ -113,7 +114,7 @@ class MdmMeasurementDeviceSensor(models.Model):
         _logger.info(
             'action_recompute_sensor_readings_range_status: processing %d '
             'readings for sensor %s (%s)',
-            len(readings), self.id, self.name
+            len(readings), self.id, self.name,
         )
         ids_normal = []
         ids_low = []
@@ -137,36 +138,36 @@ class MdmMeasurementDeviceSensor(models.Model):
                 "UPDATE mdm_measurement_device_sensor_reading "
                 "SET range_status = 'normal', is_out_of_range = false "
                 "WHERE id = ANY(%s)",
-                (ids_normal,)
+                (ids_normal,),
             )
         if ids_low:
             cr.execute(
                 "UPDATE mdm_measurement_device_sensor_reading "
                 "SET range_status = 'low', is_out_of_range = true "
                 "WHERE id = ANY(%s)",
-                (ids_low,)
+                (ids_low,),
             )
         if ids_high:
             cr.execute(
                 "UPDATE mdm_measurement_device_sensor_reading "
                 "SET range_status = 'high', is_out_of_range = true "
                 "WHERE id = ANY(%s)",
-                (ids_high,)
+                (ids_high,),
             )
         if ids_unchecked:
             cr.execute(
                 "UPDATE mdm_measurement_device_sensor_reading "
                 "SET range_status = 'unchecked', is_out_of_range = false "
                 "WHERE id = ANY(%s)",
-                (ids_unchecked,)
+                (ids_unchecked,),
             )
         readings.invalidate_cache(
-            ['is_out_of_range', 'range_status'], readings.ids
+            ['is_out_of_range', 'range_status'], readings.ids,
         )
         _logger.info(
             'action_recompute_sensor_readings_range_status: done. '
             'normal=%d low=%d high=%d unchecked=%d',
-            len(ids_normal), len(ids_low), len(ids_high), len(ids_unchecked)
+            len(ids_normal), len(ids_low), len(ids_high), len(ids_unchecked),
         )
 
     @api.multi
@@ -182,8 +183,8 @@ class MdmMeasurementDeviceSensor(models.Model):
     def _compute_effective_range(self):
         for record in self:
             effective_has_validation = (
-                record.has_range_validation
-                or record.type_id.has_range_validation
+                record.has_range_validation or
+                record.type_id.has_range_validation
             )
             if record.has_custom_range:
                 effective_min_value = record.custom_min_value

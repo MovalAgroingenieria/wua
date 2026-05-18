@@ -146,7 +146,7 @@ class MeasurementDevice(models.Model):
         mapped_device_id = 0
         if not current_device.linked_all_parcels:
             mapped_device_id = current_device.id
-        custom_context = {'mapped_device_id': mapped_device_id, }
+        custom_context = {'mapped_device_id': mapped_device_id}
         act_window = {
             'type': 'ir.actions.act_window',
             'name': _('Parcels'),

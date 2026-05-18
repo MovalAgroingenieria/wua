@@ -63,10 +63,8 @@ class website_sensorreadings_grafana(website_sensorreadings):
         partner = request.env.user.partner_id
         partner = partner.parent_id or partner
         view = kw.get('view', 'grafana')
-
         sensorreadings_model = request.env["res.partner.sensor.reading"]
         domain = [("partner_id", "=", partner.id)]
-
         if search and search_field:
             search_term = "%%%s%%" % search
             if search_field == "device_id":
@@ -85,7 +83,6 @@ class website_sensorreadings_grafana(website_sensorreadings):
                     domain.append(("device_id", "in", device_ids))
                 else:
                     domain.append(("id", "=", False))
-
             elif search_field == "sensor_id":
                 request.env.cr.execute("""
                     SELECT DISTINCT sensor_id
@@ -102,7 +99,6 @@ class website_sensorreadings_grafana(website_sensorreadings):
                     domain.append(("sensor_id", "in", sensor_ids))
                 else:
                     domain.append(("id", "=", False))
-
             elif search_field == "type_id":
                 request.env.cr.execute("""
                     SELECT DISTINCT type_id
@@ -119,16 +115,13 @@ class website_sensorreadings_grafana(website_sensorreadings):
                     domain.append(("type_id", "in", type_ids))
                 else:
                     domain.append(("id", "=", False))
-
         # Sorting functionality
         sort_map = {
             "name": "name asc",
             "measurement_time": "measurement_time desc",
         }
         order = sort_map.get(sortby, "name asc")  # Default ordering
-
         sensorreadings_count = sensorreadings_model.search_count(domain)
-
         # Pagination
         url_args = {}
         if search:
@@ -137,7 +130,6 @@ class website_sensorreadings_grafana(website_sensorreadings):
             url_args["search_field"] = search_field
         if sortby:
             url_args["sortby"] = sortby
-
         pager = request.website.pager(
             url="/my/sensorreadings",
             total=sensorreadings_count,
@@ -145,14 +137,12 @@ class website_sensorreadings_grafana(website_sensorreadings):
             step=self._items_per_page,
             url_args=url_args,
         )
-
         sensorreadings = sensorreadings_model.search(
             domain,
             limit=self._items_per_page,
             offset=pager["offset"],
             order=order,
         )
-
         values.update({
             "sensorreadings": sensorreadings,
             "pager": pager,
@@ -162,7 +152,6 @@ class website_sensorreadings_grafana(website_sensorreadings):
             "default_url": "/my/sensorreadings",
             "view": view,
         })
-
         # Grafana views
         frame_id = "portal_user_sensorreading_grafana"
         db_name, frame_url, frame_width, frame_height = \
@@ -171,7 +160,6 @@ class website_sensorreadings_grafana(website_sensorreadings):
             datasource = "var-datasource=" + db_name
             partner_var = "var-partner_id=" + str(partner.id)
             frame_url = frame_url + "&" + datasource + "&" + partner_var
-
             # Limit type of sensors
             request.env.cr.execute("""
                 SELECT DISTINCT type_id
@@ -183,7 +171,6 @@ class website_sensorreadings_grafana(website_sensorreadings):
                 for type_id in type_ids:
                     type_var += "&var-sensor_type_ids=" + str(type_id)
                 frame_url = frame_url + type_var
-
         # Set frame values
         values.update({
             "frame_id": frame_id,
