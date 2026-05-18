@@ -6,20 +6,8 @@
         <field name="model">mdm.measurement.device.sensor</field>
         <field name="inherit_id" ref="mdm_sensor_management.mdm_sensor_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//sheet/group" position="after">
-                <group string="Range Validation" name="range_validation">
-                        <field name="has_range_validation" string="Sensor Range Validation"/>
-                        <field name="has_custom_range"/>
-                        <field name="custom_min_value"
-                               attrs="{'invisible': [('has_custom_range', '=', False)]}"/>
-                        <field name="custom_max_value"
-                               attrs="{'invisible': [('has_custom_range', '=', False)]}"/>
-                </group>
-                <group string="Effective Range" name="effective_range">
-                        <field name="effective_has_validation" readonly="1"/>
-                        <field name="effective_min_value" readonly="1"/>
-                        <field name="effective_max_value" readonly="1"/>
-                </group>
+            <xpath expr="//field[@name='type_id']" position="after">
+                <field name="requires_exclusivity" readonly="1"/>
             </xpath>
         </field>
     </record>

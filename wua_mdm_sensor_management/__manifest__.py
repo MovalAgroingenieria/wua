@@ -21,7 +21,6 @@
         "views/measurement_device_views.xml",
         "views/measurement_device_sensor_type_views.xml",
         "views/measurement_device_sensor_views.xml",
-        "views/measurement_device_sensor_reading_views.xml",
         "views/measurement_device_parcellink_views.xml",
         "views/wua_parcel_sensor_reading_views.xml",
         "views/res_partner_sensor_reading_views.xml",
