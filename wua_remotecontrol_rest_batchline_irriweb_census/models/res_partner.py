@@ -33,6 +33,7 @@ class ResPartner(models.Model):
              'by the IrriWEB census synchronisation.')
 
     id_irriweb = fields.Integer(
+
         string='IrriWEB ID',
         default=0,
         index=True,
@@ -246,6 +247,9 @@ class ResPartner(models.Model):
         Returns the newly created record.
         """
         ctx = self._census_ctx()
+        # Ensure keys that third-party hooks access directly (not via .get())
+        # are always present so they don't raise KeyError on create().
+        vals.setdefault('company_type', 'person')
         try:
             with self.env.cr.savepoint():
                 return self.with_context(**ctx).create(
@@ -392,6 +396,18 @@ class ResPartner(models.Model):
             result_partners = self._sync_partners_census_batchline(log)
             result_parcels = self.env['wua.parcel'].\
                 action_census_sync_parcels_batchline(log=log)
+
+            # Recalculate partner data (votes, areas, etc.) after sync
+            try:
+                _logger.info(
+                    'Batchline census sync: running global vote calculation')
+                self.env['wua.parcel'].action_global_vote_calculation()
+                _logger.info(
+                    'Batchline census sync: global vote calculation done')
+            except Exception as e:
+                _logger.warning(
+                    'Batchline census sync: global vote calculation failed '
+                    '(non-fatal). %s', _safe_str(e))
 
             total_errors = (result_partners.get('errors', 0) +
                             result_parcels.get('errors', 0))

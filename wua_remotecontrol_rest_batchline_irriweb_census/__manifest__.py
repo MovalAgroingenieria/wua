@@ -6,7 +6,7 @@
     "name": "Water Users Association: Census Import from BATCHLINE IRRIWEB",
     "summary": "In a water users association, import partner census data "
                "from the BATCHLINE IRRIWEB REST API into Odoo",
-    "version": "10.0.1.0.0",
+    "version": "10.0.1.1.0",
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",

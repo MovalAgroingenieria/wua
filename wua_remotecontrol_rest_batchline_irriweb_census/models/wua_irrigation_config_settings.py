@@ -25,6 +25,15 @@ class WuaIrrigationConfiguration(models.TransientModel):
         size=255,
         help='Secret value sent in the API key header')
 
+    wc_name_prefix_batchline = fields.Char(
+        string='Waterconnection Name Prefix',
+        size=20,
+        help='Prefix prepended to bare-number hydrant identifiers when '
+             'building the waterconnection name for lookup.\n'
+             'E.g. "ARQ-" for Valle Inferior (794 → ARQ-0794-01).\n'
+             'Leave empty when the hydrant names from the API are '
+             'already complete (e.g. Pliego: B11-055 → B11-055-09).')
+
     @api.multi
     def set_default_values(self):
         super(WuaIrrigationConfiguration, self).set_default_values()
@@ -41,6 +50,10 @@ class WuaIrrigationConfiguration(models.TransientModel):
             'wua.irrigation.configuration',
             'census_apikey_value_batchline',
             self.census_apikey_value_batchline)
+        values.set_default(
+            'wua.irrigation.configuration',
+            'wc_name_prefix_batchline',
+            self.wc_name_prefix_batchline)
 
     @api.multi
     def action_census_sync_batchline(self):

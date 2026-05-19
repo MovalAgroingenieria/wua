@@ -189,6 +189,9 @@ class WuaParcel(models.Model):
         duplicate-name constraint violation (``wua_parcel_unique_name``).
         """
         ctx = {'no_update_partners': True, 'no_test': True}
+        # Ensure keys that third-party hooks access directly (not via .get())
+        # are always present so they don't raise KeyError on create().
+        vals.setdefault('irrigationpointwc_ids', [])
         try:
             with self.env.cr.savepoint():
                 return self.with_context(**ctx).create(
@@ -615,34 +618,45 @@ class WuaParcel(models.Model):
     # ------------------------------------------------------------------
 
     @api.model
-    def _build_waterconnection_name(self, hidrante, toma_int):
-        """Build the Odoo waterconnection name from IrriWEB hidrante + toma.
+    def _get_wc_name_prefix(self):
+        """Return the waterconnection name prefix from configuration.
 
-        Valle Inferior naming convention (hardcoded — this module is only
-        installed on Valle Inferior):
-
-        * If ``hidrante`` already starts with ``"ARQ-"`` (the hydrant number
-          is already qualified), append the toma zero-padded to 2 digits::
-
-              "ARQ-3409" + 1  →  "ARQ-3409-01"
-              "ARQ-0459" + 1  →  "ARQ-0459-01"
-
-        * If ``hidrante`` is a bare number (no prefix), prepend ``"ARQ-"``
-          and zero-pad the number to 4 digits::
-
-              "794" + 1  →  "ARQ-0794-01"
-              "601" + 1  →  "ARQ-0601-01"
+        E.g. ``"ARQ-"`` for Valle Inferior, empty string for Pliego.
         """
-        if hidrante.upper().startswith(u'ARQ-'):
-            return u'%s-%02d' % (hidrante, toma_int)
-        # Bare number — zero-pad to 4 digits and add the ARQ prefix.
-        try:
-            num = int(hidrante)
-            return u'ARQ-%04d-%02d' % (num, toma_int)
-        except ValueError:
-            # Not a plain integer either — fall back to simple concatenation
-            # and let the lookup fail gracefully with a toma warning.
-            return u'ARQ-%s-%02d' % (hidrante, toma_int)
+        prefix = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration',
+            'wc_name_prefix_batchline') or ''
+        return prefix
+
+    @api.model
+    def _build_waterconnection_name_candidates(self, hidrante, toma_int):
+        """Return candidate waterconnection names for *hidrante* + *toma_int*.
+
+        Returns a list of names to try in order, from most specific to
+        least specific.  The lookup tries each until one is found in Odoo.
+
+        Toma zero-padding varies across installations (2 digits for Valle
+        Inferior, 3 digits for Pliego) so both are always tried::
+
+            "C02-011" + 23  →  ["C02-011-23", "C02-011-023"]
+            "ARQ-3409" + 1  →  ["ARQ-3409-01", "ARQ-3409-001"]
+            "794" + 1       →  ["ARQ-0794-01", "ARQ-0794-001"]  (prefix=ARQ-)
+        """
+        prefix = self._get_wc_name_prefix()
+        base = hidrante
+
+        if prefix and not hidrante.upper().startswith(prefix.upper()):
+            # Bare number — zero-pad to 4 digits and add the prefix.
+            try:
+                num = int(hidrante)
+                base = u'%s%04d' % (prefix, num)
+            except ValueError:
+                base = u'%s%s' % (prefix, hidrante)
+
+        return [
+            u'%s-%02d' % (base, toma_int),
+            u'%s-%03d' % (base, toma_int),
+        ]
 
     @api.model
     def _sync_batchline_parcel_waterconnections(self, parcel, remote,
@@ -704,19 +718,28 @@ class WuaParcel(models.Model):
                     toma_sink.append(msg)
                 continue
 
-            wc_name = self._build_waterconnection_name(hidrante, toma_int)
+            candidates = self._build_waterconnection_name_candidates(
+                hidrante, toma_int)
 
             # 1. Lookup waterconnection — no creation.
-            if wc_cache is not None:
-                wc = wc_cache.get(wc_name) or False
-            else:
-                wc = WC.search([('name', '=', wc_name)], limit=1) or False
+            # Try candidate names in order (2-digit toma, then 3-digit toma)
+            # so the method works regardless of the CR's naming convention.
+            wc = False
+            wc_name = candidates[0]
+            for candidate in candidates:
+                if wc_cache is not None:
+                    wc = wc_cache.get(candidate) or False
+                else:
+                    wc = WC.search([('name', '=', candidate)], limit=1) or False
+                if wc:
+                    wc_name = candidate
+                    break
 
             if not wc:
                 msg = _(
                     'Waterconnection "%s" not found in Odoo '
                     '(parcel %s) \u2014 no link created.') % (
-                        wc_name, parcel.extra_code)
+                        candidates[0], parcel.extra_code)
                 _logger.warning(u'Batchline census: %s', msg)
                 if toma_sink is not None:
                     toma_sink.append(msg)
