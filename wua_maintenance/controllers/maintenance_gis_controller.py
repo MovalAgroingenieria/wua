@@ -109,6 +109,23 @@ class MaintenanceGisController(http.Controller):
                     return []
         return []
 
+    def _get_many2one_comodel_from_path(self, record, field_path):
+        field_names = field_path.split('.')
+        target = record
+        for i, field_name in enumerate(field_names):
+            if field_name not in target._fields:
+                return None
+            if i == len(field_names) - 1:
+                if target._fields[field_name].type == 'many2one':
+                    return target._fields[field_name].comodel_name
+                return None
+            if target._fields[field_name].type == 'many2one':
+                target = request.env[
+                    target._fields[field_name].comodel_name]
+            else:
+                return None
+        return None
+
     def _get_config_for_maintenance_workmode(self, maintenances):
         # Only use the equipments that have maintenance requests
         # equipments = request.env['maintenance.equipment'].search()
@@ -213,8 +230,10 @@ class MaintenanceGisController(http.Controller):
         field_names = field_path.split('.')
         target = record
         if (record.category_id and record.category_id.model_id):
-            target = request.env[record.category_id.model_id.model].search(
-                [('equipment_id', '=', record.id)], limit=1)
+            target = request.env[
+                record.category_id.model_id.model].with_context(
+                    active_test=False).search(
+                        [('equipment_id', '=', record.id)], limit=1)
         for field_name in field_names:
             if not target:
                 return None
@@ -293,12 +312,28 @@ class MaintenanceGisController(http.Controller):
                     except Exception:
                         domain = []
                     field_data['label'] = value.name if value else ''
+                    if value:
+                        comodel_name = value._name
+                    else:
+                        field_data['warning'] = _(
+                            'Related record not found for this equipment')
+                        if field.field_path:
+                            comodel_name = self.\
+                                _get_many2one_comodel_from_path(
+                                    maintenance.equipment_id, field.field_path)
+                        else:
+                            target_model = request.env[
+                                'maintenance.request'] \
+                                if field.is_request_field \
+                                else request.env['maintenance.equipment']
+                            comodel_name = target_model._fields[
+                                field.name].comodel_name
                     field_data['fixed_options'] = [
                         {'label': rec.name, 'value': rec.id}
-                        for rec in request.env[value._name].search(domain)
-                    ]
+                        for rec in request.env[comodel_name].search(domain)
+                    ] if comodel_name else []
                     # Only send the selected id, not all the data
-                    field_data['value'] = field_data['value'].id
+                    field_data['value'] = value.id if value else False
                 dynamic_fields.append(field_data)
         # In case some is null, set the 0 value
         priority_selection = "0"
