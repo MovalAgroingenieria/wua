@@ -26,6 +26,7 @@
         "views/wua_invoicing_config_settings_view.xml",
         "views/res_users_view.xml",
         "security/ir.model.access.csv",
+        "security/security.xml",
     ],
     "installable": True,
     "application": False,
