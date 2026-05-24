@@ -16,13 +16,14 @@ class ResPartner(models.Model):
     _inherit = 'res.partner'
 
     def recalculate_extra_hydric_movements(self):
+        partners = self or self.env['res.partner'].search([])
         _logger.info(
             "Starting recalculate_extra_hydric_movements for %s partner(s)",
-            len(self),
+            len(partners),
         )
         processed_partners = 0
         recalculated_readings = 0
-        for partner in self:
+        for partner in partners:
             quotas = partner.quota_ids.filtered(
                 lambda x: x.of_active_agriculturalseason and not x.quotaperiod_id.is_closed
             )

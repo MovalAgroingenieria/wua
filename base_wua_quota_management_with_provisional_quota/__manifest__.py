@@ -6,7 +6,7 @@
     "name": "Water Users Association: Management of updated quotas",
     "summary": "Quota management with updated balances for pressurized "
                "(in real time, or similar)",
-    "version": '10.0.1.1.0',
+    "version": '10.0.1.1.1',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
