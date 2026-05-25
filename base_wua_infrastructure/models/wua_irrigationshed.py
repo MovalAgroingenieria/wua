@@ -191,6 +191,30 @@ class WuaIrrigationshed(models.Model):
                 url_for_record = ''
             record.gis_viewer_link = url_for_record
 
+    @api.multi
+    def _get_epsg_code_for_googlemaps(self):
+        self.ensure_one()
+        epsg_code_value = 0
+        try:
+            self.env.cr.execute(
+                """
+                SELECT postgis.ST_SRID(geom)
+                FROM public.wua_gis_irrigationshed
+                WHERE name = %s AND geom IS NOT NULL
+                LIMIT 1
+                """,
+                (self.name,)
+            )
+            query_result = self.env.cr.fetchone()
+            if query_result and query_result[0]:
+                epsg_code_value = int(query_result[0])
+        except Exception:
+            epsg_code_value = 0
+        if not epsg_code_value:
+            epsg_code_value = self.env['ir.values'].get_default(
+                'wua.configuration', 'url_gis_viewer_epsg_code')
+        return epsg_code_value
+
     @api.depends('waterconnection_ids', 'waterconnection_ids.active')
     def _compute_number_of_waterconnections(self):
         for record in self:
@@ -255,10 +279,9 @@ class WuaIrrigationshed(models.Model):
     def action_see_gis_googlemaps(self):
         self.ensure_one()
         if self.gis_googlemaps_link:
-            url_gis_viewer_epsg_code = self.env['ir.values'].get_default(
-                'wua.configuration', 'url_gis_viewer_epsg_code')
-            if url_gis_viewer_epsg_code:
-                epsg_code = 'epsg:' + str(url_gis_viewer_epsg_code)
+            epsg_code_value = self._get_epsg_code_for_googlemaps()
+            if epsg_code_value:
+                epsg_code = 'epsg:' + str(epsg_code_value)
                 url = self.gis_googlemaps_link
                 in_proj = Proj(init=epsg_code)
                 out_proj = Proj(init='epsg:4326')
