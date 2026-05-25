@@ -32,6 +32,12 @@ class WuaHydricmovement(models.Model):
         string='Balance',
         compute='_compute_negative_balance_vol_hours')
 
+    informative_amount_eur = fields.Float(
+        string='Estimated Price',
+        digits=(32, 2),
+        store=True,
+        readonly=True)
+
     @api.depends('accounting_volume')
     def _compute_accounting_volume_hours(self):
         for record in self:
@@ -77,3 +83,25 @@ class WuaHydricmovement(models.Model):
                 'wua.quota'].transform_to_quota_hours_format_form_view(
                     record.negative_balance, record.negative_balance_hours)
             record.negative_balance_vol_hours = negative_balance_vol_hours
+
+    @api.model
+    def create(self, vals):
+        hydricmovement = super(WuaHydricmovement, self).create(vals)
+        if 'informative_amount_eur' not in vals:
+            informative_amount_eur = 0.0
+            superproduct = hydricmovement.superproduct_id
+            if (not superproduct) and hydricmovement.quota_id:
+                superproduct = hydricmovement.quota_id.superproduct_id
+            if superproduct and superproduct.product_tmpl_id:
+                product_tmpl = superproduct.product_tmpl_id
+                volume = round(hydricmovement.volume, 2)
+                if product_tmpl.taxes_id and product_tmpl.taxes_id.amount > 0:
+                    total_amount = volume * product_tmpl.list_price
+                    taxes = total_amount * (product_tmpl.taxes_id.amount / 100)
+                    informative_amount_eur = total_amount + taxes
+                else:
+                    informative_amount_eur = volume * product_tmpl.list_price
+            hydricmovement.write({
+                'informative_amount_eur': informative_amount_eur,
+            })
+        return hydricmovement

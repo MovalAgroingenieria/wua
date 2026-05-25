@@ -65,6 +65,11 @@ class WuaQuota(models.Model):
         string='Estimated Balance',
         compute='_compute_estimated_balance_vol_hours')
 
+    informative_balance_eur = fields.Float(
+        string='Estimated Price',
+        digits=(32, 2),
+        compute='_compute_informative_balance_eur')
+
     @api.depends('accumulated_input')
     def _compute_accumulated_input_hours(self):
         for record in self:
@@ -179,6 +184,24 @@ class WuaQuota(models.Model):
             record.estimated_balance_vol_hours = \
                 estimated_balance_vol_hours
 
+    @api.depends('balance', 'superproduct_id', 'superproduct_id.product_tmpl_id',
+                 'superproduct_id.product_tmpl_id.list_price',
+                 'superproduct_id.product_tmpl_id.taxes_id',
+                 'hydricmovement_ids', 'hydricmovement_ids.informative_amount_eur')
+    def _compute_informative_balance_eur(self):
+        for record in self:
+            informative_balance_eur = 0.0
+            if record.superproduct_id and record.superproduct_id.product_tmpl_id:
+                product_tmpl = record.superproduct_id.product_tmpl_id
+                balance = round(record.balance, 2)
+                if product_tmpl.taxes_id and product_tmpl.taxes_id.amount > 0:
+                    total_amount = balance * product_tmpl.list_price
+                    taxes = total_amount * (product_tmpl.taxes_id.amount / 100)
+                    informative_balance_eur = total_amount + taxes
+                else:
+                    informative_balance_eur = balance * product_tmpl.list_price
+            record.informative_balance_eur = informative_balance_eur
+
     def transform_to_quota_hours_format(self, value_m3):
         hours_as_hhmm = self.env['ir.values'].get_default(
             'wua.quotas.configuration', 'hours_as_hhmm')
@@ -238,6 +261,11 @@ class WuaQuotaAggregatevalue(models.Model):
         string='Estimated balance (hours)',
         compute='_compute_estimated_balance_hours')
 
+    informative_balance_eur = fields.Float(
+        string='Estimated Price',
+        digits=(32, 2),
+        compute='_compute_informative_balance_eur')
+
     @api.depends('accumulated_input')
     def _compute_accumulated_input_hours(self):
         for record in self:
@@ -272,3 +300,17 @@ class WuaQuotaAggregatevalue(models.Model):
             record.estimated_consumption_hours = \
                 self.env['wua.quota'].transform_to_quota_hours_format(
                     record.estimated_consumption)
+
+    @api.depends('quotaperiod_id', 'partner_id',
+                 'quotaperiod_id.quota_ids.informative_balance_eur')
+    def _compute_informative_balance_eur(self):
+        for record in self:
+            informative_balance_eur = 0.0
+            if record.quotaperiod_id and record.partner_id:
+                quotas = self.env['wua.quota'].search([
+                    ('quotaperiod_id', '=', record.quotaperiod_id.id),
+                    ('partner_id', '=', record.partner_id.id),
+                ])
+                informative_balance_eur = sum(
+                    quota.informative_balance_eur for quota in quotas)
+            record.informative_balance_eur = informative_balance_eur

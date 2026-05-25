@@ -35,6 +35,14 @@
                 </td>
             </tr>
         </xpath>
+        <xpath expr="//tr[@name='tr_negative_balance']" position="after">
+            <tr name="tr_informative_balance_eur">
+                <td><span>Euros (€)</span></td>
+                <td class="text-right">
+                    <span t-field="o.informative_balance_eur"/>
+                </td>
+            </tr>
+        </xpath>
         <xpath expr="//tr[@name='tr_average_daily_consumption']" position="replace">
             <tr name="tr_average_daily_consumption">
                 <td><span>Cons./Day</span></td>
@@ -61,10 +69,14 @@
         </xpath>
         <!-- Hydric movements fields -->
         <xpath expr="//th[@name='th_balance']" position="after">
+            <th name="th_informative_amount_eur" class="text-right">Euros (€)</th>
             <th name="th_volume_hours" class="text-right">Volume (hours)</th>
             <th name="th_balance_hours" class="text-right">Balance (hours)</th>
         </xpath>
         <xpath expr="//td[@name='td_balance_red']" position="after">
+            <td name="td_informative_amount_eur_red" class="text-right">
+                <span t-field="h.informative_amount_eur"/>
+            </td>
             <td name="td_accounting_volume_hours_red" class="text-right">
                 <span t-field="h.accounting_volume_hours"/>
             </td>
@@ -73,6 +85,9 @@
             </td>
         </xpath>
         <xpath expr="//td[@name='td_balance_blue']" position="after">
+            <td name="td_informative_amount_eur_blue" class="text-right">
+                <span t-field="h.informative_amount_eur"/>
+            </td>
             <td name="td_accounting_volume_hours_blue" class="text-right">
                 <span t-field="h.accounting_volume_hours"/>
             </td>

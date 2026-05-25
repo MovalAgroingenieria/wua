@@ -3,12 +3,20 @@
 
     <template id="wua_partner_quota_report_document" inherit_id="base_wua_quota_management.wua_partner_quota_report_document">
         <!-- Quotas -->
+        <xpath expr="//t[@t-foreach='quotas_totalized']" position="before">
+            <t t-set="total_balance_eur" t-value="0.0"/>
+        </xpath>
         <xpath expr="//th[@name='th_balance']" position="after">
+            <th name="th_balance_eur" class="text-right">Euros (€)</th>
             <th name="th_inputs_hours" class="text-right">Inputs (hours)</th>
             <th name="th_consumption_hours" class="text-right">Consumptions (hours)</th>
             <th name="th_balance_hours" class="text-right">Balance (hours)</th>
         </xpath>
         <xpath expr="//td[@name='td_balance']" position="after">
+            <td name="td_balance_eur" class="text-right">
+                <t t-set="total_balance_eur" t-value="total_balance_eur + q.informative_balance_eur"/>
+                <span t-field="q.informative_balance_eur"/>
+            </td>
             <td name="td_accumulated_input_hours" class="text-right">
                 <span t-field="q.accumulated_input_hours"/>
             </td>
@@ -23,6 +31,9 @@
             <t t-set="total_input_hours" t-value="o.recalcule_quota_total_hours(total_input)"/>
             <t t-set="total_consumption_hours" t-value="o.recalcule_quota_total_hours(total_consumption)"/>
             <t t-set="total_balance_hours" t-value="o.recalcule_quota_total_hours(total_balance)"/>
+            <td name="td_total_balance_eur" class="text-right">
+                <strong><t t-esc="total_balance_eur" t-options='{"widget": "float", "precision": 2}'/></strong>
+            </td>
             <td name="td_total_input_hours" class="text-right">
                 <strong><t t-esc="total_input_hours"/></strong>
             </td>
@@ -36,9 +47,13 @@
 
         <!-- Hydric movs -->
         <xpath expr="//th[@name='th_volume']" position="after">
+            <th name="th_informative_amount_eur" class="text-right">Euros (€)</th>
             <th name="th_accounting_volume_hours" class="text-right">Accounting Volume (hours)</th>
         </xpath>
         <xpath expr="//td[@name='td_volume']" position="after">
+            <td name="td_informative_amount_eur" class="text-right">
+                <span t-field="h.informative_amount_eur"/>
+            </td>
             <td name="td_volume_hours" class="text-right">
                 <span t-field="h.accounting_volume_hours"/>
             </td>
