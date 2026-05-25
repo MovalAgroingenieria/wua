@@ -3,7 +3,7 @@
    :alt: License: AGPL-3
 
 ==================================================================
-Invoicing based on consumption ranges for Water Users Associations 
+Invoicing based on consumption ranges for Water Users Associations
 ==================================================================
 
 This module allows you to make invoice sets based on consumption ranges.
@@ -30,7 +30,7 @@ Contributors
 Maintainer
 ----------
 
-.. image:: https://services.moval.es/static/images/logo_moval_small.png
+.. image:: https://raw.githubusercontent.com/MovalAgroingenieria/public-assets/master/logos/logo_moval_small.png
    :target: http://moval.es
    :alt: Moval Agroingeniería
 

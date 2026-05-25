@@ -14,7 +14,7 @@ Description
 
 Interface of Moval Regadio with the control remote HIDROCONTA DEMÉTER,
 based on a REST API, and with the functional schema of the
-base_wua_remotecontrol_rest module. 
+base_wua_remotecontrol_rest module.
 
 Credits
 =======
@@ -34,7 +34,7 @@ Contributors
 Maintainer
 ----------
 
-.. image:: https://services.moval.es/static/images/logo_moval_small.png
+.. image:: https://raw.githubusercontent.com/MovalAgroingenieria/public-assets/master/logos/logo_moval_small.png
    :target: http://moval.es
    :alt: Moval Agroingeniería
 

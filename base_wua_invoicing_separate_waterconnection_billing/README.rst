@@ -3,7 +3,7 @@
    :alt: License: AGPL-3
 
 =====================================================================
-Separate invoicing of water connections with their own payment method 
+Separate invoicing of water connections with their own payment method
 =====================================================================
 
 For invoice sets of water users associations, this module allows you
@@ -48,7 +48,7 @@ Contributors
 Maintainer
 ----------
 
-.. image:: https://services.moval.es/static/images/logo_moval_small.png
+.. image:: https://raw.githubusercontent.com/MovalAgroingenieria/public-assets/master/logos/logo_moval_small.png
    :target: http://moval.es
    :alt: Moval Agroingeniería
 

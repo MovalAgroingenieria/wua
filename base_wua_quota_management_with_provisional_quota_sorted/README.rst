@@ -7,7 +7,7 @@ Management of updated quotas with quota periods based on sorted superproducts
 =============================================================================
 
 Quota management with updated balances for pressurized irrigation (control
-consumptions) and quota periods based on sorted superproduts 
+consumptions) and quota periods based on sorted superproduts
 
 Description
 ===========
@@ -36,7 +36,7 @@ Contributors
 Maintainer
 ----------
 
-.. image:: https://services.moval.es/static/images/logo_moval_small.png
+.. image:: https://raw.githubusercontent.com/MovalAgroingenieria/public-assets/master/logos/logo_moval_small.png
    :target: http://moval.es
    :alt: Moval Agroingeniería
 

@@ -16,7 +16,7 @@ The module is not installable and is not an application. It is a base module
 for other modules that implement communication processes with the real remote
 control systems. This communication is based on API REST.
 
-Functionality:  
+Functionality:
 
 * Synchronization of the census of farmers and parcels.
 * Water meter readings, from: readings, water connections, irrigation sheds
@@ -41,7 +41,7 @@ Contributors
 Maintainer
 ----------
 
-.. image:: https://services.moval.es/static/images/logo_moval_small.png
+.. image:: https://raw.githubusercontent.com/MovalAgroingenieria/public-assets/master/logos/logo_moval_small.png
    :target: http://moval.es
    :alt: Moval Agroingeniería
 

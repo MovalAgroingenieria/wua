@@ -6,13 +6,13 @@
 Water Users Association: Share management
 =========================================
 
-This module add field for Share information. 
+This module add field for Share information.
 
 Description
 ===========
 
 This module allows to add a field name Share to the Partners of
-a WUA 
+a WUA
 
 Credits
 =======
@@ -32,7 +32,7 @@ Contributors
 Maintainer
 ----------
 
-.. image:: https://services.moval.es/static/images/logo_moval_small.png
+.. image:: https://raw.githubusercontent.com/MovalAgroingenieria/public-assets/master/logos/logo_moval_small.png
    :target: http://moval.es
    :alt: Moval Agroingeniería
 

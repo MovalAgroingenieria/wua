@@ -3,7 +3,7 @@
    :alt: License: AGPL-3
 
 ===========================================================
-Separate invoicing of parcels with their own payment method 
+Separate invoicing of parcels with their own payment method
 ===========================================================
 
 For invoice sets of water users associations, this module allows you
@@ -20,7 +20,7 @@ The payment method can be mapped to water costs or
 other costs. For water costs, a single partner is allowed
 with all the water costs of parcel. Similarly, for
 other costs, only one partner is allowed with all costs
-other than the costs of water. 
+other than the costs of water.
 
 Credits
 =======
@@ -40,7 +40,7 @@ Contributors
 Maintainer
 ----------
 
-.. image:: https://services.moval.es/static/images/logo_moval_small.png
+.. image:: https://raw.githubusercontent.com/MovalAgroingenieria/public-assets/master/logos/logo_moval_small.png
    :target: http://moval.es
    :alt: Moval Agroingeniería
 

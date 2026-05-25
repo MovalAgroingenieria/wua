@@ -18,7 +18,7 @@ monitoring systems. This communication is based on API REST.
 
 The context is the pumping installations.
 
-Functionality:  
+Functionality:
 
 * Obtaining data of electrical consumption, pressure and flow measurements.
 * Automation of readings.
@@ -42,7 +42,7 @@ Contributors
 Maintainer
 ----------
 
-.. image:: https://services.moval.es/static/images/logo_moval_small.png
+.. image:: https://raw.githubusercontent.com/MovalAgroingenieria/public-assets/master/logos/logo_moval_small.png
    :target: http://moval.es
    :alt: Moval Agroingeniería
 

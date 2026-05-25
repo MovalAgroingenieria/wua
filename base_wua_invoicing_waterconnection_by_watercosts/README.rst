@@ -7,7 +7,7 @@ Water Users Association Invoicing (water connections, based on percentage of wat
 =========================================================================================
 
 This module allows you to invoice a set of water connections from the
-water-costs percentage of partners. 
+water-costs percentage of partners.
 
 Description
 ===========
@@ -34,7 +34,7 @@ Contributors
 Maintainer
 ----------
 
-.. image:: https://services.moval.es/static/images/logo_moval_small.png
+.. image:: https://raw.githubusercontent.com/MovalAgroingenieria/public-assets/master/logos/logo_moval_small.png
    :target: http://moval.es
    :alt: Moval Agroingeniería
 

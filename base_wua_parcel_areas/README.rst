@@ -6,7 +6,7 @@
 Water Users Association: Extra parcel areas management
 ======================================================
 
-This module add new area types for parcels. 
+This module add new area types for parcels.
 
 Description
 ===========
@@ -32,7 +32,7 @@ Contributors
 Maintainer
 ----------
 
-.. image:: https://services.moval.es/static/images/logo_moval_small.png
+.. image:: https://raw.githubusercontent.com/MovalAgroingenieria/public-assets/master/logos/logo_moval_small.png
    :target: http://moval.es
    :alt: Moval Agroingeniería
 

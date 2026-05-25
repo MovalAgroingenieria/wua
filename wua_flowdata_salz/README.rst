@@ -11,7 +11,7 @@ Get flow data in time series from flowmeter brand Salz,
 Description
 ===========
 
-Get flow data from remote flowmeter Salz, based on a REST API. 
+Get flow data from remote flowmeter Salz, based on a REST API.
 
 Credits
 =======
@@ -31,7 +31,7 @@ Contributors
 Maintainer
 ----------
 
-.. image:: https://services.moval.es/static/images/logo_moval_small.png
+.. image:: https://raw.githubusercontent.com/MovalAgroingenieria/public-assets/master/logos/logo_moval_small.png
    :target: http://moval.es
    :alt: Moval Agroingeniería
 

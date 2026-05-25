@@ -11,7 +11,7 @@ Interface of Moval Regadio with the remote flowmeter Salz based on a REST API.
 Description
 ===========
 
-Interface of Moval Regadio with the remote flowmeter Salz, based on a REST API. 
+Interface of Moval Regadio with the remote flowmeter Salz, based on a REST API.
 
 Credits
 =======
@@ -31,7 +31,7 @@ Contributors
 Maintainer
 ----------
 
-.. image:: https://services.moval.es/static/images/logo_moval_small.png
+.. image:: https://raw.githubusercontent.com/MovalAgroingenieria/public-assets/master/logos/logo_moval_small.png
    :target: http://moval.es
    :alt: Moval Agroingeniería
 
