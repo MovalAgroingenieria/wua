@@ -20,6 +20,7 @@
         "views/portal_waterconnections_templates.xml",
         "views/portal_irrigationmanagement_templates.xml",
         "security/ir.model.access.csv",
+        "security/security.xml",
     ],
     "installable": True,
     "application": False,
