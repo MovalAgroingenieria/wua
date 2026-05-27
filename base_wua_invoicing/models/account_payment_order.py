@@ -12,7 +12,7 @@ class AccountPaymentOrder(models.Model):
     has_multiple_schemes = fields.Boolean(
         string='Has Multiple Schemes',
         compute='_compute_has_multiple_schemes',
-        help='True if payment lines have different schemes'
+        help='True if payment lines have different schemes',
     )
 
     @api.multi
@@ -50,10 +50,14 @@ class AccountPaymentOrder(models.Model):
                 invoices_str = invoices_str + ', ' + str(invoice_id)
             invoices_str = invoices_str[2:]
             self.env.cr.execute("""
-                UPDATE account_invoice 
+                UPDATE account_invoice
                 set reconciled=TRUE, state='paid', residual=0,
                     residual_signed=0, residual_company_signed=0
                 WHERE id in (""" + invoices_str + """)""")
+            self.env.cr.execute("""
+                UPDATE account_invoice_line
+                SET state='paid'
+                WHERE invoice_id IN (""" + invoices_str + """)""")
             self.env.cr.commit()
             self.env.invalidate_all()
             invoices_to_compute = \
