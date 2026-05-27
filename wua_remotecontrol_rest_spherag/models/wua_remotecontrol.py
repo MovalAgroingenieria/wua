@@ -15,7 +15,7 @@ class WuaRemotecontrol(models.Model):
             'Spherag import finished. Created sheds: %(sheds)s, '
             'created waterconnections: %(wcs)s, created watermeters: %(wms)s, '
             'updated waterconnections: %(updates)s, '
-            'skipped elements: %(skip)s.'
+            'skipped elements: %(skip)s.',
         ) % {
             'sheds': result.get('created_irrigationsheds', 0),
             'wcs': result.get('created_waterconnections', 0),
