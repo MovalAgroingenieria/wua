@@ -56,7 +56,7 @@ class AccountPaymentOrder(models.Model):
                 WHERE id in (""" + invoices_str + """)""")
             self.env.cr.execute("""
                 UPDATE account_invoice_line
-                SET state='paid'
+                SET invoice_state='paid'
                 WHERE invoice_id IN (""" + invoices_str + """)""")
             self.env.cr.commit()
             self.env.invalidate_all()
