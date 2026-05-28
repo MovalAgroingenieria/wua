@@ -430,7 +430,7 @@ class WuaReservoir(models.Model):
             if record.reservoirreading_ids:
                 readings_of_record = self.env['wua.reservoirreading'].search(
                     [('reservoir_id', '=', record.id)],
-                    limit=1, order='volume desc')
+                    limit=1, order='reading_time desc')
                 last_volume = readings_of_record[0].volume
             record.last_volume = last_volume
 
@@ -441,7 +441,7 @@ class WuaReservoir(models.Model):
             if record.reservoirreading_ids:
                 readings_of_record = self.env['wua.reservoirreading'].search(
                     [('reservoir_id', '=', record.id)],
-                    limit=1, order='differential_volume desc')
+                    limit=1, order='reading_time desc')
                 last_differential_volume = \
                     readings_of_record[0].differential_volume
             record.last_differential_volume = last_differential_volume
