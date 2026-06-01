@@ -2,10 +2,14 @@
 # 2025 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-import json
 import base64
+import json
+from urlparse import urlparse
 import requests
-from odoo import models, fields, api, exceptions, _
+from requests.exceptions import RequestException, SSLError
+
+from odoo import _, api, fields, models
+from odoo.exceptions import UserError
 
 
 class WuaReading(models.Model):
@@ -22,13 +26,13 @@ class WuaReading(models.Model):
         enable_remotecontrol = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'enable_remotecontrol')
         if not enable_remotecontrol:
-            raise exceptions.UserError(_('The remote control is not enabled.'))
+            raise UserError(_('The remote control is not enabled.'))
         url_remotecontrol_application = self.env['ir.values'].get_default(
             'wua.irrigation.configuration',
             'url_remotecontrol_application_icr')
         if not url_remotecontrol_application:
-            raise exceptions.UserError(_('There is not a URL for the '
-                                         'remote control application.'))
+            raise UserError(_('There is not a URL for the '
+                              'remote control application.'))
         return {
             'type': 'ir.actions.act_url',
             'url': url_remotecontrol_application,
@@ -39,17 +43,36 @@ class WuaReading(models.Model):
         self, url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password):
         resp = ''
-        resprest = requests.post(
-            url_remotecontrol_rest + '/login',
-            headers={'Content-Type': 'application/json'},
-            data=json.dumps({
-                'username': url_remotecontrol_rest_username,
-                'password': url_remotecontrol_rest_password,
-            }))
+        login_url = url_remotecontrol_rest + '/login'
+        try:
+            resprest = requests.post(
+                login_url,
+                headers={'Content-Type': 'application/json'},
+                data=json.dumps({
+                    'username': url_remotecontrol_rest_username,
+                    'password': url_remotecontrol_rest_password,
+                }),
+                verify=False,
+                timeout=30,
+            )
+        except SSLError as err:
+            requested_host = urlparse(login_url).hostname or ''
+            raise UserError(_(
+                'SSL certificate validation failed for host "%s". '
+                'Please review ICR URL/certificate configuration. '
+                'Technical detail: %s') % (requested_host, err))
+        except RequestException as err:
+            raise UserError(_(
+                'Connection to ICR failed. Please review network access '
+                'and URL configuration. Technical detail: %s') % err)
         if resprest.ok and resprest.text:
             response = json.loads(resprest.text)
             if 'jwt' in response:
                 resp = response['jwt']
+        elif not resprest.ok:
+            raise UserError(_(
+                'ICR login failed. Status code: %s. Response: %s')
+                % (resprest.status_code, resprest.text))
         return resp
 
     def fetch_hidrantes_icr(
@@ -63,7 +86,19 @@ class WuaReading(models.Model):
             '?items_per_page=1000000&filter=name:\'_CONTADOR$\':contains'
         )
         headers = {'Authorization': 'Bearer ' + jwt}
-        resprest = requests.get(url, headers=headers)
+        try:
+            resprest = requests.get(
+                url, headers=headers, verify=False, timeout=30)
+        except RequestException as err:
+            remotecontrol.message_post(
+                body=_(
+                    'Failed to retrieve readings from ICR for installation '
+                    '%s. Technical detail: %s')
+                % (installation_identifier, err))
+            self.env.cr.commit()
+            return [], _(
+                'Error fetching data for installation %s. '
+                'Technical detail: %s') % (installation_identifier, err)
         json_filename = 'icr_readings_%s_%s.json' % (
             installation_identifier, fields.Datetime.now())
         if resprest.ok:
@@ -94,8 +129,10 @@ class WuaReading(models.Model):
                    resprest.text))
             self.env.cr.commit()
             return [], _(
-                'Error fetching data for installation %s' %
-                installation_identifier)
+                'Error fetching data for installation %s '
+                '(status %s: %s)' % (
+                    installation_identifier, resprest.status_code,
+                    resprest.text))
 
     def _get_readings_info_icr_from_json(self, readings_json):
         readings = []
@@ -134,7 +171,13 @@ class WuaReading(models.Model):
         client_identifier = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'client_identifier')
         if installation_identifiers:
-            installation_identifiers = installation_identifiers.split(',')
+            installation_identifiers = [
+                identifier.strip()
+                for identifier in installation_identifiers.split(',')
+                if identifier.strip()
+            ]
+        if isinstance(client_identifier, basestring):
+            client_identifier = client_identifier.strip()
         if installation_identifiers and client_identifier:
             jwt = self.open_connection_icr(
                 url_remotecontrol_rest,
