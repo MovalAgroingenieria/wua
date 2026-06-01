@@ -6,25 +6,40 @@
         <field name="model">wua.waterreservoir</field>
         <field name="arch" type="xml">
             <form duplicate="0">
-                <group name="master_data">
-                    <group>
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <field name="gis_viewer_link" invisible="1"/>
+                        <field name="with_gis_waterreservoir" invisible="1"/>
+                        <button name="action_see_gis_viewer"
+                                type="object"
+                                class="oe_stat_button"
+                                string="GIS Viewer"
+                                icon="fa-map-marker"
+                                attrs="{'invisible':
+                                        ['|',('gis_viewer_link','=',False),
+                                             ('with_gis_waterreservoir','=',False)]}"/>
+                    </div>
+                    <group name="master_data">
+                        <group>
                         <field name="name" style="width:250px"/>
+                        <field name="cadastral_reference"/>
                         <field name="description" style="width:100%"/>
                         <field name="max_volume"/>
+                        </group>
+                        <group>
+                            <field name="area_gis"/>
+                            <field name="area_gis_parcels"/>
+                            <field name="area_official_parcels"/>
+                        </group>
                     </group>
-                    <group>
-                        <field name="area_gis"/>
-                        <field name="area_gis_parcels"/>
-                        <field name="area_official_parcels"/>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
                     </group>
-                </group>
-                <group name="slave_data">
-                    <notebook name="slave_data_notebook">
-                        <page name="notes_page" string="Notes">
-                            <field name="notes"/>
-                        </page>
-                    </notebook>
-                </group>
+                </sheet>
             </form>
         </field>
     </record>
@@ -34,10 +49,20 @@
         <field name="model">wua.waterreservoir</field>
         <field name="arch" type="xml">
             <tree>
+                <field name="gis_viewer_link" invisible="1"/>
+                <field name="with_gis_waterreservoir" invisible="1"/>
                 <field name="name"/>
                 <field name="description"/>
                 <field name="area_gis_parcels"/>
                 <field name="area_official_parcels"/>
+                <button name="action_see_gis_viewer"
+                        type="object"
+                        class="oe_stat_button"
+                        string="GIS Viewer"
+                        icon="fa-map-marker"
+                        attrs="{'invisible':
+                                ['|',('gis_viewer_link','=',False),
+                                     ('with_gis_waterreservoir','=',False)]}"/>
             </tree>
         </field>
     </record>
@@ -49,6 +74,11 @@
             <search>
                 <field name="name"/>
                 <field name="description"/>
+                <filter string="GIS Water Reservoir: Yes" name="giswaterreservoiryes"
+                 domain="[('with_gis_waterreservoir','=',True)]"/>
+                <filter string="GIS Water Reservoir: No" name="giswaterreservoirno"
+                 domain="[('with_gis_waterreservoir','=',False)]"/>
+                <separator/>
             </search>
         </field>
     </record>

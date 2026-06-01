@@ -51,10 +51,20 @@ class WuaWaterreservoir(models.Model):
         store=True,
     )
 
+    cadastral_reference = fields.Char(
+        string='Cadastral Reference',
+        size=64,
+    )
+
     max_volume = fields.Float(
         string='Maximum Volume (m³)',
         digits=(32, 4),
         default=0,
+    )
+
+    gis_viewer_link = fields.Char(
+        string='GIS Viewer',
+        compute='_compute_gis_viewer_link',
     )
 
     @api.depends('parcel_ids', 'parcel_ids.area_gis', 'parcel_ids.active')
@@ -74,6 +84,46 @@ class WuaWaterreservoir(models.Model):
                 area_official_parcels = sum(
                     record.mapped('parcel_ids.area_official'))
             record.area_official_parcels = area_official_parcels
+
+    @api.multi
+    def _compute_gis_viewer_link(self):
+        url = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer')
+        username = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_username')
+        password = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_password')
+        for record in self:
+            url_for_record = url
+            if url_for_record:
+                sep_char = '?'
+                if url_for_record.find('?') != -1:
+                    sep_char = '&'
+                url_for_record = (
+                    url_for_record + sep_char + 'waterreservoirid=' +
+                    record.name)
+            if url_for_record and username and password:
+                cipher_text = self.env['wua.parcel']._get_viewer_credentials(
+                    username, password)
+                if cipher_text:
+                    sep_char = '?'
+                    if url_for_record.find('?') != -1:
+                        sep_char = '&'
+                    url_for_record = url_for_record + sep_char + \
+                        'arg=' + cipher_text
+            if not url_for_record:
+                url_for_record = ''
+            record.gis_viewer_link = url_for_record
+
+    @api.multi
+    def action_see_gis_viewer(self):
+        self.ensure_one()
+        if self.gis_viewer_link:
+            return {
+                'type': 'ir.actions.act_url',
+                'url': self.gis_viewer_link,
+                'target': 'new',
+            }
 
     @api.model_cr
     def init(self):
