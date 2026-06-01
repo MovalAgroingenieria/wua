@@ -218,6 +218,8 @@ class ResPartner(models.Model):
                     if new_val != old_val:
                         changed_vals[field] = vals[field]
                 if changed_vals:
+                    if not existing.from_irriweb_census:
+                        changed_vals['from_irriweb_census'] = True
                     self._write_with_vat_fallback(
                         existing, changed_vals, warn_sink=warn_sink)
                 return False
