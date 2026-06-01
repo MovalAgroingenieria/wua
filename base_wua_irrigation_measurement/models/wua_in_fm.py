@@ -68,7 +68,8 @@ class WuaInFm(models.Model):
         ('ultrasonic', 'Ultrasonic'),
         ('titrator', 'Titrator'),
         ('levelprobe', 'Level Probe'),
-        ('ultrasonicdoppler', 'Doppler-Effect Ultrasonic')],
+        ('ultrasonicdoppler', 'Doppler-Effect Ultrasonic'),
+        ('multijet', 'Multi-Jet')],
         string='Type',
         compute='_compute_values')
 
