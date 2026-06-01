@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_irrigation_config_settings_view_form_regaber"
+            model="ir.ui.view">
+        <field name="name">Parameters (Regaber)</field>
+        <field name="model">wua.irrigation.configuration</field>
+        <field name="inherit_id"
+               ref="base_wua_remotecontrol_rest.wua_irrigation_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='remote_control']" position="after">
+                <group name="remote_control_regaber"
+                       string="Regaber SKYplatform REST API"
+                       attrs="{'invisible': [('enable_remotecontrol', '=', False)]}">
+                    <field name="url_remotecontrol_application_regaber"
+                           attrs="{'invisible': [('enable_remotecontrol', '=', False)]}"/>
+                    <field name="import_from_readings_regaber"
+                           attrs="{'invisible': [('enable_remotecontrol', '=', False)]}"/>
+                      <field name="import_from_waterconnection_regaber"
+                          attrs="{'invisible': [('enable_remotecontrol', '=', False)]}"/>
+                      <field name="import_from_irrigationshed_regaber"
+                          attrs="{'invisible': [('enable_remotecontrol', '=', False)]}"/>
+                      <field name="import_from_hydraulicsector_regaber"
+                          attrs="{'invisible': [('enable_remotecontrol', '=', False)]}"/>
+                      <field name="regaber_default_hydraulicsector_id"
+                          attrs="{'invisible': [('enable_remotecontrol', '=', False)]}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_remotecontrol_application_regaber_action"
+            model="ir.actions.server">
+        <field name="name">Native Remote Control Application of Regaber</field>
+        <field name="model_id" ref="model_wua_reading"/>
+        <field name="state">code</field>
+        <field name="code">
+            action = env['wua.reading'].run_remotecontrol_application_url_regaber()
+        </field>
+    </record>
+
+    <menuitem id="wua_remotecontrol_application_regaber_menu"
+              name="Native Remote Control Regaber"
+              parent="wua_structure_irrigation.base_wua_irrigation_configuration_menu"
+              action="wua_remotecontrol_application_regaber_action"
+              sequence="5"/>
+
+</odoo>
