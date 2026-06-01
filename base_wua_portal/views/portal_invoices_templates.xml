@@ -55,18 +55,19 @@
                                     <input type="checkbox" id="select_all" onclick="toggleCheckboxes(this)"/>
                                 </th>
                                 <t t-if="liquidation_on_portal">
-                                    <th>Liquidation</th>
-                                    <th>Liquidation Set</th>
-                                    <th>Liquidation Date</th>
+                                    <th width="15%">Liquidation</th>
+                                    <th width="12%">Liquidation Set</th>
+                                    <th width="15%">Liquidation Date</th>
                                 </t>
                                 <t t-else="">
-                                    <th>Invoice #</th>
-                                    <th>Invoiceset</th>
-                                    <th>Invoice Date</th>
+                                    <th width="15%">Invoice #</th>
+                                    <th width="12%">Invoiceset</th>
+                                    <th width="12%">Invoice Date</th>
                                 </t>
-                                <th>Due Date</th>
+                                <th width="12%">Due Date</th>
                                 <th></th>
                                 <th>Amount Due</th>
+                                <th>Amount Total</th>
                             </tr>
                         </thead>
                         <t t-foreach="invoices" t-as="invoice">
@@ -74,16 +75,16 @@
                                 <td>
                                     <input type="checkbox" name="invoice_ids" t-att-value="invoice.id"/>
                                 </td>
-                                <td class="cell_overflow">
+                                <td width="15%">
                                     <a t-att-href="'/my/invoices/pdf/'+str(invoice.id)" t-att-title="invoice.number">
                                         <t t-esc="invoice.number"/>
                                     </a>
                                 </td>
-                                <td>
+                                <td width="12%">
                                     <span><t t-esc="invoice.invoiceset_id.description"/></span>
                                 </td>
-                                <td><span t-field="invoice.date_invoice"/></td>
-                                <td><span t-field="invoice.date_due"/></td>
+                                <td width="12%"><span t-field="invoice.date_invoice"/></td>
+                                <td width="12%"><span t-field="invoice.date_due"/></td>
                                 <td>
                                     <t t-if="invoice.state == 'open'">
                                         <span class="label label-info">
@@ -103,6 +104,9 @@
                                 </td>
                                 <td>
                                     <span t-field="invoice.residual" t-options='{"widget": "monetary", "display_currency": invoice.currency_id}'/>
+                                </td>
+                                <td>
+                                    <span t-field="invoice.amount_total" t-options='{"widget": "monetary", "display_currency": invoice.currency_id}'/>
                                 </td>
                             </tr>
                         </t>
