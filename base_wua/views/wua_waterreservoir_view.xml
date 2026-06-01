@@ -7,8 +7,16 @@
         <field name="arch" type="xml">
             <form duplicate="0">
                 <group name="master_data">
-                    <field name="name" style="width:250px"/>
-                    <field name="description" style="width:100%%"/>
+                    <group>
+                        <field name="name" style="width:250px"/>
+                        <field name="description" style="width:100%"/>
+                        <field name="max_volume"/>
+                    </group>
+                    <group>
+                        <field name="area_gis"/>
+                        <field name="area_gis_parcels"/>
+                        <field name="area_official_parcels"/>
+                    </group>
                 </group>
                 <group name="slave_data">
                     <notebook name="slave_data_notebook">
@@ -28,6 +36,8 @@
             <tree>
                 <field name="name"/>
                 <field name="description"/>
+                <field name="area_gis_parcels"/>
+                <field name="area_official_parcels"/>
             </tree>
         </field>
     </record>
