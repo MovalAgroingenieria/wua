@@ -81,7 +81,15 @@ class WuaWaterconnectionTelecontrol(models.Model):
             3: '02',
             4: '03',
         }
-        return mapping.get(value, False)
+        mapped_value = mapping.get(value)
+        if mapped_value is None and value not in (None, ''):
+            try:
+                mapped_value = mapping.get(int(value))
+            except (TypeError, ValueError):
+                mapped_value = None
+        if mapped_value is None:
+            mapped_value = False
+        return mapped_value
 
     # Hook
     def import_waterconnection_telecontrol_info_batchline(

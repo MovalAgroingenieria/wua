@@ -261,9 +261,11 @@ class WuaWaterconnection(models.Model):
             label_valve_scheduled = _('Valve Scheduled: No')
         if(self.last_valve_state):
             last_valve_state_color = 'green'
-            last_valve_state = self._fields['last_valve_state'].selection
-            last_valve_state = dict(last_valve_state)\
-                .get(self.last_valve_state)
+            selection = self.fields_get(
+                allfields=['last_valve_state'])['last_valve_state'][
+                'selection']
+            last_valve_state = dict(selection).get(
+                self.last_valve_state)
         else:
             last_valve_state_color = 'red'
             last_valve_state = _('State not defined')

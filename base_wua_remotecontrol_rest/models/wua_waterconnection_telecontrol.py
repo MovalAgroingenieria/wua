@@ -2,6 +2,7 @@
 # 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import datetime
 import logging
 from odoo import models, fields, api, _, exceptions
 
@@ -38,10 +39,12 @@ class WuaWaterconnectionTelecontrol(models.Model):
         digits=(32, 4))
 
     valve_open = fields.Boolean(
-        string='Valve Open',)
+        string='Valve Open',
+    )
 
     valve_scheduled = fields.Boolean(
-        string='Valve Scheluded',)
+        string='Valve Scheluded',
+    )
 
     valve_error = fields.Boolean(
         string='Valve With Error',
@@ -141,9 +144,8 @@ class WuaWaterconnectionTelecontrol(models.Model):
                         <br/>
                         <span>%s</span>
                     </p>
-                ''' % (website_url, company_name, error_message.replace('\n',
-                                                                        '<br/>'
-                                                                        ))
+                ''' % (website_url, company_name, error_message.replace(
+                       '\n', '<br/>'))
                 mail_template.send_mail(self.id, force_send=True)
         else:
             if show_message:
@@ -196,7 +198,6 @@ class WuaWaterconnectionTelecontrol(models.Model):
         return resp
 
     # -- Hooks for vendor-specific extra columns --------
-
     def _get_telecontrol_extra_columns(self):
         """Hook: extra column names for telecontrol INSERT.
         Override to add vendor-specific columns.
@@ -221,13 +222,20 @@ class WuaWaterconnectionTelecontrol(models.Model):
         """
         return []
 
+    def _to_datetime(self, value):
+        date_value = None
+        if isinstance(value, datetime.datetime):
+            date_value = value
+        elif isinstance(value, basestring):
+            date_value = fields.Datetime.from_string(value)
+        return date_value
+
     def save_waterconnection_telecontrol_info(self, wc_info,
                                               update_log=True):
         if not wc_info:
             return
         cr = self.env.cr
         number_of_wc_info = len(wc_info)
-
         # Deduplicate: keep only newest per waterconnection
         by_wc = {}
         for info in wc_info:
@@ -249,15 +257,24 @@ class WuaWaterconnectionTelecontrol(models.Model):
         wc_stats = {}
         for wc_id, max_dt, cnt in cr.fetchall():
             wc_stats[wc_id] = (max_dt, cnt)
-        # 2. Filter: only data newer than existing
-        to_save = []
+        # 2. Split data: insert newer, update-only equal timestamp
+        to_insert = []
+        to_update = []
         for info in wc_info:
             wc_id = info['waterconnection_id']
             stats = wc_stats.get(wc_id)
-            if (not stats or
-                    info['data_time'] > stats[0]):
-                to_save.append(info)
-        if not to_save:
+            if not stats:
+                to_insert.append(info)
+                to_update.append(info)
+            else:
+                info_dt = self._to_datetime(info['data_time'])
+                max_dt = self._to_datetime(stats[0])
+                if (info_dt and max_dt and info_dt > max_dt):
+                    to_insert.append(info)
+                    to_update.append(info)
+                elif (info_dt and max_dt and info_dt == max_dt):
+                    to_update.append(info)
+        if not to_update:
             if update_log:
                 _logger = logging.getLogger(
                     self.__class__.__name__)
@@ -267,7 +284,7 @@ class WuaWaterconnectionTelecontrol(models.Model):
             return
         # 3. Waterconnection names for computed 'name'
         save_wc_ids = list(set(
-            i['waterconnection_id'] for i in to_save))
+            i['waterconnection_id'] for i in to_update))
         cr.execute(
             "SELECT id, name"
             " FROM wua_waterconnection"
@@ -275,7 +292,7 @@ class WuaWaterconnectionTelecontrol(models.Model):
             (tuple(save_wc_ids),))
         wc_names = dict(cr.fetchall())
         # 4. Delete oldest beyond MAX_COUNT_HIST (SQL)
-        for info in to_save:
+        for info in to_insert:
             wc_id = info['waterconnection_id']
             stats = wc_stats.get(wc_id)
             if (stats and
@@ -347,7 +364,7 @@ class WuaWaterconnectionTelecontrol(models.Model):
             " WHERE id = %s"
         ).format(xs=extra_set_sql)
         # 7. Execute per record
-        for info in to_save:
+        for info in to_insert:
             wc_id = info['waterconnection_id']
             wc_name = wc_names.get(wc_id, '')
             tc_name = ''
@@ -374,7 +391,8 @@ class WuaWaterconnectionTelecontrol(models.Model):
                 self._get_telecontrol_extra_values(
                     info))
             cr.execute(insert_q, insert_vals)
-
+        for info in to_update:
+            wc_id = info['waterconnection_id']
             update_vals = (
                 info['data_time'],
                 info['total_volume'],
@@ -392,12 +410,14 @@ class WuaWaterconnectionTelecontrol(models.Model):
             cr.execute(update_q, update_vals)
         # 8. Invalidate ORM cache
         self.invalidate_cache()
-        saved_count = len(to_save)
+        saved_count = len(to_insert)
+        updated_count = len(to_update)
         if update_log:
             _logger = logging.getLogger(
                 self.__class__.__name__)
             _logger.info(
                 'Remote Control: Saved '
                 'Waterconnection Telecontrol '
-                'Info... %s/%s',
-                saved_count, number_of_wc_info)
+                'Info... %s inserted, %s updated/%s',
+                saved_count, updated_count,
+                number_of_wc_info)
