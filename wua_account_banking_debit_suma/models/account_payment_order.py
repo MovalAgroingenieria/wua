@@ -35,8 +35,9 @@ class AccountPaymentOrder(models.Model):
         #        The format depends on each wua
         if partner_id.partner_code:
             # Format 5 numbers padded with zeros
-            # and padded to 12 with white spaces
-            fixed_number = str(partner_id.partner_code).zfill(5).ljust(12)
+            # and padded to 12 with white spaces. Truncate to exactly 12
+            # to avoid overflowing the field (record displacement).
+            fixed_number = str(partner_id.partner_code).zfill(5).ljust(12)[:12]
         else:
             raise ValidationError(
                 _("Fail, partner code not found for partner %s." %
@@ -51,7 +52,7 @@ class AccountPaymentOrder(models.Model):
         if invoice and invoice.invoiceset_id:
             amount_total = self.env['wua.parcel'].transform_float_to_locale(
                 invoice.amount_total, 2)
-            line_detail_1 = invoice.invoiceset_id.description + ' ' \
+            line_detail_1 = (invoice.invoiceset_id.description or '') + ' ' \
                 + invoice.number + ' ' + amount_total + ' ' \
                 + invoice.currency_id.name
             line_detail_1 = line_detail_1[:75].ljust(75)
@@ -109,7 +110,13 @@ class AccountPaymentOrder(models.Model):
                     product_lines[i]
                 detail_line_num += 1
 
-        line_detail_2 = line_detail_3 = line_detail_4 = ""
+        # @INFO: Default to exactly 75 spaces so the record keeps its fixed
+        #        width even when the invoice has no products (lines_dic empty).
+        #        Otherwise the detail fields would be empty (length 0) and
+        #        shift every following field (record displacement).
+        line_detail_2 = str(" " * 75)
+        line_detail_3 = str(" " * 75)
+        line_detail_4 = str(" " * 75)
         if lines_dic:
             if "line_detail_2" in lines_dic:
                 line_detail_2 = lines_dic["line_detail_2"][:75].ljust(75)
