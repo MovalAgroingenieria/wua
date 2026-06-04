@@ -172,7 +172,8 @@ class WuaReading(models.Model):
 
     @api.depends('watermeter_id')
     def _compute_hydraulic_infrastructure_data(self):
-        # Batch: prefetch watermeter -> waterconnection, irrigationshed, hydraulicsector, partner
+        # Batch: prefetch watermeter -> waterconnection, irrigationshed,
+        # hydraulicsector, partner
         watermeters = self.mapped('watermeter_id')
         if watermeters:
             watermeters.mapped('waterconnection_id')
@@ -300,7 +301,8 @@ class WuaReading(models.Model):
         # New consumption.
         ctx = self.env.context
         prev_by_wm = ctx.get('estimated_wizard_previous_reading') or {}
-        init_wm_ids = ctx.get('estimated_wizard_init_watermeter_ids') or frozenset()
+        init_wm_ids = ctx.get('estimated_wizard_init_watermeter_ids') or \
+            frozenset()
         if not vals['initialization_reading']:
             wm_id = vals['watermeter_id']
             if wm_id in prev_by_wm:
@@ -325,8 +327,8 @@ class WuaReading(models.Model):
                 last_reading = self.env['wua.reading'].search(
                     [('watermeter_id', '=', vals['watermeter_id'])],
                     limit=1, order='reading_time desc')
-                if (not last_reading or not previous_reading or last_reading.id !=
-                        previous_reading.id):
+                if (not last_reading or not previous_reading or
+                        last_reading.id != previous_reading.id):
                     watermeter = self.env['wua.watermeter'].browse(
                         vals['watermeter_id'])
                     watermeter_label = (
@@ -386,7 +388,8 @@ class WuaReading(models.Model):
         # of the watermeter (skipped when wizard will do a batch update).
         skip_wm_write = ctx.get('estimated_wizard_skip_watermeter_write')
         if not skip_wm_write:
-            watermeter = self.env['wua.watermeter'].browse(vals['watermeter_id'])
+            watermeter = self.env['wua.watermeter'].browse(
+                vals['watermeter_id'])
             if watermeter:
                 if new_presconsumption:
                     vals_watermeter = {
