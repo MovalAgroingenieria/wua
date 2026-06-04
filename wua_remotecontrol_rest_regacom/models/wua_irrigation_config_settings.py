@@ -35,6 +35,9 @@ class WuaIrrigationConfiguration(models.TransientModel):
     import_from_hydraulicsector_regacom = fields.Boolean(
         string='Import from hydraulic sector')
 
+    import_irrigation_schedule_from_waterconnections_regacom = fields.Boolean(
+        string='Import irrigation schedule from waterconnections')
+
     @api.multi
     def set_default_values(self):
         super(WuaIrrigationConfiguration, self).set_default_values()
@@ -89,4 +92,13 @@ class WuaIrrigationConfiguration(models.TransientModel):
         regacom_can_impport = self.env['ir.values'].get_default(
             'wua.irrigation.configuration',
             'import_from_hydraulicsector_regacom')
+        return other_can_import or regacom_can_impport
+
+    def import_irrigation_schedule_from_wc_any(self):
+        other_can_import = super(WuaIrrigationConfiguration, self).\
+            import_irrigation_schedule_from_wc_any()
+        # GET regacom config
+        regacom_can_impport = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration',
+            'import_irrigation_schedule_from_waterconnections_regacom')
         return other_can_import or regacom_can_impport
