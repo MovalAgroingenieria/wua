@@ -120,6 +120,13 @@ class WuaWatermeter(models.Model):
         track_visibility='onchange',
     )
 
+    remote_serial_number = fields.Char(
+        size=40,
+        string="Remote Serial Number",
+        index=True,
+        track_visibility='onchange',
+    )
+
     presconsumption_ids = fields.One2many(
         string='Consumptions',
         comodel_name='wua.presconsumption',
