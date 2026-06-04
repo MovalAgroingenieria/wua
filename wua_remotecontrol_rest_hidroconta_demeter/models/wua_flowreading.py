@@ -25,11 +25,16 @@ class WuaFlowreading(models.Model):
         error_message = ''
         error_flowmeters = []
         fm_dict = dict(
-            ('{flowmeter_name}'.format(
-                flowmeter_name=fm.hidroconta_id
-            ), fm)
+            (
+                '{flowmeter_name}'.format(
+                    flowmeter_name=(
+                        fm.hidroconta_id or '').encode('utf-8', 'ignore')
+                ),
+                fm
+            )
             for fm in self.env['wua.flowmeter'].search(
-                [('telecontrol_rest_associated', '=', 'hidroconta')])
+                [('telecontrol_rest_associated', '=', 'hidroconta')]
+            )
         )
         jsessionid = self.open_connection_hidroconta(
             url_remotecontrol_rest, url_remotecontrol_rest_username,
