@@ -49,22 +49,6 @@ class WuaIrrigationConfiguration(models.TransientModel):
             self.url_remotecontrol_application_regaber)
         values.set_default(
             'wua.irrigation.configuration',
-            'import_from_readings_regaber',
-            self.import_from_readings_regaber)
-        values.set_default(
-            'wua.irrigation.configuration',
-            'import_from_waterconnection_regaber',
-            self.import_from_waterconnection_regaber)
-        values.set_default(
-            'wua.irrigation.configuration',
-            'import_from_irrigationshed_regaber',
-            self.import_from_irrigationshed_regaber)
-        values.set_default(
-            'wua.irrigation.configuration',
-            'import_from_hydraulicsector_regaber',
-            self.import_from_hydraulicsector_regaber)
-        values.set_default(
-            'wua.irrigation.configuration',
             'regaber_default_hydraulicsector_id',
             self.regaber_default_hydraulicsector_id.id)
 
