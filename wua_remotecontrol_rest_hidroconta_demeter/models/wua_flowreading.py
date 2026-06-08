@@ -28,12 +28,12 @@ class WuaFlowreading(models.Model):
             (
                 '{flowmeter_name}'.format(
                     flowmeter_name=(
-                        fm.hidroconta_id or '').encode('utf-8', 'ignore')
+                        fm.hidroconta_id or '').encode('utf-8', 'ignore'),
                 ),
-                fm
+                fm,
             )
             for fm in self.env['wua.flowmeter'].search(
-                [('telecontrol_rest_associated', '=', 'hidroconta')]
+                [('telecontrol_rest_associated', '=', 'hidroconta')],
             )
         )
         jsessionid = self.open_connection_hidroconta(
@@ -170,11 +170,11 @@ class WuaFlowreading(models.Model):
         resprest = requests.request(
             'POST', url_remotecontrol_rest + '/login',
             headers={
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
                 },
             data=json.dumps({
                 'username': url_remotecontrol_rest_username,
-                'password': url_remotecontrol_rest_password
+                'password': url_remotecontrol_rest_password,
                 }))
         if resprest.status_code == 200:
             headers = str(resprest.headers)
@@ -191,6 +191,6 @@ class WuaFlowreading(models.Model):
             requests.request(
                 'POST', url_remotecontrol_rest + '/logout',
                 headers={
-                    'Cookie': 'JSESSIONID=' + jsessionid
+                    'Cookie': 'JSESSIONID=' + jsessionid,
                     },
                 data={})

@@ -12,7 +12,7 @@ class AccountPaymentOrder(models.Model):
     def generated2uploaded(self):
         res = super(AccountPaymentOrder, self).generated2uploaded()
         for order in self:
-            if order.payment_mode_id.name == 'ext_collector':
+            if order.payment_method_id.code == 'ext_collector':
                 for bline in order.bank_line_ids:
                     if bline.ext_collector_sent:
                         for l in bline.payment_line_ids:
@@ -35,7 +35,7 @@ class AccountPaymentOrder(models.Model):
     def process_missing_functions(self):
         super(AccountPaymentOrder, self).process_missing_functions()
         for order in self:
-            if order.payment_mode_id.name == 'ext_collector':
+            if order.payment_method_id.code == 'ext_collector':
                 for bline in order.bank_line_ids:
                     if bline.ext_collector_sent:
                         for line in bline.payment_line_ids:
