@@ -40,6 +40,8 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='message_needaction_counter']" position="after">
                 <field name="field_resolved"/>
+                <field name="maintenance_team_id"/>
+                <field name="days_since_creation"/>
             </xpath>
             <xpath expr="//img[@class='oe_kanban_avatar pull-right']" position="attributes">
                 <attribute name="invisible">1</attribute>
@@ -56,6 +58,21 @@
                     <i class="fa fa-calendar-o" aria-hidden="true" title="Days since creation"/>
                     <field name="days_since_creation" widget="integer"/>
                 </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="maintenance_request_view_kanban_inherit_hr_wua" model="ir.ui.view">
+        <field name="name">maintenance.request kanban (wua_maintenance)</field>
+        <field name="model">maintenance.request</field>
+        <field name="inherit_id" ref="hr_maintenance.maintenance_request_view_kanban_inherit_hr"/>
+        <field name="arch" type="xml">
+            <xpath expr="//span[@t-if='record.employee_id.raw_value']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//span[@t-if='record.employee_id.raw_value']" position="after">
+                <span t-if="record.maintenance_team_id.raw_value"><strong>Assigned to:</strong> <field name="maintenance_team_id"/><br/></span>
+                <span t-if="record.employee_id.raw_value"><strong>Created by:</strong> <field name="employee_id"/><br/></span>
             </xpath>
         </field>
     </record>
