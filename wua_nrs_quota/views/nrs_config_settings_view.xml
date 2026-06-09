@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="nrs_config_settings_view_form" model="ir.ui.view">
+        <field name="name">NRS parameters</field>
+        <field name="model">nrs.configuration</field>
+        <field name="inherit_id" ref="nrs_client_sms.nrs_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='default_invoice_template_id']" position="after">
+                <field name="default_quota_template_id" domain="[('type','=','quota')]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-07 15:17+0000\n"
-"PO-Revision-Date: 2021-10-07 15:17+0000\n"
+"POT-Creation-Date: 2026-06-09 11:21+0000\n"
+"PO-Revision-Date: 2026-06-09 11:21+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,35 +16,14 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: wua_nrs_client_sms
-#: code:addons/wua_nrs_client_sms/wizards/nrs_wizard.py:229
-#, python-format
-msgid " [Certified] "
-msgstr " [Certificado] "
-
-#. module: wua_nrs_client_sms
 #: model:ir.ui.view,arch_db:wua_nrs_client_sms.wua_parcel_view_form
-msgid "<span class=\"o_stat_text\" style=\"display:inline;\"> SMS's</span>"
-msgstr "<span class=\"o_stat_text\" style=\"display:inline;\"> SMS's</span>"
+msgid "<span class=\"o_stat_text\" style=\"display:inline;\"> SMS (NRS)</span>"
+msgstr "<span class=\"o_stat_text\" style=\"display:inline;\"> SMS (NRS)</span>"
 
 #. module: wua_nrs_client_sms
-#: code:addons/wua_nrs_client_sms/wizards/nrs_wizard.py:242
-#: code:addons/wua_nrs_client_sms/wizards/nrs_wizard.py:253
-#, python-format
-msgid "Certified: "
-msgstr "Certificado: "
-
-#. module: wua_nrs_client_sms
-#: code:addons/wua_nrs_client_sms/wizards/nrs_wizard.py:252
-#, python-format
-msgid "Confirmation: "
-msgstr "Confirmación: "
-
-#. module: wua_nrs_client_sms
-#: code:addons/wua_nrs_client_sms/models/nrs_template.py:43
-#: code:addons/wua_nrs_client_sms/wizards/nrs_wizard.py:162
-#, python-format
-msgid "Error resolving template: {}"
-msgstr "Error resolviendo la plantilla: {}"
+#: model:ir.model,name:wua_nrs_client_sms.model_wua_parcel
+msgid "Entity (parcel)"
+msgstr "Entity (parcel)"
 
 #. module: wua_nrs_client_sms
 #: model:ir.ui.view,arch_db:wua_nrs_client_sms.nrs_template_view_form
@@ -52,27 +31,15 @@ msgid "Invoice set description"
 msgstr "Descripción lote facturas"
 
 #. module: wua_nrs_client_sms
-#: code:addons/wua_nrs_client_sms/wizards/nrs_wizard.py:227
-#, python-format
-msgid "No"
-msgstr "No"
-
-#. module: wua_nrs_client_sms
-#: code:addons/wua_nrs_client_sms/models/nrs_template.py:24
+#: code:addons/wua_nrs_client_sms/models/nrs_template.py:23
 #, python-format
 msgid "No parcel found"
 msgstr "Parcela no encontrada"
 
 #. module: wua_nrs_client_sms
-#: model:ir.model.fields,field_description:wua_nrs_client_sms.field_wua_parcel_num_sms
+#: model:ir.model.fields,field_description:wua_nrs_client_sms.field_wua_parcel_num_sms_certified
 msgid "Number of SMS"
 msgstr "Nº de SMS"
-
-#. module: wua_nrs_client_sms
-#: code:addons/wua_nrs_client_sms/wizards/nrs_wizard.py:173
-#, python-format
-msgid "Number of characters must not exceed 160"
-msgstr "160 caracteres máximo"
 
 #. module: wua_nrs_client_sms
 #: model:ir.model.fields,field_description:wua_nrs_client_sms.field_nrs_configuration_default_parcel_template_id
@@ -112,41 +79,11 @@ msgid "Parcel type"
 msgstr "Tipo de parcela"
 
 #. module: wua_nrs_client_sms
-#: model:ir.model,name:wua_nrs_client_sms.model_wua_parcel
-msgid "Parcels (integrated GIS)"
-msgstr "Parcelas (integradas GIS)"
-
-#. module: wua_nrs_client_sms
-#: code:addons/wua_nrs_client_sms/wizards/nrs_wizard.py:149
-#, python-format
-msgid "Partner %s does not have a mobile number"
-msgstr "El socio %s no tiene número de móvil"
-
-#. module: wua_nrs_client_sms
-#: code:addons/wua_nrs_client_sms/wizards/nrs_wizard.py:251
-#, python-format
-msgid "Partner: "
-msgstr "Socio: "
-
-#. module: wua_nrs_client_sms
-#: code:addons/wua_nrs_client_sms/wizards/nrs_wizard.py:243
-#: code:addons/wua_nrs_client_sms/wizards/nrs_wizard.py:254
-#, python-format
-msgid "Response: "
-msgstr "Respuesta: "
-
-#. module: wua_nrs_client_sms
 #: code:addons/wua_nrs_client_sms/models/wua_parcel.py:30
 #: model:ir.ui.view,arch_db:wua_nrs_client_sms.nrs_tracking_view_tree_parcel
 #, python-format
 msgid "SMS"
 msgstr "SMS"
-
-#. module: wua_nrs_client_sms
-#: code:addons/wua_nrs_client_sms/wizards/nrs_wizard.py:279
-#, python-format
-msgid "SMS confirmation"
-msgstr "Confirmación"
 
 #. module: wua_nrs_client_sms
 #: model:ir.model,name:wua_nrs_client_sms.model_nrs_template
@@ -165,59 +102,20 @@ msgstr "SMS que han sido enviados"
 
 #. module: wua_nrs_client_sms
 #: model:ir.actions.act_window,name:wua_nrs_client_sms.action_nrs_wizard_parcel
-msgid "Send certified SMS"
-msgstr "Enviar SMS certificado"
-
-#. module: wua_nrs_client_sms
-#: code:addons/wua_nrs_client_sms/wizards/nrs_wizard.py:240
-#: code:addons/wua_nrs_client_sms/wizards/nrs_wizard.py:249
-#, python-format
-msgid "Sender: "
-msgstr "Remitente: "
-
-#. module: wua_nrs_client_sms
-#: code:addons/wua_nrs_client_sms/wizards/nrs_wizard.py:239
-#: code:addons/wua_nrs_client_sms/wizards/nrs_wizard.py:248
-#, python-format
-msgid "Subject: "
-msgstr "Asunto: "
+msgid "Send SMS (NRS)"
+msgstr "Enviar SMS (NRS)"
 
 #. module: wua_nrs_client_sms
 #: model:ir.ui.view,arch_db:wua_nrs_client_sms.nrs_template_view_form
 msgid "The parcel object is also available. Note that this object has many\n"
 "                    attributes and they depend on the installed modules."
-msgstr "El objeto parcela también está disponible. Observar que este objeto muchos\n"
-"                    atributos y son dependientes de los módulos instalados."
-
-#. module: wua_nrs_client_sms
-#: code:addons/wua_nrs_client_sms/wizards/nrs_wizard.py:144
-#, python-format
-msgid "The phone number for testing has not been set."
-msgstr "The móvil de Test no ha sido establecido."
-
-#. module: wua_nrs_client_sms
-#: code:addons/wua_nrs_client_sms/models/nrs_template.py:48
-#, python-format
-msgid "The size of the SMS after solving the variables exceeds 160 characters. Try setting a fixed length for variables {{ object.attribute[:10] }}"
-msgstr "El tamaño del SMS después de resolver las variables supera los 160 caracteres. Intente establecer una longitud fija para las variables {{ object.attribute[:10] }}"
-
-#. module: wua_nrs_client_sms
-#: code:addons/wua_nrs_client_sms/wizards/nrs_wizard.py:113
-#, python-format
-msgid "There are no items selected."
-msgstr "No hay elementos seleccionados."
+msgstr "El objeto parcela también está disponible. Observar que en este objeto muchos\n"
+"                    atributos son dependientes de los módulos instalados."
 
 #. module: wua_nrs_client_sms
 #: model:ir.ui.view,arch_db:wua_nrs_client_sms.nrs_tracking_view_tree_parcel
 msgid "To"
 msgstr "Para"
-
-#. module: wua_nrs_client_sms
-#: code:addons/wua_nrs_client_sms/wizards/nrs_wizard.py:241
-#: code:addons/wua_nrs_client_sms/wizards/nrs_wizard.py:250
-#, python-format
-msgid "To: "
-msgstr "Para: "
 
 #. module: wua_nrs_client_sms
 #: model:ir.model,name:wua_nrs_client_sms.model_nrs_tracking
@@ -227,19 +125,7 @@ msgstr "Registro de SMS enviados"
 #. module: wua_nrs_client_sms
 #: model:ir.model,name:wua_nrs_client_sms.model_nrs_wizard
 msgid "Wizard to send SMS through NRS service"
-msgstr "Asistente para enviar mensajes a través del servicio NRS"
-
-#. module: wua_nrs_client_sms
-#: code:addons/wua_nrs_client_sms/wizards/nrs_wizard.py:230
-#, python-format
-msgid "Yes"
-msgstr "Sí"
-
-#. module: wua_nrs_client_sms
-#: code:addons/wua_nrs_client_sms/wizards/nrs_wizard.py:164
-#, python-format
-msgid "empty message"
-msgstr "Mensaje vacio"
+msgstr "Asistente para enviar SMS a través del servicio NRS"
 
 #. module: wua_nrs_client_sms
 #: model:ir.model,name:wua_nrs_client_sms.model_nrs_configuration
@@ -263,8 +149,8 @@ msgstr "{{ parcel.cadastral_reference }}"
 
 #. module: wua_nrs_client_sms
 #: model:ir.ui.view,arch_db:wua_nrs_client_sms.nrs_template_view_form
-msgid "{{ parcel.county_id }}"
-msgstr "{{ parcel.county_id }}"
+msgid "{{ parcel.county_id.name }}"
+msgstr "{{ parcel.county_id.name }}"
 
 #. module: wua_nrs_client_sms
 #: model:ir.ui.view,arch_db:wua_nrs_client_sms.nrs_template_view_form

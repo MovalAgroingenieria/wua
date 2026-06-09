@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="portal_my_communications" inherit_id="base_wua_portal_mail.portal_my_communications" name="SMS NRS service">
+            <xpath expr="//div[@name='communications_menu']" position="inside">
+                <h3 class="page-header" style="order: 12;">
+                    <a href="/my/nrs">
+                        <i class="fa fa-fw fa-nrs-sms-registre"></i>
+                        SMS
+                        <small class="ml8">
+                            <t t-if="nrs_count">
+                                <span class='badge pull-right'><t t-esc="nrs_count"/></span>
+                            </t>
+                        </small>
+                    </a>
+                </h3>
+            </xpath>
+        </template>
+    </data>
+</odoo>

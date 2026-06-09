@@ -1,0 +1,77 @@
+<odoo>
+    <data>
+        <template id="portal_my_nrs" name="My SMS (NRS)">
+            <t t-call="website.layout">
+                <t t-call="base_wua_portal.portal_wua_navbar"/>
+                <div id="wrap">
+                    <div class="container mb64">
+                        <div class="col-md-12">
+                            <h3 class="page-header">Your SMS (NRS)</h3>
+                            <t t-if="not nrs">
+                                <p>There are currently no sms for your account.</p>
+                            </t>
+                            <t t-if="nrs">
+                                <form action="/my/nrs" method="get" class="mb-3">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <select id="search_field" name="search_field" class="form-control">
+                                                <option value="sms_time_data" t-att-selected="'sms_time_data' == search_field">Date/Time</option>
+                                                <option value="sender" t-att-selected="'sender' == search_field">Sender</option>
+                                                <option value="invoice_id" t-att-selected="'invoice_id' == search_field">Invoice</option>
+                                                <t t-if="has_waterconnection">
+                                                <option value="waterconnection_id" t-att-selected="'waterconnection_id' == search_field">Water Connection</option>
+                                                </t>
+                                                <option value="parcel_id" t-att-selected="'parcel_id' == search_field">Parcel</option>
+                                                <option value="subject" t-att-selected="'subject' == search_field">Subject</option>
+                                                <option value="sms_message" t-att-selected="'sms_message' == search_field">Message</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <input type="text" name="search" class="form-control" placeholder="Search SMS (NRS)..." t-att-value="search_query or ''"/>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="submit" class="btn btn-primary btn-block">Search</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <table class="table table-hover o_my_status_table">
+                                    <thead>
+                                        <tr class="active">
+                                            <th>Date/Time</th>
+                                            <th>Sender</th>
+                                            <th>Invoice</th>
+                                            <t t-if="has_waterconnection">
+                                                <th>Water Connection</th>
+                                            </t>
+                                            <th>Parcel</th>
+                                            <th>Subject</th>
+                                            <th style="width: 35%">Message</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="nrs" t-as="sms">
+                                            <tr>
+                                                <td><t t-esc="sms.sms_time_data"/></td>
+                                                <td><t t-esc="sms.sender"/></td>
+                                                <td><t t-esc="sms.invoice_id.number"/></td>
+                                                <t t-if="has_waterconnection">
+                                                    <td><t t-esc="sms.waterconnection_id.name"/></td>
+                                                </t>
+                                                <td><t t-esc="sms.parcel_id.name"/></td>
+                                                <td><t t-esc="sms.subject"/></td>
+                                                <td><t t-esc="sms.sms_message"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                                <div t-if="pager" class="o_portal_pager text-center">
+                                    <t t-call="website.pager"/>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>
