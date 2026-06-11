@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-16 16:02+0000\n"
-"PO-Revision-Date: 2026-04-16 16:02+0000\n"
+"POT-Creation-Date: 2026-06-11 10:39+0000\n"
+"PO-Revision-Date: 2026-06-11 10:39+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -25,6 +25,11 @@ msgstr " Fitxer de descobriment: %s."
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_spherag.field_wua_irrigation_configuration_url_remotecontrol_application_spherag
 msgid "Application URL"
 msgstr "URL de l'aplicació"
+
+#. module: wua_remotecontrol_rest_spherag
+#: model:ir.model.fields,help:wua_remotecontrol_rest_spherag.field_wua_waterconnection_spherag_imei
+msgid "Atlas device IMEI used to query monitoring endpoints."
+msgstr "IMEI del dispositiu Atlas utilitzat per consultar punts finals de monitoratge."
 
 #. module: wua_remotecontrol_rest_spherag
 #: model:ir.model.fields,help:wua_remotecontrol_rest_spherag.field_wua_waterconnection_spherag_flow_accumulated_element_id
@@ -52,6 +57,11 @@ msgid "Catch-all JSON with additional metadata used for diagnostics and traceabi
 msgstr "JSON genèric amb metadades addicionals utilitzades per a diagnòstic i traçabilitat."
 
 #. module: wua_remotecontrol_rest_spherag
+#: model:ir.model.fields,help:wua_remotecontrol_rest_spherag.field_wua_waterconnection_spherag_flow_accumulated_chart_type_id
+msgid "Chart type identifier used to query accumulated flow data."
+msgstr "Identificador de tipus de gràfic utilitzat per consultar dades de cabal acumulat."
+
+#. module: wua_remotecontrol_rest_spherag
 #: code:addons/wua_remotecontrol_rest_spherag/models/wua_remotecontrol.py:48
 #, python-format
 msgid "Close"
@@ -63,7 +73,7 @@ msgid "Configuration of irrigation with type of water"
 msgstr "Configuration of irrigation with type of water"
 
 #. module: wua_remotecontrol_rest_spherag
-#: code:addons/wua_remotecontrol_rest_spherag/models/wua_reading.py:140
+#: code:addons/wua_remotecontrol_rest_spherag/models/wua_reading.py:149
 #, python-format
 msgid "Could not build Spherag target elements from configured watermeters"
 msgstr "No s'han pogut construir els elements objectiu de Spherag a partir dels comptadors configurats"
@@ -76,17 +86,17 @@ msgstr "Sector hidràulic per defecte (importacions Spherag)"
 #. module: wua_remotecontrol_rest_spherag
 #: model:ir.model,name:wua_remotecontrol_rest_spherag.model_wua_negative_reading
 msgid "Entity (negative reading)"
-msgstr "Entitat (lectura negativa)"
+msgstr "Element (lectura negativa)"
 
 #. module: wua_remotecontrol_rest_spherag
 #: model:ir.model,name:wua_remotecontrol_rest_spherag.model_wua_reading
 msgid "Entity (pressure reading)"
-msgstr "Entitat (lectura de pressió)"
+msgstr "Element (lectura de pressió)"
 
 #. module: wua_remotecontrol_rest_spherag
 #: model:ir.model,name:wua_remotecontrol_rest_spherag.model_wua_waterconnection
 msgid "Entity (water connection)"
-msgstr "Entitat (presa)"
+msgstr "Element (toma)"
 
 #. module: wua_remotecontrol_rest_spherag
 #: model:ir.model.fields,help:wua_remotecontrol_rest_spherag.field_wua_irrigation_configuration_spherag_default_hydraulicsector_id
@@ -129,25 +139,25 @@ msgid "Native Remote Control Spherag"
 msgstr "Telecontrol natiu Spherag"
 
 #. module: wua_remotecontrol_rest_spherag
-#: code:addons/wua_remotecontrol_rest_spherag/models/wua_reading.py:157
+#: code:addons/wua_remotecontrol_rest_spherag/models/wua_reading.py:164
 #, python-format
 msgid "No reading found for Spherag element ID: %s"
 msgstr "No s'ha trobat cap lectura per a l'element Spherag amb ID: %s"
 
 #. module: wua_remotecontrol_rest_spherag
-#: code:addons/wua_remotecontrol_rest_spherag/models/wua_reading.py:147
+#: code:addons/wua_remotecontrol_rest_spherag/models/wua_reading.py:155
 #, python-format
 msgid "No readings found in Spherag system"
 msgstr "No s'han trobat lectures al sistema Spherag"
 
 #. module: wua_remotecontrol_rest_spherag
-#: code:addons/wua_remotecontrol_rest_spherag/models/wua_reading.py:131
+#: code:addons/wua_remotecontrol_rest_spherag/models/wua_reading.py:142
 #, python-format
 msgid "No watermeters configured with Spherag telecontrol"
 msgstr "No hi ha comptadors configurats amb telecontrol Spherag"
 
 #. module: wua_remotecontrol_rest_spherag
-#: code:addons/wua_remotecontrol_rest_spherag/models/wua_waterconnection.py:102
+#: code:addons/wua_remotecontrol_rest_spherag/models/wua_waterconnection.py:117
 #, python-format
 msgid "Please configure \"Default Hydraulic Sector (Spherag imports)\" before importing water connections from Spherag."
 msgstr "Configureu el \"Sector hidràulic per defecte (importacions Spherag)\" abans d'importar preses des de Spherag."
@@ -163,9 +173,19 @@ msgid "Spherag Data"
 msgstr "Dades de Spherag"
 
 #. module: wua_remotecontrol_rest_spherag
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_spherag.field_wua_waterconnection_spherag_flow_accumulated_chart_type_id
+msgid "Spherag FLOW_ACCUMULATED Chart Type ID"
+msgstr "ID de tipus de gràfic FLOW_ACCUMULATED de Spherag"
+
+#. module: wua_remotecontrol_rest_spherag
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_spherag.field_wua_waterconnection_spherag_flow_accumulated_element_id
 msgid "Spherag FLOW_ACCUMULATED Element ID"
 msgstr "ID de l'element FLOW_ACCUMULATED de Spherag"
+
+#. module: wua_remotecontrol_rest_spherag
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_spherag.field_wua_waterconnection_spherag_imei
+msgid "Spherag IMEI"
+msgstr "IMEI de Spherag"
 
 #. module: wua_remotecontrol_rest_spherag
 #: code:addons/wua_remotecontrol_rest_spherag/models/wua_remotecontrol.py:42
@@ -179,27 +199,32 @@ msgid "Spherag REST API"
 msgstr "Spherag REST API"
 
 #. module: wua_remotecontrol_rest_spherag
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_spherag.field_wua_waterconnection_spherag_system_id
+msgid "Spherag System ID"
+msgstr "ID de sistema Spherag"
+
+#. module: wua_remotecontrol_rest_spherag
 #: code:addons/wua_remotecontrol_rest_spherag/models/wua_remotecontrol.py:14
 #, python-format
 msgid "Spherag import finished. Created sheds: %(sheds)s, created waterconnections: %(wcs)s, created watermeters: %(wms)s, updated waterconnections: %(updates)s, skipped elements: %(skip)s."
 msgstr "Importació de Spherag finalitzada. Casetes creades: %(sheds)s, preses creades: %(wcs)s, comptadors creats: %(wms)s, preses actualitzades: %(updates)s, elements omesos: %(skip)s."
 
 #. module: wua_remotecontrol_rest_spherag
-#: code:addons/wua_remotecontrol_rest_spherag/models/wua_reading.py:24
+#: model:ir.model.fields,help:wua_remotecontrol_rest_spherag.field_wua_waterconnection_spherag_system_id
+msgid "Spherag system identifier used to query Atlas endpoints."
+msgstr "Identificador de sistema Spherag utilitzat per consultar punts finals d'Atlas."
+
+#. module: wua_remotecontrol_rest_spherag
+#: code:addons/wua_remotecontrol_rest_spherag/models/wua_reading.py:27
 #, python-format
 msgid "The remote control is not enabled."
 msgstr "El telecontrol no està habilitat."
 
 #. module: wua_remotecontrol_rest_spherag
-#: code:addons/wua_remotecontrol_rest_spherag/models/wua_reading.py:29
+#: code:addons/wua_remotecontrol_rest_spherag/models/wua_reading.py:32
 #, python-format
 msgid "There is not a URL for the remote control application."
 msgstr "No existeix cap URL per a l'aplicació de telecontrol."
-
-#. module: wua_remotecontrol_rest_spherag
-#: model:ir.model,name:wua_remotecontrol_rest_spherag.model_wizard_import_remotecontrol_data
-msgid "Wizard to Import Remote Control Data"
-msgstr "Assistent per importar dades de control remot"
 
 #. module: wua_remotecontrol_rest_spherag
 #: model:ir.model.fields,help:wua_remotecontrol_rest_spherag.field_wua_irrigation_configuration_automatic_census_synchronization_spherag

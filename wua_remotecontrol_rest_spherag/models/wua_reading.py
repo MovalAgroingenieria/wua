@@ -44,15 +44,24 @@ class WuaReading(models.Model):
             element_id = wc.spherag_flow_accumulated_element_id
             if not element_id:
                 continue
+            system_id = wc.spherag_system_id
+            imei = wc.spherag_imei
+            chart_type_id = wc.spherag_flow_accumulated_chart_type_id
+
+            # Backward compatibility for records not migrated yet.
             spherag_data = {}
-            try:
-                spherag_data = json.loads(wc.spherag_data or '{}')
-            except Exception:
-                spherag_data = {}
-            system_id = spherag_data.get('system_id')
-            imei = spherag_data.get('imei')
-            chart_type_id = spherag_data.get(
-                'flow_accumulated_chart_type_id')
+            if not system_id or not imei or not chart_type_id:
+                try:
+                    spherag_data = json.loads(wc.spherag_data or '{}')
+                except Exception:
+                    spherag_data = {}
+            if not system_id:
+                system_id = spherag_data.get('system_id')
+            if not imei:
+                imei = spherag_data.get('imei')
+            if not chart_type_id:
+                chart_type_id = spherag_data.get(
+                    'flow_accumulated_chart_type_id')
             if not system_id or not imei or not chart_type_id:
                 continue
             try:

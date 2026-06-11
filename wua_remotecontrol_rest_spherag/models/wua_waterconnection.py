@@ -18,6 +18,21 @@ class WuaWaterconnection(models.Model):
         string='Spherag FLOW_ACCUMULATED Element ID',
         help='Atlas element identifier used to query accumulated flow.')
 
+    spherag_system_id = fields.Integer(
+        string='Spherag System ID',
+        help='Spherag system identifier used to query Atlas endpoints.',
+    )
+
+    spherag_imei = fields.Char(
+        string='Spherag IMEI',
+        help='Atlas device IMEI used to query monitoring endpoints.',
+    )
+
+    spherag_flow_accumulated_chart_type_id = fields.Integer(
+        string='Spherag FLOW_ACCUMULATED Chart Type ID',
+        help='Chart type identifier used to query accumulated flow data.',
+    )
+
     spherag_data = fields.Text(
         string='Spherag Data',
         help='Catch-all JSON with additional metadata used for '
@@ -187,6 +202,9 @@ class WuaWaterconnection(models.Model):
                     'hydraulicsector_id': irrigationshed.hydraulicsector_id.id,
                     'position': position,
                     'spherag_flow_accumulated_element_id': element_id,
+                    'spherag_system_id': system_id,
+                    'spherag_imei': imei,
+                    'spherag_flow_accumulated_chart_type_id': chart_type_id,
                     'spherag_data': json.dumps({
                         'system_id': system_id,
                         'imei': imei,

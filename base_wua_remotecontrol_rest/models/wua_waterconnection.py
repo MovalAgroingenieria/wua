@@ -40,20 +40,25 @@ class WuaWaterconnection(models.Model):
 
     last_total_volume = fields.Float(
         string='Total (m³)',
-        digits=(32, 4),)
+        digits=(32, 4),
+    )
 
     last_waterflow = fields.Float(
         string='Waterconnection Waterflow (l/s)',
-        digits=(32, 4),)
+        digits=(32, 4),
+    )
 
     last_valve_open = fields.Boolean(
-        string='Valve Open',)
+        string='Valve Open',
+    )
 
     last_valve_scheduled = fields.Boolean(
-        string='Valve Scheluded',)
+        string='Valve Scheluded',
+    )
 
     last_data_time = fields.Datetime(
-        string='Last Capture Date',)
+        string='Last Capture Date',
+    )
 
     last_valve_error = fields.Boolean(
         string='Valve With Error',
