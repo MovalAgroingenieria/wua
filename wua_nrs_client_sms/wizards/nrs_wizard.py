@@ -4,7 +4,6 @@
 
 from odoo import models, api, fields, _
 from datetime import datetime
-from lxml import etree
 
 
 class NRSWizard(models.Model):
@@ -32,25 +31,11 @@ class NRSWizard(models.Model):
         ondelete="set null")
 
     @api.model
-    def fields_view_get(self, view_id=None, view_type="form", toolbar=False,
-                        submenu=False):
-        context = self._context
-        if context.get("mode") == "partner":
-            context_filter = "[('type', '=', 'partner')]"
-        elif context.get("mode") == "invoice":
-            context_filter = "[('type', '=', 'invoice')]"
-        elif context.get("mode") == "parcel":
-            context_filter = "[('type', '=', 'parcel')]"
-        else:
-            context_filter = ""
-        res = super(NRSWizard, self).fields_view_get(
-            view_id=view_id, view_type=view_type, toolbar=toolbar,
-            submenu=submenu)
-        doc = etree.XML(res["arch"])
-        for node in doc.xpath("//field[@name='template_id']"):
-            node.set("domain", context_filter)
-        res["arch"] = etree.tostring(doc)
-        return res
+    def _get_template_type_domain(self):
+        domain = super(NRSWizard, self)._get_template_type_domain()
+        if self._context.get("mode") == "parcel":
+            domain = "[('type', '=', 'parcel')]"
+        return domain
 
     def _get_targets_parcel(self, context):
         targets = []
