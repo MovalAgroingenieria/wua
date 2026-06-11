@@ -4,7 +4,10 @@
 
 import datetime
 import json
+import logging
 from odoo import models, fields, api, exceptions, _
+
+_logger = logging.getLogger(__name__)
 
 
 class WuaReading(models.Model):
@@ -80,7 +83,8 @@ class WuaReading(models.Model):
             for step in procedure.step_ids.sorted(key=lambda s: s.sequence):
                 bag = step.action_id.execute(bag=bag)
             last_readings = bag.get('last_readings', {})
-        except Exception:
+        except Exception as e:
+            _logger.warning('Spherag procedure error: %s', str(e))
             last_readings = {}
         # Keep only readings for configured Spherag elements.
         if element_ids:

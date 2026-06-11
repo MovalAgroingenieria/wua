@@ -79,7 +79,7 @@ class WuaReading(models.Model):
                     _logger.info(prefix_message_02 + '... ' +
                                  suffix_message_02)
                     error_subject = _('Remote Control: Error getting readings')
-                    remotecontrol.message_post(
+                    remotecontrol.sudo().message_post(
                         subject=error_subject,
                         body="Error %s: %s" % (
                             suffix_message_02, error_message),
@@ -113,7 +113,7 @@ class WuaReading(models.Model):
                     new_remotecontrol = self.with_env(new_env).env.ref(
                         'base_wua_remotecontrol_rest.wua_remotecontrol_logger',
                     )
-                    new_remotecontrol.message_post(
+                    new_remotecontrol.sudo().message_post(
                         subject=_('Remote Control: Exception Error'),
                         body="Error: %s" % str(e),
                         message_type='email',
