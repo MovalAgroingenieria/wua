@@ -7,6 +7,8 @@ import logging
 import math
 from odoo import models, fields, api, exceptions, _
 
+_logger = logging.getLogger(__name__)
+
 
 class WuaReading(models.Model):
     _inherit = 'wua.reading'
@@ -50,62 +52,70 @@ class WuaReading(models.Model):
                 readings, error_message, error_watermeters = \
                     self.do_import_reading_of_telecontrol()
                 readings = self.refine_readings(readings)
+                resp[2] = error_message
+                resp[3] = error_watermeters
                 if readings:
                     resp[0] = readings
                     resp[1] = len(readings)
-                    resp[2] = error_message
-                    resp[3] = error_watermeters
                     if save_data:
                         number_of_negative_readings = \
                             self.save_readings(readings)
                         resp[4] = number_of_negative_readings
-                    prefix_message_01 = _('Remote Control: '
-                                          'Getting readings')
-                    suffix_message_01 = str(resp[1])
-                    _logger = logging.getLogger(self.__class__.__name__)
-                    _logger.info(prefix_message_01 + '... ' +
-                                 suffix_message_01)
+                    _logger.info(
+                        _('Remote Control: Getting readings') + '... %s',
+                        resp[1])
                 if error_message:
-                    prefix_message_02 = _('Remote Control: '
-                                          'Error getting readings')
-                    suffix_message_02 = resp[2]
+                    _logger.info(
+                        _('Remote Control: Error getting readings') +
+                        '... %s', error_message)
                     company_name = self.env.user.company_id.name
                     website_url = self.env['ir.config_parameter'].get_param(
                         "web.base.url")
                     domain = self.env['ir.config_parameter'].get_param(
                         "mail.catchall.domain")
-                    _logger = logging.getLogger(
-                        self.__class__.__name__)
-                    _logger.info(prefix_message_02 + '... ' +
-                                 suffix_message_02)
                     error_subject = _('Remote Control: Error getting readings')
                     remotecontrol.sudo().message_post(
                         subject=error_subject,
-                        body="Error %s: %s" % (
-                            suffix_message_02, error_message),
+                        body="Error: %s" % error_message,
                         message_type='email',
                         subtype='mail.mt_comment',
                     )
-                    telecontrol_failed_template_id = self.env.ref(
-                        'base_wua_remotecontrol_rest.'
-                        'telecontrol_failed_email_template').id
-                    mail_template = self.env['mail.template'].browse(
-                        telecontrol_failed_template_id)
-                    mail_template.subject = '''
-                        Reading remote control in %s has
-                        experienced some problem
-                    ''' % (domain or self.pool.db_name)
-                    mail_template.body_html = '''
-                        <p style="margin: 0px; padding: 0px; font-size: 13px;">
-                            <b><a href="%s">%s</a></p></b>
-                            <br/>
-                            <span>%s</span>
-                        </p>
-                    ''' % (website_url, company_name, resp[2].replace(
-                        '\n', '<br/>'))
-                    mail_template.send_mail(self.id, force_send=True)
+                    try:
+                        outgoing_server = self.env[
+                            'ir.mail_server'].sudo().search(
+                            [('active', '=', True)], limit=1)
+                        if not outgoing_server:
+                            _logger.warning(
+                                'No active outgoing mail server found, '
+                                'skipping telecontrol error email.')
+                        else:
+                            telecontrol_failed_template_id = self.env.ref(
+                                'base_wua_remotecontrol_rest.'
+                                'telecontrol_failed_email_template').id
+                            mail_template = self.env['mail.template'].browse(
+                                telecontrol_failed_template_id)
+                            mail_template.subject = '''
+                                Reading remote control in %s has
+                                experienced some problem
+                            ''' % (domain or self.pool.db_name)
+                            mail_template.body_html = '''
+                                <p style="margin: 0px; padding: 0px;
+                                          font-size: 13px;">
+                                    <b><a href="%s">%s</a></p></b>
+                                    <br/>
+                                    <span>%s</span>
+                                </p>
+                            ''' % (website_url, company_name,
+                                   error_message.replace('\n', '<br/>'))
+                            # force_send=False: queued instead of synchronous
+                            # SMTP (avoids blocking up to 60s per server)
+                            mail_template.send_mail(
+                                remotecontrol.id, force_send=False)
+                    except Exception as mail_exc:
+                        _logger.warning(
+                            'Could not send telecontrol error email: %s',
+                            str(mail_exc))
             except Exception as e:
-                _logger = logging.getLogger(self.__class__.__name__)
                 _logger.error("Error getting readings: %s", str(e))
                 with self.pool.cursor() as new_cr:
                     new_env = api.Environment(
