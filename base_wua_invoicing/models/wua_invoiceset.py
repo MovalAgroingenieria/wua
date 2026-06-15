@@ -511,36 +511,36 @@ class WuaInvoiceset(models.Model):
         return invoice_items
 
     def select_invoice_items_parcel_type(self, invoiceset_line):
-        parcel_ids = []
-        for parcel in \
-            invoiceset_line.line_parcel_ids.filtered(
-                lambda x: x.selected is True):
-            parcel_ids.append(parcel.parcel_id.id)
-        return parcel_ids
+        # Raw SQL: avoids ORM Many2one traversal that search_read triggers
+        # (name_get on 10k parcel records) and benefits from the partial index
+        # wua_isl_parcel_invoicesetline_selected_idx.
+        self.env.cr.execute(
+            "SELECT parcel_id FROM wua_invoiceset_line_parcel "
+            "WHERE invoicesetline_id = %s AND selected = true",
+            (invoiceset_line.id,))
+        return [row[0] for row in self.env.cr.fetchall()]
 
     def select_invoice_items_partner_type(self, invoiceset_line):
-        partner_ids = []
-        for partner in \
-            invoiceset_line.line_partner_ids.filtered(
-                lambda x: x.selected is True):
-            partner_ids.append(partner.partner_id.id)
-        return partner_ids
+        self.env.cr.execute(
+            "SELECT partner_id FROM wua_invoiceset_line_partner "
+            "WHERE invoicesetline_id = %s AND selected = true",
+            (invoiceset_line.id,))
+        return [row[0] for row in self.env.cr.fetchall()]
 
     def select_invoice_items_waterconnection_type(self, invoiceset_line):
-        waterconnection_ids = []
-        for wc in \
-            invoiceset_line.line_waterconnection_ids.filtered(
-                lambda x: x.selected is True):
-            waterconnection_ids.append(wc.waterconnection_id.id)
-        return waterconnection_ids
+        self.env.cr.execute(
+            "SELECT waterconnection_id "
+            "FROM wua_invoiceset_line_waterconnection "
+            "WHERE invoicesetline_id = %s AND selected = true",
+            (invoiceset_line.id,))
+        return [row[0] for row in self.env.cr.fetchall()]
 
     def select_invoice_items_irrigationgate_type(self, invoiceset_line):
-        irrigationgate_ids = []
-        for ig in \
-            invoiceset_line.line_irrigationgate_ids.filtered(
-                lambda x: x.selected is True):
-            irrigationgate_ids.append(ig.irrigationgate_id.id)
-        return irrigationgate_ids
+        self.env.cr.execute(
+            "SELECT irrigationgate_id FROM wua_invoiceset_line_irrigationgate "
+            "WHERE invoicesetline_id = %s AND selected = true",
+            (invoiceset_line.id,))
+        return [row[0] for row in self.env.cr.fetchall()]
 
     # Hook.
     def select_invoice_items_other_types(self, productcategory_code,
@@ -1658,6 +1658,26 @@ class WuaInvoiceset(models.Model):
                 date_due_by_term[pt_id] = max(line[0] for line in pterm_list)
             else:
                 date_due_by_term[pt_id] = date_invoice_ref
+        # Hoist config reads out of the per-invoice loop: previously each
+        # iteration issued 1-2 ir.values queries. These values are constant
+        # during the run, so reading them once removes ~2 queries per invoice.
+        commit_every = ir_vals.get_default(
+            'wua.invoicing.configuration', 'commit_every_n_invoices')
+        if commit_every is None:
+            commit_every = self.COMMIT_EVERY_N_INVOICES
+        try:
+            commit_every = int(commit_every)
+        except (TypeError, ValueError):
+            commit_every = self.COMMIT_EVERY_N_INVOICES
+        if commit_every < 1:
+            commit_every = self.COMMIT_EVERY_N_INVOICES
+        milestone_every = ir_vals.get_default(
+            'wua.invoicing.configuration', 'log_milestone_partners_every')
+        if milestone_every is None:
+            milestone_every = self.LOG_MILESTONE_PARTNERS_EVERY
+        # Cache delivery address per partner to avoid an address_get query
+        # per invoice (the delivery address is stable during the run).
+        shipping_by_partner = {}
         for inv_idx, invoice_data in enumerate(invoices_data):
             t_inv = time.time()
             lines = []
@@ -1758,8 +1778,12 @@ class WuaInvoiceset(models.Model):
                         partner_id, 0) or 0
                 if mandate_id > 0:
                     invoice_vals.update({'mandate_id': mandate_id})
-                partner_shipping_id = partner.address_get(
-                    ['delivery']).get('delivery')
+                if partner_id in shipping_by_partner:
+                    partner_shipping_id = shipping_by_partner[partner_id]
+                else:
+                    partner_shipping_id = partner.address_get(
+                        ['delivery']).get('delivery')
+                    shipping_by_partner[partner_id] = partner_shipping_id
                 if partner.id != partner_shipping_id:
                     invoice_vals.update({'partner_shipping_id':
                                          partner_shipping_id})
@@ -1767,16 +1791,6 @@ class WuaInvoiceset(models.Model):
                 number_of_invoices = number_of_invoices + 1
                 # Periodic commit to keep transaction
                 # short and limit cache growth
-                commit_every = self.env['ir.values'].get_default(
-                    'wua.invoicing.configuration', 'commit_every_n_invoices')
-                if commit_every is None:
-                    commit_every = self.COMMIT_EVERY_N_INVOICES
-                try:
-                    commit_every = int(commit_every)
-                except (TypeError, ValueError):
-                    commit_every = self.COMMIT_EVERY_N_INVOICES
-                if commit_every < 1:
-                    commit_every = self.COMMIT_EVERY_N_INVOICES
                 if (number_of_invoices % commit_every == 0):
                     self.env.cr.commit()
                     self.env.invalidate_all()
@@ -1796,10 +1810,6 @@ class WuaInvoiceset(models.Model):
                     record.name, inv_idx + 1,
                     len(invoices_data),
                     time.time() - t0)
-            milestone_every = self.env['ir.values'].get_default(
-                'wua.invoicing.configuration', 'log_milestone_partners_every')
-            if milestone_every is None:
-                milestone_every = self.LOG_MILESTONE_PARTNERS_EVERY
             if ((inv_idx + 1) % milestone_every == 0 and
                     (inv_idx + 1) < len(invoices_data)):
                 _logger.debug(
@@ -1988,10 +1998,25 @@ class WuaInvoiceset(models.Model):
 
     # This function returns "True" if a list of parcels has the same
     # payer (of water or other costs, depending of "water_costs" parameter.
-    def is_parcels_with_a_single_payer(self, parcels, water_costs=True):
+    def is_parcels_with_a_single_payer(self, parcels, water_costs=True,
+                                       partnerlinks_by_parcel_id=None):
         resp = False
         if parcels:
             parcel_ids = [x.id for x in parcels]
+            if partnerlinks_by_parcel_id is not None:
+                # Use the precomputed index to avoid one search per call
+                # inside calculation loops (N+1 elimination, ORM-safe).
+                pl_ids = []
+                for parcel_id in parcel_ids:
+                    pl_ids.extend(
+                        partnerlinks_by_parcel_id.get(parcel_id, []))
+                if pl_ids:
+                    partnerlinks = self.env['wua.parcel.partnerlink'].browse(
+                        pl_ids)
+                    partner_ids = partnerlinks.mapped('partner_id').ids
+                    if len(set(partner_ids)) == 1:
+                        resp = True
+                return resp
             condition_costs = ('water_costs_percentage', '>', 0)
             if not water_costs:
                 condition_costs = ('other_costs_percentage', '>', 0)

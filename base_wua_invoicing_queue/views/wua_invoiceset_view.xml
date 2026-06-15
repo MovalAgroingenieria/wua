@@ -24,6 +24,30 @@
                                  ('state','=','generated')]}"
                         groups="base_wua.group_wua_manager"
                         confirm="The calculation and validation will run in the background. Continue?"/>
+                <button name="action_validate_invoiceset_queue"
+                        type="object"
+                        string="Validate in parallel"
+                        states="generated"
+                        attrs="{'invisible':
+                                ['|',
+                                 ('has_pending_invoices','=',False),
+                                 ('validate_in_progress','=',True)]}"
+                        groups="base_wua.group_wua_manager"
+                        confirm="The validation will run in the background. Continue?"/>
+                <field name="validate_in_progress" invisible="1"/>
+                <field name="validate_total" invisible="1"/>
+                <field name="validate_done" invisible="1"/>
+                <field name="has_pending_invoices" invisible="1"/>
+                <field name="calculate_in_progress" invisible="1"/>
+                <label for="calculate_in_progress" string="Calculating…"
+                       attrs="{'invisible':
+                               [('calculate_in_progress','=',False)]}"/>
+                <label for="validate_progress" string="Validating…"
+                       attrs="{'invisible':
+                               [('validate_in_progress','=',False)]}"/>
+                <field name="validate_progress" widget="progressbar"
+                       attrs="{'invisible':
+                               [('validate_in_progress','=',False)]}"/>
             </xpath>
         </field>
     </record>
