@@ -43,31 +43,46 @@ class AccountPaymentOrder(models.Model):
                 if payment_line.move_line_id.invoice_id:
                     invoices.append(payment_line.move_line_id.invoice_id.id)
                 move_lines.append(payment_line.move_line_id.id)
-        if invoices:
-            invoices = list(set(invoices))
-            invoices_str = ''
-            for invoice_id in invoices:
-                invoices_str = invoices_str + ', ' + str(invoice_id)
-            invoices_str = invoices_str[2:]
-            self.env.cr.execute("""
-                UPDATE account_invoice
-                set reconciled=TRUE, state='paid', residual=0,
-                    residual_signed=0, residual_company_signed=0
-                WHERE id in (""" + invoices_str + """)""")
-            self.env.cr.execute("""
-                UPDATE account_invoice_line
-                SET invoice_state='paid'
-                WHERE invoice_id IN (""" + invoices_str + """)""")
-            self.env.cr.commit()
-            self.env.invalidate_all()
-            invoices_to_compute = \
-                self.env['account.invoice'].browse(invoices)
-            invoices_to_compute._compute_payments()
+        # Refresh move line residuals first so the paid/unpaid decision
+        # below is based on the actual reconciliation state.
         if move_lines:
             move_lines_to_compute = \
                 self.env['account.move.line'].browse(move_lines)
             move_lines_to_compute.with_context(
                 from_account_payment_order=True)._amount_residual()
+        if invoices:
+            invoices = list(set(invoices))
+            # Only mark as paid the invoices that are actually fully
+            # reconciled. Forcing residual=0 unconditionally left invoices
+            # flagged as paid while still having a pending balance.
+            self.env.cr.execute("""
+                SELECT ai.id
+                FROM account_invoice ai
+                WHERE ai.id IN %s
+                AND NOT EXISTS (
+                    SELECT 1 FROM account_move_line aml
+                    JOIN account_account aa ON aa.id = aml.account_id
+                    WHERE aml.invoice_id = ai.id
+                    AND aa.internal_type IN ('receivable', 'payable')
+                    AND aml.reconciled IS FALSE
+                    AND COALESCE(aml.amount_residual, 0) <> 0
+                )""", (tuple(invoices),))
+            paid_invoice_ids = [row[0] for row in self.env.cr.fetchall()]
+            if paid_invoice_ids:
+                self.env.cr.execute("""
+                    UPDATE account_invoice
+                    SET reconciled=TRUE, state='paid', residual=0,
+                        residual_signed=0, residual_company_signed=0
+                    WHERE id IN %s""", (tuple(paid_invoice_ids),))
+                self.env.cr.execute("""
+                    UPDATE account_invoice_line
+                    SET invoice_state='paid'
+                    WHERE invoice_id IN %s""", (tuple(paid_invoice_ids),))
+            self.env.cr.commit()
+            self.env.invalidate_all()
+            invoices_to_compute = \
+                self.env['account.invoice'].browse(invoices)
+            invoices_to_compute._compute_payments()
         return True
 
     @api.multi

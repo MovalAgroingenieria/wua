@@ -6,7 +6,7 @@
     "name": "Water Users Association Invoicing",
     "summary": "In a water users association, global invoicing "
                "based on a selection of items (parcels, partners, etc)",
-    "version": '10.0.1.1.5',
+    "version": '10.0.1.1.6',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
