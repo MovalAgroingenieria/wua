@@ -11,8 +11,12 @@ class ReportOverdue(models.AbstractModel):
 
     def _get_account_move_lines(self, partner_ids):
         user_company_id = self.env.user.company_id.id
+        show_all = self.env.context.get('show_all_pending', False)
+        overdue_filter = (
+            '' if show_all else 'AND l.date_maturity < current_date '
+        )
         res = dict(map(lambda x: (x, []), partner_ids))
-        self.env.cr.execute(
+        sql = (
             "SELECT m.name AS move_id, l.date, l.name, l.ref, "
             "l.date_maturity, l.partner_id, l.blocked, l.amount_currency, "
             "l.currency_id, l.journal_id, j.name AS journal_name, "
@@ -25,7 +29,7 @@ class ReportOverdue(models.AbstractModel):
             "THEN SUM(l.credit) "
             "ELSE SUM(l.debit * -1) "
             "END AS credit, "
-            "CASE WHEN l.date_maturity < %s "
+            "CASE WHEN l.date_maturity < %%s "
             "THEN SUM(l.debit - l.credit) "
             "ELSE 0 "
             "END AS mat "
@@ -34,15 +38,18 @@ class ReportOverdue(models.AbstractModel):
             "JOIN account_move m ON (l.move_id = m.id) "
             "JOIN account_journal j ON (l.journal_id = j.id) "
             "LEFT JOIN account_invoice ai ON (ai.move_id = m.id) "
-            "WHERE l.partner_id IN %s "
+            "WHERE l.partner_id IN %%s "
             "AND at.type IN ('receivable', 'payable') "
             "AND l.full_reconcile_id IS NULL "
-            "AND l.company_id = %s "
+            "AND l.company_id = %%s "
+            "%s"
             "GROUP BY l.date, l.name, l.ref, l.date_maturity, l.partner_id, "
             "at.type, l.blocked, l.amount_currency, l.currency_id, l.move_id, "
-            "m.name, l.journal_id, j.name, ai.type",
-            (((fields.date.today(), ) + (tuple(partner_ids),
-                                         user_company_id))))
+            "m.name, l.journal_id, j.name, ai.type"
+        ) % overdue_filter
+        self.env.cr.execute(
+            sql,
+            (fields.date.today(), tuple(partner_ids), user_company_id))
         for row in self.env.cr.dictfetchall():
             res[row.pop('partner_id')].append(row)
         return res
@@ -94,3 +101,14 @@ class ReportOverdue(models.AbstractModel):
         }
         return self.env['report'].render(
             'account.report_overdue', values=docargs)
+
+
+class ReportOverduePending(models.AbstractModel):
+    _name = 'report.account_wua.report_overdue_all_pending'
+    _inherit = 'report.account.report_overdue'
+
+    @api.model
+    def render_html(self, docids, data=None):
+        return super(ReportOverduePending,
+                     self.with_context(show_all_pending=True)).render_html(
+            docids, data=data)

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <data>
+
     <template id="report_overdue_document" inherit_id="account.report_overdue_document">
 
         <!-- Replace full document -->
@@ -214,5 +216,17 @@
         </xpath>
 
     </template>
+
+    <record id="action_report_print_pending" model="ir.actions.report.xml">
+        <field name="name">Pending Payments</field>
+        <field name="model">res.partner</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">account_wua.report_overdue_all_pending</field>
+        <field name="report_file">account_wua.report_overdue_all_pending</field>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="context">{'show_all_pending': True}</field>
+    </record>
+
+    </data>
 
 </odoo>
