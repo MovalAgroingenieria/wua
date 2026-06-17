@@ -59,7 +59,7 @@ class WuaConfiguration(models.TransientModel):
         string='Automatically register an annotation in the output record',
         default=False,
         help='Activate this parameter to automatically register an annotation'
-             ' in the output record'
+             ' in the output record',
     )
 
     @api.multi
