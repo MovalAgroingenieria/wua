@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_waterconnection_view_form_scada" model="ir.ui.view">
+        <field name="name">wua.waterconnection.form.scada</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="inherit_id"
+               ref="base_wua_remotecontrol_rest.wua_waterconnection_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='telecontrol_associated']"
+                   position="after">
+                <field name="scada_intake"
+                       attrs="{'invisible': [('telecontrol_associated', '!=', 'scada')],
+                               'required': [('telecontrol_associated', '=', 'scada')]}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

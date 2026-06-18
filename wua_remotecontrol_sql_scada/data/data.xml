@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <record id="remotecontrol_sql_scada" model="remotecontrol">
+            <field name="name">SCADA SQL</field>
+            <field name="remotecontrol_type">sql</field>
+            <field name="base_url">mysql://</field>
+            <field name="timeout">300</field>
+            <field name="verify_ssl">False</field>
+            <field name="rate_limit_seconds">1.0</field>
+            <field name="max_retries">3</field>
+            <field name="backoff">2.0</field>
+            <field name="readonly">True</field>
+            <field name="is_cesens">True</field>
+            <field name="connection_params"><![CDATA[
+            {
+                "driver": "",
+                "server": "",
+                "port": "",
+                "database": "",
+                "uid": "",
+                "pwd": ""
+            }]]></field>
+        </record>
+
+        <record id="remotecontrol_sql_scada_action_build_plan" model="remotecontrol.action">
+            <field name="name">SCADA SQL: Build Device/Sensor Plan</field>
+            <field name="remote_id" ref="remotecontrol_sql_scada"/>
+            <field name="active">True</field>
+            <field name="rate_limit_seconds">0.0</field>
+            <field name="max_retries">1</field>
+            <field name="readonly">True</field>
+            <field name="code"><![CDATA[
+import logging
+
+logger = logging.getLogger(__name__)
+
+Remote = self.remote_id
+today_str = fields.Date.today()
+values = env['ir.values'].sudo()
+
+logger.info("[SCADA SQL] Starting Build Plan action")
+
+sql_server = values.get_default('wua.irrigation.configuration', 'sql_server_scada') or ''
+sql_port = values.get_default('wua.irrigation.configuration', 'sql_port_scada') or '1433'
+sql_database = values.get_default('wua.irrigation.configuration', 'sql_database_scada') or ''
+sql_uid = values.get_default('wua.irrigation.configuration', 'sql_uid_scada') or ''
+sql_pwd = values.get_default('wua.irrigation.configuration', 'sql_pwd_scada') or ''
+
+connection_params = {
+    'server': sql_server,
+    'port': sql_port,
+    'database': sql_database,
+    'uid': sql_uid,
+    'pwd': sql_pwd,
+}
+bag['connection_params'] = connection_params
+
+logger.info(
+    "[SCADA SQL] Build Plan connection params server=%s port=%s database=%s user=%s password_set=%s" %
+    (sql_server, sql_port, sql_database, sql_uid, bool(sql_pwd))
+)
+
+condition = [
+    ('telecontrol_associated', '=', 'scada'),
+    ('scada_intake', '!=', False),
+]
+waterconnections = env['wua.waterconnection'].search(condition)
+
+logger.info(
+    "[SCADA SQL] Build Plan found %d candidate waterconnections" %
+    len(waterconnections)
+)
+
+plan = []
+for waterconnection in waterconnections:
+    intake = (waterconnection.scada_intake or '').strip()
+    if not intake:
+        logger.warning(
+            "[SCADA SQL] Build Plan skipped waterconnection %s without intake" %
+            waterconnection.id
+        )
+        continue
+    last_m = False
+    if waterconnection.watermeter_id:
+        last_m = waterconnection.watermeter_id.last_reading_time
+    if last_m:
+        try:
+            initial_date = fields.Date.to_string(
+                fields.Datetime.from_string(last_m)
+            )
+        except Exception:
+            initial_date = str(last_m)[:10]
+    else:
+        year_str = today_str[:4]
+        initial_date = '%s-01-01' % year_str
+    plan.append({
+        'sensor_id': waterconnection.id,
+        'device_id': waterconnection.id,
+        'waterconnection_id': waterconnection.id,
+        'intake': intake,
+        'initial_date': initial_date,
+    })
+
+bag['sensors_plan'] = plan
+bag['plan_count'] = len(plan)
+
+logger.info("[SCADA SQL] Build Plan generated %d items" % len(plan))
+Remote.message_post(body='[SCADA SQL] Build Plan: %s items' % len(plan))
+]]></field>
+        </record>
+
+        <record id="remotecontrol_sql_scada_action_get_devices" model="remotecontrol.action">
+            <field name="name">SCADA SQL: Fetch and Parse Rows</field>
+            <field name="remote_id" ref="remotecontrol_sql_scada"/>
+            <field name="active">True</field>
+            <field name="rate_limit_seconds">1.0</field>
+            <field name="max_retries">3</field>
+            <field name="backoff">2.0</field>
+            <field name="readonly">True</field>
+            <field name="code"><![CDATA[
+import mysql.connector
+import logging
+
+logger = logging.getLogger(__name__)
+
+Remote = self.remote_id
+plan = bag.get('sensors_plan') or []
+
+rows = []
+errors = []
+selected_driver = 'mysql.connector'
+
+try:
+    logger.info("[SCADA SQL] Starting Fetch and Parse Rows action")
+    logger.info("[SCADA SQL] Plan contains %d sensors" % len(plan))
+
+    values = env['ir.values'].sudo()
+    server = values.get_default(
+        'wua.irrigation.configuration',
+        'sql_server_scada') or ''
+    port_val = values.get_default(
+        'wua.irrigation.configuration',
+        'sql_port_scada') or '3306'
+    database = values.get_default(
+        'wua.irrigation.configuration',
+        'sql_database_scada') or ''
+    uid_raw = values.get_default(
+        'wua.irrigation.configuration',
+        'sql_uid_scada') or ''
+    pwd_raw = values.get_default(
+        'wua.irrigation.configuration',
+        'sql_pwd_scada') or ''
+
+    if isinstance(port_val, basestring):
+        port_val = port_val.strip()
+    try:
+        port = int(port_val)
+    except Exception:
+        port = 3306
+
+    server = server.strip() if isinstance(server, basestring) else str(server).strip()
+    database = database.strip() if isinstance(database, basestring) else str(database).strip()
+    uid = uid_raw.strip() if isinstance(uid_raw, basestring) else str(uid_raw).strip()
+    pwd = pwd_raw.strip() if isinstance(pwd_raw, basestring) else str(pwd_raw).strip()
+
+    bag['connection_params'] = {
+        'server': server,
+        'port': str(port),
+        'database': database,
+        'uid': uid,
+        'pwd': pwd,
+    }
+
+    if not all([server, database, uid]):
+        logger.error("[SCADA SQL] Missing required connection parameters")
+        raise Exception('Missing required connection parameters')
+
+    if pwd in (None, ''):
+        logger.error("[SCADA SQL] Missing password in connection_params")
+        raise Exception('Missing password parameter (pwd/password/pass)')
+
+    logger.info(
+        "[SCADA SQL] Connecting to %s:%d/%s as %s (password_set=%s)" %
+        (server, port, database, uid, bool(pwd))
+    )
+
+    config = {
+        'host': server,
+        'port': port,
+        'user': uid,
+        'password': pwd,
+        'database': database,
+    }
+
+    conn = mysql.connector.connect(**config)
+    logger.info("[SCADA SQL] Connected successfully")
+    cursor = conn.cursor()
+
+    for item in plan:
+        sensor_id = item['sensor_id']
+        device_id = item['device_id']
+        intake = (item['intake'] or '').strip()
+        initial_date = item['initial_date']
+        waterconnection_id = item.get('waterconnection_id')
+
+        query = (
+            'SELECT fecha, toma, contador, caudal '
+            'FROM odoo '
+            'WHERE TRIM(toma) = %s '
+            'AND fecha >= %s '
+            'ORDER BY fecha ASC'
+        )
+        fallback_query = (
+            'SELECT fecha, toma, contador, caudal '
+            'FROM odoo '
+            'WHERE TRIM(toma) = %s '
+            'ORDER BY fecha ASC '
+            'LIMIT 3'
+        )
+
+        try:
+            logger.info(
+                "[SCADA SQL] Fetching sensor %d with intake=%s from %s" %
+                (sensor_id, intake, initial_date)
+            )
+            cursor.execute(query, (intake, initial_date))
+            results = cursor.fetchall()
+            if not results:
+                logger.warning(
+                    "[SCADA SQL] No rows with date filter for sensor %d. Trying fallback without date filter" % sensor_id
+                )
+                cursor.execute(fallback_query, (intake,))
+                results = cursor.fetchall()
+            logger.info("[SCADA SQL] Got %d rows for sensor %d" % (len(results), sensor_id))
+
+            for row in results:
+                timestamp = row[0]
+                if hasattr(timestamp, 'strftime'):
+                    timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
+                else:
+                    timestamp = str(timestamp)
+                rows.append({
+                    'sensor_id': sensor_id,
+                    'device_id': device_id,
+                    'waterconnection_id': waterconnection_id,
+                    'intake': intake,
+                    'timestamp': timestamp,
+                    'contador': row[2],
+                    'value': row[3],
+                    'caudal': row[3],
+                })
+        except Exception as exc:
+            error_msg = str(exc)
+            logger.error("[SCADA SQL] Error fetching data for sensor %d: %s" % (sensor_id, error_msg))
+            errors.append({
+                'sensor_id': sensor_id,
+                'device_id': device_id,
+                'intake': intake,
+                'query': query,
+                'fallback_query': fallback_query,
+                'error': error_msg,
+            })
+
+    cursor.close()
+    conn.close()
+    logger.info("[SCADA SQL] Cursor and connection closed")
+except Exception as ex:
+    error_msg = str(ex)
+    logger.exception("[SCADA SQL] Fatal error in Fetch action: %s" % error_msg)
+    errors.append({'fatal_error': error_msg})
+
+bag['scada_sql_rows'] = rows
+bag['scada_sql_fetch_errors'] = errors
+bag['scada_sql_driver'] = selected_driver
+
+logger.info("[SCADA SQL] Fetch completed: %d rows, %d errors (driver=%s)" % (len(rows), len(errors), selected_driver))
+
+Remote.message_post(
+    body='[SCADA SQL] Fetch: %s rows, %s errors (driver=%s)' %
+         (len(rows), len(errors), selected_driver)
+)
+]]></field>
+        </record>
+
+        <record id="remotecontrol_sql_scada_action_get_readings" model="remotecontrol.action">
+            <field name="name">SCADA SQL: Upsert Readings</field>
+            <field name="remote_id" ref="remotecontrol_sql_scada"/>
+            <field name="active">True</field>
+            <field name="rate_limit_seconds">0.0</field>
+            <field name="max_retries">3</field>
+            <field name="backoff">1.6</field>
+            <field name="readonly">True</field>
+            <field name="code"><![CDATA[
+import pytz
+from datetime import datetime
+import logging
+
+logger = logging.getLogger(__name__)
+
+Remote = self.remote_id
+
+logger.info("[SCADA SQL] Starting Upsert Readings action")
+
+def parse_value(v):
+    if v is None:
+        return None
+    if isinstance(v, basestring):
+        v = v.strip().replace(',', '.')
+        if v.lower() == 'nan':
+            return None
+        try:
+            return float(v)
+        except Exception:
+            return None
+    if isinstance(v, (int, float)):
+        return float(v)
+    return None
+
+rows = bag.get('scada_sql_rows') or []
+total_processed = 0
+total_upserts = 0
+total_errors = 0
+
+logger.info("[SCADA SQL] Processing %d rows" % len(rows))
+
+for r in rows:
+    total_processed += 1
+    sensor_id = r.get('sensor_id')
+    device_id = r.get('device_id')
+    timestamp = r.get('timestamp')
+    value = parse_value(r.get('value'))
+
+    if not sensor_id or not device_id or not timestamp or value is None:
+        logger.warning("[SCADA SQL] Skipping row: missing required fields")
+        total_errors += 1
+        continue
+
+    try:
+        try:
+            date_time_read = datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S')
+            date_time_read = pytz.timezone('Europe/Madrid').localize(date_time_read)
+            date_time_read = date_time_read.astimezone(pytz.timezone('UTC'))
+            ts_utc = date_time_read.strftime('%Y-%m-%d %H:%M:%S')
+        except Exception:
+            ts_utc = timestamp
+
+        Remote.upsert(
+            'mdm.measurement.device.sensor.reading',
+            {
+                'sensor_id': sensor_id,
+                'measurement_time': ts_utc,
+            },
+            {
+                'value': value,
+                'device_id': device_id,
+            }
+        )
+        logger.debug("[SCADA SQL] Upserted reading for sensor %d, timestamp %s" % (sensor_id, ts_utc))
+        total_upserts += 1
+    except Exception as ex:
+        error_msg = str(ex)
+        logger.error("[SCADA SQL] Error upserting reading for sensor %d: %s" % (sensor_id, error_msg))
+        total_errors += 1
+
+logger.info("[SCADA SQL] Upsert completed: %d processed, %d upserts, %d errors" % (total_processed, total_upserts, total_errors))
+
+bag['upserts'] = total_upserts
+bag['errors'] = total_errors
+Remote.message_post(
+    body='[SCADA SQL] Upsert: %s processed, %s upserts, %s errors' %
+         (total_processed, total_upserts, total_errors)
+)
+]]></field>
+        </record>
+
+
+        <record id="remotecontrol_sql_scada_procedure" model="remotecontrol.procedure">
+            <field name="name">SCADA SQL: Daily Sync</field>
+            <field name="remote_id" ref="remotecontrol_sql_scada"/>
+            <field name="active">True</field>
+            <field name="schedule_cron">False</field>
+            <field name="readonly">True</field>
+            <field name="procedure_for_readings" eval="True"/>
+    </record>
+
+
+        <record id="remotecontrol_sql_scada_step_10_token" model="remotecontrol.step">
+            <field name="name">Build Device/Sensor Plan</field>
+            <field name="procedure_id" ref="remotecontrol_sql_scada_procedure"/>
+            <field name="action_id" ref="remotecontrol_sql_scada_action_build_plan"/>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="remotecontrol_sql_scada_step_20_devices" model="remotecontrol.step">
+            <field name="name">Fetch and Parse Rows</field>
+            <field name="procedure_id" ref="remotecontrol_sql_scada_procedure"/>
+            <field name="action_id" ref="remotecontrol_sql_scada_action_get_devices"/>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="remotecontrol_sql_scada_step_30_readings" model="remotecontrol.step">
+            <field name="name">Upsert Readings</field>
+            <field name="procedure_id" ref="remotecontrol_sql_scada_procedure"/>
+            <field name="action_id" ref="remotecontrol_sql_scada_action_get_readings"/>
+            <field name="sequence">30</field>
+        </record>
+
+
+    </data>
+
+</odoo>
