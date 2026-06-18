@@ -6,6 +6,7 @@ import datetime
 import logging
 
 from odoo import api, fields, models
+from odoo.tools import pickle
 
 
 _logger = logging.getLogger(__name__)
@@ -27,6 +28,45 @@ class WuaReading(models.Model):
             )
         except Exception:
             return None
+
+    @api.model
+    def _safe_get_default(
+            self, model, field_name, for_all_users=True,
+            company_id=False, condition=False):
+        values_obj = self.env['ir.values']
+        try:
+            return values_obj.get_default(
+                model,
+                field_name,
+                for_all_users=for_all_users,
+                company_id=company_id,
+                condition=condition,
+            )
+        except ValueError as error:
+            if 'Expected singleton: ir.values(' not in str(error):
+                raise
+            key2_value = condition and condition[:200] or False
+            user_value = False if for_all_users else self._uid
+            records = values_obj.sudo().search([
+                ('key', '=', 'default'),
+                ('key2', '=', key2_value),
+                ('model', '=', model),
+                ('name', '=', field_name),
+                ('user_id', '=', user_value),
+                ('company_id', '=', company_id),
+            ], order='id desc')
+            if not records:
+                return None
+            try:
+                return pickle.loads(records[0].value.encode('utf-8'))
+            except Exception:
+                _logger.exception(
+                    'SCADA SQL: Could not decode duplicated default '
+                    'value for %s.%s',
+                    model,
+                    field_name,
+                )
+                return None
 
     def _get_scada_rows(self):
         action_build_plan = self.env.ref(
