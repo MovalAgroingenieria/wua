@@ -4,6 +4,7 @@
 from functools import partial
 from datetime import datetime
 from odoo import models, fields, api, _
+from odoo.osv import expression
 from odoo.tools.misc import formatLang
 from odoo.exceptions import UserError
 
@@ -11,6 +12,11 @@ from odoo.exceptions import UserError
 class AccountInvoice(models.Model):
     _name = 'account.invoice'
     _inherit = ['account.invoice', 'simpleattachment.model']
+
+    amount_total_search = fields.Char(
+        string='Total Amount',
+        compute='_compute_amount_total_search',
+        search='_search_amount_total_search')
 
     invoiceset_id = fields.Many2one(
         string='Invoice Set',
@@ -73,6 +79,49 @@ class AccountInvoice(models.Model):
         column2='state_tag_id',
         index=True,
     )
+
+    @api.model
+    def _parse_amount_total_search(self, value):
+        if isinstance(value, (int, long, float)):
+            value = str(value)
+        elif not isinstance(value, basestring):
+            return None
+        value = (value or '').strip().replace(' ', '')
+        if not value:
+            return None
+        if ',' in value and '.' in value:
+            if value.rfind(',') > value.rfind('.'):
+                value = value.replace('.', '')
+                value = value.replace(',', '.')
+            else:
+                value = value.replace(',', '')
+        elif ',' in value:
+            value = value.replace(',', '.')
+        else:
+            value = value.replace(',', '')
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            return None
+
+    @api.model
+    def _search_amount_total_search(self, operator, value):
+        amount = self._parse_amount_total_search(value)
+        if amount is None:
+            return [('id', '=', 0)]
+        epsilon = 0.005
+        domain = expression.AND([
+            [('amount_total', '>=', amount - epsilon)],
+            [('amount_total', '<=', amount + epsilon)],
+        ])
+        if operator in ('!=', '<>', 'not like', 'not ilike'):
+            domain = ['!'] + domain
+        return domain
+
+    @api.depends('amount_total')
+    def _compute_amount_total_search(self):
+        for record in self:
+            record.amount_total_search = False
 
     # It is not necessary "api.depends" (get from parent method).
     def _compute_amount(self):

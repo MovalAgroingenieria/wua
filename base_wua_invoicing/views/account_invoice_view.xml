@@ -126,6 +126,11 @@
         <field name="model">account.invoice</field>
         <field name="inherit_id" ref="account.view_account_invoice_filter"/>
         <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <field name="amount_total_search"
+                       string="Total Amount"
+                       operator="="/>
+            </xpath>
             <xpath expr="//filter[@name='draft']" position="before">
                 <filter string="With attachments" name="withattachments"
                         domain="[('has_attachments','=',True)]"/>
