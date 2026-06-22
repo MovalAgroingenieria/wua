@@ -16,7 +16,8 @@
         "base_wua_certificate",
     ],
     "data": [
-        "views/website_portal_templates.xml",
+        'views/assets.xml',
+        'views/website_portal_templates.xml',
         'security/ir.model.access.csv',
     ],
     "installable": True,

@@ -42,25 +42,34 @@
                             </t>
 
                             <t t-if="certificates">
-                                <form action="/my/certificates" method="get" class="mb-3">
+                                <form action="/my/certificates" method="get" class="mb-3 certificate-search-form">
                                     <div class="row">
                                         <div class="col-md-2">
                                             <select id="search_field" name="search_field" class="form-control">
-                                                <option value="name" t-att-selected="'name' == search_field">Name</option>
-                                                <option value="certificatetype_id" t-att-selected="'certificatetype_id' == search_field">Certificate Type</option>
-                                                <option value="date_of_issue" t-att-selected="'date_of_issue' == search_field">Date of Issue</option>
-                                                <option value="state" t-att-selected="'state' == search_field">State</option>
+                                                <option value="name" t-att-selected="'selected' if search_field == 'name' else None">Name</option>
+                                                <option value="certificatetype_id" t-att-selected="'selected' if search_field == 'certificatetype_id' else None">Certificate Type</option>
+                                                <option value="date_of_issue" t-att-selected="'selected' if search_field == 'date_of_issue' else None">Date of Issue</option>
+                                                <option value="state" t-att-selected="'selected' if search_field == 'state' else None">State</option>
                                             </select>
                                         </div>
+
                                         <div class="col-md-8">
-                                            <input type="text" name="search" class="form-control" placeholder="Search certificates..." t-att-value="search_query or ''"/>
+                                            <input type="text"
+                                                name="search"
+                                                class="form-control"
+                                                placeholder="Search certificates..."
+                                                t-att-value="search_query or ''"/>
                                         </div>
+
                                         <div class="col-md-2">
-                                            <button type="submit" class="btn btn-primary btn-block">Search</button>
+                                            <button type="submit" class="btn btn-primary btn-block">
+                                                Search
+                                            </button>
                                         </div>
                                     </div>
                                 </form>
-                                <table class="table table-hover o_my_status_table">
+
+                                <table class="table table-hover o_my_status_table certificate-table">
                                     <thead>
                                         <tr class="active">
                                             <th>Name</th>
@@ -69,31 +78,49 @@
                                             <th>State</th>
                                         </tr>
                                     </thead>
+
                                     <tbody>
                                         <t t-foreach="certificates" t-as="certificate">
-                                            <tr t-att-class="'text-danger' if certificate.state == '01_draft' else ''">
+                                            <tr t-att-class="
+                                                'certificate-row certificate-row-draft' if certificate.state == '01_draft'
+                                                else 'certificate-row certificate-row-validated' if certificate.state == '02_validated'
+                                                else 'certificate-row certificate-row-other'
+                                            ">
                                                 <td>
                                                     <t t-if="certificate.state != '01_draft'">
-                                                        <a t-att-href="'/my/certificate/%d/report' % certificate.id" target="_blank">
+                                                        <a t-att-href="'/my/certificate/%d/report' % certificate.id"
+                                                        target="_blank"
+                                                        class="certificate-report-link">
                                                             <t t-esc="certificate.name"/>
                                                         </a>
                                                     </t>
                                                     <t t-else="">
-                                                        <t t-esc="certificate.name"/>
+                                                        <span class="certificate-name">
+                                                            <t t-esc="certificate.name"/>
+                                                        </span>
                                                     </t>
                                                 </td>
+
                                                 <td>
                                                     <t t-esc="certificate.certificatetype_id.name"/>
                                                 </td>
+
                                                 <td>
                                                     <t t-esc="certificate.date_of_issue"/>
                                                 </td>
+
                                                 <td>
-                                                    <t t-if="certificate.state == '01_draft'">Pending</t>
-                                                    <t t-if="certificate.state == '02_validated'">Validated</t>
-                                                    <t t-if="certificate.state not in ['01_draft', '02_validated']">
-                                                        <t t-esc="certificate.state"/>
-                                                    </t>
+                                                    <span t-att-class="
+                                                        'certificate-state certificate-state-draft' if certificate.state == '01_draft'
+                                                        else 'certificate-state certificate-state-validated' if certificate.state == '02_validated'
+                                                        else 'certificate-state certificate-state-other'
+                                                    ">
+                                                        <t t-if="certificate.state == '01_draft'">Pending</t>
+                                                        <t t-if="certificate.state == '02_validated'">Validated</t>
+                                                        <t t-if="certificate.state not in ['01_draft', '02_validated']">
+                                                            <t t-esc="certificate.state"/>
+                                                        </t>
+                                                    </span>
                                                 </td>
                                             </tr>
                                         </t>

@@ -126,7 +126,7 @@ class website_account(website_account):
         notes = post.get('notes', '')
         main_page = certificatetype_id.main_page
         final_paragraph = certificatetype_id.final_paragraph
-        requested_from_portal = True,
+        requested_from_portal = True
         user_who_signs_id = \
             request.env.user.company_id.employee_as_secretary_id.id
         if partner.lang:
