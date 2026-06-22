@@ -6,12 +6,13 @@
             <field name="name">Certificate creation notification</field>
             <field name="model_id" ref="model_wua_certificate"/>
             <field name="subject">Certificate creation - ${object.name}</field>
-            <field name="email_from"></field>
-            <field name="email_to"></field>
-            <field name="lang"></field>
+
+            <field name="email_from">${(user.email or user.company_id.email or '')|safe}</field>
+            <field name="email_to">${object.partner_id.email or ''}</field>
+            <field name="lang">${object.partner_id.lang or user.lang}</field>
+
             <field name="auto_delete">True</field>
-            <field name="body_html">
-                <![CDATA[
+            <field name="body_html"><![CDATA[
                 <p>Created new certificate with the following details:</p>
                 <ul>
                     <li>Element identifier: ${object.name}</li>
@@ -19,8 +20,7 @@
                     <li>Type of certificate: ${object.certificatetype_id.name}</li>
                     <li>Issuer: ${object.partner_id.name}</li>
                 </ul>
-                ]]>
-            </field>
+            ]]></field>
         </record>
     </data>
 </odoo>
