@@ -4,7 +4,12 @@
 
 import requests
 import json
+import logging
 from odoo import models, _
+from odoo.tools import ustr
+
+
+_logger = logging.getLogger(__name__)
 
 
 class WuaParcel(models.Model):
@@ -50,12 +55,12 @@ class WuaParcel(models.Model):
             crop_type = ''
             if 'subparcel_ids' in vals:
                 crop_type = self.get_crop_type_of_vals(
-                    vals['subparcel_ids']
+                    vals['subparcel_ids'],
                 )
             variety = ''
             if 'subparcel_ids' in vals:
                 variety = self.get_variety_of_vals(
-                    vals['subparcel_ids']
+                    vals['subparcel_ids'],
                 )
             resp = {
                 'name': name,
@@ -79,6 +84,8 @@ class WuaParcel(models.Model):
             url_remotecontrol_rest_password, data):
         resp = False
         error_message = ''
+        payload_data = None
+        resprest = None
         url_open_session = url_remotecontrol_rest + '/sesiones'
         auth_data = {
             'usuario': url_remotecontrol_rest_username,
@@ -120,17 +127,36 @@ class WuaParcel(models.Model):
                     resp = outputrest['resultado'] == 'OK'
                     if not resp:
                         error_message = outputrest['detalleError']
+                        self._log_telecontrol_error(
+                            'send_new_parcel',
+                            url_send_new_parcel,
+                            url_remotecontrol_rest_username,
+                            data=data,
+                            payload_data=payload_data,
+                            response=resprest,
+                        )
                 url_close_session = url_remotecontrol_rest + \
                     '/sesiones/' + id_session
                 resprest = requests.delete(url_close_session)
         except Exception:
+            _logger.exception(
+                'Inelcom telecontrol exception [send_new_parcel].',
+            )
+            self._log_telecontrol_error(
+                'send_new_parcel_exception',
+                url_open_session,
+                url_remotecontrol_rest_username,
+                data=data,
+                payload_data=payload_data,
+                response=resprest,
+            )
             resp = False
             error_message = _('Telecontrol Error')
         return resp, error_message
 
     def send_parcel_on_creation_telecontrol(self, new_parcel, vals):
         super(WuaParcel, self).send_parcel_on_creation_telecontrol(
-            new_parcel, vals
+            new_parcel, vals,
         )
         self.send_parcel_on_creation('inelcom', new_parcel, vals)
 
@@ -189,6 +215,8 @@ class WuaParcel(models.Model):
             url_remotecontrol_rest_password, data, record_archived=False):
         resp = False
         error_message = ''
+        payload_data = None
+        resprest = None
         observ = _('Source: Moval Regadío')
         observ_archived_preffix = _('Archived Data')
         if record_archived:
@@ -233,10 +261,60 @@ class WuaParcel(models.Model):
                     resp = outputrest['resultado'] == 'OK'
                     if not resp:
                         error_message = outputrest['detalleError']
+                        remote_snapshot = None
+                        try:
+                            remote_snapshot_resp = requests.get(
+                                url_update_parcel,
+                                headers=headers_data,
+                                timeout=self.REQUEST_TIMEOUT,
+                            )
+                            remote_snapshot = {
+                                'status': remote_snapshot_resp.status_code,
+                                'body': remote_snapshot_resp.text,
+                            }
+                        except Exception:
+                            _logger.exception(
+                                'Inelcom telecontrol exception '
+                                '[update_parcel_snapshot].',
+                            )
+                        extra_data = {
+                            'outputrest': outputrest,
+                            'remote_snapshot': remote_snapshot,
+                        }
+                        self._log_telecontrol_error(
+                            'update_parcel',
+                            url_update_parcel,
+                            url_remotecontrol_rest_username,
+                            data=data,
+                            payload_data=payload_data,
+                            response=resprest,
+                            extra_data=extra_data,
+                        )
+                else:
+                    error_message = _('Telecontrol Error')
+                    self._log_telecontrol_error(
+                        'update_parcel_http_error',
+                        url_update_parcel,
+                        url_remotecontrol_rest_username,
+                        data=data,
+                        payload_data=payload_data,
+                        response=resprest,
+                    )
                 url_close_session = url_remotecontrol_rest + \
                     '/sesiones/' + id_session
                 resprest = requests.delete(url_close_session)
         except Exception:
+            _logger.exception(
+                'Inelcom telecontrol exception [update_parcel].',
+            )
+            self._log_telecontrol_error(
+                'update_parcel_exception',
+                url_open_session,
+                url_remotecontrol_rest_username,
+                data=data,
+                payload_data=payload_data,
+                response=resprest,
+            )
             resp = False
             error_message = _('Telecontrol Error')
         return resp, error_message
@@ -261,6 +339,7 @@ class WuaParcel(models.Model):
             url_remotecontrol_rest_password, data):
         resp = False
         error_message = ''
+        resprest = None
         url_open_session = url_remotecontrol_rest + '/sesiones'
         auth_data = {
             'usuario': url_remotecontrol_rest_username,
@@ -286,10 +365,27 @@ class WuaParcel(models.Model):
                     resp = outputrest['resultado'] == 'OK'
                     if not resp:
                         error_message = outputrest['detalleError']
+                        self._log_telecontrol_error(
+                            'delete_parcel',
+                            url_delete_parcel,
+                            url_remotecontrol_rest_username,
+                            data=data,
+                            response=resprest,
+                        )
                 url_close_session = url_remotecontrol_rest + \
                     '/sesiones/' + id_session
                 resprest = requests.delete(url_close_session)
         except Exception:
+            _logger.exception(
+                'Inelcom telecontrol exception [delete_parcel].',
+            )
+            self._log_telecontrol_error(
+                'delete_parcel_exception',
+                url_open_session,
+                url_remotecontrol_rest_username,
+                data=data,
+                response=resprest,
+            )
             resp = False
             error_message = _('Telecontrol Error')
         return resp, error_message
@@ -304,6 +400,8 @@ class WuaParcel(models.Model):
             url_remotecontrol_rest_password, data, record_archived=False):
         resp = False
         error_message = ''
+        payload_data = None
+        resprest = None
         observ = _('Source: Moval Regadío')
         observ_archived_preffix = _('Archived Data')
         if record_archived:
@@ -354,10 +452,29 @@ class WuaParcel(models.Model):
                     resp = outputrest['resultado'] == 'OK'
                     if not resp:
                         error_message = outputrest['detalleError']
+                        self._log_telecontrol_error(
+                            'synchronize_parcel',
+                            url_update_parcel,
+                            url_remotecontrol_rest_username,
+                            data=data,
+                            payload_data=payload_data,
+                            response=resprest,
+                        )
                 url_close_session = url_remotecontrol_rest + \
                     '/sesiones/' + id_session
                 resprest = requests.delete(url_close_session)
         except Exception:
+            _logger.exception(
+                'Inelcom telecontrol exception [synchronize_parcel].',
+            )
+            self._log_telecontrol_error(
+                'synchronize_parcel_exception',
+                url_open_session,
+                url_remotecontrol_rest_username,
+                data=data,
+                payload_data=payload_data,
+                response=resprest,
+            )
             resp = False
             error_message = _('Telecontrol Error')
         return resp, error_message
@@ -372,6 +489,9 @@ class WuaParcel(models.Model):
             url_remotecontrol_rest_password, list_of_data):
         parcels_ok = []
         parcels_not_ok = []
+        payload_data = None
+        resprest = None
+        data = None
         url_open_session = url_remotecontrol_rest + '/sesiones'
         auth_data = {
             'usuario': url_remotecontrol_rest_username,
@@ -429,11 +549,29 @@ class WuaParcel(models.Model):
                             parcels_ok.append(data['name'])
                         else:
                             parcels_not_ok.append(data['name'])
+                            self._log_telecontrol_error(
+                                'synchronize_parcels',
+                                url_update_parcel,
+                                url_remotecontrol_rest_username,
+                                data=data,
+                                payload_data=payload_data,
+                                response=resprest,
+                            )
                 url_close_session = url_remotecontrol_rest + \
                     '/sesiones/' + id_session
                 resprest = requests.delete(url_close_session)
         except Exception:
-            resp = False
+            _logger.exception(
+                'Inelcom telecontrol exception [synchronize_parcels].',
+            )
+            self._log_telecontrol_error(
+                'synchronize_parcels_exception',
+                url_open_session,
+                url_remotecontrol_rest_username,
+                data=data,
+                payload_data=payload_data,
+                response=resprest,
+            )
         return parcels_ok, parcels_not_ok
 
     def create_parcels_on_synchronize_telecontrol(self, active_parcels,
@@ -532,3 +670,33 @@ class WuaParcel(models.Model):
         if value:
             resp = value
         return resp
+
+    def _to_log_text(self, value):
+        try:
+            return ustr(json.dumps(value, ensure_ascii=False))
+        except Exception:
+            try:
+                return ustr(repr(value))
+            except Exception:
+                return u'<unserializable>'
+
+    def _log_telecontrol_error(
+            self, operation, request_url, username, data=None,
+            payload_data=None, response=None, extra_data=None):
+        response_status = ''
+        response_text = ''
+        if response is not None:
+            response_status = getattr(response, 'status_code', '')
+            response_text = self._to_log_text(getattr(response, 'text', ''))
+        _logger.error(
+            u'Inelcom telecontrol error [%s]. url=%s username=%s '
+            u'data=%s payload=%s status=%s response=%s extra=%s',
+            operation,
+            ustr(request_url),
+            ustr(username),
+            self._to_log_text(data),
+            self._to_log_text(payload_data),
+            ustr(response_status),
+            response_text,
+            self._to_log_text(extra_data),
+        )
