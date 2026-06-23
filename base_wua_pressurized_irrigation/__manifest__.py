@@ -6,7 +6,7 @@
     "name": "Pressurized Irrigation Management for Water Users Associations",
     "summary": "In a water users association, management of the "
                "pressurized irrigation",
-    "version": '10.0.1.1.10',
+    "version": '10.0.1.1.11',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
