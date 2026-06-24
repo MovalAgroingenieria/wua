@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <record id="remotecontrol_scada_mula_action_build_plan"
+                model="remotecontrol.action">
+            <field name="name">SCADA Mula WUA: Build waterconnection plan</field>
+            <field name="remote_id"
+                   ref="remotecontrol_scada_mula.remotecontrol_scada_mula"/>
+            <field name="active" eval="True"/>
+            <field name="readonly" eval="True"/>
+            <field name="rate_limit_seconds">0.0</field>
+            <field name="max_retries">1</field>
+            <field name="backoff">1.0</field>
+            <field name="code"><![CDATA[
+import logging
+
+logger = logging.getLogger(__name__)
+
+condition = [
+    ('telecontrol_associated', '=', 'scada_mula'),
+]
+waterconnections = env['wua.waterconnection'].search(condition)
+
+plan = []
+for waterconnection in waterconnections:
+    sector = (waterconnection.scada_mula_sector or '').strip()
+    arqueta = (waterconnection.scada_mula_arqueta or '').strip()
+    parcela = (waterconnection.scada_mula_parcela or '').strip()
+
+    has_location = bool(sector and arqueta and parcela)
+    if not has_location:
+        logger.warning(
+            '[SCADA Mula] Skipped waterconnection %s without keys',
+            waterconnection.id,
+        )
+        continue
+
+    plan.append({
+        'waterconnection_id': waterconnection.id,
+        'sector': sector,
+        'arqueta': arqueta,
+        'parcela': parcela,
+    })
+
+bag['waterconnection_plan'] = plan
+bag['plan_count'] = len(plan)
+            ]]></field>
+        </record>
+
+        <record id="remotecontrol_scada_mula_action_get_readings"
+                model="remotecontrol.action">
+            <field name="name">SCADA Mula WUA: Get closest readings</field>
+            <field name="remote_id"
+                   ref="remotecontrol_scada_mula.remotecontrol_scada_mula"/>
+            <field name="active" eval="True"/>
+            <field name="readonly" eval="True"/>
+            <field name="rate_limit_seconds">0.0</field>
+            <field name="max_retries">1</field>
+            <field name="backoff">1.0</field>
+            <field name="code"><![CDATA[
+import logging
+import re
+from datetime import datetime
+
+logger = logging.getLogger(__name__)
+
+
+def sanitize_identifier(identifier):
+    value = (identifier or '').strip()
+    if not value:
+        return ''
+    if not re.match(r'^[A-Za-z0-9_]+$', value):
+        raise Exception('Invalid identifier: %s' % value)
+    return value
+
+
+def get_hydro_db_name(date_obj, db_prefix):
+    month = date_obj.month
+    year = date_obj.year
+    if month >= 9:
+        year1 = year
+        year2 = year + 1
+    else:
+        year1 = year - 1
+        year2 = year
+    return '%s_%s_%s' % (db_prefix, year1, str(year2)[2:])
+
+
+def choose_best_day(previous_row, next_row, target_day):
+    if previous_row and next_row:
+        previous_diff = target_day - int(previous_row[0])
+        next_diff = int(next_row[0]) - target_day
+        if previous_diff <= next_diff:
+            return previous_row
+        return next_row
+    if previous_row:
+        return previous_row
+    return next_row
+
+Remote = self.remote_id
+plan = bag.get('waterconnection_plan') or []
+rows = []
+errors = []
+if not plan:
+    bag['scada_mula_rows'] = rows
+    bag['scada_mula_fetch_errors'] = errors
+else:
+    connection_params = json.loads(Remote.connection_params or '{}')
+    server = (connection_params.get('host') or '').strip()
+    port = int(connection_params.get('port') or 3306)
+    db_prefix = sanitize_identifier(
+        connection_params.get('database_prefix') or '')
+    uid = (connection_params.get('user') or '').strip()
+    pwd = connection_params.get('password') or ''
+    charset = (connection_params.get('charset') or 'utf8mb4').strip()
+    if not all([server, db_prefix, uid]):
+        raise Exception('Missing SCADA Mula connection parameters')
+    execution_date = datetime.strptime(fields.Date.today(), '%Y-%m-%d')
+    hydro_db_name = sanitize_identifier(
+        get_hydro_db_name(execution_date, db_prefix))
+    monthly_table = sanitize_identifier('consumos_%02d' % execution_date.month)
+    target_day = execution_date.day
+    original_connection_params = dict(connection_params)
+    connection_params['host'] = server
+    connection_params['port'] = port
+    connection_params['user'] = uid
+    connection_params['password'] = pwd
+    connection_params['charset'] = charset
+    connection_params['database'] = hydro_db_name
+    Remote.write({'connection_params': json.dumps(connection_params)})
+    cursor = sql_connect()
+    bag['_sql_cursor'] = cursor
+    try:
+        for item in plan:
+            sector = (item.get('sector') or '').strip()
+            arqueta = (item.get('arqueta') or '').strip()
+            parcela = (item.get('parcela') or '').strip()
+            waterconnection_id = item.get('waterconnection_id')
+            where_clause = ''
+            where_params = []
+            if sector and arqueta and parcela:
+                where_clause = (
+                    'WHERE `sector` = ? '
+                    'AND `arqueta` = ? '
+                    'AND `parcela` = ? '
+                )
+                where_params = [sector, arqueta, parcela]
+            else:
+                errors.append({
+                    'waterconnection_id': waterconnection_id,
+                    'error': 'Missing mapping fields',
+                })
+                continue
+
+            query_previous = (
+                'SELECT `dia`, `contadorFinal` '
+                'FROM `%s` '
+                '%s'
+                'AND `dia` <= ? '
+                'AND `contadorFinal` IS NOT NULL '
+                'ORDER BY `dia` DESC '
+                'LIMIT 1'
+            ) % (monthly_table, where_clause)
+
+            query_next = (
+                'SELECT `dia`, `contadorFinal` '
+                'FROM `%s` '
+                '%s'
+                'AND `dia` > ? '
+                'AND `contadorFinal` IS NOT NULL '
+                'ORDER BY `dia` ASC '
+                'LIMIT 1'
+            ) % (monthly_table, where_clause)
+
+            try:
+                previous_params = tuple(where_params + [target_day])
+                next_params = tuple(where_params + [target_day])
+                sql_execute(cursor, query_previous, previous_params)
+                previous_row = sql_fetchone(cursor)
+                sql_execute(cursor, query_next, next_params)
+                next_row = sql_fetchone(cursor)
+                selected_row = choose_best_day(
+                    previous_row, next_row, target_day)
+                if not selected_row:
+                    continue
+                selected_day = int(selected_row[0])
+                selected_value = float(selected_row[1]) / 1000.0
+                try:
+                    reading_date = execution_date.replace(day=selected_day)
+                except Exception:
+                    continue
+                rows.append({
+                    'waterconnection_id': waterconnection_id,
+                    'sector': sector,
+                    'arqueta': arqueta,
+                    'parcela': parcela,
+                    'timestamp': reading_date.strftime('%Y-%m-%d 23:59:59'),
+                    'contador_final': selected_value,
+                    'database': hydro_db_name,
+                    'table': monthly_table,
+                    'day': selected_day,
+                })
+            except Exception as error:
+                errors.append({
+                    'waterconnection_id': waterconnection_id,
+                    'sector': sector,
+                    'arqueta': arqueta,
+                    'parcela': parcela,
+                    'database': hydro_db_name,
+                    'table': monthly_table,
+                    'error': str(error),
+                })
+    finally:
+        if cursor:
+            sql_close(cursor)
+        Remote.write({
+            'connection_params': json.dumps(original_connection_params)})
+
+bag['scada_mula_rows'] = rows
+bag['scada_mula_fetch_errors'] = errors
+
+logger.info(
+    '[SCADA Mula] Fetched %d rows (%d errors)',
+    len(rows),
+    len(errors),
+)
+            ]]></field>
+        </record>
+
+        <record id="remotecontrol_scada_mula_procedure_waterconnection_readings"
+                model="remotecontrol.procedure">
+            <field name="name">SCADA Mula WUA: Waterconnection Readings</field>
+            <field name="remote_id"
+                   ref="remotecontrol_scada_mula.remotecontrol_scada_mula"/>
+            <field name="active" eval="True"/>
+            <field name="readonly" eval="True"/>
+        </record>
+
+        <record id="remotecontrol_scada_mula_step_10_build_plan"
+                model="remotecontrol.step">
+            <field name="name">Build waterconnection plan</field>
+            <field name="procedure_id"
+                   ref="remotecontrol_scada_mula_procedure_waterconnection_readings"/>
+            <field name="action_id" ref="remotecontrol_scada_mula_action_build_plan"/>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="remotecontrol_scada_mula_step_20_get_readings"
+                model="remotecontrol.step">
+            <field name="name">Get closest readings</field>
+            <field name="procedure_id"
+                   ref="remotecontrol_scada_mula_procedure_waterconnection_readings"/>
+            <field name="action_id" ref="remotecontrol_scada_mula_action_get_readings"/>
+            <field name="sequence">20</field>
+        </record>
+
+    </data>
+</odoo>
