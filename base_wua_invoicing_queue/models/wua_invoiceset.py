@@ -58,6 +58,12 @@ class WuaInvoiceset(models.Model):
         help="Percentage of invoices validated by the parallel jobs.",
     )
 
+    validate_pending = fields.Integer(
+        string="Invoices pending validation",
+        compute="_compute_validate_progress",
+        help="Number of draft/proforma invoices still pending validation.",
+    )
+
     has_pending_invoices = fields.Boolean(
         string="Has invoices to validate",
         compute="_compute_validate_progress",
@@ -66,7 +72,6 @@ class WuaInvoiceset(models.Model):
         "invoice is already validated.",
     )
 
-    @api.depends("validate_total", "validate_in_progress")
     def _compute_validate_progress(self):
         # Derive progress on read with a single COUNT instead of having the
         # workers UPDATE a shared counter. This removes the only row lock the
@@ -92,6 +97,7 @@ class WuaInvoiceset(models.Model):
                 )
                 row = record.env.cr.fetchone()
                 done, pending = row[0], row[1]
+            record.validate_pending = pending
             record.has_pending_invoices = pending > 0
             if record.validate_total and done > record.validate_total:
                 done = record.validate_total
@@ -209,6 +215,10 @@ class WuaInvoiceset(models.Model):
         if self.validate_in_progress:
             raise UserError(_(
                 "A validation is already running for this invoice set."))
+        self._compute_validate_progress()
+        if self.validate_pending <= 0:
+            raise UserError(_(
+                "All invoices of this set are already validated."))
         self._enqueue_validation_partitions()
         self.message_post(
             body=_("Invoice validation has been enqueued and will run in "
@@ -217,11 +227,24 @@ class WuaInvoiceset(models.Model):
         return True
 
     @api.multi
+    def calculate_invoiceset(self):
+        if not self.env.context.get("queue_background_calculation"):
+            for record in self:
+                if record.calculate_in_progress:
+                    raise UserError(_(
+                        "A background calculation is already running for "
+                        "this invoice set. Please wait until it finishes."
+                    ))
+        return super(WuaInvoiceset, self).calculate_invoiceset()
+
+    @api.multi
     @job(default_channel="root.base_wua_invoicing_queue")
     def calculate_invoiceset_job(self):
         self.ensure_one()
         try:
-            self.calculate_invoiceset()
+            self.with_context(
+                queue_background_calculation=True,
+            ).calculate_invoiceset()
         finally:
             self._clear_calculate_in_progress()
         return True
@@ -231,7 +254,9 @@ class WuaInvoiceset(models.Model):
     def calculate_and_validate_invoiceset_job(self):
         self.ensure_one()
         try:
-            self.calculate_invoiceset()
+            self.with_context(
+                queue_background_calculation=True,
+            ).calculate_invoiceset()
         finally:
             self._clear_calculate_in_progress()
         self._enqueue_validation_partitions()
