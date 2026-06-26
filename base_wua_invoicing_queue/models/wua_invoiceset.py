@@ -123,6 +123,9 @@ class WuaInvoiceset(models.Model):
         if self.is_being_computed:
             raise UserError(_(
                 "The invoice set is already being computed. Please wait."))
+        if self.calculate_in_progress:
+            raise UserError(_(
+                "A calculation is already running for this invoice set."))
         if not self.configured_invoiceset:
             raise UserError(_(
                 "The invoice set is not configured. Please configure it "
@@ -134,13 +137,42 @@ class WuaInvoiceset(models.Model):
         return True
 
     @api.multi
+    def _acquire_calculation_in_progress(self):
+        """Atomically mark the invoice set as being calculated.
+
+        This prevents double-clicks and multi-tab races from enqueuing more
+        than one calculation job for the same invoice set.
+        """
+        self.ensure_one()
+        self.env.cr.execute(
+            """
+            UPDATE wua_invoiceset
+            SET calculate_in_progress = true
+            WHERE id = %s
+              AND calculate_in_progress = false
+            RETURNING id
+            """,
+            (self.id,),
+        )
+        won = self.env.cr.fetchone()
+        self.invalidate_cache(["calculate_in_progress"])
+        if not won:
+            raise UserError(_(
+                "A calculation is already running for this invoice set."))
+        return True
+
+    @api.multi
     def action_calculate_invoiceset_queue(self):
         self.ensure_one()
         self._check_can_enqueue()
-        self.write({"calculate_in_progress": True})
-        self.with_delay(
-            description=_("Calculate invoice set %s") % self.name,
-        ).calculate_invoiceset_job()
+        self._acquire_calculation_in_progress()
+        try:
+            self.with_delay(
+                description=_("Calculate invoice set %s") % self.name,
+            ).calculate_invoiceset_job()
+        except Exception:
+            self._clear_calculate_in_progress()
+            raise
         self.message_post(
             body=_("Invoice set calculation has been enqueued and will run "
                    "in the background. Follow its progress in the Job Queue."),
@@ -151,11 +183,15 @@ class WuaInvoiceset(models.Model):
     def action_calculate_and_validate_invoiceset_queue(self):
         self.ensure_one()
         self._check_can_enqueue()
-        self.write({"calculate_in_progress": True})
-        self.with_delay(
-            description=_("Calculate and validate invoice set %s")
-            % self.name,
-        ).calculate_and_validate_invoiceset_job()
+        self._acquire_calculation_in_progress()
+        try:
+            self.with_delay(
+                description=_("Calculate and validate invoice set %s")
+                % self.name,
+            ).calculate_and_validate_invoiceset_job()
+        except Exception:
+            self._clear_calculate_in_progress()
+            raise
         self.message_post(
             body=_("Invoice set calculation and validation have been "
                    "enqueued and will run in the background. Follow the "
@@ -237,19 +273,20 @@ class WuaInvoiceset(models.Model):
         self.ensure_one()
         self.env.cr.execute(
             """
-            SELECT id
+            SELECT id, journal_id
             FROM account_invoice
             WHERE invoiceset_id = %s
               AND state IN ('draft', 'proforma', 'proforma2')
-            ORDER BY id
+            ORDER BY journal_id, id
             """,
             (self.id,),
         )
-        invoice_ids = [row[0] for row in self.env.cr.fetchall()]
+        invoice_rows = self.env.cr.fetchall()
+        invoice_ids = [row[0] for row in invoice_rows]
         if not invoice_ids:
             return True
-        partitions = self._split_in_partitions(
-            invoice_ids, self._get_validate_partitions())
+        partitions = self._split_in_partitions_by_journal(
+            invoice_rows, self._get_validate_partitions())
         # Mark the validation as running and record the total. No per-partition
         # counter is kept: completion is decided by a COUNT of the invoices
         # that are still pending (see _maybe_finish_validation), which is
@@ -264,6 +301,39 @@ class WuaInvoiceset(models.Model):
                 % (self.name, index + 1, len(partitions)),
             ).validate_partition_job(partition_ids)
         return True
+
+    @api.model
+    def _split_in_partitions_by_journal(self, invoice_rows, partitions):
+        """Split pending invoices into partitions without mixing journals.
+
+        Posting invoices of the same journal competes for the same sequence
+        row lock. Keeping one journal in a single partition avoids workers
+        fighting each other, while different journals can still run in
+        parallel.
+        """
+        if not invoice_rows:
+            return []
+        journal_groups = {}
+        journal_order = []
+        for invoice_id, journal_id in invoice_rows:
+            if journal_id not in journal_groups:
+                journal_groups[journal_id] = []
+                journal_order.append(journal_id)
+            journal_groups[journal_id].append(invoice_id)
+        if len(journal_groups) == 1:
+            only_group = journal_groups[journal_order[0]]
+            return [only_group]
+        effective_partitions = max(1, min(partitions, len(journal_groups)))
+        buckets = []
+        for _index in range(effective_partitions):
+            buckets.append([])
+        for journal_id in journal_order:
+            target_bucket = min(
+                range(effective_partitions),
+                key=lambda bucket_index: len(buckets[bucket_index]),
+            )
+            buckets[target_bucket].extend(journal_groups[journal_id])
+        return [bucket for bucket in buckets if bucket]
 
     @api.model
     def _split_in_partitions(self, ids, partitions):
