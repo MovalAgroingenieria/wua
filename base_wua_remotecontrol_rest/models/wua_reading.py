@@ -207,6 +207,16 @@ class WuaReading(models.Model):
             for reading in readings:
                 reading_time = self._get_reading_time_from_remotecontrol(
                     reading, now)
+                # Validate reading_time is set
+                if not reading_time:
+                    number_of_failed_readings += 1
+                    wm_name = reading.get(
+                        'watermeter_name', str(reading['watermeter_id']))
+                    failed_watermeter_names.append(wm_name)
+                    _logger.warning(
+                        'Remote Control: reading_time is missing or empty '
+                        'for water meter %r', wm_name)
+                    continue
                 key = (reading['watermeter_id'], reading_time)
                 if key in processed_keys:
                     number_of_skipped_readings += 1
