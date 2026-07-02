@@ -11,4 +11,5 @@ def migrate(cr, version):
     values.set_default(
         'wua.irrigation.configuration',
         'remotecontrol_rounding_reading_volume',
-        '00_without_rounding',)
+        '00_without_rounding',
+    )

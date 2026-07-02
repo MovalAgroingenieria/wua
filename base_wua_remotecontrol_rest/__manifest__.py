@@ -7,22 +7,23 @@
     "summary": "In a water users association, base module for other modules "
                "that implement communication dialogues with remote control "
                "systems for irrigation (with REST API)",
-    "version": '10.0.1.1.5',
+    "version": '10.0.1.1.7',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
     "license": "AGPL-3",
     "depends": [
         "base_wua_pressurized_irrigation",
-        "base_wua_infrastructure_pressurized_hierarchy"],
+        "base_wua_infrastructure_pressurized_hierarchy",
+        "base_cron_exclusion"],
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
         "wizard/wizard_import_remotecontrol_data_view.xml",
         "data/wua_waterconnection_telecontrol_cron.xml",
+        "data/wua_reading_cron.xml",
         "data/wua_remotecontrol_data.xml",
         "data/wua_irrigation_config_settings_data.xml",
-        "data/wua_reading_cron.xml",
         "data/wua_telecontrol_no_connection_mail_template.xml",
         "data/wua_pressuresensormeasurement_cron.xml",
         "data/wua_waterconnection_irrigation_schedule_cron.xml",

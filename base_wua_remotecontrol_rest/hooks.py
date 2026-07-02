@@ -2,7 +2,66 @@
 # 2021 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import logging
+
 from odoo import api, SUPERUSER_ID, tools
+
+_logger = logging.getLogger(__name__)
+
+# All pairs of crons in base_wua_remotecontrol_rest that must not run
+# simultaneously: all four import crons write to wua_waterconnection (either
+# directly or via stored computed fields), so any overlap risks row-level lock
+# contention and deadlocks.
+_CRON_EXCLUSION_MODULE = 'base_wua_remotecontrol_rest'
+_CRON_EXCLUSION_PAIRS = [
+    ('wua_cron_import_reading_global_action',
+     'wua_cron_import_waterconnection_telecontrol_info_action'),
+    ('wua_cron_import_reading_global_action',
+     'wua_cron_import_waterconnection_irrigation_event_action'),
+    ('wua_cron_import_reading_global_action',
+     'wua_cron_import_waterconnection_irrigation_schedule_action'),
+    ('wua_cron_import_waterconnection_telecontrol_info_action',
+     'wua_cron_import_waterconnection_irrigation_event_action'),
+    ('wua_cron_import_waterconnection_telecontrol_info_action',
+     'wua_cron_import_waterconnection_irrigation_schedule_action'),
+    ('wua_cron_import_waterconnection_irrigation_event_action',
+     'wua_cron_import_waterconnection_irrigation_schedule_action'),
+]
+
+
+def install_cron_exclusions(cr):
+    """Insert mutual exclusion pairs into ir_cron_exclusion.
+
+    Safe to call on both fresh installs (post_init_hook) and existing
+    databases (post-migration).  The NOT EXISTS guard checks both directions
+    of each pair so duplicate rows are never inserted.
+    """
+    inserted = 0
+    for name1, name2 in _CRON_EXCLUSION_PAIRS:
+        cr.execute(
+            """
+            INSERT INTO ir_cron_exclusion (ir_cron1_id, ir_cron2_id)
+            SELECT d1.res_id, d2.res_id
+            FROM ir_model_data d1
+            JOIN ir_model_data d2
+              ON d2.module = %s AND d2.name = %s
+            WHERE d1.module = %s
+              AND d1.name = %s
+              AND NOT EXISTS (
+                  SELECT 1 FROM ir_cron_exclusion
+                   WHERE (ir_cron1_id = d1.res_id
+                          AND ir_cron2_id = d2.res_id)
+                      OR (ir_cron1_id = d2.res_id
+                          AND ir_cron2_id = d1.res_id)
+              )
+            """,
+            (_CRON_EXCLUSION_MODULE, name2,
+             _CRON_EXCLUSION_MODULE, name1))
+        inserted += cr.rowcount
+    if inserted:
+        _logger.info(
+            'base_wua_remotecontrol_rest: %d cron exclusion pair(s) '
+            'installed.', inserted)
 
 
 def post_init_hook(cr, registry):
@@ -36,3 +95,4 @@ def post_init_hook(cr, registry):
             ww1.last_total_volume
         ) a )
         """)
+    install_cron_exclusions(cr)
