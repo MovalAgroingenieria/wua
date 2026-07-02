@@ -296,11 +296,6 @@ class WuaReading(models.Model):
     @api.model
     def create(self, vals):
         new_presconsumption = None
-        # Ensure reading_time is present - required for consumption calculation
-        if 'reading_time' not in vals:
-            raise ValueError(
-                'reading_time is required when creating wua.reading. '
-                'vals keys: %s' % ', '.join(vals.keys()))
         reading_end_time = vals['reading_time']
         end_volume = vals['volume']
         # New consumption.

@@ -18,6 +18,4 @@ class WizardImportRemotecontrolData(models.TransientModel):
         readings = reading_model._get_readings_info_inelcom_from_json(
             json_data)
         readings = reading_model.refine_readings(readings)
-        # Ensure context is preserved through save_readings call
-        reading_model.with_context(inelcom_reading_date=date).save_readings(
-            readings)
+        reading_model.save_readings(readings)
