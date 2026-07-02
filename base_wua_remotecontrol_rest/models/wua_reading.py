@@ -273,6 +273,14 @@ class WuaReading(models.Model):
                         'Remote Control: Failed to save %s readings: %s',
                         number_of_failed_readings,
                         ', '.join(failed_watermeter_names))
+            if number_of_failed_readings:
+                # Failed savepoints leave stale recompute todos in
+                # env.all.todo (wua.waterconnection computed fields whose
+                # _recompute_done was never called after the rollback).
+                # Without this, the first ORM recompute() outside a
+                # savepoint (e.g. message_post below) fires those updates
+                # bare, immediately aborting the main transaction.
+                self.env.invalidate_all()
             remotecontrol = self.env.ref(
                 'base_wua_remotecontrol_rest.wua_remotecontrol_logger')
             body = (
@@ -287,10 +295,15 @@ class WuaReading(models.Model):
                     "%s (%s)" % (
                         number_of_failed_readings,
                         ', '.join(failed_watermeter_names))
-            remotecontrol.message_post(
-                subject=_('Remote Control: Readings Saved'),
-                body=body,
-                message_type='email',
-                subtype='mail.mt_comment',
-            )
+            try:
+                with self.env.cr.savepoint():
+                    remotecontrol.message_post(
+                        subject=_('Remote Control: Readings Saved'),
+                        body=body,
+                        message_type='email',
+                        subtype='mail.mt_comment',
+                    )
+            except Exception as e:
+                _logger.error(
+                    'Remote Control: Failed to post status message: %s', e)
         return number_of_negative_readings
