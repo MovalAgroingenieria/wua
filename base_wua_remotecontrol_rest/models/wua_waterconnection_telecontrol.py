@@ -4,7 +4,13 @@
 
 import datetime
 import logging
-from odoo import models, fields, api, _, exceptions
+from odoo import api, models, fields, _, exceptions
+
+_logger = logging.getLogger(__name__)
+
+# Number of waterconnections processed per independent DB transaction.
+# Smaller batches release row locks on wua_waterconnection faster.
+_TELECONTROL_BATCH_SIZE = 20
 
 
 class WuaWaterconnectionTelecontrol(models.Model):
@@ -97,6 +103,64 @@ class WuaWaterconnectionTelecontrol(models.Model):
         })
         return telecontrol_info
 
+    # ------------------------------------------------------------------
+    # Concurrency guard and batched save
+    # ------------------------------------------------------------------
+    def _acquire_cron_lock(self):
+        """Try to acquire an advisory lock to prevent overlapping runs.
+        Returns True if the lock was acquired, False otherwise."""
+        lock_id = hash(
+            'do_import_waterconnection_telecontrol_info') % (2 ** 31)
+        self.env.cr.execute(
+            "SELECT pg_try_advisory_xact_lock(%s)", (lock_id,))
+        acquired = self.env.cr.fetchone()[0]
+        if not acquired:
+            _logger.warning(
+                'Cron telecontrol info import: another instance is '
+                'already running. Skipping this execution.')
+        return acquired
+
+    def _save_telecontrol_info_in_batches(self, wc_info):
+        """Save telecontrol info in small independent DB transactions.
+
+        Each batch commits independently, keeping row locks on
+        ``wua_waterconnection`` short-lived and avoiding deadlocks
+        with other crons that also write to the same rows.
+        """
+        # Deduplicate: keep only newest entry per waterconnection
+        by_wc = {}
+        for info in wc_info:
+            wc_id = info['waterconnection_id']
+            if (wc_id not in by_wc or
+                    info['data_time'] > by_wc[wc_id]['data_time']):
+                by_wc[wc_id] = info
+        wc_info_deduped = list(by_wc.values())
+        total = len(wc_info_deduped)
+        saved = 0
+        errors = 0
+        for batch_start in range(0, total, _TELECONTROL_BATCH_SIZE):
+            batch = wc_info_deduped[
+                batch_start:batch_start + _TELECONTROL_BATCH_SIZE]
+            batch_num = batch_start // _TELECONTROL_BATCH_SIZE + 1
+            try:
+                with self.env.registry.cursor() as new_cr:
+                    new_env = api.Environment(
+                        new_cr, self.env.uid, self.env.context)
+                    new_env['wua.waterconnection.telecontrol']\
+                        .save_waterconnection_telecontrol_info(
+                            batch, update_log=False)
+                    new_cr.commit()
+                saved += len(batch)
+            except Exception as e:
+                _logger.error(
+                    'Cron telecontrol info import: '
+                    'batch %d failed: %s', batch_num, e)
+                errors += len(batch)
+        _logger.info(
+            'Cron telecontrol info import: %d saved, %d errors',
+            saved, errors)
+        return saved, errors
+
     # Hook that will be implemented on all telecontrols, appending info
     def do_import_waterconnection_telecontrol_info_all(self):
         wc_info = []
@@ -111,47 +175,51 @@ class WuaWaterconnectionTelecontrol(models.Model):
             'wua.irrigation.configuration', 'enable_remotecontrol')
         if enable_remotecontrol is None:
             enable_remotecontrol = False
-        if (enable_remotecontrol):
-            wc_info, error_message = \
-                self.do_import_waterconnection_telecontrol_info_all()
-            wc_info = self.refine_waterconnection_telecontrol_info(
-                wc_info)
-            if save_data:
-                self.save_waterconnection_telecontrol_info(wc_info)
-            if error_message:
-                prefix_message = _('Remote Control: Error getting '
-                                   'waterconnection info')
-                suffix_message = error_message
-                company_name = self.env.user.company_id.name
-                website_url = self.env['ir.config_parameter'].get_param(
-                    "web.base.url")
-                domain = self.env['ir.config_parameter'].get_param(
-                    "mail.catchall.domain")
-                _logger = logging.getLogger(self.__class__.__name__)
-                _logger.info(prefix_message + '... ' + suffix_message)
-                telecontrol_failed_template_id = self.env.ref(
-                    'base_wua_remotecontrol_rest.'
-                    'telecontrol_failed_email_template').id
-                mail_template = self.env['mail.template'].browse(
-                    telecontrol_failed_template_id)
-                mail_template.subject = '''
-                    Waterconnection remote control in %s
-                    has experienced some problem
-                ''' % (domain or self.pool.db_name)
-                mail_template.body_html = '''
-                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
-                        <b><a href="%s">%s</a></p></b>
-                        <br/>
-                        <span>%s</span>
-                    </p>
-                ''' % (website_url, company_name, error_message.replace(
-                       '\n', '<br/>'))
-                mail_template.send_mail(self.id, force_send=True)
-        else:
+        if not enable_remotecontrol:
             if show_message:
                 raise exceptions.UserError(_('The communication with '
                                              'the remote control is not '
                                              'enabled.'))
+            return resp
+        # Concurrency guard: skip if another instance is running.
+        if not self._acquire_cron_lock():
+            return resp
+        # Phase 1 — Collect from remote control (HTTP, no DB writes).
+        wc_info, error_message = \
+            self.do_import_waterconnection_telecontrol_info_all()
+        # Phase 2 — Refine (filter / transform).
+        wc_info = self.refine_waterconnection_telecontrol_info(wc_info)
+        # Phase 3 — Save in batches with independent transactions.
+        if save_data and wc_info:
+            self._save_telecontrol_info_in_batches(wc_info)
+        # Phase 4 — Error notification (if API reported errors).
+        if error_message:
+            prefix_message = _('Remote Control: Error getting '
+                               'waterconnection info')
+            company_name = self.env.user.company_id.name
+            website_url = self.env['ir.config_parameter'].get_param(
+                "web.base.url")
+            domain = self.env['ir.config_parameter'].get_param(
+                "mail.catchall.domain")
+            _logger.info(prefix_message + '... ' + error_message[:200])
+            telecontrol_failed_template_id = self.env.ref(
+                'base_wua_remotecontrol_rest.'
+                'telecontrol_failed_email_template').id
+            mail_template = self.env['mail.template'].browse(
+                telecontrol_failed_template_id)
+            mail_template.subject = '''
+                Waterconnection remote control in %s
+                has experienced some problem
+            ''' % (domain or self.pool.db_name)
+            mail_template.body_html = '''
+                <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                    <b><a href="%s">%s</a></p></b>
+                    <br/>
+                    <span>%s</span>
+                </p>
+            ''' % (website_url, company_name, error_message.replace(
+                   '\n', '<br/>'))
+            mail_template.send_mail(self.id, force_send=True)
         return resp
 
     def populate_data_for_import_waterconnection_telecontrol_info(

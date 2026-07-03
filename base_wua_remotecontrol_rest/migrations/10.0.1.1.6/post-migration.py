@@ -8,7 +8,7 @@ from odoo.addons.base_wua_remotecontrol_rest.hooks import (
 _logger = logging.getLogger(__name__)
 
 
-def post_migrate(cr, version):
+def migrate(cr, installed_version):
     """Install mutual exclusion between all remote-control import crons.
 
     All four crons write to wua_waterconnection (either directly or via

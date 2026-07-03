@@ -25,7 +25,8 @@
         "data/wua_controlreading_cron.xml",
         "data/wua_controlperiod_cron.xml",
         "data/wua_soiltype_data.xml",
-        "data/base_wua_pressurized_irrigation_monitoring_config_settings_data.xml",
+        "data/base_wua_pressurized_irrigation_monitoring_"
+        "config_settings_data.xml",
         "data/wua_negative_controlreading_notice_mail.xml",
         "data/wua_negative_controlreading_notice_action.xml",
         "wizard/wizard_generate_controlperiods_view.xml",
