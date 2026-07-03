@@ -14,13 +14,16 @@
     "license": "AGPL-3",
     "depends": [
         "web_ir_actions_act_window_message",
-        "base_wua_pressurized_irrigation_energy_monitoring", ],
+        "base_wua_pressurized_irrigation_energy_monitoring",
+        "base_wua_remotecontrol_rest",
+    ],
     "data": [
         "data/wua_infrastructure_config_settings_data.xml",
         "data/wua_pumpgroupmeasurement_cron.xml",
         "views/resources.xml",
         "views/wua_infrastructure_config_settings_view.xml",
-        "views/wua_pumpgroup_view.xml", ],
+        "views/wua_pumpgroup_view.xml",
+    ],
     "installable": True,
     "application": False,
 }
