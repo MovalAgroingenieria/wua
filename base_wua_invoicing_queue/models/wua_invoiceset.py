@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # 2026 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+import json
 import logging
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
@@ -24,6 +25,11 @@ class WuaInvoiceset(models.Model):
     # transaction (commit per chunk) to keep locks and ORM cache small.
     VALIDATE_PARTITION_CHUNK = 100
 
+    # Chunk size for the materialization step. Kept below
+    # 'commit_every_n_invoices' so create_invoices never issues its own
+    # internal commit in the middle of our chunk savepoint.
+    MATERIALIZE_CHUNK = 50
+
     validate_in_progress = fields.Boolean(
         string="Validation in progress",
         default=False,
@@ -37,6 +43,36 @@ class WuaInvoiceset(models.Model):
         help="True while the invoice-set generation job is running. The "
         "calculation is a single sequential process, so it is shown as a "
         "plain busy indicator rather than a percentage.",
+    )
+
+    active_plan_id = fields.Many2one(
+        string="Active plan",
+        comodel_name="wua.invoiceset.plan",
+        copy=False,
+    )
+
+    calculate_phase = fields.Selection(
+        string="Calculation phase",
+        related="active_plan_id.phase",
+        readonly=True,
+    )
+
+    calculate_total = fields.Integer(
+        string="Invoices to create",
+        related="active_plan_id.line_total",
+        readonly=True,
+    )
+
+    calculate_done = fields.Integer(
+        string="Invoices created",
+        related="active_plan_id.line_done",
+        readonly=True,
+    )
+
+    calculate_progress = fields.Float(
+        string="Calculation progress",
+        related="active_plan_id.progress",
+        readonly=True,
     )
 
     validate_total = fields.Integer(
@@ -175,7 +211,7 @@ class WuaInvoiceset(models.Model):
         try:
             self.with_delay(
                 description=_("Calculate invoice set %s") % self.name,
-            ).calculate_invoiceset_job()
+            ).compute_plan_job()
         except Exception:
             self._clear_calculate_in_progress()
             raise
@@ -194,7 +230,7 @@ class WuaInvoiceset(models.Model):
             self.with_delay(
                 description=_("Calculate and validate invoice set %s")
                 % self.name,
-            ).calculate_and_validate_invoiceset_job()
+            ).compute_plan_job(validate_after=True)
         except Exception:
             self._clear_calculate_in_progress()
             raise
@@ -276,6 +312,276 @@ class WuaInvoiceset(models.Model):
             (self.id,),
         )
         self.invalidate_cache(["calculate_in_progress"])
+        return True
+
+    @api.multi
+    def _create_plan(self, validate_after=False):
+        self.ensure_one()
+        plan = self.env['wua.invoiceset.plan'].create({
+            'invoiceset_id': self.id,
+            'state': 'computing',
+            'phase': 'select_items',
+            'validate_after': validate_after,
+            'date_start': fields.Datetime.now(),
+            'job_uuid': self.env.context.get('job_uuid') or False,
+        })
+        self.active_plan_id = plan
+        self.env.cr.commit()
+        return plan
+
+    @api.multi
+    def _set_plan_phase(self, plan, phase, state=None):
+        self.ensure_one()
+        values = {'phase': phase}
+        if state:
+            values['state'] = state
+        plan.write(values)
+        self.env.cr.commit()
+        return True
+
+    @api.multi
+    def _mark_plan_failed(self, plan):
+        self.ensure_one()
+        self.env.cr.execute(
+            "UPDATE wua_invoiceset_plan SET state = 'failed' "
+            "WHERE id = %s",
+            (plan.id,),
+        )
+        self.env.cr.commit()
+        plan.invalidate_cache(['state'])
+        return True
+
+    @api.multi
+    def _get_materialize_chunk(self):
+        self.ensure_one()
+        commit_every = self.env['ir.values'].get_default(
+            'wua.invoicing.configuration', 'commit_every_n_invoices')
+        try:
+            commit_every = int(commit_every)
+        except (TypeError, ValueError):
+            commit_every = self.COMMIT_EVERY_N_INVOICES
+        if commit_every < 2:
+            commit_every = self.COMMIT_EVERY_N_INVOICES
+        chunk = self.MATERIALIZE_CHUNK
+        if chunk >= commit_every:
+            chunk = commit_every - 1
+        if chunk < 1:
+            chunk = 1
+        return chunk
+
+    @api.multi
+    def _post_job_message(self, body, commit_now=False):
+        """Post an informative message on the running queue.job chatter so the
+        operator can follow batch progress from the Job Queue view."""
+        self.ensure_one()
+        job_uuid = self.env.context.get('job_uuid')
+        if job_uuid:
+            job_rec = self.env['queue.job'].search(
+                [('uuid', '=', job_uuid)], limit=1)
+            if job_rec:
+                job_rec.message_post(body=body)
+                if commit_now:
+                    self.env.cr.commit()
+        return True
+
+    @api.multi
+    def _notify_finished(self, ok, summary):
+        self.ensure_one()
+        self._post_job_message(summary)
+        user = self.env.user
+        self.message_post(
+            body=summary,
+            partner_ids=[user.partner_id.id],
+            subtype='mail.mt_comment',
+        )
+        self.env['bus.bus'].sendone(
+            ('wua_invoiceset_notif', user.id),
+            {'title': _('Invoice set %s') % self.name,
+             'message': summary,
+             'sticky': False},
+        )
+        return True
+
+    @api.multi
+    @job(default_channel='root.base_wua_invoicing_queue')
+    def compute_plan_job(self, validate_after=False):
+        self.ensure_one()
+        plan = self._create_plan(validate_after=validate_after)
+        try:
+            self.with_context(
+                queue_background_calculation=True,
+            )._build_plan(plan)
+        except Exception:
+            # Job-level failure boundary (NOT a per-item loop): recover the
+            # cursor so we can persist the failed state and notify.
+            self.env.cr.rollback()
+            self._mark_plan_failed(plan)
+            self._clear_calculate_in_progress()
+            self._notify_finished(False, _(
+                'Invoice set %s calculation FAILED. '
+                'Check the job queue.') % self.name)
+            raise
+        self.with_delay(
+            description=_('Materialize invoice set %s') % self.name,
+        ).materialize_plan_job(plan.id)
+        return True
+
+    @api.multi
+    def _build_plan(self, plan):
+        self.ensure_one()
+        self._set_plan_phase(plan, 'select_items')
+        invoice_items = self.select_invoice_items(self)
+        self._set_plan_phase(plan, 'calc_details')
+        invoice_details = self.calculate_invoice_details(invoice_items)
+        self._set_plan_phase(plan, 'grouping')
+        invoices_data = self.group_invoice_details(invoice_details)
+        plan_line_model = self.env['wua.invoiceset.plan.line']
+        sequence = 10
+        for invoice_data in invoices_data:
+            plan_line_model.create({
+                'plan_id': plan.id,
+                'partner_id': invoice_data.get('partner_id'),
+                'invoice_data_json': json.dumps(invoice_data),
+                'sequence': sequence,
+                'state': 'draft',
+            })
+            sequence += 10
+        plan.write({
+            'details_json': json.dumps(invoice_details),
+            'line_total': len(invoices_data),
+            'state': 'planned',
+            'date_planned': fields.Datetime.now(),
+        })
+        self.env.cr.commit()
+        return True
+
+    @api.multi
+    @job(default_channel='root.base_wua_invoicing_queue')
+    def materialize_plan_job(self, plan_id):
+        self.ensure_one()
+        plan = self.env['wua.invoiceset.plan'].browse(plan_id)
+        try:
+            self._materialize_plan(plan)
+        except Exception:
+            self.env.cr.rollback()
+            self._mark_plan_failed(plan)
+            self._clear_calculate_in_progress()
+            self._notify_finished(False, _(
+                'Invoice set %s materialization FAILED. '
+                'Check the job queue.') % self.name)
+            raise
+        return True
+
+    @api.multi
+    def _materialize_plan(self, plan):
+        self.ensure_one()
+        product_data = self.get_product_data(self.line_ids)
+        self._set_plan_phase(plan, 'creating_invoices',
+                             state='materializing')
+        chunk_size = self._get_materialize_chunk()
+        pending = plan.line_ids.filtered(
+            lambda l: l.state == 'draft').sorted(key=lambda l: l.sequence)
+        for start in range(0, len(pending), chunk_size):
+            chunk = pending[start:start + chunk_size]
+            self._materialize_chunk(chunk, product_data)
+            self.env.cr.commit()
+        remaining = plan.line_ids.filtered(lambda l: l.state == 'draft')
+        if not remaining:
+            self._finalize_plan(plan)
+        self._clear_calculate_in_progress()
+        self._notify_finished(True, _(
+            'Invoice set %s calculated: %s invoices created.') % (
+            self.name, plan.line_total))
+        if plan.validate_after and not remaining:
+            self._enqueue_validation_partitions()
+        return True
+
+    @api.multi
+    def _materialize_chunk(self, chunk, product_data):
+        self.ensure_one()
+        invoices_data = [
+            json.loads(line.invoice_data_json) for line in chunk]
+        self.env.cr.execute(
+            "SELECT COALESCE(MAX(id), 0) FROM account_invoice")
+        before_max = self.env.cr.fetchone()[0]
+        try:
+            with self.env.cr.savepoint():
+                self.create_invoices(invoices_data, self, product_data)
+            self.env.cr.execute(
+                "SELECT id FROM account_invoice "
+                "WHERE invoiceset_id = %s AND id > %s ORDER BY id",
+                (self.id, before_max),
+            )
+            new_ids = [row[0] for row in self.env.cr.fetchall()]
+            for line, invoice_id in zip(chunk, new_ids):
+                line.write({'invoice_id': invoice_id, 'state': 'done'})
+            # If counts differ, still mark remaining lines done so retries do
+            # not recreate them (idempotency relies on 'state', invoice_id is
+            # only informative).
+            for line in chunk[len(new_ids):]:
+                line.write({'state': 'done'})
+        except Exception as chunk_error:
+            _logger.warning(
+                '[invoiceset %s] materialize chunk failed (%s); '
+                'retrying line by line.', self.name, chunk_error)
+            self._materialize_chunk_one_by_one(chunk, product_data)
+        return True
+
+    @api.multi
+    def _materialize_chunk_one_by_one(self, chunk, product_data):
+        self.ensure_one()
+        for line in chunk:
+            invoice_data = json.loads(line.invoice_data_json)
+            self.env.cr.execute(
+                "SELECT COALESCE(MAX(id), 0) FROM account_invoice")
+            before_max = self.env.cr.fetchone()[0]
+            try:
+                with self.env.cr.savepoint():
+                    self.create_invoices(
+                        [invoice_data], self, product_data)
+                self.env.cr.execute(
+                    "SELECT id FROM account_invoice "
+                    "WHERE invoiceset_id = %s AND id > %s ORDER BY id",
+                    (self.id, before_max),
+                )
+                new_ids = [row[0] for row in self.env.cr.fetchall()]
+                values = {'state': 'done'}
+                if new_ids:
+                    values['invoice_id'] = new_ids[0]
+                line.write(values)
+            except Exception as line_error:
+                line.write({
+                    'state': 'error',
+                    'error_info': str(line_error),
+                })
+                _logger.warning(
+                    '[invoiceset %s] failed to create invoice for '
+                    'partner %s: %s',
+                    self.name, line.partner_id.id, line_error)
+        return True
+
+    @api.multi
+    def _finalize_plan(self, plan):
+        self.ensure_one()
+        self._set_plan_phase(plan, 'finalizing')
+        invoice_details = json.loads(plan.details_json or '[]')
+        total_quantities = self.get_total_product_quantities(invoice_details)
+        self.update_invoiceset_quantities(self, total_quantities)
+        amounts = self.update_invoiceset_amounts(self)
+        done_lines = plan.line_ids.filtered(lambda l: l.state == 'done')
+        self.write({
+            'amount_untaxed': amounts['amount_untaxed'],
+            'amount_tax': amounts['amount_tax'],
+            'amount_total': amounts['amount_total'],
+            'number_of_invoices': len(done_lines),
+            'state': 'generated',
+        })
+        self.after_calculate_invoiceset(self)
+        plan.write({
+            'state': 'done',
+            'date_done': fields.Datetime.now(),
+        })
+        self.env.cr.commit()
         return True
 
     @api.multi
@@ -394,9 +700,15 @@ class WuaInvoiceset(models.Model):
         invoice_model = self.env["account.invoice"]
         pending_states = ("draft", "proforma", "proforma2")
         chunk_size = self.VALIDATE_PARTITION_CHUNK
+        total = len(invoice_ids)
+        total_chunks = (total + chunk_size - 1) // chunk_size
         validated = 0
         errors = 0
-        for start in range(0, len(invoice_ids), chunk_size):
+        self._post_job_message(_(
+            "Validating a partition of %s invoices in %s chunks of %s.")
+            % (total, total_chunks, chunk_size), commit_now=True)
+        for chunk_index, start in enumerate(
+                range(0, total, chunk_size), start=1):
             chunk_ids = invoice_ids[start:start + chunk_size]
             # Re-read the still-pending ids of this chunk from the database so
             # the job is idempotent across retries and restarts.
@@ -437,6 +749,10 @@ class WuaInvoiceset(models.Model):
                             self.name, invoice.id, invoice_error,
                         )
             validated += chunk_ok
+            self._post_job_message(_(
+                "Chunk %s/%s done: %s/%s invoices validated in this "
+                "partition (%s errors).")
+                % (chunk_index, total_chunks, validated, total, errors))
             # Commit each chunk as an independent transaction. Progress is
             # derived on read with a COUNT (see _compute_validate_progress),
             # so a worker never writes to the shared invoiceset row here and
@@ -446,6 +762,9 @@ class WuaInvoiceset(models.Model):
             "[invoiceset %s] partition done: %s validated, %s errors.",
             self.name, validated, errors,
         )
+        self._post_job_message(_(
+            "Partition finished: %s invoices validated, %s errors.")
+            % (validated, errors), commit_now=True)
         self._maybe_finish_validation()
         return True
 
@@ -488,7 +807,7 @@ class WuaInvoiceset(models.Model):
         if won:
             # Only the worker that flipped the flag reaches here, so the
             # completion message is posted exactly once.
-            self.message_post(
-                body=_("Invoice validation finished: %s invoices validated.")
+            self._notify_finished(True, _(
+                "Invoice validation finished: %s invoices validated.")
                 % self.validate_total)
         return True

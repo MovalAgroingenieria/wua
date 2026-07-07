@@ -127,28 +127,55 @@ class AccountInvoice(models.Model):
     def _compute_amount(self):
         super(AccountInvoice, self)._compute_amount()
         for record in self:
-            record.amount_untaxed_categ01 = \
-                sum(line.price_subtotal for line in record.invoice_line_ids.
-                    filtered(lambda x: x.categ_id.productcategory_code == 1))
-            record.amount_untaxed_categ02 = \
-                sum(line.price_subtotal for line in record.invoice_line_ids.
-                    filtered(lambda x: x.categ_id.productcategory_code == 2))
-            record.amount_untaxed_categ03 = \
-                sum(line.price_subtotal for line in record.invoice_line_ids.
-                    filtered(lambda x: x.categ_id.productcategory_code == 3))
-            record.amount_untaxed_categ04 = \
-                sum(line.price_subtotal for line in record.invoice_line_ids.
-                    filtered(lambda x: x.categ_id.productcategory_code == 4))
-            record.amount_untaxed_categ05 = \
-                sum(line.price_subtotal for line in record.invoice_line_ids.
-                    filtered(lambda x: x.categ_id.productcategory_code == 5))
-            record.amount_untaxed_categ06 = \
-                sum(line.price_subtotal for line in record.invoice_line_ids.
-                    filtered(lambda x: x.categ_id.productcategory_code == 6))
+            # This base module runs before the satellite invoicing modules
+            # in the _compute_amount chain, so it refreshes the shared
+            # per-category subtotals cache here (single pass over the lines).
+            subtotal_by_code = record._refresh_categ_subtotals()
+            record.amount_untaxed_categ01 = subtotal_by_code.get(1, 0.0)
+            record.amount_untaxed_categ02 = subtotal_by_code.get(2, 0.0)
+            record.amount_untaxed_categ03 = subtotal_by_code.get(3, 0.0)
+            record.amount_untaxed_categ04 = subtotal_by_code.get(4, 0.0)
+            record.amount_untaxed_categ05 = subtotal_by_code.get(5, 0.0)
+            record.amount_untaxed_categ06 = subtotal_by_code.get(6, 0.0)
             record.amount_untaxed_nocateg = record.amount_untaxed - (
                 record.amount_untaxed_categ01 + record.amount_untaxed_categ02 +
                 record.amount_untaxed_categ03 + record.amount_untaxed_categ04 +
                 record.amount_untaxed_categ05 + record.amount_untaxed_categ06)
+
+    @api.multi
+    def _compute_categ_subtotals(self):
+        """Single pass over the invoice lines grouping ``price_subtotal`` by
+        product category code (``{code: subtotal}``)."""
+        self.ensure_one()
+        subtotal_by_code = {}
+        for line in self.invoice_line_ids:
+            code = line.categ_id.productcategory_code
+            subtotal_by_code[code] = \
+                subtotal_by_code.get(code, 0.0) + line.price_subtotal
+        return subtotal_by_code
+
+    @api.multi
+    def _refresh_categ_subtotals(self):
+        """Recompute the category subtotals and store them in a per-record
+        cache on the environment. Called from this base module's
+        ``_compute_amount`` (which runs first in the chain), so the cache is
+        always fresh for the satellite invoicing modules that read it."""
+        self.ensure_one()
+        subtotals = self._compute_categ_subtotals()
+        self.env.__dict__.setdefault(
+            'wua_categ_subtotals', {})[self.id] = subtotals
+        return subtotals
+
+    @api.multi
+    def _get_categ_subtotals(self):
+        """Return the category subtotals for this invoice, reusing the cache
+        populated by ``_refresh_categ_subtotals``. Falls back to a fresh
+        computation if the cache has no entry."""
+        self.ensure_one()
+        cache = self.env.__dict__.get('wua_categ_subtotals') or {}
+        if self.id in cache:
+            return cache[self.id]
+        return self._refresh_categ_subtotals()
 
     @api.multi
     def _compute_overdue(self):

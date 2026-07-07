@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="wua_invoiceset_plan_view_tree" model="ir.ui.view">
+        <field name="name">wua.invoiceset.plan tree</field>
+        <field name="model">wua.invoiceset.plan</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="invoiceset_id"/>
+                <field name="state"/>
+                <field name="phase"/>
+                <field name="line_done"/>
+                <field name="line_total"/>
+                <field name="progress" widget="progressbar"/>
+                <field name="date_start"/>
+                <field name="date_done"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_invoiceset_plan_view_form" model="ir.ui.view">
+        <field name="name">wua.invoiceset.plan form</field>
+        <field name="model">wua.invoiceset.plan</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="invoiceset_id"/>
+                        <field name="state"/>
+                        <field name="phase"/>
+                        <field name="line_done"/>
+                        <field name="line_total"/>
+                        <field name="progress" widget="progressbar"/>
+                        <field name="job_uuid"/>
+                    </group>
+                    <field name="line_ids">
+                        <tree>
+                            <field name="sequence"/>
+                            <field name="partner_id"/>
+                            <field name="state"/>
+                            <field name="invoice_id"/>
+                        </tree>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

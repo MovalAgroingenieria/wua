@@ -30,7 +30,7 @@
                         states="generated"
                         attrs="{'invisible':
                                 ['|',
-                                 ('validate_pending','=',0),
+                                 ('has_pending_invoices','=',False),
                                  ('validate_in_progress','=',True)]}"
                         groups="base_wua.group_wua_manager"
                         confirm="The validation will run in the background. Continue?"/>
@@ -40,7 +40,17 @@
                 <field name="validate_pending" invisible="1"/>
                 <field name="has_pending_invoices" invisible="1"/>
                 <field name="calculate_in_progress" invisible="1"/>
+                <field name="calculate_phase" invisible="1"/>
+                <field name="calculate_total" invisible="1"/>
+                <field name="calculate_done" invisible="1"/>
+                <field name="calculate_progress" invisible="1"/>
                 <label for="calculate_in_progress" string="Calculating…"
+                       attrs="{'invisible':
+                               [('calculate_in_progress','=',False)]}"/>
+                <label for="calculate_phase"
+                       attrs="{'invisible':
+                               [('calculate_in_progress','=',False)]}"/>
+                <field name="calculate_progress" widget="progressbar"
                        attrs="{'invisible':
                                [('calculate_in_progress','=',False)]}"/>
                 <label for="validate_progress" string="Validating…"

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-15 22:12+0000\n"
-"PO-Revision-Date: 2026-06-15 22:12+0000\n"
+"POT-Creation-Date: 2026-07-07 11:05+0000\n"
+"PO-Revision-Date: 2026-07-07 11:05+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,10 +16,34 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: base_wua_invoicing_queue
-#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:158
+#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:270
+#, python-format
+msgid "A background calculation is already running for this invoice set. Please wait until it finishes."
+msgstr "Ya hay un cálculo en segundo plano en curso para este lote. Espere a que termine."
+
+#. module: base_wua_invoicing_queue
+#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:169
+#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:202
+#, python-format
+msgid "A calculation is already running for this invoice set."
+msgstr "Ya hay un cálculo en curso para este lote."
+
+#. module: base_wua_invoicing_queue
+#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:252
 #, python-format
 msgid "A validation is already running for this invoice set."
 msgstr "Ya hay una validación en curso para este lote."
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_active_plan_id
+msgid "Active plan"
+msgstr "Plan activo"
+
+#. module: base_wua_invoicing_queue
+#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:256
+#, python-format
+msgid "All invoices of this set are already validated."
+msgstr "Todas las facturas de este lote ya están validadas."
 
 #. module: base_wua_invoicing_queue
 #: model:ir.ui.view,arch_db:base_wua_invoicing_queue.wua_invoiceset_view_form_queue
@@ -27,7 +51,7 @@ msgid "Calculate + Validate"
 msgstr "Calcular + Validar"
 
 #. module: base_wua_invoicing_queue
-#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:140
+#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:231
 #, python-format
 msgid "Calculate and validate invoice set %s"
 msgstr "Calcular y validar lote %s"
@@ -38,10 +62,15 @@ msgid "Calculate in parallel"
 msgstr "Calcular en paralelo"
 
 #. module: base_wua_invoicing_queue
-#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:126
+#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:213
 #, python-format
 msgid "Calculate invoice set %s"
 msgstr "Calcular lote %s"
+
+#. module: base_wua_invoicing_queue
+#: selection:wua.invoiceset.plan,phase:0
+msgid "Calculating details"
+msgstr "Calculando detalles"
 
 #. module: base_wua_invoicing_queue
 #: model:ir.ui.view,arch_db:base_wua_invoicing_queue.wua_invoiceset_view_form_queue
@@ -54,24 +83,181 @@ msgid "Calculation in progress"
 msgstr "Cálculo en curso"
 
 #. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_calculate_phase
+msgid "Calculation phase"
+msgstr "Fase de cálculo"
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_calculate_progress
+msgid "Calculation progress"
+msgstr "Progreso de cálculo"
+
+#. module: base_wua_invoicing_queue
+#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:752
+#, python-format
+msgid "Chunk %s/%s done: %s/%s invoices validated in this partition (%s errors)."
+msgstr "Bloque %s/%s completado: %s/%s facturas validadas en esta partición (%s errores)."
+
+#. module: base_wua_invoicing_queue
+#: selection:wua.invoiceset.plan,state:0
+msgid "Computing"
+msgstr "Calculando"
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_create_uid
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_line_create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_create_date
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_line_create_date
+msgid "Created on"
+msgstr "Creado el"
+
+#. module: base_wua_invoicing_queue
+#: selection:wua.invoiceset.plan,phase:0
+msgid "Creating invoices"
+msgstr "Creando facturas"
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_display_name
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_line_display_name
+msgid "Display Name"
+msgstr "Nombre a mostrar"
+
+#. module: base_wua_invoicing_queue
+#: selection:wua.invoiceset.plan,state:0
+#: selection:wua.invoiceset.plan.line,state:0
+msgid "Done"
+msgstr "Hecho"
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_date_done
+msgid "Done date"
+msgstr "Fecha de finalización"
+
+#. module: base_wua_invoicing_queue
+#: selection:wua.invoiceset.plan.line,state:0
+msgid "Draft"
+msgstr "Borrador"
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model,name:base_wua_invoicing_queue.model_wua_invoiceset_plan
+msgid "Entity (invoice set calculation plan)"
+msgstr "Entidad (plan de cálculo de lote de facturación)"
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model,name:base_wua_invoicing_queue.model_wua_invoiceset_plan_line
+msgid "Entity (invoice set plan line)"
+msgstr "Entidad (línea de plan de lote de facturación)"
+
+#. module: base_wua_invoicing_queue
 #: model:ir.model,name:base_wua_invoicing_queue.model_wua_invoiceset
 msgid "Entity (invoice set)"
 msgstr "Elemento (lote)"
 
 #. module: base_wua_invoicing_queue
-#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:144
+#: selection:wua.invoiceset.plan.line,state:0
+msgid "Error"
+msgstr "Error"
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_error_info
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_line_error_info
+msgid "Error info"
+msgstr "Información de error"
+
+#. module: base_wua_invoicing_queue
+#: selection:wua.invoiceset.plan,state:0
+msgid "Failed"
+msgstr "Fallido"
+
+#. module: base_wua_invoicing_queue
+#: selection:wua.invoiceset.plan,phase:0
+msgid "Finalizing"
+msgstr "Finalizando"
+
+#. module: base_wua_invoicing_queue
+#: selection:wua.invoiceset.plan,phase:0
+msgid "Grouping"
+msgstr "Agrupando"
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_has_pending_invoices
+msgid "Has invoices to validate"
+msgstr "Tiene facturas para validar"
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_id
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_line_id
+msgid "ID"
+msgstr "ID"
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_line_invoice_id
+msgid "Invoice"
+msgstr "Factura"
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_line_invoice_data_json
+msgid "Invoice data (JSON)"
+msgstr "Datos de factura (JSON)"
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_details_json
+msgid "Invoice details (JSON)"
+msgstr "Detalles de factura (JSON)"
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_invoiceset_id
+msgid "Invoice set"
+msgstr "Lote de facturación"
+
+#. module: base_wua_invoicing_queue
+#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:399
+#, python-format
+msgid "Invoice set %s"
+msgstr "Lote %s"
+
+#. module: base_wua_invoicing_queue
+#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:492
+#, python-format
+msgid "Invoice set %s calculated: %s invoices created."
+msgstr "Lote %s calculado: %s facturas creadas."
+
+#. module: base_wua_invoicing_queue
+#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:420
+#, python-format
+msgid "Invoice set %s calculation FAILED. Check the job queue."
+msgstr "El cálculo del lote %s HA FALLADO. Revise la cola de trabajos."
+
+#. module: base_wua_invoicing_queue
+#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:469
+#, python-format
+msgid "Invoice set %s materialization FAILED. Check the job queue."
+msgstr "La materialización del lote %s HA FALLADO. Revise la cola de trabajos."
+
+#. module: base_wua_invoicing_queue
+#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:238
 #, python-format
 msgid "Invoice set calculation and validation have been enqueued and will run in the background. Follow the validation progress bar on this form."
 msgstr "El cálculo y la validación del lote se han encolado y se ejecutarán en segundo plano. Siga la barra de progreso de validación en este formulario."
 
 #. module: base_wua_invoicing_queue
-#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:129
+#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:219
 #, python-format
 msgid "Invoice set calculation has been enqueued and will run in the background. Follow its progress in the Job Queue."
 msgstr "El cálculo del lote se ha encolado y se ejecutará en segundo plano. Siga su progreso en la cola de trabajos."
 
 #. module: base_wua_invoicing_queue
-#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:162
+#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:810
+#, python-format
+msgid "Invoice validation finished: %s invoices validated."
+msgstr "Validación de facturas finalizada: %s facturas validadas."
+
+#. module: base_wua_invoicing_queue
+#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:260
 #, python-format
 msgid "Invoice validation has been enqueued and will run in the background. Follow the progress bar on this form."
 msgstr "La validación de facturas se ha encolado y se ejecutará en segundo plano. Siga la barra de progreso en este formulario."
@@ -80,6 +266,22 @@ msgstr "La validación de facturas se ha encolado y se ejecutará en segundo pla
 #: model:ir.model.fields,help:base_wua_invoicing_queue.field_wua_invoiceset_validate_done
 msgid "Invoices already validated, derived on read from a COUNT so the parallel workers never write to this record (no row lock)."
 msgstr "Facturas ya validadas, calculadas al leer mediante un COUNT para que los trabajadores en paralelo nunca escriban en este registro (sin bloqueo de fila)."
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_calculate_done
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_line_done
+msgid "Invoices created"
+msgstr "Facturas creadas"
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_validate_pending
+msgid "Invoices pending validation"
+msgstr "Facturas pendientes de validación"
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_calculate_total
+msgid "Invoices to create"
+msgstr "Facturas a crear"
 
 #. module: base_wua_invoicing_queue
 #: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_validate_total
@@ -92,9 +294,120 @@ msgid "Invoices validated"
 msgstr "Facturas validadas"
 
 #. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_job_uuid
+msgid "Job UUID"
+msgstr "UUID del trabajo"
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan___last_update
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_line___last_update
+msgid "Last Modified on"
+msgstr "Última modificación en"
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_line_write_uid
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_line_write_date
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_write_date
+msgid "Last Updated on"
+msgstr "Última actualización el"
+
+#. module: base_wua_invoicing_queue
+#: selection:wua.invoiceset.plan,phase:0
+msgid "Loading product data"
+msgstr "Cargando datos de producto"
+
+#. module: base_wua_invoicing_queue
+#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:425
+#, python-format
+msgid "Materialize invoice set %s"
+msgstr "Materializar lote %s"
+
+#. module: base_wua_invoicing_queue
+#: selection:wua.invoiceset.plan,state:0
+msgid "Materializing"
+msgstr "Materializando"
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,help:base_wua_invoicing_queue.field_wua_invoiceset_validate_pending
+msgid "Number of draft/proforma invoices still pending validation."
+msgstr "Número de facturas en borrador/proforma que aún están pendientes de validación."
+
+#. module: base_wua_invoicing_queue
+#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:765
+#, python-format
+msgid "Partition finished: %s invoices validated, %s errors."
+msgstr "Partición finalizada: %s facturas validadas, %s errores."
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_line_partner_id
+msgid "Partner"
+msgstr "Socio"
+
+#. module: base_wua_invoicing_queue
 #: model:ir.model.fields,help:base_wua_invoicing_queue.field_wua_invoiceset_validate_progress
 msgid "Percentage of invoices validated by the parallel jobs."
 msgstr "Porcentaje de facturas validadas por los trabajos en paralelo."
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_phase
+msgid "Phase"
+msgstr "Fase"
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_line_plan_id
+msgid "Plan"
+msgstr "Plan"
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_line_ids
+msgid "Plan lines"
+msgstr "Líneas del plan"
+
+#. module: base_wua_invoicing_queue
+#: selection:wua.invoiceset.plan,state:0
+msgid "Planned"
+msgstr "Planificado"
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_date_planned
+msgid "Planned date"
+msgstr "Fecha de planificación"
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_line_total
+msgid "Planned invoices"
+msgstr "Facturas planificadas"
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_progress
+msgid "Progress"
+msgstr "En proceso"
+
+#. module: base_wua_invoicing_queue
+#: selection:wua.invoiceset.plan,phase:0
+msgid "Selecting items"
+msgstr "Seleccionando elementos"
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_line_sequence
+msgid "Sequence"
+msgstr "Secuencia"
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_date_start
+msgid "Start date"
+msgstr "Fecha de inicio"
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_line_state
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_state
+msgid "State"
+msgstr "Estado"
 
 #. module: base_wua_invoicing_queue
 #: model:ir.ui.view,arch_db:base_wua_invoicing_queue.wua_invoiceset_view_form_queue
@@ -107,25 +420,25 @@ msgid "The calculation will run in the background. Continue?"
 msgstr "El cálculo se ejecutará en segundo plano. ¿Continuar?"
 
 #. module: base_wua_invoicing_queue
-#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:108
+#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:166
 #, python-format
 msgid "The invoice set is already being computed. Please wait."
 msgstr "El lote de facturación ya se está calculando. Espere."
 
 #. module: base_wua_invoicing_queue
-#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:115
+#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:176
 #, python-format
 msgid "The invoice set is already generated. Cancel it first if you want to recalculate."
 msgstr "El lote ya está generado. Cáncelo antes si desea recalcular."
 
 #. module: base_wua_invoicing_queue
-#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:111
+#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:172
 #, python-format
 msgid "The invoice set is not configured. Please configure it first."
 msgstr "El lote de facturación no está configurado. Configúrelo primero."
 
 #. module: base_wua_invoicing_queue
-#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:154
+#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:248
 #, python-format
 msgid "The invoice set must be generated before validating its invoices."
 msgstr "El lote debe estar generado antes de validar sus facturas."
@@ -136,9 +449,19 @@ msgid "The validation will run in the background. Continue?"
 msgstr "La validación se ejecutará en segundo plano. ¿Continuar?"
 
 #. module: base_wua_invoicing_queue
+#: model:ir.model.fields,help:base_wua_invoicing_queue.field_wua_invoiceset_has_pending_invoices
+msgid "True when the invoice set still has draft/proforma invoices pending validation. Used to hide the validation button once every invoice is already validated."
+msgstr "Verdadero cuando el lote aún tiene facturas en borrador/proforma pendientes de validar. Se usa para ocultar el botón de validación cuando todas las facturas ya están validadas."
+
+#. module: base_wua_invoicing_queue
 #: model:ir.model.fields,help:base_wua_invoicing_queue.field_wua_invoiceset_calculate_in_progress
 msgid "True while the invoice-set generation job is running. The calculation is a single sequential process, so it is shown as a plain busy indicator rather than a percentage."
 msgstr "Verdadero mientras se ejecuta el trabajo de generación del lote. El cálculo es un proceso secuencial único, por lo que se muestra como un simple indicador de actividad en lugar de un porcentaje."
+
+#. module: base_wua_invoicing_queue
+#: model:ir.model.fields,field_description:base_wua_invoicing_queue.field_wua_invoiceset_plan_validate_after
+msgid "Validate after materialize"
+msgstr "Validar después de materializar"
 
 #. module: base_wua_invoicing_queue
 #: model:ir.ui.view,arch_db:base_wua_invoicing_queue.wua_invoiceset_view_form_queue
@@ -146,10 +469,16 @@ msgid "Validate in parallel"
 msgstr "Validar en paralelo"
 
 #. module: base_wua_invoicing_queue
-#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:247
+#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:631
 #, python-format
 msgid "Validate invoice set %s (partition %s/%s)"
 msgstr "Validar lote %s (partición %s/%s)"
+
+#. module: base_wua_invoicing_queue
+#: code:addons/base_wua_invoicing_queue/models/wua_invoiceset.py:707
+#, python-format
+msgid "Validating a partition of %s invoices in %s chunks of %s."
+msgstr "Validando una partición de %s facturas en %s bloques de %s."
 
 #. module: base_wua_invoicing_queue
 #: model:ir.ui.view,arch_db:base_wua_invoicing_queue.wua_invoiceset_view_form_queue

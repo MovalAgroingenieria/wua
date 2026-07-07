@@ -66,15 +66,10 @@ class AccountInvoice(models.Model):
     def _compute_amount(self):
         super(AccountInvoice, self)._compute_amount()
         for record in self:
-            record.amount_untaxed_categ16 = \
-                sum(line.price_subtotal for line in record.invoice_line_ids.
-                    filtered(lambda x: x.categ_id.productcategory_code == 16))
-            record.amount_untaxed_categ17 = \
-                sum(line.price_subtotal for line in record.invoice_line_ids.
-                    filtered(lambda x: x.categ_id.productcategory_code == 17))
-            record.amount_untaxed_categ18 = \
-                sum(line.price_subtotal for line in record.invoice_line_ids.
-                    filtered(lambda x: x.categ_id.productcategory_code == 18))
+            subtotal_by_code = record._get_categ_subtotals()
+            record.amount_untaxed_categ16 = subtotal_by_code.get(16, 0.0)
+            record.amount_untaxed_categ17 = subtotal_by_code.get(17, 0.0)
+            record.amount_untaxed_categ18 = subtotal_by_code.get(18, 0.0)
             record.amount_untaxed_nocateg = record.amount_untaxed_nocateg - \
                 record.amount_untaxed_categ16 - \
                 record.amount_untaxed_categ17 - record.amount_untaxed_categ18
