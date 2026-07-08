@@ -90,6 +90,7 @@ class WuaAgriculturalseason(models.Model):
 
     @api.multi
     def write(self, vals):
+        update_active_flag = 'active_agriculturalseason' in vals
         if len(self) == 1 and 'volume_time_equivalence' in vals:
             recalculate_volumes = False
             data_in_hours = self.env['ir.values'].get_default(
@@ -115,6 +116,8 @@ class WuaAgriculturalseason(models.Model):
                     else:
                         recalculate_volumes = True
             super(WuaAgriculturalseason, self).write(vals)
+            if update_active_flag:
+                self._sync_irrigationreport_active_flag()
             if recalculate_volumes:
                 irrigationreports = self.env['wua.irrigationreport'].search(
                     [('agriculturalseason_id', '=',
@@ -122,7 +125,22 @@ class WuaAgriculturalseason(models.Model):
                 irrigationreports._compute_volume()
         else:
             super(WuaAgriculturalseason, self).write(vals)
+            if update_active_flag:
+                self._sync_irrigationreport_active_flag()
         return True
+
+    @api.multi
+    def _sync_irrigationreport_active_flag(self):
+        self.env.cr.execute(
+            """
+            UPDATE wua_irrigationreport AS irrigationreport
+               SET of_active_agriculturalseason =
+                    agriculturalseason.active_agriculturalseason
+              FROM wua_agriculturalseason AS agriculturalseason
+             WHERE agriculturalseason.id =
+                    irrigationreport.agriculturalseason_id
+               AND irrigationreport.agriculturalseason_id IN %s
+            """, (tuple(self.ids),))
 
     @api.multi
     def action_see_irrigationreports(self):
