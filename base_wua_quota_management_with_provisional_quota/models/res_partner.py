@@ -15,8 +15,35 @@ _logger = logging.getLogger(__name__)
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
+    def _get_initial_time_from_reference(self, reference_date):
+        parsed_reference = None
+        if isinstance(reference_date, datetime.datetime):
+            parsed_reference = reference_date
+        elif isinstance(reference_date, datetime.date):
+            parsed_reference = datetime.datetime.combine(
+                reference_date,
+                datetime.time.min,
+            )
+        else:
+            reference_text = str(reference_date)
+            for date_format in ('%Y-%m-%d %H:%M:%S', '%Y-%m-%d'):
+                try:
+                    parsed_reference = datetime.datetime.strptime(
+                        reference_text,
+                        date_format,
+                    )
+                    break
+                except ValueError:
+                    continue
+        if parsed_reference:
+            parsed_reference += datetime.timedelta(seconds=1)
+        return parsed_reference
+
     def recalculate_extra_hydric_movements(self):
-        partners = self or self.env['res.partner'].search([])
+        partners = self or self.env['res.partner'].search([
+            ('quota_ids', '!=', False),
+        ])
+
         _logger.info(
             "Starting recalculate_extra_hydric_movements for %s partner(s)",
             len(partners),
@@ -49,16 +76,12 @@ class ResPartner(models.Model):
                     continue
             else:
                 reference_date = last_move.event_time
-            try:
-                initial_time = datetime.datetime.strptime(
-                    str(reference_date), '%Y-%m-%d %H:%M:%S'
-                ) + datetime.timedelta(seconds=1)
-            except Exception as exc:
+            initial_time = self._get_initial_time_from_reference(reference_date)
+            if not initial_time:
                 _logger.warning(
-                    "Skipping partner %s: invalid reference date %s (%s)",
+                    "Skipping partner %s: invalid reference date %s",
                     partner.id,
                     reference_date,
-                    exc,
                 )
                 continue
             wc_ids = self.env['wua.waterconnection'].search([
