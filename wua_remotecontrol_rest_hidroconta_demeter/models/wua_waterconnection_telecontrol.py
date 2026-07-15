@@ -61,71 +61,100 @@ class WuaWaterconnectionTelecontrol(models.Model):
                 url_remotecontrol_rest, url_remotecontrol_rest_username,
                 url_remotecontrol_rest_password)
             if jsessionid:
-                resp_rest = requests.request(
-                    'POST', url_remotecontrol_rest + '/search',
-                    headers={
-                        'Content-Type': 'application/json',
-                        'Cookie': 'JSESSIONID=' + jsessionid
-                        },
-                    data=json.dumps({
-                        'type': ['hydrants'],
-                        'status': 'enabled'
-                        }))
                 installation_identifier = self.env['ir.values'].get_default(
                     'wua.irrigation.configuration', 'installation_identifier')
                 flow_in_liters = self.env['ir.values'].get_default(
                     'wua.irrigation.configuration', 'flow_in_liters')
-                if resp_rest.status_code == 200 and installation_identifier:
-                    hydrants = json.loads(resp_rest.text)
-                    model_wua_watermeter = self.env['wua.watermeter']
+                if installation_identifier:
+                    reading_obj = self.env['wua.reading']
+                    hydrants = reading_obj.get_hydrants_from_hidroconta(
+                        url_remotecontrol_rest, jsessionid)
+                    iris = reading_obj.get_iris_from_hidroconta(
+                        url_remotecontrol_rest, jsessionid)
+                    counters = reading_obj.get_counters_from_hidroconta(
+                        url_remotecontrol_rest, jsessionid)
+                    all_elements = []
                     for hydrant in hydrants:
-                        installationId = int(hydrant['installationId'])
+                        all_elements.append(('hydrant', hydrant))
+                    for iris_counter in iris:
+                        all_elements.append(('iris', iris_counter))
+                    for counter in counters:
+                        all_elements.append(('counter', counter))
+                    model_wua_watermeter = self.env['wua.watermeter']
+                    for element_type, element in all_elements:
+                        installationId = int(element.get('installationId', 0))
                         if installationId == installation_identifier:
                             current_watermeter = False
-                            if ('counter' in hydrant and hydrant['counter']):
-                                watermeter = \
-                                    hydrant['counter']['code'].encode(
-                                        'utf-8', 'ignore')
+                            counter_data = {}
+                            if (element_type == 'hydrant' and
+                                    element.get('counter')):
+                                counter_data = element.get('counter')
+                            watermeter_code = counter_data.get('code')
+                            if not watermeter_code:
+                                watermeter_code = element.get('code')
+                            if watermeter_code:
+                                watermeter = watermeter_code.encode(
+                                    'utf-8', 'ignore')
                                 current_watermeter = model_wua_watermeter.\
-                                    search([('name', '=', watermeter)])
+                                    search([('name', '=', watermeter)],
+                                           limit=1)
                             if current_watermeter:
-                                current_watermeter = current_watermeter[0]
                                 if current_watermeter.waterconnection_id:
                                     waterconnection = \
                                         current_watermeter.waterconnection_id.\
                                         name
-                                    total_volume = (
-                                        hydrant['counter']
-                                        ['counterGlobalValue'] /
-                                        1000)
+                                    counter_global_value = counter_data.get(
+                                        'counterGlobalValue')
+                                    if counter_global_value is None:
+                                        counter_global_value = element.get(
+                                            'counterGlobalValue')
+                                    if counter_global_value is None:
+                                        continue
+                                    total_volume = counter_global_value / 1000
+                                    flow_value = counter_data.get('flow')
+                                    if flow_value is None:
+                                        flow_value = element.get('flow')
+                                    if flow_value is None:
+                                        flow_value = 0.0
                                     waterflow = (
-                                        hydrant['counter']['flow'] /
+                                        flow_value /
                                         self.FACTOR_CONVERSION)
                                     # flow in m³/h?
                                     if (not flow_in_liters):
                                         waterflow = waterflow / 3.6
-                                    valve_open = \
-                                        hydrant['valve']['stateIsOpen']
-                                    valve_scheduled = \
-                                        str(hydrant['valve']['modeIsProgram'])
-                                    if valve_scheduled == '1':
-                                        valve_scheduled = True
-                                    else:
-                                        valve_scheduled = False
+                                    valve_data = element.get('valve') or {}
+                                    valve_open = bool(
+                                        valve_data.get('stateIsOpen', False))
+                                    if (not valve_data and
+                                            element.get('stateIsOpen') is not
+                                            None):
+                                        valve_open = bool(
+                                            element.get('stateIsOpen'))
+                                    mode_is_program = \
+                                        valve_data.get('modeIsProgram')
+                                    valve_scheduled = str(mode_is_program)
+                                    valve_scheduled = (
+                                        valve_scheduled == '1' or
+                                        valve_scheduled == 'True')
                                     valve_error = False
                                     valve_error_msg = ''
                                     watermeter_error = False
                                     watermeter_error_msg = ''
-                                    date = hydrant['counter'][
-                                        'lastStatusLocal']
-                                    data_time = datetime.datetime.strptime(
-                                        date, '%d/%m/%Y %H:%M:%S')
-                                    data_time = pytz.timezone(
-                                        'Europe/Madrid').\
-                                        localize(data_time)
-                                    data_time = data_time.astimezone(
-                                        pytz.timezone('UTC')).\
-                                        strftime('%Y-%m-%d %H:%M:%S')
+                                    date = counter_data.get('lastStatusLocal')
+                                    if not date:
+                                        date = element.get('lastStatusLocal')
+                                    data_time = False
+                                    if date:
+                                        data_time = \
+                                            datetime.datetime.strptime(
+                                                date,
+                                                '%d/%m/%Y %H:%M:%S')
+                                        data_time = pytz.timezone(
+                                            'Europe/Madrid').\
+                                            localize(data_time)
+                                        data_time = data_time.astimezone(
+                                            pytz.timezone('UTC')).\
+                                            strftime('%Y-%m-%d %H:%M:%S')
                                     wc_all_info.append({
                                         'waterconnection': waterconnection,
                                         'total_volume': total_volume,
@@ -141,8 +170,8 @@ class WuaWaterconnectionTelecontrol(models.Model):
                                     })
                 else:
                     error_message = _(
-                        ' Some error ocurred on hidrocontra servers '
-                        '(Installation id / Code not 200). ')
+                        ' It is not possible to get installation '
+                        'identifier. ')
                 self.close_connection(url_remotecontrol_rest, jsessionid)
             else:
                 error_message = _(' It is not possible to get session id. ')
@@ -157,11 +186,11 @@ class WuaWaterconnectionTelecontrol(models.Model):
         resp_rest = requests.request(
             'POST', url_remotecontrol_rest + '/login',
             headers={
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
                 },
             data=json.dumps({
                 'username': url_remotecontrol_rest_username,
-                'password': url_remotecontrol_rest_password
+                'password': url_remotecontrol_rest_password,
                 }))
         if resp_rest.status_code == 200:
             headers = str(resp_rest.headers)
@@ -178,6 +207,6 @@ class WuaWaterconnectionTelecontrol(models.Model):
             requests.request(
                 'POST', url_remotecontrol_rest + '/logout',
                 headers={
-                    'Cookie': 'JSESSIONID=' + jsessionid
+                    'Cookie': 'JSESSIONID=' + jsessionid,
                     },
                 data={})
