@@ -189,7 +189,14 @@ class WuaHydricBalance(models.Model):
                  'total_variation_volume')
     def _compute_total_loss_percentage(self):
         for record in self:
-            if record.total_input_volume != 0:
+            if record.total_input_volume < record.total_output_volume:
+                record.total_loss_percentage = -(
+                    (record.total_output_volume -
+                     record.total_input_volume +
+                     record.total_variation_volume) /
+                    record.total_input_volume
+                ) * 100
+            elif record.total_input_volume != 0:
                 record.total_loss_percentage = (
                     (record.total_output_volume -
                      record.total_input_volume +
