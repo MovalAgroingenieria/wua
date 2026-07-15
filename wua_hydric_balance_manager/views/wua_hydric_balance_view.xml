@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Full-screen iframe form (no sheet, no top bar, like Grafana) -->
+    <record id="hydric_balance_manager_home" model="ir.ui.view">
+        <field name="name">Hydric Balance Manager</field>
+        <field name="model">hydric.balance.manager</field>
+        <field name="arch" type="xml">
+            <form string="Hydric Balance Manager" create="false"
+                  edit="false" delete="false"
+                  class="o_moval_external_app_form_view">
+                <div class="text-center">
+                    <field name="app_frame"
+                           widget="html" nolabel="1"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Server action: iframe -->
+    <record id="login_into_hydric_balance_manager_action"
+            model="ir.actions.server">
+        <field name="name">Hydric Balance Manager</field>
+        <field name="model_id" ref="model_hydric_balance_manager"/>
+        <field name="state">code</field>
+        <field name="code">
+            action = env['hydric.balance.manager'].action_open_iframe()
+        </field>
+    </record>
+
+    <menuitem id="hydric_balance_manager_menu"
+              name="Hydric Balance Manager"
+              parent="base_wua_hydric_balance.hydric_balance_menu"
+              action="login_into_hydric_balance_manager_action"
+              sequence="1"/>
+
+    <!-- Server action: open in new tab -->
+    <record id="go_to_hydric_balance_manager_app_action"
+            model="ir.actions.server">
+        <field name="name">Hydric Balance App</field>
+        <field name="model_id" ref="model_hydric_balance_manager"/>
+        <field name="state">code</field>
+        <field name="code">
+            action = env['hydric.balance.manager'].action_open_new_tab()
+        </field>
+    </record>
+
+    <menuitem id="hydric_balance_app_menu"
+              name="Hydric Balance App"
+              parent="base_wua_hydric_balance.hydric_balance_menu"
+              action="go_to_hydric_balance_manager_app_action"
+              sequence="2"/>
+
+</odoo>
