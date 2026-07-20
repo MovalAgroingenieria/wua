@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Portal water connections view with remote control readings -->
+        <template id="portal_my_waterconnections" inherit_id="base_wua_portal_infrastructure.portal_my_waterconnections">
+            <!-- Add header columns for remote control data -->
+            <xpath expr="//table[@id='waterconnections-table']/thead/tr" position="inside">
+                <th>Data Time</th>
+                <th>Total (m3)</th>
+                <th>Waterflow</th>
+                <th>Valve Open</th>
+                <th>Valve Scheduled</th>
+            </xpath>
+
+            <!-- Add body cells for remote control data -->
+            <xpath expr="//table[@id='waterconnections-table']/tbody/t/tr" position="inside">
+                <td>
+                    <t t-esc="link.last_data_time" t-options="{'widget': 'date'}"/>
+                </td>
+                <td>
+                    <t t-esc="link.last_total_volume"/>
+                </td>
+                <td>
+                    <t t-esc="link.last_waterflow"/>
+                </td>
+                <td>
+                    <input type="checkbox" t-att-checked="link.last_valve_open" disabled="disabled"/>
+                </td>
+                <td>
+                    <input type="checkbox" t-att-checked="link.last_valve_scheduled" disabled="disabled"/>
+                </td>
+            </xpath>
+        </template>
+    </data>
+</odoo>

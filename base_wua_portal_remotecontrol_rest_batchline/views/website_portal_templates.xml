@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+        <!-- IrriWEB-specific tabs for waterconnection followup -->
         <template id="waterconnections_followup" name="Portal layout : waterconnection entries" inherit_id="base_wua_portal_pressurized_irrigation.waterconnections_followup">
             <xpath expr="//ul[@name='tabs_titles']" position="inside">
                 <li><a href="#readings_irriweb" role="tab" data-toggle="tab"> Readings(IrriWEB)</a></li>
@@ -26,14 +28,9 @@
             </xpath>
         </template>
 
-        <template id="portal_my_waterconnections" inherit_id="base_wua_portal_infrastructure.portal_my_waterconnections">
-            <xpath expr="//table[@id='waterconnections-table']/thead/tr" position="inside">
-                <th>Data Time</th>
-                <th>Total (m3)</th>
-                <th>Waterflow</th>
-                <th>Valve Open</th>
-                <th>Valve Scheduled</th>
-            </xpath>
+        <!-- Batchline-specific enhancements: action buttons and modal for historical data -->
+        <template id="portal_my_waterconnections" inherit_id="base_wua_portal_remotecontrol_rest.portal_my_waterconnections">
+            <!-- Add action buttons (Historical readings, consumptions, scheduling) after first column -->
             <xpath expr="//table[@id='waterconnections-table']/thead/tr/th[1]" position="after">
                 <th style="width:3%;"></th>
                 <th style="width:3%;"></th>
@@ -69,23 +66,8 @@
                     </a>
                 </td>
             </xpath>
-            <xpath expr="//table[@id='waterconnections-table']/tbody/t/tr" position="inside">
-                <td>
-                    <t t-esc="link.last_data_time" t-options="{'widget': 'date'}"/>
-                </td>
-                <td>
-                    <t t-esc="link.last_total_volume"/>
-                </td>
-                <td>
-                    <t t-esc="link.last_waterflow"/>
-                </td>
-                <td>
-                    <input type="checkbox" t-att-checked="link.last_valve_open" disabled="disabled"/>
-                </td>
-                <td>
-                    <input type="checkbox" t-att-checked="link.last_valve_scheduled" disabled="disabled"/>
-                </td>
-            </xpath>
+
+            <!-- Modal dialog for displaying frames -->
             <xpath expr="//div[@id='wrap']" position="inside">
                 <div class="modal fade" id="frameModal" tabindex="-1" role="dialog">
                     <div class="modal-dialog modal-lg" role="document" style="width:auto; max-width:70%;">
