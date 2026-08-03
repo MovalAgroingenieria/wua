@@ -54,7 +54,8 @@
                                                     </a>
                                                 </td>
                                                 <td>
-                                                    <t t-esc="reading.reading_time"/>
+                                                    <span t-field="reading.reading_time"
+                                                          t-options='{"widget": "datetime"}'/>
                                                 </td>
                                                 <td>
                                                     <t t-esc="reading.volume"/>
@@ -133,14 +134,16 @@
                                     <t t-esc="presconsumption.waterconnection_id.name"/>
                                 </td>
                                 <td>
-                                    <t t-esc="presconsumption.reading_initial_time"/>
+                                    <span t-field="presconsumption.reading_initial_time"
+                                          t-options='{"widget": "datetime"}'/>
                                 </td>
 
                                 <td>
                                     <t t-esc="presconsumption.initial_volume"/>
                                 </td>
                                 <td>
-                                    <t t-esc="presconsumption.reading_end_time"/>
+                                    <span t-field="presconsumption.reading_end_time"
+                                          t-options='{"widget": "datetime"}'/>
                                 </td>
 
                                 <td>
@@ -233,10 +236,12 @@
                                     <t t-esc="irrigationevent.waterconnection_id.name"/>
                                 </td>
                                 <td>
-                                    <t t-esc="irrigationevent.irrigation_start_date"/>
+                                    <span t-field="irrigationevent.irrigation_start_date"
+                                          t-options='{"widget": "datetime"}'/>
                                 </td>
                                 <td>
-                                    <t t-esc="irrigationevent.irrigation_end_date"/>
+                                    <span t-field="irrigationevent.irrigation_end_date"
+                                          t-options='{"widget": "datetime"}'/>
                                 </td>
                                 <td>
                                     <t t-esc="irrigationevent.irrigation_volume"/>
