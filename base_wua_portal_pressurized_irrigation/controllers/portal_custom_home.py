@@ -12,6 +12,14 @@ class website_account(website_account):
 
     _items_per_page = 10
 
+    def _get_portal_tz(self, partner):
+        tz = request.env.user.tz
+        if not tz and partner:
+            tz = partner.tz
+        if not tz:
+            tz = 'Europe/Madrid'
+        return tz
+
     @http.route()
     def account(self, **kw):
         """ Add readings and presconsumptions documents to main account page"""
@@ -29,7 +37,9 @@ class website_account(website_account):
             request.env['wua.presconsumption'].search_count([
                 ('waterconnection_id', 'in', waterconnections),
             ])
-        show_irrigation_events_on_portal = request.env['ir.values'].sudo().get_default(
+        show_irrigation_events_on_portal = request.env[
+            'ir.values'
+        ].sudo().get_default(
             'wua.irrigation.configuration',
             'show_irrigation_events_on_portal')
         response.qcontext.update({
@@ -47,6 +57,7 @@ class website_account(website_account):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
         partner = partner.parent_id or partner
+        portal_tz = self._get_portal_tz(partner)
         waterconnection_partnerlink_model = \
             request.env['res.partner.waterconnection']
         domain = [('partner_id', '=', partner.id)]
@@ -70,7 +81,8 @@ class website_account(website_account):
             }
             if search_field in field_map:
                 domain.append((field_map[search_field], 'ilike', search))
-        readings_count = request.env['wua.reading'].search_count(domain)
+        reading_model = request.env['wua.reading'].with_context(tz=portal_tz)
+        readings_count = reading_model.search_count(domain)
         items_per_page = self._items_per_page
         pager = request.website.pager(
             url="/my/readings",
@@ -83,7 +95,7 @@ class website_account(website_account):
             },
         )
         offset = (page - 1) * items_per_page
-        readings = request.env['wua.reading'].search(
+        readings = reading_model.search(
             domain, limit=items_per_page, offset=offset)
         liquidation_on_portal = request.env['ir.values'].sudo().get_default(
             'wua.invoicing.configuration',
@@ -111,6 +123,7 @@ class website_account(website_account):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
         partner = partner.parent_id or partner
+        portal_tz = self._get_portal_tz(partner)
         waterconnection_partnerlink_model = \
             request.env['res.partner.waterconnection']
         domain = [('partner_id', '=', partner.id)]
@@ -149,9 +162,11 @@ class website_account(website_account):
                 presconsumptions_domain.append(
                     (field_map[search_field], 'ilike', search))
 
-        presconsumptions_count = \
-            request.env['wua.presconsumption'].search_count(
-                presconsumptions_domain)
+        presconsumption_model = request.env[
+            'wua.presconsumption'
+        ].with_context(tz=portal_tz)
+        presconsumptions_count = presconsumption_model.search_count(
+            presconsumptions_domain)
         items_per_page = self._items_per_page
         pager = request.website.pager(
             url="/my/presconsumptions",
@@ -164,7 +179,7 @@ class website_account(website_account):
             },
         )
         offset = (page - 1) * items_per_page
-        presconsumptions = request.env['wua.presconsumption'].search(
+        presconsumptions = presconsumption_model.search(
             presconsumptions_domain, limit=items_per_page, offset=offset)
         liquidation_on_portal = request.env['ir.values'].sudo().get_default(
             'wua.invoicing.configuration',
@@ -194,6 +209,7 @@ class website_account(website_account):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
         partner = partner.parent_id or partner
+        portal_tz = self._get_portal_tz(partner)
         waterconnection_partnerlink_model = \
             request.env['res.partner.waterconnection']
         domain = [('partner_id', '=', partner.id)]
@@ -234,9 +250,11 @@ class website_account(website_account):
             else:
                 irrigationevents_domain.append(
                     (field_map[search_field], 'ilike', search))
-        irrigationevent_count = \
-            request.env['wua.waterconnection.irrigation.event'].search_count(
-                irrigationevents_domain)
+        irrigationevent_model = request.env[
+            'wua.waterconnection.irrigation.event'
+        ].with_context(tz=portal_tz)
+        irrigationevent_count = irrigationevent_model.search_count(
+            irrigationevents_domain)
         items_per_page = self._items_per_page
         pager = request.website.pager(
             url="/my/irrigationevents",
@@ -250,10 +268,9 @@ class website_account(website_account):
             },
         )
         offset = (page - 1) * items_per_page
-        irrigationevents = \
-            request.env['wua.waterconnection.irrigation.event'].search(
-                irrigationevents_domain, limit=items_per_page, offset=offset,
-                order='irrigation_end_date desc')
+        irrigationevents = irrigationevent_model.search(
+            irrigationevents_domain, limit=items_per_page, offset=offset,
+            order='irrigation_end_date desc')
         liquidation_on_portal = request.env['ir.values'].sudo().get_default(
             'wua.invoicing.configuration',
             'liquidation_on_portal',
