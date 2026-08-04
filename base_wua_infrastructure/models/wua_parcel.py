@@ -2204,7 +2204,7 @@ class WuaParcel(models.Model):
                     vals['subparcel_ids'])
             if irrigationgates_in_another_parcel:
                 raise exceptions.UserError(_('There are some irrigation '
-                                             'gates in anoter parcel.'))
+                                             'gates in another parcel.'))
 
     def waterconnections_no_repeat(self, irrigationpointwc_ids):
         resp = True

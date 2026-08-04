@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-08 08:14+0000\n"
-"PO-Revision-Date: 2026-06-08 08:14+0000\n"
+"POT-Creation-Date: 2026-08-04 12:25+0000\n"
+"PO-Revision-Date: 2026-08-04 12:25+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -265,7 +265,6 @@ msgstr "Tipo actuación"
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_active
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_stage_active
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_team_active
-#: model:ir.model.fields,field_description:wua_maintenance.field_mdm_measurement_device_active
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_building_active
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_infrastructureitem_active
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_irrigationdelivery_active
@@ -414,6 +413,7 @@ msgstr "No se puede borrar una categoría estándar."
 
 #. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_equipment_view_search_inherit_hr
+#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_history_view_search
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_team_kanban
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_team_view_form
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_team_view_search
@@ -586,6 +586,11 @@ msgstr "Descripción"
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_infrastructureitem_display_name
 msgid "Display Name"
 msgstr "Nombre a mostrar"
+
+#. module: wua_maintenance
+#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_history_view_search
+msgid "Done"
+msgstr "Hecho"
 
 #. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_request_view_form
@@ -889,6 +894,7 @@ msgstr "Ruta a campo"
 
 #. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_request_view_form
+#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_history_view_search
 msgid "Field Resolved"
 msgstr "Resuelta en campo"
 
@@ -1015,6 +1021,7 @@ msgstr "Riego por gravedad"
 
 #. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_plan_view_search
+#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_history_view_search
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_team_view_search
 msgid "Group By"
 msgstr "Agrupar por"
@@ -1292,8 +1299,15 @@ msgid "Maintenance Equipment Tag"
 msgstr "Etiqueta de Elemento de Mantenimiento"
 
 #. module: wua_maintenance
+#: model:ir.actions.act_window,name:wua_maintenance.maintenance_request_history_action
+#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_history_view_search
+msgid "Maintenance History"
+msgstr "Histórico"
+
+#. module: wua_maintenance
 #: model:ir.model,name:wua_maintenance.model_maintenance_kind
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_kind_dynamic_field_maintenance_kind_id
+#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_history_view_search
 #: model:ir.ui.view,arch_db:wua_maintenance.view_maintenance_kind_form
 msgid "Maintenance Kind"
 msgstr "Clase de mantenimiento"
@@ -1705,6 +1719,11 @@ msgid "Randomize Style"
 msgstr "Aleatorizar estilo"
 
 #. module: wua_maintenance
+#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_history_view_search
+msgid "Reference"
+msgstr "Referencia"
+
+#. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_related_element_extradata
 msgid "Related element extradata"
 msgstr "Información extra"
@@ -1887,6 +1906,11 @@ msgstr "Mostrar siguiente"
 #: model:ir.model.fields,field_description:wua_maintenance.field_wizard_image_preview_show_prev
 msgid "Show prev"
 msgstr "Mostras anterior"
+
+#. module: wua_maintenance
+#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_history_view_search
+msgid "Stage"
+msgstr "Etapa"
 
 #. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_wizard_export_images_zip_state

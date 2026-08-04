@@ -437,4 +437,47 @@
         </field>
     </record>
 
+    <record id="maintenance_request_history_view_search"
+            model="ir.ui.view">
+        <field name="name">maintenance.request history search
+            (wua_maintenance)</field>
+        <field name="model">maintenance.request</field>
+        <field name="arch" type="xml">
+            <search string="Maintenance History">
+                <field name="name" string="Reference"/>
+                <field name="equipment_id"/>
+                <field name="category_id"/>
+                <field name="stage_id"/>
+                <filter string="Field Resolved" name="field_resolved"
+                        domain="[('field_resolved', '=', True)]"/>
+                <filter string="Done" name="done"
+                        domain="[('stage_id.done', '=', True)]"/>
+                <separator/>
+                <group expand="1" string="Group By">
+                    <filter string="Category" name="groupby_category"
+                            domain="[]"
+                            context="{'group_by': 'category_id'}"/>
+                    <filter string="Stage" name="groupby_stage"
+                            domain="[]"
+                            context="{'group_by': 'stage_id'}"/>
+                    <filter string="Maintenance Kind" name="groupby_kind"
+                            domain="[]"
+                            context="{'group_by': 'maintenance_kind_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="maintenance_request_history_action"
+            model="ir.actions.act_window">
+        <field name="name">Maintenance History</field>
+        <field name="res_model">maintenance.request</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('equipment_id', '=', active_id)]</field>
+        <field name="context">{'search_default_groupby_category': 1,
+            'active_test': False}</field>
+        <field name="search_view_id"
+               ref="maintenance_request_history_view_search"/>
+    </record>
+
 </odoo>

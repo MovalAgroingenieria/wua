@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-08 08:13+0000\n"
-"PO-Revision-Date: 2026-06-08 08:13+0000\n"
+"POT-Creation-Date: 2026-08-04 12:24+0000\n"
+"PO-Revision-Date: 2026-08-04 12:24+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -265,7 +265,6 @@ msgstr "Tipus d'actuació"
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_active
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_stage_active
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_team_active
-#: model:ir.model.fields,field_description:wua_maintenance.field_mdm_measurement_device_active
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_building_active
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_infrastructureitem_active
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_irrigationdelivery_active
@@ -414,6 +413,7 @@ msgstr "No es pot eliminar una categoria d'infraestructura WUA."
 
 #. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_equipment_view_search_inherit_hr
+#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_history_view_search
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_team_kanban
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_team_view_form
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_team_view_search
@@ -586,6 +586,11 @@ msgstr "Descripció"
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_infrastructureitem_display_name
 msgid "Display Name"
 msgstr "Mostrar Nom"
+
+#. module: wua_maintenance
+#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_history_view_search
+msgid "Done"
+msgstr "Fet"
 
 #. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_request_view_form
@@ -889,6 +894,7 @@ msgstr "Ruta del camp"
 
 #. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_request_view_form
+#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_history_view_search
 msgid "Field Resolved"
 msgstr "Camp resolt"
 
@@ -1015,6 +1021,7 @@ msgstr "Reg de gravetat"
 
 #. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_plan_view_search
+#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_history_view_search
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_team_view_search
 msgid "Group By"
 msgstr "Agrupar per"
@@ -1235,7 +1242,7 @@ msgstr "Etiqueta"
 #: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests___last_update
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_infrastructureitem___last_update
 msgid "Last Modified on"
-msgstr "Darrera modificació el"
+msgstr "Última modificació el "
 
 #. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipmenttag_write_uid
@@ -1247,7 +1254,7 @@ msgstr "Darrera modificació el"
 #: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_plans_write_uid
 #: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_write_uid
 msgid "Last Updated by"
-msgstr "Darrera Actualització per"
+msgstr "Última actualització per"
 
 #. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipmenttag_write_date
@@ -1259,7 +1266,7 @@ msgstr "Darrera Actualització per"
 #: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_plans_write_date
 #: model:ir.model.fields,field_description:wua_maintenance.field_wizard_massive_maintenance_requests_write_date
 msgid "Last Updated on"
-msgstr "Darrera Actualització el"
+msgstr "Última actualització el"
 
 #. module: wua_maintenance
 #: model:ir.model.fields,help:wua_maintenance.field_maintenance_equipment_category_legend_symbology
@@ -1292,8 +1299,15 @@ msgid "Maintenance Equipment Tag"
 msgstr "Etiqueta d'equips de manteniment"
 
 #. module: wua_maintenance
+#: model:ir.actions.act_window,name:wua_maintenance.maintenance_request_history_action
+#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_history_view_search
+msgid "Maintenance History"
+msgstr "Històric"
+
+#. module: wua_maintenance
 #: model:ir.model,name:wua_maintenance.model_maintenance_kind
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_kind_dynamic_field_maintenance_kind_id
+#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_history_view_search
 #: model:ir.ui.view,arch_db:wua_maintenance.view_maintenance_kind_form
 msgid "Maintenance Kind"
 msgstr "Tipus de manteniment"
@@ -1705,6 +1719,11 @@ msgid "Randomize Style"
 msgstr "Aleatoritzar estil"
 
 #. module: wua_maintenance
+#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_history_view_search
+msgid "Reference"
+msgstr "Referència"
+
+#. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_request_related_element_extradata
 msgid "Related element extradata"
 msgstr "Extradades d'elements relacionats"
@@ -1887,6 +1906,11 @@ msgstr "Mostrar següent"
 #: model:ir.model.fields,field_description:wua_maintenance.field_wizard_image_preview_show_prev
 msgid "Show prev"
 msgstr "Mostrar anterior"
+
+#. module: wua_maintenance
+#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_history_view_search
+msgid "Stage"
+msgstr "Etapa"
 
 #. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_wizard_export_images_zip_state
