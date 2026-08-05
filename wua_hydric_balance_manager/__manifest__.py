@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# 2024 Moval Agroingeniería
+# 2026 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 {
@@ -12,7 +12,8 @@
     "author": "Moval Agroingeniería",
     "license": "AGPL-3",
     "depends": [
-        "base_wua_hydric_balance", "moval_external_apps_iframe",
+        "base_wua_hydric_balance",
+        "moval_external_apps_iframe",
     ],
     "data": [
         "security/ir.model.access.csv",
