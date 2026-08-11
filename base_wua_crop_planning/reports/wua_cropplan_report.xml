@@ -20,6 +20,7 @@
 
     <template id="report_wua_cropplan_document">
         <div class="page" style="font-family: dejavusansmono;font-size: 12;">
+            <t t-set="with_two_cultivations" t-value="o.env['ir.values'].get_default('wua.irrigation.configuration', 'enrolledsubparcel_with_two_cultivations')"/>
             <style type="text/css">
             <![CDATA[
             @font-face {
@@ -61,6 +62,7 @@
                             <th name="th_type" class="text-left">Type</th>
                             <th name="th_cultivation" class="text-left">Cultivation</th>
                             <th name="th_variety" class="text-left">Variety</th>
+                            <th t-if="with_two_cultivations" name="th_second_cultivation" class="text-left">Second Cultivation</th>
                             <th name="th_irrig_system" class="text-left">Irrig. System</th>
                             <th name="th_prod_method" class="text-left">Prod. Method</th>
                             <th name="th_area" class="text-right">Area</th>
@@ -72,6 +74,7 @@
                             <td name="td_order" align="center"><span t-field="l.order"/></td>
                             <td name="td_subparceltype" align="left"><span t-field="l.subparceltype_id"/></td>
                             <td name="td_cultivation" align="left"><span t-field="l.cultivation_id"/></td>
+                            <td t-if="with_two_cultivations" name="td_second_cultivation" align="left"><span t-field="l.second_cultivation_id"/></td>
                             <td name="td_cultivationvariety" align="left"><span t-field="l.cultivationvariety_id"/></td>
                             <td name="td_irrigationsystem" align="left"><span t-field="l.irrigationsystem_id"/></td>
                             <td name="td_productionmethod" align="left"><span t-field="l.productionmethod_id"/></td>
