@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wizard_regularize_negative_reading_view_form"
+            model="ir.ui.view">
+        <field name="name">wizard.regularize.negative.reading.form</field>
+        <field name="model">wizard.regularize.negative.reading</field>
+        <field name="arch" type="xml">
+            <form string="Generate regularization consumption">
+                <group>
+                    <field name="notes"/>
+                </group>
+                <footer>
+                    <button name="action_regularize"
+                            string="Regularize"
+                            type="object"
+                            class="btn-primary"/>
+                    <button string="Cancel"
+                            class="btn-default"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window id="action_regularize_negative_reading"
+        name="Generate regularization consumption"
+        res_model="wizard.regularize.negative.reading"
+        src_model="wua.negative.reading"
+        view_mode="form"
+        key2="client_action_multi"
+        target="new"
+        groups="base_wua.group_wua_manager"/>
+
+</odoo>

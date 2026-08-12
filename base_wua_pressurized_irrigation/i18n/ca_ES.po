@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-04 09:08+0000\n"
-"PO-Revision-Date: 2026-06-04 09:08+0000\n"
+"POT-Creation-Date: 2026-08-12 07:46+0000\n"
+"PO-Revision-Date: 2026-08-12 07:46+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -414,6 +414,7 @@ msgstr "Càlcul: consums (pressió)"
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wizard_edit_reading_time_view_form
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wizard_generate_estimated_readings_view
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wizard_print_readings_view_form
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wizard_regularize_negative_reading_view_form
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wizard_remove_readings_view_form
 msgid "Cancel"
 msgstr "Cancel·la"
@@ -450,7 +451,9 @@ msgid "Click to add a new Pressure sensor measurement."
 msgstr "Click per afegir nova mesura de pressió."
 
 #. module: base_wua_pressurized_irrigation
+#: code:addons/base_wua_pressurized_irrigation/wizard/wizard_regularize_negative_reading.py:45
 #: model:wua.waterconnection.state,name:base_wua_pressurized_irrigation.param_state_close
+#, python-format
 msgid "Close"
 msgstr "Tancar"
 
@@ -543,6 +546,7 @@ msgstr "Consums (a baix nivell)"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_generate_estimated_readings_create_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_init_reading_create_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_print_readings_create_uid
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_regularize_negative_reading_create_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_remove_readings_create_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_irrigationdelivery_create_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_negative_reading_create_uid
@@ -566,6 +570,7 @@ msgstr "Creat per"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_generate_estimated_readings_create_date
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_init_reading_create_date
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_print_readings_create_date
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_regularize_negative_reading_create_date
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_remove_readings_create_date
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_irrigationdelivery_create_date
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_negative_reading_create_date
@@ -656,6 +661,7 @@ msgstr "Descartat"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_generate_estimated_readings_display_name
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_init_reading_display_name
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_print_readings_display_name
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_regularize_negative_reading_display_name
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_remove_readings_display_name
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_irrigationdelivery_display_name
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_negative_reading_display_name
@@ -917,6 +923,12 @@ msgid "Generate Init Readings"
 msgstr "Genera lectures inicials"
 
 #. module: base_wua_pressurized_irrigation
+#: model:ir.actions.act_window,name:base_wua_pressurized_irrigation.action_regularize_negative_reading
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wizard_regularize_negative_reading_view_form
+msgid "Generate regularization consumption"
+msgstr "Generar consum de regularització"
+
+#. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_presconsumption_volume
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_reading_presconsumption_volume
 msgid "Gross Value (m³)"
@@ -968,6 +980,7 @@ msgstr "Sector hidràulic"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_generate_estimated_readings_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_init_reading_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_print_readings_id
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_regularize_negative_reading_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_remove_readings_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_irrigationdelivery_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_negative_reading_id
@@ -978,7 +991,7 @@ msgstr "Sector hidràulic"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_tertiarypipe_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_schedule_id
-#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_shift_id_9067
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_shift_id_14792
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_shift_relation_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_shiftlink_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_state_id
@@ -1335,6 +1348,7 @@ msgstr "Darrera mesurament"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_generate_estimated_readings___last_update
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_init_reading___last_update
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_print_readings___last_update
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_regularize_negative_reading___last_update
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_remove_readings___last_update
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_irrigationdelivery___last_update
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_negative_reading___last_update
@@ -1442,6 +1456,7 @@ msgstr "Última lectura: Sì"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_generate_estimated_readings_write_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_init_reading_write_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_print_readings_write_uid
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_regularize_negative_reading_write_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_remove_readings_write_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_irrigationdelivery_write_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_negative_reading_write_uid
@@ -1465,6 +1480,7 @@ msgstr "Última actualització per"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_generate_estimated_readings_write_date
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_init_reading_write_date
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_print_readings_write_date
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_regularize_negative_reading_write_date
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_remove_readings_write_date
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_irrigationdelivery_write_date
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_negative_reading_write_date
@@ -1602,10 +1618,34 @@ msgid "Name of pressure sensors param in the GIS viewer url"
 msgstr "Paràmetre per a sensor de pressió"
 
 #. module: base_wua_pressurized_irrigation
+#: code:addons/base_wua_pressurized_irrigation/wizard/wizard_regularize_negative_reading.py:38
+#, python-format
+msgid "Negative Reading Regularization Result"
+msgstr "Resultat de la regularització de lectures negatives"
+
+#. module: base_wua_pressurized_irrigation
+#: code:addons/base_wua_pressurized_irrigation/wizard/wizard_regularize_negative_reading.py:140
+#, python-format
+msgid "Negative Reading Regularization Summary"
+msgstr "Resum de la regularització de lectures negatives"
+
+#. module: base_wua_pressurized_irrigation
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation.wua_negative_reading_action
 #: model:ir.ui.menu,name:base_wua_pressurized_irrigation.wua_negative_reading_menu
 msgid "Negative Readings"
 msgstr "Lectures negatives"
+
+#. module: base_wua_pressurized_irrigation
+#: code:addons/base_wua_pressurized_irrigation/wizard/wizard_regularize_negative_reading.py:123
+#, python-format
+msgid "Negative readings successfully regularized"
+msgstr "Lectures negatives regularitzades amb èxit"
+
+#. module: base_wua_pressurized_irrigation
+#: code:addons/base_wua_pressurized_irrigation/wizard/wizard_regularize_negative_reading.py:133
+#, python-format
+msgid "Negative readings with errors"
+msgstr "Lectures negatives amb errors"
 
 #. module: base_wua_pressurized_irrigation
 #: code:addons/base_wua_pressurized_irrigation/models/wua_waterconnection.py:503
@@ -1644,6 +1684,7 @@ msgstr "Lectura normal"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_init_reading_notes
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_regularize_negative_reading_notes
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_negative_reading_notes
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_presconsumption_notes
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_pressuresensor_notes
@@ -1929,6 +1970,17 @@ msgid "Real Worker Reading"
 msgstr "Lectura real operari"
 
 #. module: base_wua_pressurized_irrigation
+#: code:addons/base_wua_pressurized_irrigation/wizard/wizard_regularize_negative_reading.py:50
+#, python-format
+msgid "Refresh Page"
+msgstr "Actualitza la pàgina"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wizard_regularize_negative_reading_view_form
+msgid "Regularize"
+msgstr "Regularize"
+
+#. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_remote_serial_number
 msgid "Remote Serial Number"
 msgstr "Número de sèrie remot"
@@ -2072,6 +2124,12 @@ msgid "The model of watermter."
 msgstr "El model de comptador."
 
 #. module: base_wua_pressurized_irrigation
+#: code:addons/base_wua_pressurized_irrigation/wizard/wizard_regularize_negative_reading.py:58
+#, python-format
+msgid "The negative reading has no water meter."
+msgstr "La lectura negativa no té comptador d'aigua."
+
+#. module: base_wua_pressurized_irrigation
 #: code:addons/base_wua_pressurized_irrigation/models/wua_reading.py:377
 #, python-format
 msgid "The new initialization reading time (%s) for water meter '%s' is earlier than the last existing reading (%s). Readings must be entered in chronological order."
@@ -2126,6 +2184,12 @@ msgid "The reading volume must be a non-negative value."
 msgstr "El volum de lectura ha de ser un valor no negatiu."
 
 #. module: base_wua_pressurized_irrigation
+#: code:addons/base_wua_pressurized_irrigation/wizard/wizard_regularize_negative_reading.py:82
+#, python-format
+msgid "The regularization value for water meter \"%s\" is not a negative value (%.4f)."
+msgstr "El valor de regularització per al comptador d'aigua \"%s\" no és un valor negatiu (%.4f)."
+
+#. module: base_wua_pressurized_irrigation
 #: code:addons/base_wua_pressurized_irrigation/models/wua_presconsumption.py:226
 #, python-format
 msgid "The water meter is mandatory, it must be active and it must have a water connection."
@@ -2138,6 +2202,12 @@ msgid "There are different water meters."
 msgstr "Hi ha comptadors diferents."
 
 #. module: base_wua_pressurized_irrigation
+#: code:addons/base_wua_pressurized_irrigation/wizard/wizard_regularize_negative_reading.py:75
+#, python-format
+msgid "There are more recent readings for water meter \"%s\" (%s). It is not possible to regularize this negative reading."
+msgstr "Hi ha lectures més recents per al comptador d'aigua \"%s\" (%s). No és possible regularitzar aquesta lectura negativa."
+
+#. module: base_wua_pressurized_irrigation
 #: code:addons/base_wua_pressurized_irrigation/models/wua_reading.py:539
 #, python-format
 msgid "There can be no final readings without eliminating."
@@ -2148,6 +2218,12 @@ msgstr "No hi pot haver-hi cap lectura final sense eliminar."
 #, python-format
 msgid "There can be no intermediate readings without eliminating."
 msgstr "No hi pot haver-hi cap lecturas intermèdies sense eliminar."
+
+#. module: base_wua_pressurized_irrigation
+#: code:addons/base_wua_pressurized_irrigation/wizard/wizard_regularize_negative_reading.py:67
+#, python-format
+msgid "There is no previous reading for water meter \"%s\" before %s."
+msgstr "No hi ha cap lectura anterior per al comptador d'aigua \"%s\" abans del %s."
 
 #. module: base_wua_pressurized_irrigation
 #: code:addons/base_wua_pressurized_irrigation/models/wua_reading.py:347
@@ -2371,7 +2447,7 @@ msgstr "Estat de les connexions d'aigua"
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_wc_wm_nominal_water_flow
 msgid "Water Flow (m3/hour)"
-msgstr "Cabal (m3 / hora)"
+msgstr "Cabal (m³/hora)"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_nominal_water_flow
@@ -2510,6 +2586,11 @@ msgstr "Assistent per a la inicialització de la lectura del comptador d'aigua"
 #: model:ir.model,name:base_wua_pressurized_irrigation.model_wizard_generate_estimated_readings
 msgid "Wizard to Generate Estimated Readings"
 msgstr "Assistent per generar lectures estimades"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.model,name:base_wua_pressurized_irrigation.model_wizard_regularize_negative_reading
+msgid "Wizard to regularize negative readings"
+msgstr "Assistent per regularitzar lectures negatives"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_watermeter_view_search

@@ -53,6 +53,7 @@
         "views/wua_waterconnection_state_view.xml",
         "data/wua_waterconnection_state_data.xml",
         "wizard/wizard_init_reading.xml",
+        "wizard/wizard_regularize_negative_reading_view.xml",
     ],
     "installable": True,
     "application": True,
