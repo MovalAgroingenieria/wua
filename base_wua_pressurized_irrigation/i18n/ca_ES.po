@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-12 07:46+0000\n"
-"PO-Revision-Date: 2026-08-12 07:46+0000\n"
+"POT-Creation-Date: 2026-08-12 11:32+0000\n"
+"PO-Revision-Date: 2026-08-12 11:32+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -476,8 +476,8 @@ msgstr "Configuració del mòdul base_wua_infrastructure_primary"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model,name:base_wua_pressurized_irrigation.model_wua_irrigation_configuration
-msgid "Configuration of irrigation with type of fertilizer"
-msgstr "Configuració del reg amb tipus de fertilitzant"
+msgid "Configuration of irrigation with type of water"
+msgstr "Configuració de reg amb tipus d'aigua"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wizard_init_reading_form_view
@@ -649,6 +649,11 @@ msgstr "Menú de diàleg per imprimir lectures"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_tertiarypipe_diameter
 msgid "Diameter (mm)"
 msgstr "Diàmetre"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,help:base_wua_pressurized_irrigation.field_wizard_init_reading_regularization_adjustment
+msgid "Difference (Reading to keep - Last Reading Value) applied as an adjustment on the zero-consumption reading."
+msgstr "Diferència (Valor que es queda - Valor de l'última lectura) aplicada com a ajust en la lectura de consum zero."
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_watermeter_view_search
@@ -848,6 +853,7 @@ msgstr "Mesura existent."
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_init_reading_final_reading
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wizard_init_reading_form_view
 msgid "Final Reading"
 msgstr "Lectura final"
 
@@ -1017,6 +1023,11 @@ msgid "If checked, it will set this state as the default for new water connectio
 msgstr "Si està marcat, aquest estat s'establirà com a predeterminat per a les noves connexions d'aigua."
 
 #. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,help:base_wua_pressurized_irrigation.field_wizard_init_reading_regularization
+msgid "If checked, the final reading is registered like the negative reading transformation: a zero-consumption reading plus an adjustment, avoiding a negative consumption volume."
+msgstr "Si està marcat, la lectura final es registra com la transformació de lectura negativa: una lectura de consum zero més un ajust, evitant un volum de consum negatiu."
+
+#. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,help:base_wua_pressurized_irrigation.field_wua_waterconnection_with_estimated_readings
 msgid "If checked, this water connection is configured to receive estimated readings. The Estimated monthly consumption must then be greater than zero."
 msgstr "Si està marcada, aquesta connexió d'aigua està configurada per rebre lectures estimades. El consum mensual estimat ha de ser llavors major que zero."
@@ -1031,6 +1042,11 @@ msgstr "Si el camp actiu està com a fals, això li permetrà ocultar el registr
 #: model:ir.model.fields,help:base_wua_pressurized_irrigation.field_wua_waterconnection_state_active
 msgid "If unchecked, it will allow you to hide the state without removing it."
 msgstr "Si no està marcada, us permetrà ocultar l'estat sense eliminar-lo."
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wizard_init_reading_form_view
+msgid "Enter only the Reading to Keep, like the negative reading process: a zero-consumption reading plus the corresponding adjustment is created, and that value becomes the initialization reading."
+msgstr "Introdueix només el Valor que es queda, com en el procés de lectures negatives: es crea una lectura de consum zero més l'ajust corresponent, i aquest valor passa a ser la lectura d'inicialització."
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_irrigation_schedule_view_search
@@ -1170,7 +1186,7 @@ msgstr "Irrigation Deliveries"
 #: model:ir.model,name:base_wua_pressurized_irrigation.model_wua_irrigationdelivery
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_irrigationdelivery_view_form
 msgid "Irrigation Delivery"
-msgstr "Irrigation Delivery"
+msgstr "Escomesa"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_irrigation_end_date
@@ -1424,6 +1440,7 @@ msgstr "Última lectura (valor)"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_res_partner_waterconnection_last_reading_time
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_init_reading_last_reading_time
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_last_reading_time
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_last_reading_time
 msgid "Last Reading Time"
@@ -1431,6 +1448,7 @@ msgstr "Data última lectura"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_res_partner_waterconnection_last_reading_value
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_init_reading_last_reading_value
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_last_reading_value
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_last_reading_value
 msgid "Last Reading Value"
@@ -1556,6 +1574,11 @@ msgstr "Mesura"
 #, python-format
 msgid "Measurements"
 msgstr "Mesures"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wizard_init_reading_form_view
+msgid "Reading to Keep"
+msgstr "Valor que es queda"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_watermeter_model
@@ -1976,9 +1999,19 @@ msgid "Refresh Page"
 msgstr "Actualitza la pàgina"
 
 #. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_init_reading_regularization
+msgid "Regularization"
+msgstr "Regularització"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_init_reading_regularization_adjustment
+msgid "Regularization Adjustment"
+msgstr "Ajust de regularització"
+
+#. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wizard_regularize_negative_reading_view_form
 msgid "Regularize"
-msgstr "Regularize"
+msgstr "Regularitzar"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_remote_serial_number
@@ -2232,7 +2265,13 @@ msgid "There is no previous reading for water meter '%s' before %s. The first re
 msgstr "There is no previous reading for water meter '%s' before %s. The first reading of a water meter must be marked as 'Initialization reading'."
 
 #. module: base_wua_pressurized_irrigation
-#: code:addons/base_wua_pressurized_irrigation/wizard/wizard_init_reading.py:67
+#: code:addons/base_wua_pressurized_irrigation/wizard/wizard_init_reading.py:95
+#, python-format
+msgid "There is no previous reading to regularize for this water meter."
+msgstr "No hi ha cap lectura anterior per regularitzar per a aquest comptador."
+
+#. module: base_wua_pressurized_irrigation
+#: code:addons/base_wua_pressurized_irrigation/wizard/wizard_init_reading.py:140
 #, python-format
 msgid "This waterconnection has no watermeter assigned."
 msgstr "Aquesta connexió d'aigua no té cap comptador assignat."

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-12 07:44+0000\n"
-"PO-Revision-Date: 2026-08-12 07:44+0000\n"
+"POT-Creation-Date: 2026-08-12 11:31+0000\n"
+"PO-Revision-Date: 2026-08-12 11:31+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -631,6 +631,11 @@ msgid "Diameter (mm)"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,help:base_wua_pressurized_irrigation.field_wizard_init_reading_regularization_adjustment
+msgid "Difference (Final Reading - Last Reading Value) applied as an adjustment on the zero-consumption reading."
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_watermeter_view_search
 #: selection:wua.watermeter,state:0
 msgid "Discarted"
@@ -828,6 +833,7 @@ msgstr ""
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_init_reading_final_reading
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wizard_init_reading_form_view
 msgid "Final Reading"
 msgstr ""
 
@@ -997,6 +1003,11 @@ msgid "If checked, it will set this state as the default for new water connectio
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,help:base_wua_pressurized_irrigation.field_wizard_init_reading_regularization
+msgid "If checked, the final reading is registered like the negative reading transformation: a zero-consumption reading plus an adjustment, avoiding a negative consumption volume."
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,help:base_wua_pressurized_irrigation.field_wua_waterconnection_with_estimated_readings
 msgid "If checked, this water connection is configured to receive estimated readings. The Estimated monthly consumption must then be greater than zero."
 msgstr ""
@@ -1010,6 +1021,16 @@ msgstr ""
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,help:base_wua_pressurized_irrigation.field_wua_waterconnection_state_active
 msgid "If unchecked, it will allow you to hide the state without removing it."
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wizard_init_reading_form_view
+msgid "In regularization mode the Meter Value to Regularize is\n"
+"                    not stored as a reading: a reading with the Last Reading\n"
+"                    Value is created (zero consumption) and the difference\n"
+"                    (Meter Value to Regularize - Last Reading Value) is\n"
+"                    applied as an adjustment. The initialization reading is\n"
+"                    created with the Initial Reading value."
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation
@@ -1404,6 +1425,7 @@ msgstr ""
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_res_partner_waterconnection_last_reading_time
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_init_reading_last_reading_time
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_last_reading_time
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_last_reading_time
 msgid "Last Reading Time"
@@ -1411,6 +1433,7 @@ msgstr ""
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_res_partner_waterconnection_last_reading_value
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_init_reading_last_reading_value
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_last_reading_value
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_last_reading_value
 msgid "Last Reading Value"
@@ -1535,6 +1558,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_pressuresensor_pressuresensormeasurement_ids
 #, python-format
 msgid "Measurements"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wizard_init_reading_form_view
+msgid "Meter Value to Regularize"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation
@@ -1953,6 +1981,16 @@ msgid "Refresh Page"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_init_reading_regularization
+msgid "Regularization"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_init_reading_regularization_adjustment
+msgid "Regularization Adjustment"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wizard_regularize_negative_reading_view_form
 msgid "Regularize"
 msgstr ""
@@ -2209,7 +2247,13 @@ msgid "There is no previous reading for water meter '%s' before %s. The first re
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation
-#: code:addons/base_wua_pressurized_irrigation/wizard/wizard_init_reading.py:67
+#: code:addons/base_wua_pressurized_irrigation/wizard/wizard_init_reading.py:95
+#, python-format
+msgid "There is no previous reading to regularize for this water meter."
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation
+#: code:addons/base_wua_pressurized_irrigation/wizard/wizard_init_reading.py:140
 #, python-format
 msgid "This waterconnection has no watermeter assigned."
 msgstr ""

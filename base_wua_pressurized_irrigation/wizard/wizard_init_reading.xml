@@ -7,10 +7,28 @@
             <form string="Initialize Reading">
                 <group>
                     <field name="date_change" required="1"/>
-                    <field name="final_reading" required="1"/>
-                    <field name="initial_reading" required="1"/>
+                    <field name="regularization"/>
+                    <field name="last_reading_time" readonly="1"
+                           attrs="{'invisible': [('regularization', '=', False)]}"/>
+                    <field name="last_reading_value" readonly="1"
+                           attrs="{'invisible': [('regularization', '=', False)]}"/>
+                    <field name="final_reading" string="Final Reading"
+                           attrs="{'invisible': [('regularization', '=', True)],
+                                   'required': [('regularization', '=', False)]}"/>
+                    <field name="initial_reading"
+                           attrs="{'invisible': [('regularization', '=', True)],
+                                   'required': [('regularization', '=', False)]}"/>
+                    <field name="initial_reading" string="Reading to Keep"
+                           attrs="{'invisible': [('regularization', '=', False)],
+                                   'required': [('regularization', '=', True)]}"/>
+                    <field name="regularization_adjustment" readonly="1"
+                           attrs="{'invisible': [('regularization', '=', False)]}"/>
                     <field name="notes"/>
                 </group>
+                <div class="oe_grey"
+                     attrs="{'invisible': [('regularization', '=', False)]}">
+                    Enter only the Reading to Keep, like the negative reading process: a zero-consumption reading plus the corresponding adjustment is created, and that value becomes the initialization reading.
+                </div>
                 <footer>
                     <button name="action_generate_init_readings"
                             string="Confirm"
