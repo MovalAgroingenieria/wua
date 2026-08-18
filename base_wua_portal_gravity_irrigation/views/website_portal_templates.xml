@@ -181,5 +181,533 @@
             </t>
         </template>
 
+        <template id="portal_my_wateringrequests"
+                  name="My Gravity Irrigation Requests">
+            <t t-call="website.layout">
+                <t t-call="base_wua_portal.portal_wua_navbar"/>
+                <div id="wrap">
+                    <div class="container-fluid mb64"
+                         style="max-width: 98%; margin: 0 auto;">
+                        <div class="col-md-12">
+                            <div class="row mb16">
+                                <div class="col-md-6">
+                                    <h3 class="page-header">
+                                        Gravity Irrigation Requests
+                                    </h3>
+                                </div>
+                                <div class="col-md-6 text-right">
+                                    <a href="#"
+                                       class="btn btn-primary mt8"
+                                       data-toggle="modal"
+                                       data-target="#requestWateringModal">
+                                        <i class="fa fa-plus"></i>
+                                        Create new request
+                                    </a>
+                                </div>
+                            </div>
+
+                            <t t-if="success_message">
+                                <div class="alert alert-success" role="alert">
+                                    <t t-esc="success_message"/>
+                                </div>
+                            </t>
+                            <t t-if="error_message">
+                                <div class="alert alert-danger" role="alert">
+                                    <t t-esc="error_message"/>
+                                </div>
+                            </t>
+
+                            <div class="row" style="margin-bottom:6px;">
+                                <div class="col-md-3">
+                                    <form method="GET" class="form-inline"
+                                          style="margin:0;">
+                                        <input type="hidden" name="filter_is_open"
+                                               t-att-value="filter_is_open or ''"/>
+                                        <div class="form-group">
+                                            <label for="wateringperiod_filter"
+                                                   class="mr8">Period:</label>
+                                            <select name="wateringperiod_id"
+                                                    id="wateringperiod_filter"
+                                                    class="form-control"
+                                                    onchange="this.form.submit()">
+                                                <option value="">All Periods</option>
+                                                <t t-foreach="wateringperiods"
+                                                   t-as="period">
+                                                    <option t-att-value="period.id"
+                                                            t-att-selected="'selected' if selected_wateringperiod_id == period.id else None">
+                                                        <t t-esc="period.display_name"/>
+                                                    </option>
+                                                </t>
+                                            </select>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-md-2">
+                                    <form method="GET" class="form-inline"
+                                          style="margin:0;">
+                                        <input type="hidden" name="wateringperiod_id"
+                                               t-att-value="selected_wateringperiod_id or ''"/>
+                                        <div class="form-group">
+                                            <label for="is_open_filter"
+                                                   class="mr8">Status:</label>
+                                            <select name="filter_is_open"
+                                                    id="is_open_filter"
+                                                    class="form-control"
+                                                    onchange="this.form.submit()">
+                                                <option value="">All</option>
+                                                <option value="open"
+                                                        t-att-selected="'selected' if filter_is_open == 'open' else None">
+                                                    Open
+                                                </option>
+                                                <option value="closed"
+                                                        t-att-selected="'selected' if filter_is_open == 'closed' else None">
+                                                    Closed
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-md-7">
+                                    <form method="GET" style="width:100%;">
+                                        <input type="hidden" name="wateringperiod_id"
+                                               t-att-value="selected_wateringperiod_id or ''"/>
+                                        <input type="hidden" name="filter_is_open"
+                                               t-att-value="filter_is_open or ''"/>
+                                        <div style="display:flex; align-items:center;">
+                                            <div class="form-group mr8">
+                                                <select name="search_field"
+                                                        class="form-control">
+                                                    <option value="">Search by...</option>
+                                                    <option value="name"
+                                                            t-att-selected="'selected' if search_field == 'name' else None">
+                                                        Request
+                                                    </option>
+                                                    <option value="request_date"
+                                                            t-att-selected="'selected' if search_field == 'request_date' else None">
+                                                        Request Date
+                                                    </option>
+                                                    <option value="state"
+                                                            t-att-selected="'selected' if search_field == 'state' else None">
+                                                        State
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group mr8"
+                                                 style="flex:1;">
+                                                <input type="text"
+                                                       name="search"
+                                                       class="form-control"
+                                                       placeholder="Search..."
+                                                       t-att-value="search_query or ''"
+                                                       style="width:100%; box-sizing:border-box;"/>
+                                            </div>
+                                            <div class="form-group">
+                                                <button type="submit"
+                                                        class="btn btn-primary">
+                                                    Search
+                                                </button>
+                                                <a href="/my/wateringrequests"
+                                                   class="btn btn-default ml8">
+                                                    Clear
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <t t-if="not wateringrequests">
+                                    <div class="alert alert-info" role="alert">
+                                        There are currently no gravity
+                                        irrigation requests for your account.
+                                    </div>
+                                </t>
+                                <t t-else="">
+                                    <t t-foreach="grouped_requests.items()"
+                                       t-as="period_group">
+                                        <t t-set="period_name"
+                                           t-value="period_group[0]"/>
+                                        <t t-set="status_groups"
+                                           t-value="period_group[1]"/>
+
+                                        <div class="panel panel-default"
+                                             style="margin-top: 15px;">
+                                            <div class="panel-heading"
+                                                 style="background-color: #f5f5f5;">
+                                                <h4 class="panel-title"
+                                                    style="margin: 0; font-weight: bold;">
+                                                    <i class="fa fa-calendar"></i>
+                                                    <t t-esc="period_name"/>
+                                                </h4>
+                                            </div>
+                                            <div class="panel-body"
+                                                 style="padding: 0;">
+                                                <t t-foreach="['Open', 'Closed']"
+                                                   t-as="status">
+                                                    <t t-if="status_groups.get(status)">
+                                                        <div style="padding: 10px 15px; background-color: #fafafa; border-bottom: 1px solid #ddd;">
+                                                            <strong style="font-size: 14px;">
+                                                                <t t-if="status == 'Open'">
+                                                                    <i class="fa fa-unlock text-success"></i>
+                                                                    Open Requests
+                                                                </t>
+                                                                <t t-else="">
+                                                                    <i class="fa fa-lock text-muted"></i>
+                                                                    Closed Requests
+                                                                </t>
+                                                                <span class="badge"
+                                                                      t-esc="len(status_groups[status])"/>
+                                                            </strong>
+                                                        </div>
+                                                        <table class="table table-hover o_my_status_table"
+                                                               style="margin-bottom: 0;">
+                                                            <thead>
+                                                                <tr class="active">
+                                                                    <th style="width:20%;">Request</th>
+                                                                    <th style="width:20%;">Request Date</th>
+                                                                    <th style="width:20%;">Subparcels</th>
+                                                                    <th style="width:20%;">State</th>
+                                                                    <th style="width:20%;">Period Open</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <t t-foreach="status_groups[status]"
+                                                                   t-as="wateringrequest">
+                                                                    <tr>
+                                                                        <td>
+                                                                            <t t-esc="wateringrequest.name"/>
+                                                                        </td>
+                                                                        <td>
+                                                                            <t t-esc="wateringrequest.request_date"/>
+                                                                        </td>
+                                                                        <td>
+                                                                            <t t-esc="wateringrequest.number_of_subparcels"/>
+                                                                        </td>
+                                                                        <td>
+                                                                            <t t-if="wateringrequest.state == 'pending'">
+                                                                                Pending Processing
+                                                                            </t>
+                                                                            <t t-if="wateringrequest.state == 'intermediate'">
+                                                                                Intermediate
+                                                                            </t>
+                                                                            <t t-if="wateringrequest.state == 'executed'">
+                                                                                Executed
+                                                                            </t>
+                                                                        </td>
+                                                                        <td>
+                                                                            <t t-if="wateringrequest.is_open">Yes</t>
+                                                                            <t t-else="">No</t>
+                                                                        </td>
+                                                                    </tr>
+                                                                </t>
+                                                            </tbody>
+                                                        </table>
+                                                    </t>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </t>
+                            </div>
+
+                            <t t-if="pager">
+                                <div class="o_portal_pager text-center">
+                                    <t t-call="website.pager">
+                                        <t t-set="classname">pagination</t>
+                                    </t>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </t>
+
+            <div class="modal fade" id="requestWateringModal" tabindex="-1"
+                 role="dialog" aria-labelledby="requestWateringModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <form id="portal-watering-request-form"
+                              onsubmit="return false;">
+                            <div class="modal-header">
+                                <h4 class="modal-title"
+                                    id="requestWateringModalLabel">
+                                    Request Gravity Irrigation
+                                </h4>
+                                <button type="button" class="close"
+                                        data-dismiss="modal"
+                                        aria-label="Close"
+                                        style="margin-top: -25px;">
+                                    <span aria-hidden="true">x</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="watering-period-id">
+                                        Watering Period
+                                    </label>
+                                    <select class="form-control"
+                                            id="watering-period-id"
+                                            name="wateringperiod_id"
+                                            required="required">
+                                        <t t-foreach="wateringperiods"
+                                           t-as="period">
+                                            <t t-if="period.state == 'open'">
+                                                <option t-att-value="period.id">
+                                                    <t t-esc="period.display_name"/>
+                                                </option>
+                                            </t>
+                                        </t>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="product-id">
+                                        Water Type
+                                    </label>
+                                    <select class="form-control"
+                                            id="product-id"
+                                            name="product_id"
+                                            required="required">
+                                        <t t-foreach="watering_products"
+                                           t-as="product">
+                                            <option t-att-value="product.id">
+                                                <t t-esc="product.display_name"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>
+                                        Requests (subparcel and watering hours)
+                                    </label>
+                                    <table class="table table-bordered"
+                                           id="portal-watering-lines-table"
+                                           style="margin-bottom: 8px;">
+                                        <thead>
+                                            <tr>
+                                                <th>Subparcel</th>
+                                                <th>Hours</th>
+                                                <th style="width: 90px;">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="portal-watering-lines-body">
+                                            <tr class="portal-watering-line">
+                                                <td>
+                                                    <select class="form-control"
+                                                            name="subparcel_ids"
+                                                            required="required">
+                                                        <t t-foreach="subparcels"
+                                                           t-as="subparcel">
+                                                            <option
+                                                                t-att-value="subparcel.id">
+                                                                <t t-esc="subparcel.display_name"/>
+                                                            </option>
+                                                        </t>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input class="form-control"
+                                                           name="watering_hours"
+                                                           type="number"
+                                                           min="0.5"
+                                                           step="0.5"
+                                                           value="1"
+                                                           required="required"/>
+                                                </td>
+                                                <td class="text-center">
+                                                    <button type="button"
+                                                            class="btn btn-default btn-sm js-remove-portal-line"
+                                                            disabled="disabled">
+                                                        Remove
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <button type="button"
+                                            class="btn btn-default btn-sm"
+                                            id="js-add-portal-watering-line">
+                                        Add line
+                                    </button>
+
+                                    <table style="display: none;">
+                                        <tbody>
+                                            <tr id="portal-watering-line-template"
+                                                class="portal-watering-line">
+                                                <td>
+                                                    <select class="form-control"
+                                                            name="subparcel_ids"
+                                                            disabled="disabled"
+                                                            required="required">
+                                                        <t t-foreach="subparcels"
+                                                           t-as="subparcel">
+                                                            <option
+                                                                t-att-value="subparcel.id">
+                                                                <t t-esc="subparcel.display_name"/>
+                                                            </option>
+                                                        </t>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input class="form-control"
+                                                           name="watering_hours"
+                                                           type="number"
+                                                           min="0.5"
+                                                           step="0.5"
+                                                           disabled="disabled"
+                                                           value="1"
+                                                           required="required"/>
+                                                </td>
+                                                <td class="text-center">
+                                                    <button type="button"
+                                                            class="btn btn-default btn-sm js-remove-portal-line">
+                                                        Remove
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="form-group">
+                                    <label for="watering-request-notes">
+                                        Notes
+                                    </label>
+                                    <textarea class="form-control"
+                                              id="watering-request-notes"
+                                              name="notes"></textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <span id="watering-request-message"
+                                      class="mr8"></span>
+                                <button type="button" class="btn btn-primary"
+                                        id="js-submit-watering-request">
+                                    Submit
+                                </button>
+                                <button type="button" class="btn btn-default"
+                                        data-dismiss="modal">
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <script type="text/javascript">
+                <![CDATA[
+                $(document).ready(function () {
+                    function updateRemoveButtons() {
+                        var $rows = $('#portal-watering-lines-body')
+                            .find('.portal-watering-line');
+                        $rows.find('.js-remove-portal-line')
+                            .prop('disabled', $rows.length <= 1);
+                    }
+
+                    $('#js-add-portal-watering-line').on(
+                        'click',
+                        function () {
+                            var $template = $('#portal-watering-line-template')
+                                .clone();
+                            $template.removeAttr('id');
+                            $template.find(':input').prop('disabled', false);
+                            $('#portal-watering-lines-body').append($template);
+                            updateRemoveButtons();
+                        }
+                    );
+
+                    $(document).on(
+                        'click',
+                        '.js-remove-portal-line',
+                        function () {
+                            $(this).closest('tr').remove();
+                            updateRemoveButtons();
+                        }
+                    );
+
+                    $('#js-submit-watering-request').on(
+                        'click',
+                        function () {
+                            var $btn = $(this);
+                            var $message = $('#watering-request-message');
+                            var lines = [];
+
+                            $('#portal-watering-lines-body')
+                                .find('.portal-watering-line')
+                                .each(function () {
+                                    var $row = $(this);
+                                    var subparcelId = $row.find(
+                                        'select[name="subparcel_ids"]').val();
+                                    var wateringHours = $row.find(
+                                        'input[name="watering_hours"]').val();
+                                    if (subparcelId) {
+                                        lines.push({
+                                            subparcel_id: subparcelId,
+                                            watering_hours: wateringHours
+                                        });
+                                    }
+                                });
+
+                            function showMessage(text, ok) {
+                                var cls = ok ? 'text-success' : 'text-danger';
+                                $message.html(
+                                    '<span class="' + cls + '">' +
+                                    text + '</span>');
+                            }
+
+                            $btn.prop('disabled', true);
+                            fetch('/my/wateringrequest/request', {
+                                method: 'POST',
+                                credentials: 'same-origin',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    jsonrpc: '2.0',
+                                    method: 'call',
+                                    params: {
+                                        wateringperiod_id:
+                                            $('#watering-period-id').val(),
+                                        product_id:
+                                            $('#product-id').val(),
+                                        notes:
+                                            $('#watering-request-notes').val(),
+                                        lines: lines
+                                    }
+                                })
+                            })
+                            .then(function (response) {
+                                return response.json();
+                            })
+                            .then(function (data) {
+                                $btn.prop('disabled', false);
+                                if (data && data.error) {
+                                    showMessage('Error: server error', false);
+                                    return;
+                                }
+                                var result = (data && data.result) || {};
+                                if (result.success) {
+                                    window.location.href =
+                                        '/my/wateringrequests?success=' +
+                                        encodeURIComponent(
+                                            result.message || 'Done');
+                                } else {
+                                    showMessage(
+                                        result.message || 'Error', false);
+                                }
+                            })
+                            .catch(function (error) {
+                                $btn.prop('disabled', false);
+                                showMessage('Error: ' + error, false);
+                            });
+                        }
+                    );
+
+                    updateRemoveButtons();
+                });
+                ]]>
+            </script>
+        </template>
+
     </data>
 </odoo>
