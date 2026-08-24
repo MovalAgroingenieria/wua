@@ -5,6 +5,7 @@
 from odoo import http
 from odoo.http import request, Response
 from odoo.addons.website_portal.controllers.main import website_account
+from odoo.tools.float_utils import float_is_zero
 
 
 class website_account(website_account):
@@ -129,11 +130,16 @@ class website_account(website_account):
                 hydricmovements_domain.append(
                     (field_map[search_field], 'ilike', search))
 
-        hydricmovements = \
-            hydricmovement_model.search(hydricmovements_domain)
-        hydricmovements_count = \
-            request.env['wua.hydricmovement'].search_count(
-                hydricmovements_domain)
+        hydricmovements = hydricmovement_model.search(hydricmovements_domain)
+        filtered_hydricmovements = request.env['wua.hydricmovement']
+        for hydricmovement in hydricmovements:
+            is_accounting_volume_zero = float_is_zero(
+                hydricmovement.accounting_volume, precision_digits=2)
+            is_balance_zero = float_is_zero(
+                hydricmovement.balance, precision_digits=2)
+            if not (is_accounting_volume_zero and is_balance_zero):
+                filtered_hydricmovements += hydricmovement
+        hydricmovements_count = len(filtered_hydricmovements)
         items_per_page = self._items_per_page
         pager = request.website.pager(
             url="/my/hydricmovements",
@@ -146,8 +152,8 @@ class website_account(website_account):
             },
         )
         offset = (page - 1) * items_per_page
-        hydricmovements = request.env['wua.hydricmovement'].search(
-            hydricmovements_domain, limit=items_per_page, offset=offset)
+        hydricmovements = filtered_hydricmovements[
+            offset:offset + items_per_page]
         liquidation_on_portal = request.env['ir.values'].sudo().get_default(
             'wua.invoicing.configuration',
             'liquidation_on_portal',

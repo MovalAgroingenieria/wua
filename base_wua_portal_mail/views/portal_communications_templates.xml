@@ -23,7 +23,15 @@
                         <h3 class="page-header">Your Details <a href="/my/account" class="btn btn-default btn-xs">Consult</a></h3>
                         <a t-attf-href="/my/report"
                         target="_blank">
-                            <div t-field="user.partner_id" t-options='{"widget": "contact", "fields": ["email", "phone", "address", "name"]}'/>
+                            <div t-field="user.partner_id" t-options='{"widget": "contact", "fields": ["email", "address", "name"]}'/>
+                            <div class="mt8" t-if="user.partner_id.phone">
+                                <strong>Phone: </strong>
+                                <span t-esc="user.partner_id.phone"/>
+                            </div>
+                            <div class="mt8" t-if="user.partner_id.mobile">
+                                <strong>Mobile: </strong>
+                                <span t-esc="user.partner_id.mobile"/>
+                            </div>
                             <div class="mt8" t-if="user.partner_id.vat">
                                 <t t-set="vat_no_prefix" t-value="user.partner_id.vat[2:]"/>
                                 <span t-esc="vat_no_prefix"/>

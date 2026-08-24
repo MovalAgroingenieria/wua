@@ -442,6 +442,14 @@
                                 </button>
                             </div>
                             <div class="modal-body">
+                                <t t-if="html_quota_balance">
+                                    <div class="form-group">
+                                        <label>
+                                            Available Water
+                                        </label>
+                                        <t t-raw="html_quota_balance"/>
+                                    </div>
+                                </t>
                                 <div class="form-group">
                                     <label for="watering-period-id">
                                         Watering Period

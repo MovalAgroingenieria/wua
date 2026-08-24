@@ -37,6 +37,19 @@ class website_account(website_account):
             product_domain = wateringrequest.get_domain_product_id()
         return product_domain
 
+    def _get_portal_watering_quota_balance(self, partner):
+        # Reuse the backend "available water" dialog (balance per
+        # superproduct in m3 and hours) so the portal user can preview how
+        # much can still be requested before submitting a watering request.
+        wateringrequest = request.env['wua.wateringrequest'].sudo().new({
+            'partner_id': partner.id,
+        })
+        html_quota_balance = ''
+        if hasattr(wateringrequest, '_get_html_quota_balance'):
+            html_quota_balance = wateringrequest._get_html_quota_balance(
+                partner)
+        return html_quota_balance
+
     @http.route()
     def account(self, **kw):
         """Add gravity irrigation consumptions count to main account page"""
@@ -138,6 +151,8 @@ class website_account(website_account):
             product_domain,
             order='name')
 
+        html_quota_balance = self._get_portal_watering_quota_balance(partner)
+
         liquidation_on_portal = request.env['ir.values'].sudo().get_default(
             'wua.invoicing.configuration', 'liquidation_on_portal')
 
@@ -156,6 +171,7 @@ class website_account(website_account):
             'error_message': error,
             'subparcels': subparcels,
             'watering_products': products,
+            'html_quota_balance': html_quota_balance,
             'partner': partner,
             'liquidation_on_portal': liquidation_on_portal,
             'page_name': 'wateringrequests',
@@ -242,14 +258,16 @@ class website_account(website_account):
             if notes:
                 vals['notes'] = '<p>%s</p>' % notes
             try:
-                wateringrequest = request.env[
-                    'wua.wateringrequest'].create(vals)
+                with request.env.cr.savepoint():
+                    wateringrequest = request.env[
+                        'wua.wateringrequest'].create(vals)
                 result.update({
                     'success': True,
                     'message': _('Watering request created successfully.'),
                     'wateringrequest_id': wateringrequest.id,
                 })
             except (AccessError, UserError, ValidationError) as create_error:
+                request.env.invalidate_all()
                 error = create_error.name
 
         if not result['success']:

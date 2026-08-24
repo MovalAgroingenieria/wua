@@ -11,7 +11,7 @@
     "author": "Moval Agroingeniería",
     "license": "AGPL-3",
     "depends": [
-        "base_wua_portal_infrastructure",
+        "base_wua_portal_gravity_infrastructure",
         "base_wua_gravity_irrigation",
     ],
     "data": [
