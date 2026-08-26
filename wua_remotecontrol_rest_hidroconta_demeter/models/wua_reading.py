@@ -5,6 +5,8 @@
 import requests
 import json
 import traceback
+import datetime
+import pytz
 from odoo import models, exceptions, api, _
 
 
@@ -212,6 +214,26 @@ class WuaReading(models.Model):
                     'Exception: ' + str(e) + '\n' + \
                     'Stack trace:\n' + error_details + '\n'
         return others_readings_info
+
+    def _get_reading_time_from_remotecontrol(self, reading, now):
+        reading_time = reading.get('reading_time', False)
+        date_time_read = False
+        if reading_time:
+            try:
+                date_time_read = datetime.datetime.strptime(
+                    reading_time, '%d/%m/%Y %H:%M:%S')
+            except Exception:
+                date_time_read = False
+        if not date_time_read:
+            try:
+                date_time_read = datetime.datetime.strptime(
+                    now, '%Y-%m-%d %H:%M:%S')
+            except Exception:
+                return now
+        date_time_read = pytz.timezone('Europe/Madrid').localize(
+            date_time_read)
+        date_time_read = date_time_read.astimezone(pytz.timezone('UTC'))
+        return date_time_read.strftime('%Y-%m-%d %H:%M:%S')
 
     def open_connection_hidroconta(
         self, url_remotecontrol_rest, url_remotecontrol_rest_username,
