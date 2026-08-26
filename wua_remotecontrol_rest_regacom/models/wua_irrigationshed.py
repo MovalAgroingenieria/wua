@@ -26,3 +26,11 @@ class WuaIrrigationshed(models.Model):
         help='Hydrant/device directory identifier in Regacom database '
              '(HIRU_nDirIRU / HIRUC_nDirIRU)',
     )
+
+    regacom_import_irrigation_events = fields.Boolean(
+        string='Import Irrigation Events',
+        default=False,
+        help='Enable import of irrigation events (consumption) from '
+             'Regacom historico_iru for this irrigation shed. '
+             'Uses HIRU_nConsumo as volume, HIRU_nFechaHora as date.',
+    )
