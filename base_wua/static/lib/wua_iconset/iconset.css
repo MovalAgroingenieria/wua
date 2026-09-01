@@ -1,31 +1,41 @@
-@font-face {
-  font-family: 'wua_iconset';
-  src:  url('fonts/wua_iconset.eot?fsclch');
-  src:  url('fonts/wua_iconset.eot?fsclch#iefix') format('embedded-opentype'),
-    url('fonts/wua_iconset.ttf?fsclch') format('truetype'),
-    url('fonts/wua_iconset.woff?fsclch') format('woff'),
-    url('fonts/wua_iconset.svg?fsclch#wua_iconset') format('svg');
-  font-weight: normal;
+/* Base icon class */
+[class^="fa-wua-"], [class*=" fa-wua-"] {
+  display: inline-block;
+  font-family: 'wua_iconset' !important;
   font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  --fa-entity-duotone-offset: 1em;
 }
 
-/* Simplified fa-wua class (inspired by the native Base Fontawesome module) */
-[class^="fa-wua-"], [class*=" fa-wua-"] {
-   display: inline-block;
-   font-family: wua_iconset;
-   font-style: normal;
-   font-weight: normal;
-   font-variant: normal;
-   text-rendering: auto;
+/* Define pseudo-elements */
+[class^="fa-wua-"]::before,
+[class^="fa-wua-"]::after,
+[class*=" fa-wua-"]::before,
+[class*=" fa-wua-"]::after {
+  font-family: 'wua_iconset' !important;
+  font-style: normal;
+  font-weight: normal;
 }
 
 /* Render duotone icons */
 [class*="-duotone"]::before {
-   opacity: 1;
+  opacity: 1;
 }
+
 [class*="-duotone"]::after {
-   opacity: 0.4;
-   margin-left: -1em;
+  opacity: 0.4;
+  position: relative;
+  right: var(--fa-entity-duotone-offset);
+}
+
+/* Context overrides */
+.btn  [class*="-duotone"] {
+    --fa-entity-duotone-offset: 1em;
+}
+.oe_stat_button  [class*="-duotone"] {
+    --fa-entity-duotone-offset: 1.25em;
 }
 
 /* Print duotone */
@@ -33,6 +43,7 @@
   opacity: 1;
   color: rgba(255, 255, 255, 0.6);
 }
+
 .duotone-print-color::after {
   opacity: 1;
   /* Overwritten by js */
@@ -40,6 +51,25 @@
 }
 
 /* Icons */
+@font-face {
+  font-family: 'wua_iconset';
+  src:  url('fonts/wua_iconset.eot?oju94c');
+  src:  url('fonts/wua_iconset.eot?oju94c#iefix') format('embedded-opentype'),
+    url('fonts/wua_iconset.ttf?oju94c') format('truetype'),
+    url('fonts/wua_iconset.woff?oju94c') format('woff'),
+    url('fonts/wua_iconset.svg?oju94c#wua_iconset') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+.fa-wua-parcels-duotone::before {
+  content: "\e90b";
+}
+.fa-wua-parcels-duotone::after {
+  content: "\e90c";
+}
+.fa-wua-parcels:before {
+  content: "\e90d";
+}
 .fa-wua-parcel:before {
   content: "\e900";
 }
