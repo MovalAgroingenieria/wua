@@ -16,9 +16,9 @@
         "base_wua_pressurized_irrigation_tank",
     ],
     "data": [
+        'security/ir.model.access.csv',
         "views/website_portal_templates.xml",
         "views/portal_irrigationmanagement_templates.xml",
-        'security/ir.model.access.csv',
     ],
     "installable": True,
     "application": False,

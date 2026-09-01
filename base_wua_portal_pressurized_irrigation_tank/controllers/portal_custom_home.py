@@ -19,7 +19,7 @@ class website_account(website_account):
         partner = partner.parent_id or partner
 
         tankconsumptions_count = \
-            request.env['wua.tankconsumption'].search_count([
+            request.env['wua.tankconsumption'].sudo().search_count([
                 ('partner_id', '=', partner.id),
             ])
         response.qcontext.update({
@@ -50,9 +50,9 @@ class website_account(website_account):
                 tankconsumptions_domain.append(
                     (field_map[search_field], 'ilike', search))
 
+        tankconsumption_model = request.env['wua.tankconsumption'].sudo()
         tankconsumptions_count = \
-            request.env['wua.tankconsumption'].search_count(
-                tankconsumptions_domain)
+            tankconsumption_model.search_count(tankconsumptions_domain)
         items_per_page = self._items_per_page
         pager = request.website.pager(
             url="/my/tankconsumptions",
@@ -65,7 +65,7 @@ class website_account(website_account):
             },
         )
         offset = (page - 1) * items_per_page
-        tankconsumptions = request.env['wua.tankconsumption'].search(
+        tankconsumptions = tankconsumption_model.search(
             tankconsumptions_domain, limit=items_per_page, offset=offset,
             order="initial_time desc")
         liquidation_on_portal = request.env['ir.values'].sudo().get_default(
