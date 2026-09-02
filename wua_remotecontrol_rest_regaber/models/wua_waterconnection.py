@@ -25,6 +25,7 @@ class WuaWaterconnection(models.Model):
             ('skyreg', 'SKYreg WaterMeter'),
             ('skyreg_hydrant', 'SKYreg Hydrant WaterMeter'),
             ('skymeter_nbiot', 'SKYmeter NB-IoT WaterMeter'),
+            ('atlas', 'ATLAS WaterMeter'),
         ],
         default='skyreg',
         help='Type of SKYplatform device. Determines which API endpoint '
@@ -64,7 +65,7 @@ class WuaWaterconnection(models.Model):
             if not current_node:
                 break
             current_type = current_node.get('Type')
-            if current_type in (2, 200, 221, 3106):
+            if current_type in (2, 200, 221, 3106, 3500):
                 shed_node = current_node
                 break
             current_id = parent_index.get(current_id)
@@ -143,13 +144,18 @@ class WuaWaterconnection(models.Model):
             'updated_waterconnections': 0,
             'skipped_meters': 0,
         }
+        device_type_by_node_type = {
+            3107: 'skymeter_nbiot',
+            3510: 'atlas',
+        }
 
         for node in tree_nodes:
             if not isinstance(node, dict):
                 processed['skipped_meters'] += 1
                 continue
 
-            if node.get('Type') != 3107:
+            device_type = device_type_by_node_type.get(node.get('Type'))
+            if not device_type:
                 continue
 
             node_id = node.get('Id')
@@ -206,7 +212,7 @@ class WuaWaterconnection(models.Model):
                 'hydraulicsector_id': irrigationshed.hydraulicsector_id.id,
                 'position': position,
                 'regaber_tree_node_id': node_id,
-                'regaber_device_type': 'skymeter_nbiot',
+                'regaber_device_type': device_type,
             })
 
             if not was_created:

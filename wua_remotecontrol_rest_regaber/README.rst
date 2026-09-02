@@ -15,7 +15,8 @@ Features
 
 * Adds *Regaber SKYplatform* as a telecontrol option for ``wua.waterconnection``
 * Stores the SKYplatform ``TreeNodeId`` and device type per waterconnection
-* Imports the last counter reading from SKYplatform into ``wua.reading``
+* Imports the last SKYmeter NB-IoT and ATLAS counter reading from SKYplatform
+   into ``wua.reading``
 * Plugs into the standard ``do_import_reading_of_telecontrol`` hook
 * Settings page entry under WUA Irrigation Configuration
 
@@ -29,8 +30,8 @@ Configuration
 
    * Set *Telecontrol Associated* to **Regaber SKYplatform**.
    * Set *Regaber TreeNode ID* to the ``Id`` from ``GET /TreeNode``.
-   * Set *Regaber Device Type* (``skyreg``, ``skyreg_hydrant``, or
-     ``skymeter_nbiot``).
+   * Set *Regaber Device Type* (``skyreg``, ``skyreg_hydrant``,
+     ``skymeter_nbiot``, or ``atlas``).
 
 4. In *WUA → Configuration → Irrigation Settings*, enable
    *Import from readings (Regaber)*.
