@@ -16,6 +16,7 @@
     ],
     "data": [
         "security/ir.model.access.csv",
+        "security/security.xml",
         "views/website_portal_templates.xml",
         "views/portal_irrigationmanagement_templates.xml",
     ],
