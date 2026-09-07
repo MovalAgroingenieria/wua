@@ -70,6 +70,11 @@ class WuaIrrigationConfiguration(models.TransientModel):
         required=True,
         help='Installation Identifier')
 
+    installation_code_hidroconta = fields.Char(
+        string='Installation Code',
+        size=255,
+        help='Installation code used to filter Hidroconta searches')
+
     flow_in_liters = fields.Boolean(
         string='API Flow on l/s.',
         default=False,
@@ -104,6 +109,9 @@ class WuaIrrigationConfiguration(models.TransientModel):
         values.set_default('wua.irrigation.configuration',
                            'installation_identifier',
                            self.installation_identifier)
+        values.set_default('wua.irrigation.configuration',
+                   'installation_code_hidroconta',
+                   self.installation_code_hidroconta)
         values.set_default('wua.irrigation.configuration',
                            'flow_in_liters',
                            self.flow_in_liters)

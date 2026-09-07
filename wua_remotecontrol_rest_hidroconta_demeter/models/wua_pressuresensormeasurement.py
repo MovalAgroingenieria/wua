@@ -51,10 +51,9 @@ class WuaPressuresensormeasurement(models.Model):
                 analoginputs_req = requests.request(
                     'POST', url_remotecontrol_rest + '/search',
                     headers=request_headers,
-                    data=json.dumps({
-                        'type': ['analogInputs'],
-                        'status': 'enabled'
-                        }))
+                    data=json.dumps(
+                        self.env['wua.reading'].
+                        _get_hidroconta_search_data(['analogInputs'])))
                 if analoginputs_req.status_code == 200:
                     analoginputs_reqs = json.loads(analoginputs_req.text)
                     for analoginput in analoginputs_reqs:

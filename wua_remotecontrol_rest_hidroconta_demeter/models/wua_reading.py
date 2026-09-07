@@ -38,6 +38,21 @@ class WuaReading(models.Model):
         resp = True
         return resp
 
+    @api.model
+    def _get_hidroconta_search_data(self, element_types):
+        search_data = {
+            'type': element_types,
+            'status': 'enabled',
+        }
+        installation_code = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration',
+            'installation_code_hidroconta') or ''
+        installation_code = installation_code.strip()
+        if installation_code:
+            search_text = 'i=' + installation_code
+            search_data['searchText'] = search_text
+        return search_data
+
     def get_hydrants_from_hidroconta(self, url_remotecontrol_rest, jsessionid):
         hydrants = []
         request_headers = {
@@ -47,10 +62,7 @@ class WuaReading(models.Model):
         hydrants_req = requests.request(
             'POST', url_remotecontrol_rest + '/search',
             headers=request_headers,
-            data=json.dumps({
-                'type': ['hydrants'],
-                'status': 'enabled',
-                }))
+            data=json.dumps(self._get_hidroconta_search_data(['hydrants'])))
         if hydrants_req.status_code == 200:
             try:
                 hydrants = json.loads(hydrants_req.text)
@@ -67,10 +79,7 @@ class WuaReading(models.Model):
         iris_req = requests.request(
             'POST', url_remotecontrol_rest + '/search',
             headers=request_headers,
-            data=json.dumps({
-                'type': ['iris'],
-                'status': 'enabled',
-                }))
+            data=json.dumps(self._get_hidroconta_search_data(['iris'])))
         if iris_req.status_code == 200:
             try:
                 iris = json.loads(iris_req.text)
@@ -87,10 +96,7 @@ class WuaReading(models.Model):
         counters_req = requests.request(
             'POST', url_remotecontrol_rest + '/search',
             headers=request_headers,
-            data=json.dumps({
-                'type': ['counters'],
-                'status': 'enabled',
-                }))
+            data=json.dumps(self._get_hidroconta_search_data(['counters'])))
         if counters_req.status_code == 200:
             try:
                 counters = json.loads(counters_req.text)
