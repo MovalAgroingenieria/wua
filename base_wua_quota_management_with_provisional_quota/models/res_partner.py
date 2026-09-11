@@ -5,7 +5,6 @@
 import logging
 
 from odoo import models
-from odoo.exceptions import UserError
 import datetime
 
 
@@ -40,19 +39,55 @@ class ResPartner(models.Model):
         return parsed_reference
 
     def recalculate_extra_hydric_movements(self):
-        partners = self or self.env['res.partner'].search([
-            ('quota_ids', '!=', False),
+        active_irrigationpoints = self.env['wua.parcel.irrigationpoint'].search([
+            ('active', '=', True),
+            ('waterconnection_id.active', '=', True),
+            ('partner_id', '!=', False),
         ])
+        active_partner_ids = active_irrigationpoints.mapped('partner_id').ids
+
+        if self:
+            partners = self.filtered(lambda partner: partner.id in active_partner_ids)
+        else:
+            partners = self.env['res.partner'].search([
+                ('id', 'in', active_partner_ids),
+                ('quota_ids', '!=', False),
+                ('quota_ids.of_active_agriculturalseason', '=', True),
+                ('quota_ids.quotaperiod_id.is_closed', '=', False),
+            ])
+
+        active_wc_by_partner = {}
+        for irrigation_point in active_irrigationpoints:
+            if not irrigation_point.partner_id:
+                continue
+            active_wc_by_partner.setdefault(
+                irrigation_point.partner_id.id,
+                set(),
+            ).add(irrigation_point.waterconnection_id.id)
 
         _logger.info(
-            "Starting recalculate_extra_hydric_movements for %s partner(s)",
+            "Starting recalculate_extra_hydric_movements for %s partner(s) "
+            "with active irrigation points and open quotas",
             len(partners),
         )
         processed_partners = 0
         recalculated_readings = 0
+        _logger.info(
+            "recalculate_extra_hydric_movements: total candidates=%s",
+            len(partners),
+        )
         for partner in partners:
+            wc_ids = list(active_wc_by_partner.get(partner.id, set()))
+            if not wc_ids:
+                _logger.debug(
+                    "Skipping partner %s: no active irrigation point with "
+                    "active water connection",
+                    partner.id,
+                )
+                continue
             quotas = partner.quota_ids.filtered(
-                lambda x: x.of_active_agriculturalseason and not x.quotaperiod_id.is_closed
+                lambda x: x.of_active_agriculturalseason and
+                not x.quotaperiod_id.is_closed
             )
             if not quotas:
                 _logger.debug(
@@ -84,15 +119,19 @@ class ResPartner(models.Model):
                     reference_date,
                 )
                 continue
-            wc_ids = self.env['wua.waterconnection'].search([
-                ('irrigationpoint_ids.partner_id', '=', partner.id)
-            ])
             readings = self.env['wua.controlreading'].search([
-                ('waterconnection_id', 'in', wc_ids.ids),
+                ('waterconnection_id', 'in', wc_ids),
                 ('reading_time', '>=', initial_time.strftime('%Y-%m-%d %H:%M:%S'))
             ])
             processed_partners += 1
             recalculated_readings += len(readings)
+            _logger.info(
+                "recalculate_extra_hydric_movements: partner=%s, "
+                "readings_recalculated=%s, total_processed=%s",
+                partner.id,
+                len(readings),
+                processed_partners,
+            )
             for reading in readings:
                 reading.cancel_controlreading()
                 reading.validate_controlreading()
