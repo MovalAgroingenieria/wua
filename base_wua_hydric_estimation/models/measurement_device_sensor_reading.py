@@ -20,10 +20,10 @@ class MeasurementDeviceSensorReading(models.Model):
             current_date = datetime.date.today().strftime('%Y-%m-%d')
             (self.env['wua.parcel'].
              sudo().get_all_ndvi_values())
-            (self.env['wua.parcel.sensor.reading'].
-             sudo().refresh_materialized_view())
-            (self.env['res.partner.sensor.reading'].
-             sudo().refresh_materialized_view())
+            # (self.env['wua.parcel.sensor.reading'].
+            #  sudo().refresh_materialized_view())
+            # (self.env['res.partner.sensor.reading'].
+            #  sudo().refresh_materialized_view())
             uncalculated_monitoringperiods = \
                 (self.env['wua.monitoringperiod'].
                  sudo().get_uncalculated_monitoringperiods(
