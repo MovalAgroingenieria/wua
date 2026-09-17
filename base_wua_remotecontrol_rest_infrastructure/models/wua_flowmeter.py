@@ -47,8 +47,7 @@ class WuaFlowmeter(models.Model):
             prefix_message = _('Remote Control: Starting reading in '
                                'flowmeter')
             _logger = logging.getLogger(self.__class__.__name__)
-            _logger.info(prefix_message + '... ' +
-                         str(self.name))
+            _logger.info(u'%s... %s', prefix_message, self.name)
             model_flowreading = self.env['wua.flowreading']
             model_wpflowreading = self.env['wua.waterpipeflowreading']
             if self.intake_id:
