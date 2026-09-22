@@ -6,7 +6,7 @@
     "name": "WUA: Interface with Regaber SKYplatform REST API",
     "summary": "In a water users association, interface of Moval Regadio with "
                "the Regaber SKYplatform system, based on a REST API",
-    "version": "10.0.1.0.0",
+    "version": "10.0.1.0.2",
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
@@ -19,6 +19,7 @@
         "data/remotecontrol_regaber_wua_data.xml",
         "data/wua_irrigation_config_settings_data.xml",
         "views/wua_irrigation_config_settings_view.xml",
+        "views/wua_pressuresensor_view.xml",
         "views/wua_waterconnection_view.xml",
     ],
     "installable": True,

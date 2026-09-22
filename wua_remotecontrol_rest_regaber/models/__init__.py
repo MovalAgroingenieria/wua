@@ -5,6 +5,8 @@
 from . import (
     wua_irrigation_config_settings,
     wua_negative_reading,
+    wua_pressuresensor,
+    wua_pressuresensormeasurement,
     wua_reading,
     wua_waterconnection,
 )

@@ -17,6 +17,8 @@ Features
 * Stores the SKYplatform ``TreeNodeId`` and device type per waterconnection
 * Imports the last SKYmeter NB-IoT and ATLAS counter reading from SKYplatform
    into ``wua.reading``
+* Imports ATLAS pressure sensor measurements into
+   ``wua.pressuresensormeasurement``
 * Plugs into the standard ``do_import_reading_of_telecontrol`` hook
 * Settings page entry under WUA Irrigation Configuration
 
@@ -35,6 +37,12 @@ Configuration
 
 4. In *WUA → Configuration → Irrigation Settings*, enable
    *Import from readings (Regaber)*.
+
+5. For each ATLAS pressure sensor, create a ``wua.pressuresensor`` with
+   *Telecontrol Associated* set to **Regaber SKYplatform** and *Regaber
+   TreeNode ID* set to the type ``3512`` node ID from ``GET /TreeNode``.
+   Enable *Import pressure measurements (Regaber)* and schedule
+   *Get Pressure-Measurements Service*.
 
 Credits
 =======
