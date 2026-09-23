@@ -31,10 +31,25 @@ class website_account(website_account):
             request.env['wua.quota.aggregatevalue'].search_count([
                 ('partner_id', '=', partner.id),
             ])
+        show_quotas_on_portal = request.env[
+            'ir.values'
+        ].sudo().get_default(
+            'wua.irrigation.configuration',
+            'show_quotas_on_portal')
+        show_quotas_on_portal = show_quotas_on_portal if show_quotas_on_portal is not None else True
+        show_hydricmovements_on_portal = request.env[
+            'ir.values'
+        ].sudo().get_default(
+            'wua.irrigation.configuration',
+            'show_hydricmovements_on_portal')
+        show_hydricmovements_on_portal = show_hydricmovements_on_portal if show_hydricmovements_on_portal is not None else True
         response.qcontext.update({
             'quota_count': quota_count,
             'hydricmovement_count': hydricmovement_count,
             'quotaaggregates_count': quotaaggregates_count,
+            'show_quotas_on_portal': show_quotas_on_portal,
+            'show_hydricmovements_on_portal':
+                show_hydricmovements_on_portal,
         })
         return response
 

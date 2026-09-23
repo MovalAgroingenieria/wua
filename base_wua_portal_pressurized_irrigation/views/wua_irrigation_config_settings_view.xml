@@ -8,8 +8,12 @@
                ref="wua_structure_irrigation.wua_irrigation_config_settings_view_form"/>
         <field name="arch" type="xml">
           <xpath expr="//group[@name='irrigation_event']"
-                 position="inside">
-                  <field name="show_irrigation_events_on_portal"/>
+                 position="after">
+                 <group string="Portal Visibility" name="portal_visibility">
+                    <field name="show_readings_on_portal"/>
+                    <field name="show_presconsumptions_on_portal"/>
+                    <field name="show_irrigation_events_on_portal"/>
+                  </group>
             </xpath>
         </field>
     </record>

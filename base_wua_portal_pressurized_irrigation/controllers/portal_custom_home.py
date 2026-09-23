@@ -37,14 +37,30 @@ class website_account(website_account):
             request.env['wua.presconsumption'].search_count([
                 ('waterconnection_id', 'in', waterconnections),
             ])
+        show_readings_on_portal = request.env[
+            'ir.values'
+        ].sudo().get_default(
+            'wua.irrigation.configuration',
+            'show_readings_on_portal')
+        show_readings_on_portal = show_readings_on_portal if show_readings_on_portal is not None else True
+        show_presconsumptions_on_portal = request.env[
+            'ir.values'
+        ].sudo().get_default(
+            'wua.irrigation.configuration',
+            'show_presconsumptions_on_portal')
+        show_presconsumptions_on_portal = show_presconsumptions_on_portal if show_presconsumptions_on_portal is not None else True
         show_irrigation_events_on_portal = request.env[
             'ir.values'
         ].sudo().get_default(
             'wua.irrigation.configuration',
             'show_irrigation_events_on_portal')
+        show_irrigation_events_on_portal = show_irrigation_events_on_portal if show_irrigation_events_on_portal is not None else True
         response.qcontext.update({
             'readings_count': readings_count,
             'presconsumptions_count': presconsumptions_count,
+            'show_readings_on_portal': show_readings_on_portal,
+            'show_presconsumptions_on_portal':
+                show_presconsumptions_on_portal,
             'show_irrigation_events_on_portal':
                 show_irrigation_events_on_portal
         })

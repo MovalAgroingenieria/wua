@@ -138,6 +138,10 @@ class BaseConfigSettings(models.TransientModel):
 
     @api.multi
     def set_default_values(self):
+        res = None
+        parent = super(BaseConfigSettings, self)
+        if hasattr(parent, 'set_default_values'):
+            res = parent.set_default_values()
         values = self.env['ir.values'].sudo()
         # values.set_default('base.config.settings', 'sidebar_irrigation_menu',
         #                    self.sidebar_irrigation_menu)
@@ -210,3 +214,4 @@ class BaseConfigSettings(models.TransientModel):
                            self.wua_tenant_report)
         values.set_default('base.config.settings', 'wua_quota_report',
                            self.wua_quota_report)
+        return res

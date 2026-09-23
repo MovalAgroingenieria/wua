@@ -3,28 +3,32 @@
     <data>
         <template id="portal_my_irrigationmanagement" inherit_id="base_wua_portal_infrastructure.portal_my_irrigationmanagement" name="Hide Quotes and Orders">
             <xpath expr="//div[@name='irrigation_menu']" position="inside">
-                <h3 class="page-header" style="order: 6;">
-                    <a href="/my/quotas">
-                        <i class="fa fa-fw fa-moval-quotas"/>
-                        Quotas
-                        <small class="ml8">
-                            <t t-if="quota_count">
-                                <span class='badge pull-right'><t t-esc="quota_count"/></span>
-                            </t>
-                        </small>
-                    </a>
-                </h3>
-                <h3 class="page-header" style="order: 8;">
-                    <a href="/my/hydricmovements">
-                        <i class="fa fa-fw fa-list-ol"/>
-                        Hydricmovements
-                        <small class="ml8">
-                            <t t-if="hydricmovement_count">
-                                <span class='badge pull-right'><t t-esc="hydricmovement_count"/></span>
-                            </t>
-                        </small>
-                    </a>
-                </h3>
+                <t t-if="show_quotas_on_portal">
+                    <h3 name="quotas" class="page-header" style="order: 6;">
+                        <a href="/my/quotas">
+                            <i class="fa fa-fw fa-moval-quotas"/>
+                            Quotas
+                            <small class="ml8">
+                                <t t-if="quota_count">
+                                    <span class='badge pull-right'><t t-esc="quota_count"/></span>
+                                </t>
+                            </small>
+                        </a>
+                    </h3>
+                </t>
+                <t t-if="show_hydricmovements_on_portal">
+                    <h3 name="hydricmovements" class="page-header" style="order: 8;">
+                        <a href="/my/hydricmovements">
+                            <i class="fa fa-fw fa-list-ol"/>
+                            Hydricmovements
+                            <small class="ml8">
+                                <t t-if="hydricmovement_count">
+                                    <span class='badge pull-right'><t t-esc="hydricmovement_count"/></span>
+                                </t>
+                            </small>
+                        </a>
+                    </h3>
+                </t>
             </xpath>
         </template>
     </data>

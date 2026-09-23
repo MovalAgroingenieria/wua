@@ -8,6 +8,12 @@ from odoo.http import request
 
 class PortalIrrigationManagement(http.Controller):
 
+    def _get_portal_config(self, param_name):
+        """Get a portal configuration parameter, default to True if not set"""
+        value = request.env['ir.values'].sudo().get_default(
+            'wua.irrigation.configuration', param_name)
+        return value if value is not None else True
+
     def _prepare_portal_layout_values(self):
         """ prepare the values to render portal layout """
         partner = request.env.user.partner_id
@@ -20,18 +26,17 @@ class PortalIrrigationManagement(http.Controller):
             'wua.invoicing.configuration',
             'liquidation_on_portal'
         )
-        show_irrigation_events_on_portal = request.env['ir.values'].sudo().get_default(
-            'wua.irrigation.configuration',
-            'show_irrigation_events_on_portal'
-        )
         values = {
             'company': request.website.company_id,
             'user': request.env.user,
             'partner': partner,
             'waterconnection_count': waterconnection_count,
             'liquidation_on_portal': liquidation_on_portal,
-            'show_irrigation_events_on_portal':
-                show_irrigation_events_on_portal
+            'show_readings_on_portal': self._get_portal_config('show_readings_on_portal'),
+            'show_presconsumptions_on_portal': self._get_portal_config('show_presconsumptions_on_portal'),
+            'show_irrigation_events_on_portal': self._get_portal_config('show_irrigation_events_on_portal'),
+            'show_quotas_on_portal': self._get_portal_config('show_quotas_on_portal'),
+            'show_hydricmovements_on_portal': self._get_portal_config('show_hydricmovements_on_portal'),
         }
         return values
 

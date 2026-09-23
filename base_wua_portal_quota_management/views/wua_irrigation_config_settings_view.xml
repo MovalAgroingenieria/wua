@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_irrigation_config_settings_view_form_quota" model="ir.ui.view">
+        <field name="name">Parameters</field>
+        <field name="model">wua.irrigation.configuration</field>
+        <field name="inherit_id"
+               ref="wua_structure_irrigation.wua_irrigation_config_settings_view_form"/>
+        <field name="arch" type="xml">
+          <xpath expr="//group[@name='portal_visibility']"
+                 position="inside">
+                  <field name="show_quotas_on_portal"/>
+                  <field name="show_hydricmovements_on_portal"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

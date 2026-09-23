@@ -5,7 +5,7 @@
 {
     "name": "Water Users Association: Portal user experience",
     "summary": "Module that improves the user experience of the portal",
-    "version": '10.0.0.0.0',
+    "version": '10.0.0.1.0',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
@@ -25,6 +25,7 @@
         "views/portal_invoices_templates.xml",
         "views/wua_invoicing_config_settings_view.xml",
         "views/res_users_view.xml",
+        "views/res_partner_view.xml",
         "security/ir.model.access.csv",
         "security/security.xml",
     ],

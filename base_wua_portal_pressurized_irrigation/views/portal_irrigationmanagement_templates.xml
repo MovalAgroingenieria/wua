@@ -3,30 +3,34 @@
     <data>
         <template id="portal_my_irrigationmanagement" inherit_id="base_wua_portal_infrastructure.portal_my_irrigationmanagement" name="Hide Quotes and Orders">
             <xpath expr="//div[@name='irrigation_menu']" position="inside">
-                <h3 class="page-header" style="order: 4;">
-                    <a href="/my/readings">
-                        <i class="fa fa-fw fa-list"/>
-                        Readings
-                        <small class="ml8">
-                            <t t-if="readings_count">
-                                <span class='badge pull-right'><t t-esc="readings_count"/></span>
-                            </t>
-                        </small>
-                    </a>
-                </h3>
-                <h3 class="page-header" style="order: 5;">
-                    <a href="/my/presconsumptions">
-                        <i class="fa fa-fw fa-moval-irrigation"/>
-                        Presconsumptions
-                        <small class="ml8">
-                            <t t-if="presconsumptions_count">
-                                <span class='badge pull-right'><t t-esc="presconsumptions_count"/></span>
-                            </t>
-                        </small>
-                    </a>
-                </h3>
+                <t t-if="show_readings_on_portal">
+                    <h3 name="readings" class="page-header" style="order: 4;">
+                        <a href="/my/readings">
+                            <i class="fa fa-fw fa-list"/>
+                            Readings
+                            <small class="ml8">
+                                <t t-if="readings_count">
+                                    <span class='badge pull-right'><t t-esc="readings_count"/></span>
+                                </t>
+                            </small>
+                        </a>
+                    </h3>
+                </t>
+                <t t-if="show_presconsumptions_on_portal">
+                    <h3 name="presconsumptions" class="page-header" style="order: 5;">
+                        <a href="/my/presconsumptions">
+                            <i class="fa fa-fw fa-moval-irrigation"/>
+                            Presconsumptions
+                            <small class="ml8">
+                                <t t-if="presconsumptions_count">
+                                    <span class='badge pull-right'><t t-esc="presconsumptions_count"/></span>
+                                </t>
+                            </small>
+                        </a>
+                    </h3>
+                </t>
                 <t t-if="show_irrigation_events_on_portal">
-                    <h3 class="page-header" style="order: 6;">
+                    <h3 name="irrigation_events" class="page-header" style="order: 6;">
                         <a href="/my/irrigationevents">
                             <i class="fa fa-fw fa-history"/>
                             Irrigation Events
