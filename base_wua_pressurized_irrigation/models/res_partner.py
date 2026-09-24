@@ -58,7 +58,7 @@ class ResPartnerWaterconnection(models.Model):
                     LEFT JOIN wua_presconsumption wpc1
                     ON wpc1.waterconnection_id = ww1.id
                     AND wpc1.reading_end_time = ww1.last_reading_time
-                    WHERE wpi1.type='WC' AND ww1.watermeter_id IS NOT NULL
+                    WHERE wpi1.type='WC' AND ww1.watermeter_id IS NOT NULL AND ww1.active
                     GROUP BY  wpp1.partner_id, wpi1.waterconnection_id,
                      wpi1.active,
                     ww1.last_reading_time, ww1.last_reading_value,
