@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="wua_irrigation_config_settings_view_form" model="ir.ui.view">
+    <record id="wua_irrigation_config_settings_view_form_portal" model="ir.ui.view">
         <field name="name">Parameters</field>
         <field name="model">wua.irrigation.configuration</field>
         <field name="inherit_id"
-               ref="wua_structure_irrigation.wua_irrigation_config_settings_view_form"/>
+               ref="base_wua_pressurized_irrigation.wua_irrigation_config_settings_view_form"/>
         <field name="arch" type="xml">
-          <xpath expr="//group[@name='irrigation_event']"
+          <xpath expr="//group[@name='pres_irrig']"
                  position="after">
                  <group string="Portal Visibility" name="portal_visibility">
                     <field name="show_readings_on_portal"/>

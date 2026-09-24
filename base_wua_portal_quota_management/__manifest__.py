@@ -12,6 +12,7 @@
     "license": "AGPL-3",
     "depends": [
         "base_wua_portal_infrastructure",
+        "base_wua_portal_pressurized_irrigation",
         "wua_structure_irrigation",
         "base_wua_quota_management",
     ],
