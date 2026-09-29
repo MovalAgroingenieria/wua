@@ -200,7 +200,7 @@ class website_account(website_account):
                 "No partner found",
                 status=404)
         report_ref = \
-            'base_wua_quota_management.wua_partner_quota_report_document'
+            'base_wua_quota_management.quota_report_document'
         partner_report = model_report.with_context(
             {'lang': partner.lang}).get_pdf(
                 [partner.id], report_ref)
