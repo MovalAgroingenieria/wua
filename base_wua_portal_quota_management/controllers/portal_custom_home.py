@@ -193,17 +193,31 @@ class website_account(website_account):
         partner = request.env.user.partner_id
         partner = partner.parent_id or partner
         partner_model = request.env['res.partner'].sudo()
+        quota_model = request.env['wua.quota'].sudo()
         model_report = request.env['report'].sudo()
+
         partner = partner_model.search([('id', '=', partner.id)], limit=1)
         if not partner:
             return Response(
                 "No partner found",
                 status=404)
+
+        # Get all quotas for this partner
+        quotas = quota_model.search([('partner_id', '=', partner.id)])
+
+        # Filter out quotas with deleted partner references
+        valid_quotas = quotas.filtered(lambda q: q.partner_id and q.partner_id.exists())
+
+        if not valid_quotas:
+            return Response(
+                "No valid quotas found",
+                status=404)
+
         report_ref = \
             'base_wua_quota_management.quota_report_document'
         partner_report = model_report.with_context(
             {'lang': partner.lang}).get_pdf(
-                [partner.id], report_ref)
+                valid_quotas.ids, report_ref)
 
         response = request.make_response(
             partner_report,
