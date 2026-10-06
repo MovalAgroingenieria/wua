@@ -18,13 +18,8 @@ class WuaIrrigationReport(models.Model):
         for record in self:
             html_quota_balance = ''
             if record.partner_id:
-                active_agriculturalseason = \
-                    self.env['wua.agriculturalseason'].\
-                    get_active_agriculturalseason()
-                if (active_agriculturalseason and
-                   active_agriculturalseason == record.agriculturalseason_id):
-                    html_quota_balance = self._get_html_quota_balance(
-                        record.partner_id)
+                html_quota_balance = record._get_html_quota_balance(
+                    record.partner_id)
             record.html_quota_balance = html_quota_balance
 
     @api.onchange('partner_id')
@@ -68,24 +63,41 @@ class WuaIrrigationReport(models.Model):
                        header + body + '</div>'
         return resp
 
-    # If there is active agricultural season, then: if this agricultural
-    # season as single quota period, then the current quota period is that;
-    # else the current quota period is the period of the current date.
+    # If the irrigation report has an agricultural season, the quota periods
+    # of that season are used (so reports of past seasons keep working);
+    # otherwise, the active agricultural season is used (if any).
+    # If that agricultural season has a single quota period, then the
+    # current quota period is that one; else, the current quota period is
+    # the period of the report date (falling back to the current date when
+    # the report has no date yet). If the evaluation date is after the end
+    # of the last generated quota period (deferred report, e.g. September
+    # reports entered in October), the last generated period is returned;
+    # if it is before the first generated period, the first one is
+    # returned, instead of returning no quota period at all.
     def _get_current_quotaperiod(self):
         resp = None
-        active_agriculturalseason = \
-            self.env['wua.agriculturalseason'].search(
-                [('active_agriculturalseason', '=', True)])
-        if (active_agriculturalseason):
+        agriculturalseason = self.agriculturalseason_id
+        if not agriculturalseason:
+            agriculturalseason = self.env['wua.agriculturalseason'].search(
+                [('active_agriculturalseason', '=', True)], limit=1)
+        if (agriculturalseason):
             quotaperiods = self.env['wua.quotaperiod'].search(
-                [('agriculturalseason_id', '=', active_agriculturalseason.id),
+                [('agriculturalseason_id', '=', agriculturalseason.id),
                  ('state', '=', 'generated')],
                 order='initial_date')
             if quotaperiods:
                 if len(quotaperiods) == 1:
                     resp = quotaperiods[0]
                 else:
-                    current_time = datetime.datetime.now()
+                    current_time = None
+                    if self.report_initial_time:
+                        current_time = fields.Datetime.from_string(
+                            self.report_initial_time)
+                    elif self.report_end_time:
+                        current_time = fields.Datetime.from_string(
+                            self.report_end_time)
+                    else:
+                        current_time = datetime.datetime.now()
                     for quotaperiod in quotaperiods:
                         min_date = datetime.datetime.strptime(
                             quotaperiod.initial_date, '%Y-%m-%d')
@@ -96,4 +108,14 @@ class WuaIrrigationReport(models.Model):
                            current_time < max_date):
                             resp = quotaperiod
                             break
+                    if not resp:
+                        first_min_date = datetime.datetime.strptime(
+                            quotaperiods[0].initial_date, '%Y-%m-%d')
+                        last_max_date = datetime.datetime.strptime(
+                            quotaperiods[-1].end_date, '%Y-%m-%d') + \
+                            datetime.timedelta(days=1)
+                        if current_time >= last_max_date:
+                            resp = quotaperiods[-1]
+                        elif current_time < first_min_date:
+                            resp = quotaperiods[0]
         return resp
