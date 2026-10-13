@@ -40,8 +40,6 @@ class ResPartner(models.Model):
 
     def recalculate_extra_hydric_movements(self):
         active_irrigationpoints = self.env['wua.parcel.irrigationpoint'].search([
-            ('active', '=', True),
-            ('waterconnection_id.active', '=', True),
             ('partner_id', '!=', False),
         ])
         active_partner_ids = active_irrigationpoints.mapped('partner_id').ids
