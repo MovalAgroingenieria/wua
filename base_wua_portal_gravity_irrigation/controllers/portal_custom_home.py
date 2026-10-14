@@ -260,7 +260,7 @@ class website_account(website_account):
             try:
                 with request.env.cr.savepoint():
                     wateringrequest = request.env[
-                        'wua.wateringrequest'].create(vals)
+                        'wua.wateringrequest'].sudo().create(vals)
                 result.update({
                     'success': True,
                     'message': _('Watering request created successfully.'),
