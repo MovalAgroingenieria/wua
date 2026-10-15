@@ -201,7 +201,7 @@ class WuaWateringrequest(models.Model):
         partners = self.env['res.partner']
         for record in self:
             is_portal_user = False
-            user = self.env.user
+            user = record.user_id
             if not user.has_group('base_wua.group_wua_user'):
                 partner = partners.browse(user.partner_id.id)
                 if partner.is_wua_partner:

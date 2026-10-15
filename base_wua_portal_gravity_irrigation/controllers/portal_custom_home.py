@@ -252,6 +252,7 @@ class website_account(website_account):
             vals = {
                 'wateringperiod_id': wateringperiod.id,
                 'partner_id': partner.id,
+                'user_id': request.env.uid,
                 'product_id': product.id,
                 'gravconsumption_ids': gravconsumption_vals,
             }
