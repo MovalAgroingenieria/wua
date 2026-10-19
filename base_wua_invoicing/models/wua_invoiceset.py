@@ -945,6 +945,8 @@ class WuaInvoiceset(models.Model):
         alter_invoicing_behavior = self.get_alter_invoicing_behavior()
         show_irrigationditch = self.get_invoicing_configuration_parameter(
             'show_irrigationditch')
+        show_waterpipe = self.get_invoicing_configuration_parameter(
+            'show_waterpipe')
         show_owners = self.get_invoicing_configuration_parameter(
             'show_owners')
         if alter_invoicing_behavior:
@@ -953,6 +955,7 @@ class WuaInvoiceset(models.Model):
             area_invoicing_measurement_equivalence = \
                 self.get_invoicing_area_measurement_equivalence()
         default_irrigationditch_label = _('Irrigationditch')
+        default_waterpipe_label = _('Water Pipe')
         default_parcel_label = _('Parcel')
         default_cost_label = _('cost:')
         partnerlinks_by_parcel = defaultdict(list)
@@ -1026,6 +1029,17 @@ class WuaInvoiceset(models.Model):
                         irrigationditch_content = '. ' + \
                             irrigationditch_label + ': ' + \
                             parcel.irrigationditch_id.name
+                    infrastructure_content = irrigationditch_content
+                    if (show_waterpipe and
+                            'waterpipe_id' in parcel._fields and
+                            parcel.waterpipe_id):
+                        waterpipe_label = self.get_value_from_translation(
+                            'base_wua_invoicing', 'Water Pipe',
+                            partnerlink.partner_id.lang)
+                        if not waterpipe_label:
+                            waterpipe_label = default_waterpipe_label
+                        infrastructure_content += '. ' + waterpipe_label + \
+                            ': ' + parcel.waterpipe_id.name
                     if not cost_label:
                         cost_label = default_cost_label
                     # Set description according to Invoicing Area setting
@@ -1035,13 +1049,13 @@ class WuaInvoiceset(models.Model):
                             area_measurement_name + ', ' + \
                             invoicing_area_official_str + ' ' \
                             + area_invoicing_measurement_name + \
-                            irrigationditch_content + '), ' + \
+                            infrastructure_content + '), ' + \
                             profile_name_label + \
                             ' (' + cost_label + ' ' + percentage_str + ' %)'
                     else:
                         description = parcel_label + ' ' + parcel_code \
                             + ' ' + '(' + area_official_str + ' ' +  \
-                            area_measurement_name + irrigationditch_content + \
+                            area_measurement_name + infrastructure_content + \
                             '), ' + profile_name_label + ' (' + cost_label + \
                             ' ' + percentage_str + ' %)'
                     # Add owners with ownership percentage list to the

@@ -70,6 +70,13 @@ class WuaInvoicingConfiguration(models.TransientModel):
              'irrigationditch name on line description for products of '
              'category 03')
 
+    show_waterpipe = fields.Boolean(
+        string='Show water pipe on invoice descriptions',
+        default=False,
+        help='If enabled, invoice line descriptions for products of category '
+             '03 include the water pipe of the parcel.',
+    )
+
     show_owners = fields.Boolean(
         string='Show all owners on invoices descriptions',
         default=False,
@@ -151,6 +158,9 @@ class WuaInvoicingConfiguration(models.TransientModel):
         values.set_default('wua.invoicing.configuration',
                            'show_irrigationditch',
                            self.show_irrigationditch)
+        values.set_default('wua.invoicing.configuration',
+                   'show_waterpipe',
+                   self.show_waterpipe)
         values.set_default('wua.invoicing.configuration',
                            'show_owners',
                            self.show_owners)

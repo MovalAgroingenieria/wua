@@ -111,6 +111,19 @@ class WuaInvoiceset(models.Model):
                     resp.append(waterconnection.name)
         return ', '.join(resp)
 
+    @api.model
+    def _get_consumption_waterconnection_name(self, waterconnection):
+        name = waterconnection.name
+        show_waterpipe = self.env['ir.values'].get_default(
+            'wua.invoicing.configuration',
+            'show_waterpipe_in_consumption_description')
+        if show_waterpipe:
+            irrigationshed = waterconnection.irrigationshed_id
+            if ('waterpipe_id' in irrigationshed._fields and
+                    irrigationshed.waterpipe_id):
+                name = '%s(%s)' % (name, irrigationshed.waterpipe_id.name)
+        return name
+
     def _get_description_categ07_normal(
             self, partnerlink, parcel, waterconnection,
             volume_real_of_waterconnection, presconsumption_quantity, product,
@@ -126,7 +139,8 @@ class WuaInvoiceset(models.Model):
         presconsumption_percentage_str = \
             '%.2f' % presconsumption_percentage
         uom = product.uom_id.name
-        waterconnection_code = waterconnection.name
+        waterconnection_code = self._get_consumption_waterconnection_name(
+            waterconnection)
         area_measurement_name = self.get_area_measurement_name()
         lang = 'es_ES'
         if (partnerlink.partner_id.lang):
@@ -388,8 +402,10 @@ class WuaInvoiceset(models.Model):
         initial_volume = round(presconsumption.initial_volume)
         end_volume = round(presconsumption.end_volume)
         volume = round(presconsumption.volume_real)
+        waterconnection_name = self._get_consumption_waterconnection_name(
+            presconsumption.waterconnection_id)
         resp = waterconnection_label + ' ' + \
-            presconsumption.waterconnection_id.name + '. ' + \
+            waterconnection_name + '. ' + \
             initial_reading_label + ': ' + reading_initial_time + ' ' + \
             '(' + '{0:.0f}'.format(initial_volume) + _(' m³). ') + \
             final_reading_label + ': ' + reading_end_time + ' ' + \

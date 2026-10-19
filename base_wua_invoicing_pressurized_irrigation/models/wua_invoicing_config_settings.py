@@ -2,7 +2,7 @@
 # Copyright 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api
+from odoo import api, fields, models, _
 
 
 class WuaInvoicingConfiguration(models.TransientModel):
@@ -13,6 +13,14 @@ class WuaInvoicingConfiguration(models.TransientModel):
         default=False,
         help='If enabled, invoicing will be based only on water connections, '
              'parcels will be ignored',
+    )
+
+    show_waterpipe_in_consumption_description = fields.Boolean(
+        string='Show water pipe on consumption descriptions',
+        default=False,
+        help='If enabled, consumption invoice descriptions show the water '
+             'connection followed by its water pipe in parentheses: '
+             'connection(pipe).',
     )
 
     separate_wc_invoices = fields.Boolean(
@@ -57,6 +65,10 @@ class WuaInvoicingConfiguration(models.TransientModel):
         values.set_default('wua.invoicing.configuration',
                            'invoicing_based_on_wc',
                            self.invoicing_based_on_wc)
+        values.set_default(
+            'wua.invoicing.configuration',
+            'show_waterpipe_in_consumption_description',
+            self.show_waterpipe_in_consumption_description)
         values.set_default('wua.invoicing.configuration',
                            'separate_wc_invoices',
                            self.separate_wc_invoices)
