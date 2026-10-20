@@ -2,7 +2,6 @@
 # 2026 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-import datetime
 from odoo import models, fields, api, exceptions, _
 
 
@@ -72,19 +71,6 @@ class WuaReading(models.Model):
             ('waterconnection_id.regaber_tree_node_id', '!=', 0),
         ])
 
-    def _is_reading_newer_regaber(self, reading_date, last_reading_time):
-        if not last_reading_time:
-            return True
-        try:
-            date_str = str(reading_date).split('.')[0]
-            reading_datetime = datetime.datetime.strptime(
-                date_str, '%Y-%m-%d %H:%M:%S')
-            last_datetime = datetime.datetime.strptime(
-                last_reading_time, '%Y-%m-%d %H:%M:%S')
-            return reading_datetime >= last_datetime
-        except (ValueError, TypeError):
-            return False
-
     def import_readings_regaber(self):
         readings = []
         error_message = ''
@@ -118,9 +104,10 @@ class WuaReading(models.Model):
                 continue
             reading_data = last_readings[node_id]
             reading_date = reading_data.get('date')
-            volume = reading_data.get('value', 0.0)
-            if reading_date and self._is_reading_newer_regaber(
-                    reading_date, wm.last_reading_time):
+            volume = reading_data.get('value')
+            # MR stores the import time, not the device measurement time.
+            # An unchanged LastValue must remain importable in later periods.
+            if reading_date and volume is not None and volume != '':
                 readings.append({
                     'watermeter': wm.name,
                     'volume': volume,
