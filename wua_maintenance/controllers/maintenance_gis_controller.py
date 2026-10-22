@@ -11,6 +11,13 @@ from bs4 import BeautifulSoup
 
 class MaintenanceGisController(http.Controller):
 
+    # FIX ADDED to avoid empty string "" error interpreted as False causing
+    # the mode to crash on launch
+    def _split_field_path(self, field_path):
+        if not isinstance(field_path, (str, unicode)):
+            return []
+        return field_path.split('.')
+
     def _get_equipment_display_name(self, equipment):
         """Return a descriptive name for the equipment.
         For pumpunit equipment, returns 'Pumpgroup Name [nº X]'.
@@ -89,7 +96,9 @@ class MaintenanceGisController(http.Controller):
         return geojson_geom
 
     def _get_selection_options(self, model, field_path):
-        field_names = field_path.split('.')
+        field_names = self._split_field_path(field_path)
+        if not field_names:
+            return []
         target = request.env[model]
         for i, field_name in enumerate(field_names):
             if i == len(field_names) - 1:
@@ -110,7 +119,9 @@ class MaintenanceGisController(http.Controller):
         return []
 
     def _get_many2one_comodel_from_path(self, record, field_path):
-        field_names = field_path.split('.')
+        field_names = self._split_field_path(field_path)
+        if not field_names:
+            return None
         target = record
         for i, field_name in enumerate(field_names):
             if field_name not in target._fields:
@@ -226,8 +237,10 @@ class MaintenanceGisController(http.Controller):
                     value = span_tag.get_text(strip=True)
                 return value
             return None
+        if not isinstance(field_path, (str, unicode)):
+            return None
         # Handle regular field path
-        field_names = field_path.split('.')
+        field_names = self._split_field_path(field_path)
         target = record
         if (record.category_id and record.category_id.model_id):
             target = request.env[
