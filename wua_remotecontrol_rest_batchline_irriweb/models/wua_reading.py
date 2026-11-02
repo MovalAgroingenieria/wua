@@ -2,10 +2,16 @@
 # 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-import requests
-import json
 import base64
+import json
+import logging
+import math
+
+import requests
+
 from odoo import models, _, api, exceptions, fields
+
+_logger = logging.getLogger(__name__)
 
 
 class WuaReading(models.Model):
@@ -97,16 +103,59 @@ class WuaReading(models.Model):
             return '', error_message
 
     def _get_readings_info_batchline_from_json(self, outputrest):
-        readings = []
-        for watermeter_info in outputrest:
-            watermeter = watermeter_info['Id']
-            volume = watermeter_info['Volumen']
-            readings.append({
-                'watermeter': watermeter,
-                'volume': volume,
-                'remotecontrol_origin': 'batchline',
-            })
+        readings, error_message, error_watermeters = \
+            self._parse_readings_batchline(outputrest)
+        if error_message:
+            remotecontrol = self.env.ref(
+                'base_wua_remotecontrol_rest.wua_remotecontrol_logger')
+            remotecontrol.message_post(body=error_message)
         return readings
+
+    def _parse_readings_batchline(self, outputrest):
+        if not isinstance(outputrest, list):
+            raise exceptions.UserError(_(
+                'Invalid Batchline response: expected a list of hydrants.'))
+        readings = []
+        error_watermeters = []
+        error_message = ''
+        for index, watermeter_info in enumerate(outputrest, 1):
+            watermeter = None
+            volume = None
+            if isinstance(watermeter_info, dict):
+                watermeter = watermeter_info.get('Id')
+                volume = watermeter_info.get('Volumen')
+            valid_reading = (
+                isinstance(watermeter, (basestring, int, long)) and
+                not isinstance(watermeter, bool) and
+                watermeter not in (None, '') and
+                not isinstance(volume, bool))
+            if valid_reading:
+                try:
+                    volume = float(volume)
+                    valid_reading = not (
+                        math.isnan(volume) or math.isinf(volume))
+                except (TypeError, ValueError, OverflowError):
+                    valid_reading = False
+            if valid_reading:
+                readings.append({
+                    'watermeter': watermeter,
+                    'volume': volume,
+                    'remotecontrol_origin': 'batchline',
+                })
+            else:
+                watermeter_name = (
+                    unicode(watermeter) if watermeter not in (None, '')
+                    else _('Record %s') % index)
+                error_watermeters.append(watermeter_name)
+                _logger.warning(
+                    'Batchline: discarded record %s (water meter=%r, '
+                    'volume=%r): missing or invalid ID or volume.',
+                    index, watermeter, volume)
+        if error_watermeters:
+            error_message = _(
+                'Batchline: %s readings discarded because the water meter '
+                'ID or volume is missing or invalid.') % len(error_watermeters)
+        return readings, error_message, error_watermeters
 
     # Ovwerwrite hook for Wizard imports with a settet datetime
     def _get_reading_time_from_remotecontrol(self, reading, now):
@@ -126,7 +175,6 @@ class WuaReading(models.Model):
         readings = []
         error_message = ''
         error_watermeters = []
-        error_message = ''
         token, error_message = self.get_token(
             url_remotecontrol_rest,
             url_remotecontrol_rest_username,
@@ -136,8 +184,8 @@ class WuaReading(models.Model):
                 url_remotecontrol_rest, token)
             if readings_text:
                 outputrest = json.loads(readings_text)
-                readings = self._get_readings_info_batchline_from_json(
-                    outputrest)
+                readings, error_message, error_watermeters = \
+                    self._parse_readings_batchline(outputrest)
         return [readings, error_message, error_watermeters]
 
     # Implemented hook
