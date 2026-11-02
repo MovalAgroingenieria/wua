@@ -58,11 +58,13 @@ class AccountInvoice(models.Model):
 
     def _get_grouped_wc_description_for_report(
             self, waterconnection_id, quantity):
+        waterconnection_name = self.env['wua.invoiceset'].\
+            _get_consumption_waterconnection_name(waterconnection_id)
         formatted_qty = self.env['wua.parcel'].transform_float_to_locale(
             quantity, 4,
         )
         return _(u'Water Connection %s; Total Consumption: %s m³') % (
-            waterconnection_id.name, formatted_qty)
+            waterconnection_name, formatted_qty)
 
     def _is_invoicing_based_on_wc(self):
         return (self.env['ir.values'].get_default(
