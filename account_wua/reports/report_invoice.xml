@@ -70,7 +70,7 @@
                                 <div class="col-xs-12" style="display: table;">
                                     <div style="border-right: 1px solid white; width: 50%; display: table-cell;">
                                         <p name="invoicing_address_title" style="margin-bottom: 0px"><i>Invoicing address</i></p>
-                                        <div>
+                                        <div name="invoicing_address_data">
                                             <t t-if="o.partner_id.name"><strong><span name="invoicing_address_partner_name" t-field="o.partner_id.name"/></strong></t><br/>
                                             <t t-if="o.partner_id.vat">
                                                 <t t-set="mod_vat" t-value="o.partner_id.vat[2:]"/>
@@ -82,7 +82,7 @@
                                             <t t-if="o.partner_id.street_num"><span t-field="o.partner_id.street_num"/></t>
                                             <t t-if="o.partner_id.street2"><span t-field="o.partner_id.street2"/></t>
                                             <br/>
-                                            <t t-if="o.partner_id.city"><span t-field="o.partner_id.city"/></t>
+                                         <t t-if="o.partner_id.city"><span t-field="o.partner_id.city"/></t>
                                             <t t-if="o.partner_id.zip">
                                                 <span>&amp;nbsp;-&amp;nbsp;</span>
                                                 <span t-field="o.partner_id.zip"/>
@@ -99,7 +99,7 @@
                                         </div>
                                     </div>
                                     <div style="width: 40%; display: table-cell; padding: 0px 4px;">
-                                        <p style="margin-bottom: 0px"><i>Shipping Address</i></p>
+                                        <p name="shipping_address_title" style="margin-bottom: 0px"><i>Shipping Address</i></p>
                                         <div groups="!sale.group_delivery_invoice_address">
                                             <div>
                                                 <t t-if="o.partner_id.name"><strong><span t-field="o.partner_id.name"/></strong></t><br/>
@@ -107,7 +107,7 @@
                                                 <t t-if="o.partner_id.street"><span t-field="o.partner_id.street"/></t>
                                                 <t t-if="o.partner_id.street_num"><span t-field="o.partner_id.street_num"/></t>
                                                 <t t-if="o.partner_id.street2"><span t-field="o.partner_id.street2"/></t>
-                                                <br/>
+                                                   <br/>
                                                 <t t-if="o.partner_id.city"><span t-field="o.partner_id.city"/></t>
                                                 <t t-if="o.partner_id.zip">
                                                     <span>&amp;nbsp;-&amp;nbsp;</span>
