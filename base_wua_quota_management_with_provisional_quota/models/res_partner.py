@@ -14,6 +14,16 @@ _logger = logging.getLogger(__name__)
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
+    def _get_last_pres_consumption_domain(self, quota_ids):
+        hydricmovement_model = self.env['wua.hydricmovement']
+        domain = [
+            ('quota_id', 'in', quota_ids),
+            ('type', '=', 'pres_consumption'),
+        ]
+        if 'invoiced_hydricmovement' in hydricmovement_model._fields:
+            domain.append(('invoiced_hydricmovement', '=', False))
+        return domain
+
     def _get_initial_time_from_reference(self, reference_date):
         parsed_reference = None
         if isinstance(reference_date, datetime.datetime):
@@ -93,10 +103,11 @@ class ResPartner(models.Model):
                     partner.id,
                 )
                 continue
-            last_move = self.env['wua.hydricmovement'].search([
-                ('quota_id', 'in', quotas.ids),
-                ('type', '=', 'pres_consumption')
-            ], order='event_time desc', limit=1)
+            last_move = self.env['wua.hydricmovement'].search(
+                self._get_last_pres_consumption_domain(quotas.ids),
+                order='event_time desc',
+                limit=1,
+            )
             if not last_move:
                 quotaperiod = quotas.mapped('quotaperiod_id')
                 if quotaperiod and quotaperiod[0].initial_date:
