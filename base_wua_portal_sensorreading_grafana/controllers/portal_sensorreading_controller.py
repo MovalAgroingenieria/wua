@@ -2,6 +2,11 @@
 # 2025 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import urllib
+
+import werkzeug.exceptions
+import werkzeug.utils
+
 from odoo import http
 from odoo.http import request
 from odoo.addons.base_wua_portal_sensorreading.controllers.\
@@ -10,48 +15,72 @@ from odoo.addons.base_wua_portal_sensorreading.controllers.\
 
 class website_sensorreadings_grafana(website_sensorreadings):
 
-    def get_grafana_dashboard_configuration(self, view):
-        # Get grafana url
-        grafana_url = request.env["ir.values"].get_default(
-            "board.grafana.configuration", "grafana_url")
-        # Get configured dashboards
-        if view == 'grafana-histogram':
-            portal_user_sensorreading_dashboard_id = \
-                request.env["ir.values"].get_default(
-                    "mdm.config.settings",
-                    "portal_user_sensorreading_dashboard_histogram_id")
+    GRAFANA_ROUTE = "/my/sensorreadings/grafana"
+    GRAFANA_VIEWS = ("grafana", "grafana-histogram")
+
+    def _get_grafana_dashboard(self, view):
+        if view == "grafana-histogram":
+            setting = "portal_user_sensorreading_dashboard_histogram_id"
         else:
-            portal_user_sensorreading_dashboard_id = \
-                request.env["ir.values"].get_default(
-                    "mdm.config.settings",
-                    "portal_user_sensorreading_dashboard_id")
-        portal_user_sensorreading_dashboard = request.env[
-            "board.grafana.dashboard.storage"].browse(
-                portal_user_sensorreading_dashboard_id)
-        # Get sensorreading dashboard
-        portal_user_sensorreading_dashboard_path = \
-            portal_user_sensorreading_dashboard.sudo().dashboard_path
-        # Get datasource
+            setting = "portal_user_sensorreading_dashboard_id"
+        dashboard_id = request.env["ir.values"].get_default(
+            "mdm.config.settings", setting)
+        return request.env[
+            "board.grafana.dashboard.storage"].sudo().browse(dashboard_id)
+
+    def _get_grafana_datasource(self):
         grafana_default_datasource = request.env["ir.values"].get_default(
             "board.grafana.configuration", "grafana_default_datasource")
-        if grafana_default_datasource:
-            db_name = grafana_default_datasource
-        else:
-            db_name = request.env.cr.dbname
+        return grafana_default_datasource or request.env.cr.dbname
+
+    def _get_grafana_dashboard_path(self, view):
+        # Built on the server from the partner of the session: the portal
+        # user can not choose the parameters of the dashboard
+        dashboard = self._get_grafana_dashboard(view)
+        if not dashboard.dashboard_path:
+            return False
+        partner = request.env.user.partner_id
+        partner = partner.parent_id or partner
+        path = dashboard.dashboard_path
+        path += "&var-datasource=" + self._get_grafana_datasource()
+        path += "&var-partner_id=" + str(partner.id)
+        # Limit type of sensors
+        request.env.cr.execute("""
+            SELECT DISTINCT type_id
+            FROM res_partner_sensor_reading
+            WHERE partner_id = %s;""", (partner.id,))
+        for row in request.env.cr.fetchall():
+            if row[0]:
+                path += "&var-sensor_type_ids=" + str(row[0])
+        return path
+
+    def get_grafana_dashboard_configuration(self, view):
+        dashboard = self._get_grafana_dashboard(view)
+        db_name = self._get_grafana_datasource()
+        grafana_model = request.env["board.grafana"].sudo()
         frame_url = False
-        if grafana_url and portal_user_sensorreading_dashboard_path:
-            frame_url = grafana_url + portal_user_sensorreading_dashboard_path
-        if portal_user_sensorreading_dashboard.sudo().frame_width:
-            frame_width = \
-                portal_user_sensorreading_dashboard.sudo().frame_width
-        else:
-            frame_width = "100%"
-        if portal_user_sensorreading_dashboard.sudo().frame_height:
-            frame_height = \
-                portal_user_sensorreading_dashboard.sudo().frame_height
-        else:
-            frame_height = "600px"
+        if dashboard.dashboard_path and grafana_model._get_grafana_url():
+            # Loaded through Odoo, which signs the portal user in to Grafana
+            frame_url = "%s?%s" % (
+                self.GRAFANA_ROUTE, urllib.urlencode({"view": view}))
+        frame_width = dashboard.frame_width or "100%"
+        frame_height = dashboard.frame_height or "600px"
         return db_name, frame_url, frame_width, frame_height
+
+    @http.route(GRAFANA_ROUTE, type="http", auth="user", website=True)
+    def portal_my_sensorreadings_grafana(self, view=None, **kw):
+        if view not in self.GRAFANA_VIEWS:
+            raise werkzeug.exceptions.NotFound()
+        path = self._get_grafana_dashboard_path(view)
+        url = False
+        if path:
+            url = request.env["board.grafana"].sudo()._get_grafana_signed_url(
+                path)
+        if not url:
+            raise werkzeug.exceptions.NotFound()
+        response = werkzeug.utils.redirect(url, 303)
+        response.headers["Cache-Control"] = "no-store"
+        return response
 
     @http.route(["/my/sensorreadings", "/my/sensorreadings/page/<int:page>"],
                 type="http", auth="user", website=True)
@@ -156,21 +185,6 @@ class website_sensorreadings_grafana(website_sensorreadings):
         frame_id = "portal_user_sensorreading_grafana"
         db_name, frame_url, frame_width, frame_height = \
             self.get_grafana_dashboard_configuration(view)
-        if frame_url:
-            datasource = "var-datasource=" + db_name
-            partner_var = "var-partner_id=" + str(partner.id)
-            frame_url = frame_url + "&" + datasource + "&" + partner_var
-            # Limit type of sensors
-            request.env.cr.execute("""
-                SELECT DISTINCT type_id
-                FROM res_partner_sensor_reading
-                WHERE partner_id = %s;""", (partner.id,))
-            type_ids = [row[0] for row in request.env.cr.fetchall() if row[0]]
-            if len(type_ids) > 0:
-                type_var = ''
-                for type_id in type_ids:
-                    type_var += "&var-sensor_type_ids=" + str(type_id)
-                frame_url = frame_url + type_var
         # Set frame values
         values.update({
             "frame_id": frame_id,

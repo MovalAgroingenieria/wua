@@ -13,6 +13,25 @@ Description
 
 A new portal section is created to allow users to view the sensor readings associated with their measurement devices graphically whith grafana.
 
+Automatic login
+===============
+
+The dashboard is loaded in an iframe through ``/my/sensorreadings/grafana``,
+which signs the portal user in to Grafana with the shared Grafana user of
+``board_grafana_integration`` (see its *Automatic login (JWT)* section), so
+the anonymous access of Grafana is not needed.
+
+The path of the dashboard, including the partner and the types of sensor it
+filters by, is built on the server from the session of the portal user: the
+browser only chooses the view (line or bar chart).
+
+.. warning::
+
+   The portal user gets a Grafana token with the Viewer role, so they can
+   query the data sources of that Grafana organization through its API.
+   Keep the data source user read-only and restricted to the tables the
+   dashboards need.
+
 Credits
 =======
 
