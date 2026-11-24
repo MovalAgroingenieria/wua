@@ -11,309 +11,448 @@
             <field name="integrated_panel_id">0</field>
             <field name="dashboard_json"><![CDATA[
                 {
-                "id": null,
-                "uid": null,
-                "title": "Estadísticas sobre el uso del agua",
-                "version": 0,
-                "schemaVersion": 41,
-                "timezone": "Europe/Madrid",
-                "editable": true,
-                "tags": [
+                "apiVersion": "dashboard.grafana.app/v2",
+                "kind": "Dashboard",
+                "metadata": {
+                    "name": "estadisticas-usos-del-agua"
+                },
+                "spec": {
+                    "annotations": [
+                    {
+                        "kind": "AnnotationQuery",
+                        "spec": {
+                        "query": {
+                            "kind": "DataQuery",
+                            "group": "grafana",
+                            "version": "v0",
+                            "datasource": {
+                            "name": "-- Grafana --"
+                            },
+                            "spec": {}
+                        },
+                        "enable": true,
+                        "hide": true,
+                        "iconColor": "rgba(0, 211, 255, 1)",
+                        "name": "Annotations & Alerts",
+                        "builtIn": true,
+                        "legacyOptions": {
+                            "type": "dashboard"
+                        }
+                        }
+                    }
+                    ],
+                    "cursorSync": "Off",
+                    "editable": true,
+                    "elements": {
+                    "panel-1": {
+                        "kind": "Panel",
+                        "spec": {
+                        "id": 1,
+                        "title": "",
+                        "links": [],
+                        "data": {
+                            "kind": "QueryGroup",
+                            "spec": {
+                            "queries": [
+                                {
+                                "kind": "PanelQuery",
+                                "spec": {
+                                    "query": {
+                                    "kind": "DataQuery",
+                                    "group": "grafana-postgresql-datasource",
+                                    "version": "v0",
+                                    "spec": {
+                                        "editorMode": "code",
+                                        "format": "table",
+                                        "rawQuery": true,
+                                        "rawSql": "-- =============================================================================\n-- Panel     : distribución de cultivos (sin título) · id 1 · ref A · table → Business Charts\n-- Propósito : porcentaje de la superficie cultivada de la zona regable que ocupa cada uso SIGPAC.\n-- Entradas  : ninguna; no usa el rango de tiempo del panel\n-- Salida    : Codigo (uso SIGPAC o RESTO; fija el color de la barra), Cultivo (nombre),\n--             Porcentaje (% sobre la superficie cultivada, 2 decimales),\n--             Incluye (solo en RESTO: «nombre=porcentaje» separados por «;»; NULL en el resto)\n-- Notas     : zona regable = parcelas de Odoo; superficie = intersección parcela ∩ recinto SIGPAC\n--             (vista materializada wua_parcel_sigpaclink, datos del último refresco).\n--             Usos cultivados según el catálogo cod_uso_sigpac; CO (contorno olivar) se suma a OV.\n--             Fuera: tierra arable, pastos, forestal, matorral, improductivo, urbano, viales, agua…\n--             Los usos con menos del 1 % se agrupan en RESTO, que sale siempre la última.\n-- =============================================================================\nWITH\n-- Fuentes ---------------------------------------------------------------------\nusos_cultivados AS (\n  -- Superficie (ha) por uso SIGPAC cultivado\n  SELECT\n    CASE WHEN uso_sigpac = 'CO' THEN 'OV' ELSE uso_sigpac END AS codigo,\n    sum(area_ha) AS ha\n  FROM wua_parcel_sigpaclink\n  WHERE uso_sigpac IN (\n    'VI', 'OV', 'CO', 'FS', 'FY', 'CI', 'CF', 'CS', 'CV', 'FF',\n    'FL', 'FV', 'OC', 'OF', 'VF', 'VO', 'OP', 'TH', 'IV'\n  )\n  GROUP BY 1\n),\n-- Transformaciones ------------------------------------------------------------\ncultivos AS (\n  -- Nombre de cada uso y su porcentaje sobre el total cultivado\n  SELECT\n    codigo,\n    CASE codigo\n      WHEN 'VI' THEN 'Viñedo'\n      WHEN 'OV' THEN 'Olivar'\n      WHEN 'FS' THEN 'Frutos secos'\n      WHEN 'FY' THEN 'Frutales'\n      WHEN 'CI' THEN 'Cítricos'\n      WHEN 'TH' THEN 'Huerta'\n      WHEN 'IV' THEN 'Invernaderos y cultivos bajo plástico'\n      WHEN 'OP' THEN 'Otros cultivos permanentes'\n      WHEN 'VO' THEN 'Viñedo y olivar'\n      WHEN 'VF' THEN 'Viñedo y frutales'\n      WHEN 'FF' THEN 'Frutales y frutales de cáscara'\n      WHEN 'FV' THEN 'Frutos secos y viñedo'\n      WHEN 'FL' THEN 'Frutos secos y olivar'\n      WHEN 'OF' THEN 'Olivar y frutales'\n      WHEN 'OC' THEN 'Olivar y cítricos'\n      WHEN 'CF' THEN 'Cítricos y frutales'\n      WHEN 'CS' THEN 'Cítricos y frutales de cáscara'\n      WHEN 'CV' THEN 'Cítricos y viñedo'\n      ELSE codigo\n    END AS cultivo,\n    ha,\n    100.0 * ha / sum(ha) OVER () AS pct\n  FROM usos_cultivados\n),\n-- Agregados -------------------------------------------------------------------\nagrupados AS (\n  -- Usos por debajo del 1 % reunidos en RESTO, con el detalle de lo agrupado\n  SELECT\n    CASE WHEN pct < 1 THEN 'RESTO' ELSE codigo END AS codigo,\n    CASE WHEN pct < 1 THEN 'Resto de cultivos' ELSE cultivo END AS cultivo,\n    sum(ha) AS ha,\n    sum(pct) AS pct,\n    string_agg(cultivo || '=' || round(pct::numeric, 2), ';' ORDER BY pct DESC)\n      FILTER (WHERE pct < 1) AS incluye\n  FROM cultivos\n  GROUP BY 1, 2\n)\n-- Salida ----------------------------------------------------------------------\nSELECT\n  codigo AS \"Codigo\",\n  cultivo AS \"Cultivo\",\n  round(pct::numeric, 2) AS \"Porcentaje\",\n  incluye AS \"Incluye\"\nFROM agrupados\nORDER BY\n  (codigo = 'RESTO'),\n  ha DESC"
+                                    },
+                                    "labels": {
+                                        "grafana.app/export-label": "grafana-postgresql-datasource-1"
+                                    }
+                                    },
+                                    "refId": "A",
+                                    "hidden": false
+                                }
+                                }
+                            ],
+                            "transformations": [],
+                            "queryOptions": {}
+                            }
+                        },
+                        "vizConfig": {
+                            "kind": "VizConfig",
+                            "group": "volkovlabs-echarts-panel",
+                            "version": "",
+                            "spec": {
+                            "options": {
+                                "editor": {
+                                "format": "auto",
+                                "language": "javascript"
+                                },
+                                "editorMode": "code",
+                                "getOption": "// =============================================================================\n// Panel 1 · Distribución de cultivos en la zona regable (Business Charts, sin título)\n// Campos: Codigo, Cultivo, Porcentaje, Incluye (ver la cabecera de la consulta A)\n// Barras con el % de cada uso SIGPAC cultivado, color fijo por uso y línea al pie\n// que explica qué agrupa «Resto de cultivos».\n// =============================================================================\n\n// --- Datos de la consulta (format table) -------------------------------------\nconst frame = context.panel.data.series.find(s => s.fields.some(f => f.name === 'Cultivo'));\nif (!frame || !frame.length) return {\n  title: {\n    text: 'Sin datos SIGPAC de la zona regable',\n    left: 'center',\n    top: 'middle',\n    textStyle: { color: '#81968a', fontSize: 14, fontWeight: 500 }\n  }\n};\nconst col = n => Array.from(frame.fields.find(f => f.name === n).values);\nconst names = col('Cultivo');\nconst pct = col('Porcentaje').map(Number);\n\n// --- Utilidades y estilo común -----------------------------------------------\n// Color fijo por uso SIGPAC (igual en todas las instancias).\n// Puros: color del cultivo; asociaciones: mezcla de sus dos cultivos.\nconst COLOR = {\n  VI: '#6B2D5C', OV: '#6B7F2A', FS: '#8B5A2B', FY: '#C0504D', CI: '#F2A743', TH: '#4E9F64', IV: '#8FA9B8',\n  OP: '#A68A64',\n  VO: '#6D5644', VF: '#963F55', FV: '#7B4440', FL: '#7B6D2B', FF: '#A6553C', OF: '#96683C', OC: '#AF9337',\n  CF: '#D97B48', CS: '#BE8137', CV: '#AE6A50', RESTO: '#A1B6AD'\n};\nconst codF = frame.fields.find(f => f.name === 'Codigo');\nconst cods = codF ? Array.from(codF.values) : [];\n// Código no previsto en COLOR: gris verdoso neutro\nconst colorOf = (n, i) => COLOR[cods[i]] || (n === 'Resto de cultivos' ? COLOR.RESTO : '#8CA99F');\n// Etiquetas del eje partidas en dos líneas para los nombres largos más habituales\nconst short = {\n  'Invernaderos y cultivos bajo plástico': 'Invernaderos',\n  'Otros cultivos permanentes': 'Otros cultivos\\npermanentes',\n  'Frutales y frutales de cáscara': 'Frutales y\\nfrutos de cáscara',\n  'Viñedo y olivar': 'Viñedo y\\nolivar',\n  'Viñedo y frutales': 'Viñedo y\\nfrutales',\n  'Frutos secos': 'Frut. secos',\n  'Cítricos y frutales': 'Cítric/Frut.',\n  'Resto de cultivos': 'Resto de\\ncultivos (<1 %)'\n};\nconst nf = d => new Intl.NumberFormat('es-ES', { minimumFractionDigits: d, maximumFractionDigits: d });\nconst fmtP = v => v > 0 && v < 0.01 ? '<0,01 %' : nf(2).format(v) + ' %';\n\n// --- Preparación -------------------------------------------------------------\n// Eje Y: máximo + 5 %, redondeado a la decena (mínimo 10 %)\nconst yMax = Math.max(10, Math.ceil((Math.max(...pct) + 5) / 10) * 10);\n// Línea explicativa de «Resto de cultivos», construida con los datos (nada fijo).\n// Incluye llega como «nombre=porcentaje» separados por «;».\nconst incF = frame.fields.find(f => f.name === 'Incluye');\nconst inc = incF ? Array.from(incF.values) : [];\nconst ri = names.indexOf('Resto de cultivos');\nconst restItems = ri >= 0 && inc[ri] ? String(inc[ri]).split(';').map(s => {\n  const [n, p] = s.split('=');\n  return { n, p: Number(p) };\n}) : [];\nconst joinY = a => a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' y ' + a[a.length - 1];\nconst restLine = restItems.length\n  ? '«Resto de cultivos» agrupa los usos SIGPAC con menos del 1 % de la superficie cultivada: '\n    + joinY(restItems.map(x => x.n + ' (' + fmtP(x.p) + ')')) + '.'\n  : '';\nconst chartW = (context.panel.chart && context.panel.chart.getWidth && context.panel.chart.getWidth()) || 900;\n\n// --- Opciones ECharts --------------------------------------------------------\nreturn {\n  graphic: restLine ? [{\n    type: 'text',\n    left: 20,\n    bottom: 6,\n    style: {\n      text: restLine,\n      width: chartW - 40,\n      overflow: 'break',\n      lineHeight: 16,\n      fill: '#6f8a7c',\n      fontSize: 11,\n      fontFamily: 'Inter, Arial, sans-serif'\n    }\n  }] : [],\n  backgroundColor: 'transparent',\n  animationDuration: 700,\n  textStyle: { fontFamily: 'Inter, Arial, sans-serif', color: '#35564a' },\n  grid: { left: 54, right: 26, top: 52, bottom: restLine ? 40 : 12, containLabel: true },\n  tooltip: {\n    trigger: 'axis',\n    axisPointer: { type: 'shadow', shadowStyle: { color: 'rgba(36,107,83,0.04)' } },\n    backgroundColor: '#ffffff',\n    borderColor: '#dde7e1',\n    padding: 14,\n    textStyle: { color: '#254e3d', fontSize: 13 },\n    formatter: p => {\n      const i = p[0].dataIndex;\n      let t = names[i] + '<br/><strong>' + fmtP(pct[i]) + '</strong> de la superficie cultivada';\n      if (i === ri && restItems.length) t += '<br/><span style=\"color:#6f8a7c;font-size:12px\">'\n        + restItems.map(x => x.n + ': ' + fmtP(x.p)).join('<br/>') + '</span>';\n      return t;\n    }\n  },\n  xAxis: {\n    type: 'category',\n    data: names,\n    axisLine: { lineStyle: { color: '#dce6df' } },\n    axisTick: { show: false },\n    axisLabel: {\n      interval: 0,\n      fontSize: 11,\n      lineHeight: 16,\n      margin: 16,\n      color: '#456454',\n      formatter: n => short[n] || (n.length > 14 ? n.replace(' y ', '\\ny ') : n)\n    }\n  },\n  yAxis: {\n    type: 'value',\n    min: 0,\n    max: yMax,\n    interval: 10,\n    name: 'Superficie cultivada · %',\n    nameTextStyle: { color: '#81968a', fontSize: 11, padding: [0, 0, 16, 0] },\n    axisLine: { show: false },\n    axisTick: { show: false },\n    axisLabel: { formatter: '{value} %', color: '#8a9e92', fontSize: 11 },\n    splitLine: { lineStyle: { color: '#edf2ee', type: 'dashed' } }\n  },\n  series: [{\n    name: 'Porcentaje de superficie cultivada',\n    type: 'bar',\n    barMaxWidth: 120,\n    barCategoryGap: '22%',\n    barMinHeight: 2,\n    data: pct.map((value, i) => {\n      const c = colorOf(names[i], i);\n      return {\n        value,\n        itemStyle: {\n          color: new context.echarts.graphic.LinearGradient(0, 0, 0, 1, [\n            { offset: 0, color: c },\n            { offset: 1, color: c + 'bb' }\n          ]),\n          borderRadius: [8, 8, 0, 0]\n        }\n      };\n    }),\n    label: {\n      show: true,\n      position: 'top',\n      distance: 12,\n      color: '#254e3d',\n      fontWeight: 600,\n      fontSize: 13,\n      formatter: p => fmtP(p.value)\n    },\n    emphasis: { itemStyle: { shadowBlur: 15, shadowColor: 'rgba(31,78,61,.12)' } }\n  }],\n  aria: {\n    enabled: true,\n    // Cadena literal larga: se deja en una línea (excepción al límite de 120 caracteres, guía §2.1)\n    description: 'Distribución de los cultivos de la zona regable (SIGPAC) como porcentaje de la superficie cultivada; sin tierra arable, pastos ni usos no agrícolas.'\n  }\n};",
+                                "renderer": "svg"
+                            },
+                            "fieldConfig": {
+                                "defaults": {},
+                                "overrides": []
+                            }
+                            }
+                        }
+                        }
+                    },
+                    "panel-10": {
+                        "kind": "Panel",
+                        "spec": {
+                        "id": 10,
+                        "title": "",
+                        "links": [],
+                        "data": {
+                            "kind": "QueryGroup",
+                            "spec": {
+                            "queries": [
+                                {
+                                "kind": "PanelQuery",
+                                "spec": {
+                                    "query": {
+                                    "kind": "DataQuery",
+                                    "group": "grafana-postgresql-datasource",
+                                    "version": "v0",
+                                    "spec": {
+                                        "editorMode": "code",
+                                        "format": "table",
+                                        "rawQuery": true,
+                                        "rawSql": "-- =============================================================================\n-- Panel     : cabecera · id 10 · ref A · table → Business Text\n-- Propósito : nombre de la comunidad (compañía de Odoo) para la banda de cabecera.\n-- Entradas  : ninguna; no usa el rango de tiempo del panel\n-- Salida    : comunidad (texto en mayúsculas)\n-- Notas     : si hay varias compañías, la de id más bajo.\n-- =============================================================================\nSELECT\n  upper(name) AS comunidad\nFROM res_company\nORDER BY id\nLIMIT 1"
+                                    },
+                                    "labels": {
+                                        "grafana.app/export-label": "grafana-postgresql-datasource-1"
+                                    }
+                                    },
+                                    "refId": "A",
+                                    "hidden": false
+                                }
+                                }
+                            ],
+                            "transformations": [],
+                            "queryOptions": {}
+                            }
+                        },
+                        "vizConfig": {
+                            "kind": "VizConfig",
+                            "group": "marcusolsson-dynamictext-panel",
+                            "version": "",
+                            "spec": {
+                            "options": {
+                                "afterRender": "",
+                                "content": "{{!-- Campos de la consulta A: comunidad --}}<div class=\"water-heading\"><div class=\"water-mark\">{{comunidad}} <span>·</span> SUPERFICIE CULTIVADA · SIGPAC</div><div class=\"water-bottom\"><h1>Estadísticas sobre el uso del agua</h1></div></div>",
+                                "contentPartials": [],
+                                "defaultContent": "<div class=\"water-heading\"><div class=\"water-mark\">SIN DATOS SIGPAC</div><h1>Estadísticas sobre el uso del agua</h1></div>",
+                                "editors": [
+                                "styles"
+                                ],
+                                "renderMode": "everyRow",
+                                "styles": "/* =============================================================================\n   Panel 10 · cabecera (Business Text) · plantilla: .water-heading > .water-mark + .water-bottom > h1\n   ============================================================================= */\n.water-heading{box-sizing:border-box;padding:14px 26px;background:linear-gradient(110deg,#173e31,#28634e);\n  border-radius:14px;color:#fff;font-family:Inter,Arial,sans-serif;min-height:0}\n.water-mark{font-size:10px;font-weight:600;letter-spacing:2px;color:#a6cfba}\n.water-mark span{margin:0 8px;color:#85ba9b}\n.water-heading h1{margin:7px 0 0;font-size:clamp(20px,2.5vw,28px);font-weight:600;letter-spacing:-.7px;line-height:1.2}\n.water-bottom{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}\n/* Reglas para un subtítulo <p> en .water-bottom: la plantilla actual no lo usa (se quitaron las cifras) */\n.water-bottom p{margin:0 0 4px;font-size:12px;color:#d4e7db}\n.water-bottom p span{margin:0 8px;color:#9bc6ad}",
+                                "wrap": false
+                            },
+                            "fieldConfig": {
+                                "defaults": {},
+                                "overrides": []
+                            }
+                            }
+                        }
+                        }
+                    },
+                    "panel-21": {
+                        "kind": "Panel",
+                        "spec": {
+                        "id": 21,
+                        "title": "Calendario de ET₀ y Precipitación Efectiva",
+                        "links": [],
+                        "data": {
+                            "kind": "QueryGroup",
+                            "spec": {
+                            "queries": [
+                                {
+                                "kind": "PanelQuery",
+                                "spec": {
+                                    "query": {
+                                    "kind": "DataQuery",
+                                    "group": "grafana-postgresql-datasource",
+                                    "version": "v0",
+                                    "spec": {
+                                        "editorMode": "code",
+                                        "format": "table",
+                                        "rawQuery": true,
+                                        "rawSql": "-- =============================================================================\n-- Panel     : Calendario de ET₀ y Precipitación Efectiva · id 21 · ref A · table → Business Charts\n-- Propósito : ET0 y precipitación efectiva diarias del año hidrológico en curso (SIAR).\n-- Entradas  : ninguna; año hidrológico en curso según la fecha actual (Europe/Madrid);\n--             no usa variables (el dashboard público no las sustituye) ni el rango de tiempo del panel\n-- Salida    : dia (texto AAAA-MM-DD), et0 (mm, 2 decimales, atípicas sustituidas),\n--             pe (mm, 2 decimales), anom (true si la ET0 del día era atípica)\n-- Notas     : estaciones SIAR = dispositivos activos cuyo telecontrol contiene «SIAR» en el nombre;\n--             sensores por nombre, sin ids fijos; media de todas las estaciones.\n--             ET0 atípica por estación (> 12 mm o > max(4, 4 × mediana del mes)) sustituida por la media\n--             del mes sin atípicos. 0 filas si no hay estaciones SIAR o lecturas en el año.\n-- =============================================================================\nWITH\n-- Parámetros ------------------------------------------------------------------\nperiodo AS (\n  -- [bloque periodo_hy] Año hidrológico en curso: del 1 de octubre al 30 de septiembre (fin exclusivo).\n  --   Año de inicio = año actual si el mes es octubre o posterior; si no, año anterior.\n  SELECT\n    make_date(a.hy, 10, 1) AS inicio,\n    make_date(a.hy + 1, 10, 1) AS fin\n  FROM (\n    SELECT\n      extract(year FROM h.hoy)::int - CASE WHEN extract(month FROM h.hoy) >= 10 THEN 0 ELSE 1 END AS hy\n    FROM (SELECT (now() AT TIME ZONE 'Europe/Madrid')::date AS hoy) h\n  ) a\n),\n-- Fuentes ---------------------------------------------------------------------\n-- [bloque estaciones_siar] Dispositivos activos cuyo telecontrol se llama «…SIAR…»\n--   (en Odoo el tipo de telecontrol es genérico, rest; el nombre es la única marca).\nestaciones AS (\n  SELECT\n    d.id AS dispositivo\n  FROM mdm_measurement_device d\n  JOIN remotecontrol t ON t.id = d.remotecontrol_id\n  WHERE d.active\n    AND t.name ILIKE '%siar%'\n),\n-- [bloque siar_diario] Sensores Et0 y Pe de las estaciones SIAR, por nombre.\nsensores AS (\n  SELECT\n    s.id AS sensor,\n    s.device_id AS dispositivo,\n    lower(s.name) AS variable\n  FROM mdm_measurement_device_sensor s\n  JOIN estaciones e ON e.dispositivo = s.device_id\n  WHERE s.active\n    AND lower(s.name) IN ('et0', 'pe')\n),\n-- [bloque siar_diario] Valor diario por estación (día natural de Madrid); la lectura en UTC se pide\n--   con un día de margen a cada lado para no perder bordes por la conversión a hora local.\nlecturas_dia AS (\n  SELECT\n    sn.dispositivo,\n    ((r.measurement_time AT TIME ZONE 'UTC') AT TIME ZONE 'Europe/Madrid')::date AS dia,\n    max(r.value) FILTER (WHERE sn.variable = 'et0') AS et0,\n    max(r.value) FILTER (WHERE sn.variable = 'pe') AS pe\n  FROM mdm_measurement_device_sensor_reading r\n  JOIN sensores sn ON sn.sensor = r.sensor_id\n  WHERE r.active\n    AND r.measurement_time >= (SELECT inicio - 1 FROM periodo)\n    AND r.measurement_time < (SELECT fin + 1 FROM periodo)\n  GROUP BY 1, 2\n),\n-- Transformaciones ------------------------------------------------------------\n-- [bloque siar_diario] Días dentro del año hidrológico\ndias_periodo AS (\n  SELECT\n    l.dispositivo,\n    l.dia,\n    l.et0,\n    l.pe\n  FROM lecturas_dia l\n  CROSS JOIN periodo p\n  WHERE l.dia >= p.inicio\n    AND l.dia < p.fin\n),\n-- [bloque siar_diario] Mediana mensual de ET0 por estación, para detectar valores atípicos\nmediana_mes AS (\n  SELECT\n    dispositivo,\n    date_trunc('month', dia) AS mes,\n    percentile_cont(0.5) WITHIN GROUP (ORDER BY et0) AS mediana\n  FROM dias_periodo\n  GROUP BY 1, 2\n),\n-- [bloque siar_diario] ET0 atípica: > 12 mm o > max(4, 4 × mediana del mes); sin ET0 → no atípica\nmarcados AS (\n  SELECT\n    dp.dispositivo,\n    dp.dia,\n    dp.et0,\n    dp.pe,\n    coalesce(dp.et0 > 12 OR dp.et0 > greatest(4, 4 * mm.mediana), false) AS anom\n  FROM dias_periodo dp\n  JOIN mediana_mes mm\n    ON mm.dispositivo = dp.dispositivo\n    AND mm.mes = date_trunc('month', dp.dia)\n),\n-- [bloque siar_diario] Media mensual de ET0 sin atípicos, por estación\nmedia_mes AS (\n  SELECT\n    dispositivo,\n    date_trunc('month', dia) AS mes,\n    avg(et0) FILTER (WHERE NOT anom) AS media\n  FROM marcados\n  GROUP BY 1, 2\n),\n-- [bloque siar_diario] ET0 atípica sustituida por la media del mes de su estación\ncorregidos AS (\n  SELECT\n    m.dispositivo,\n    m.dia,\n    CASE WHEN m.anom THEN me.media ELSE m.et0 END AS et0,\n    m.pe,\n    m.anom\n  FROM marcados m\n  JOIN media_mes me\n    ON me.dispositivo = m.dispositivo\n    AND me.mes = date_trunc('month', m.dia)\n),\n-- Agregados -------------------------------------------------------------------\n-- [bloque siar_diario] Media diaria de todas las estaciones SIAR; anom si alguna estación lo era\ndiario AS (\n  SELECT\n    dia,\n    avg(et0) AS et0,\n    avg(pe) AS pe,\n    bool_or(anom) AS anom\n  FROM corregidos\n  GROUP BY 1\n)\n-- Salida ----------------------------------------------------------------------\nSELECT\n  to_char(dia, 'YYYY-MM-DD') AS dia,\n  round(et0::numeric, 2) AS et0,\n  round(pe::numeric, 2) AS pe,\n  anom\nFROM diario\nORDER BY dia"
+                                    },
+                                    "labels": {
+                                        "grafana.app/export-label": "grafana-postgresql-datasource-1"
+                                    }
+                                    },
+                                    "refId": "A",
+                                    "hidden": false
+                                }
+                                }
+                            ],
+                            "transformations": [],
+                            "queryOptions": {}
+                            }
+                        },
+                        "vizConfig": {
+                            "kind": "VizConfig",
+                            "group": "volkovlabs-echarts-panel",
+                            "version": "",
+                            "spec": {
+                            "options": {
+                                "editor": {
+                                "format": "auto",
+                                "language": "javascript"
+                                },
+                                "editorMode": "code",
+                                "getOption": "// =============================================================================\n// Panel 21 · Calendario de ET₀ y Precipitación Efectiva (Business Charts)\n// Campos: dia, et0, pe, anom (ver la cabecera de la consulta A)\n// Calendario de 3 meses: color = ET0 diaria; gris oscuro = ET0 atípica sustituida;\n// puntos azules = precipitación efectiva ≥ 1 mm.\n// =============================================================================\n\n// --- Datos de la consulta (format table) -------------------------------------\nconst f = context.panel.data.series.find(s => s.fields.some(x => x.name === 'dia'));\nconst g = n => (f && f.fields.find(x => x.name === n) ? Array.from(f.fields.find(x => x.name === n).values) : []);\nconst dia = g('dia'),\n  et0 = g('et0').map(v => v == null ? null : Number(v)),\n  pe = g('pe').map(v => v == null ? null : Number(v)),\n  anom = g('anom');\n// Año hidrológico de la variable oculta hy; si no se puede leer, el año hidrológico en curso\nlet hy = parseInt(\n  context.grafana && context.grafana.replaceVariables ? context.grafana.replaceVariables('${hy}') : '',\n  10\n);\nif (!Number.isFinite(hy)) {\n  const n = new Date();\n  hy = n.getMonth() >= 9 ? n.getFullYear() : n.getFullYear() - 1;\n}\nif (!dia.length) return {\n  title: {\n    text: 'Sin datos SIAR en el año hidrológico ' + hy + '-' + (hy + 1),\n    left: 'center',\n    top: 'middle',\n    textStyle: { color: '#81968a', fontSize: 14, fontWeight: 500 }\n  }\n};\n\n// --- Utilidades y estilo común -----------------------------------------------\nconst fmt = (x, d) => x == null\n  ? '—'\n  : Number(x).toLocaleString('es-ES', { minimumFractionDigits: d, maximumFractionDigits: d });\n// [bloque ventana_3_meses] Igual en los paneles 21 y 23.\n// Ventana de 3 meses: termina hoy (o el 30 sep si el año ya terminó);\n// si desde el 1 oct aún no han pasado 3 meses, del 1 oct al 31 dic.\nconst pad = n => String(n).padStart(2, '0');\nconst iso = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());\nconst now = new Date();\nconst today = new Date(now.getFullYear(), now.getMonth(), now.getDate());\nconst hyStart = new Date(hy, 9, 1),\n  hyEnd = new Date(hy + 1, 8, 30);\nlet wEnd = today < hyEnd ? today : hyEnd;\nlet wStart = new Date(wEnd.getFullYear(), wEnd.getMonth() - 3, wEnd.getDate() + 1);\nif (wStart < hyStart) {\n  wStart = hyStart;\n  wEnd = new Date(hy, 12, 0);\n}\nconst a = iso(wStart),\n  b = iso(wEnd);\nconst inW = k => k >= a && k <= b;\n\n// --- Preparación -------------------------------------------------------------\n// Días de la ventana con ET0: normales (escala de color) y atípicos (gris oscuro)\nconst ok = dia.map((d, i) => [d, et0[i]]).filter((p, i) => p[1] != null && !anom[i] && inW(p[0]));\nconst bad = dia.map((d, i) => [d, et0[i]]).filter((p, i) => p[1] != null && anom[i] && inW(p[0]));\nconst maxE = Math.ceil(Math.max(1, ...ok.map(p => p[1])));\n// Búsqueda por día para el tooltip\nconst peMap = {},\n  anMap = {};\ndia.forEach((d, i) => {\n  peMap[d] = pe[i];\n  anMap[d] = !!anom[i];\n});\nconst etMap = {};\ndia.forEach((d, i) => etMap[d] = et0[i]);\n\n// --- Opciones ECharts --------------------------------------------------------\nreturn {\n  backgroundColor: 'transparent',\n  textStyle: { fontFamily: 'Inter, Helvetica, Arial, sans-serif' },\n  tooltip: {\n    backgroundColor: '#fff',\n    borderColor: '#C9D6E3',\n    textStyle: { color: '#1B2B3A' },\n    formatter: p => {\n      const k = p.value[0];\n      const d = new Date(k + 'T12:00:00').toLocaleDateString('es-ES',\n        { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });\n      return '<b>' + d + '</b><br>ET₀: <b>' + fmt(etMap[k], 1) + ' mm</b>'\n        + (anMap[k] ? ' <span style=\"color:#4D4D4D\">(atípica: media del mes)</span>' : '')\n        + '<br>Precip. efectiva: <b>' + fmt(peMap[k], 1) + ' mm</b>';\n    }\n  },\n  visualMap: [\n    // ET0 normal: escala continua de 0 al máximo de la ventana\n    {\n      min: 0,\n      max: maxE,\n      calculable: true,\n      orient: 'horizontal',\n      left: 'center',\n      bottom: 4,\n      itemWidth: 12,\n      itemHeight: 220,\n      text: ['ET₀ alta (mm/día)', 'baja'],\n      textStyle: { color: '#5B7690' },\n      seriesIndex: 0,\n      inRange: { color: ['#FFF7E6', '#FDD49E', '#FC8D59', '#D7301F', '#7F0000'] }\n    },\n    // ET0 atípica: un solo color, sin leyenda de escala\n    { show: false, seriesIndex: 1, type: 'piecewise', pieces: [{ min: -1e9, max: 1e9, color: '#4D4D4D' }] }\n  ],\n  graphic: bad.length ? [{\n    type: 'text',\n    right: 20,\n    bottom: 8,\n    style: { text: '■ Gris oscuro: ET₀ atípica sustituida por la media del mes', fill: '#4D4D4D', fontSize: 11 }\n  }] : [],\n  calendar: {\n    top: 30,\n    left: 40,\n    right: 20,\n    bottom: 50,\n    cellSize: ['auto', 22],\n    range: [a, b],\n    firstDay: 1,\n    itemStyle: { color: '#ECEFF3', borderColor: '#fff', borderWidth: 2 },\n    splitLine: { lineStyle: { color: '#9FB3C8', width: 1.2 } },\n    yearLabel: { show: false },\n    dayLabel: { nameMap: ['D', 'L', 'M', 'X', 'J', 'V', 'S'], color: '#8A9BB0', fontSize: 10 },\n    monthLabel: {\n      nameMap: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],\n      color: '#33475B',\n      fontWeight: 600\n    }\n  },\n  series: [\n    { type: 'heatmap', coordinateSystem: 'calendar', data: ok },\n    { type: 'heatmap', coordinateSystem: 'calendar', data: bad },\n    {\n      type: 'scatter',\n      coordinateSystem: 'calendar',\n      name: 'Precipitación efectiva',\n      data: dia.map((d, i) => [d, pe[i]]).filter(p => p[1] != null && p[1] >= 1 && inW(p[0])),\n      symbolSize: v => Math.min(14, 4 + Math.sqrt(v[1]) * 2.2),\n      itemStyle: { color: '#1F77B4', borderColor: '#fff', borderWidth: 1 }\n    }\n  ]\n};",
+                                "renderer": "svg"
+                            },
+                            "fieldConfig": {
+                                "defaults": {},
+                                "overrides": []
+                            }
+                            }
+                        }
+                        }
+                    },
+                    "panel-22": {
+                        "kind": "Panel",
+                        "spec": {
+                        "id": 22,
+                        "title": "Totales mensuales",
+                        "links": [],
+                        "data": {
+                            "kind": "QueryGroup",
+                            "spec": {
+                            "queries": [
+                                {
+                                "kind": "PanelQuery",
+                                "spec": {
+                                    "query": {
+                                    "kind": "DataQuery",
+                                    "group": "grafana-postgresql-datasource",
+                                    "version": "v0",
+                                    "spec": {
+                                        "editorMode": "code",
+                                        "format": "table",
+                                        "rawQuery": true,
+                                        "rawSql": "-- =============================================================================\n-- Panel     : Totales mensuales · id 22 · ref A · table → Business Text\n-- Propósito : ET0 y precipitación efectiva acumuladas por mes del año hidrológico en curso, y total del año.\n-- Entradas  : ninguna; año hidrológico en curso según la fecha actual (Europe/Madrid);\n--             no usa variables (el dashboard público no las sustituye) ni el rango de tiempo del panel\n-- Salida    : mes (texto Ene…Dic, o «Año» en el total), et0 (mm, texto es-ES con 1 decimal o «—»),\n--             pe (ídem), dias (días con dato), total (true solo en la fila del año),\n--             orden (fecha del mes; ordena las filas, el total va al final),\n--             anio_hidrologico (texto AAAA-AAAA, igual en todas las filas)\n-- Notas     : estaciones SIAR = dispositivos activos cuyo telecontrol contiene «SIAR» en el nombre;\n--             sensores por nombre, sin ids fijos; media de todas las estaciones.\n--             ET0 atípica por estación (> 12 mm o > max(4, 4 × mediana del mes)) sustituida por la media\n--             del mes sin atípicos. 0 filas si no hay estaciones SIAR o lecturas en el año.\n--             Sumas de los valores diarios; un mes con días sin dato suma menos (no se rellenan huecos).\n-- =============================================================================\nWITH\n-- Parámetros ------------------------------------------------------------------\nperiodo AS (\n  -- [bloque periodo_hy] Año hidrológico en curso: del 1 de octubre al 30 de septiembre (fin exclusivo).\n  --   Año de inicio = año actual si el mes es octubre o posterior; si no, año anterior.\n  SELECT\n    make_date(a.hy, 10, 1) AS inicio,\n    make_date(a.hy + 1, 10, 1) AS fin\n  FROM (\n    SELECT\n      extract(year FROM h.hoy)::int - CASE WHEN extract(month FROM h.hoy) >= 10 THEN 0 ELSE 1 END AS hy\n    FROM (SELECT (now() AT TIME ZONE 'Europe/Madrid')::date AS hoy) h\n  ) a\n),\n-- Fuentes ---------------------------------------------------------------------\n-- [bloque estaciones_siar] Dispositivos activos cuyo telecontrol se llama «…SIAR…»\n--   (en Odoo el tipo de telecontrol es genérico, rest; el nombre es la única marca).\nestaciones AS (\n  SELECT\n    d.id AS dispositivo\n  FROM mdm_measurement_device d\n  JOIN remotecontrol t ON t.id = d.remotecontrol_id\n  WHERE d.active\n    AND t.name ILIKE '%siar%'\n),\n-- [bloque siar_diario] Sensores Et0 y Pe de las estaciones SIAR, por nombre.\nsensores AS (\n  SELECT\n    s.id AS sensor,\n    s.device_id AS dispositivo,\n    lower(s.name) AS variable\n  FROM mdm_measurement_device_sensor s\n  JOIN estaciones e ON e.dispositivo = s.device_id\n  WHERE s.active\n    AND lower(s.name) IN ('et0', 'pe')\n),\n-- [bloque siar_diario] Valor diario por estación (día natural de Madrid); la lectura en UTC se pide\n--   con un día de margen a cada lado para no perder bordes por la conversión a hora local.\nlecturas_dia AS (\n  SELECT\n    sn.dispositivo,\n    ((r.measurement_time AT TIME ZONE 'UTC') AT TIME ZONE 'Europe/Madrid')::date AS dia,\n    max(r.value) FILTER (WHERE sn.variable = 'et0') AS et0,\n    max(r.value) FILTER (WHERE sn.variable = 'pe') AS pe\n  FROM mdm_measurement_device_sensor_reading r\n  JOIN sensores sn ON sn.sensor = r.sensor_id\n  WHERE r.active\n    AND r.measurement_time >= (SELECT inicio - 1 FROM periodo)\n    AND r.measurement_time < (SELECT fin + 1 FROM periodo)\n  GROUP BY 1, 2\n),\n-- Transformaciones ------------------------------------------------------------\n-- [bloque siar_diario] Días dentro del año hidrológico\ndias_periodo AS (\n  SELECT\n    l.dispositivo,\n    l.dia,\n    l.et0,\n    l.pe\n  FROM lecturas_dia l\n  CROSS JOIN periodo p\n  WHERE l.dia >= p.inicio\n    AND l.dia < p.fin\n),\n-- [bloque siar_diario] Mediana mensual de ET0 por estación, para detectar valores atípicos\nmediana_mes AS (\n  SELECT\n    dispositivo,\n    date_trunc('month', dia) AS mes,\n    percentile_cont(0.5) WITHIN GROUP (ORDER BY et0) AS mediana\n  FROM dias_periodo\n  GROUP BY 1, 2\n),\n-- [bloque siar_diario] ET0 atípica: > 12 mm o > max(4, 4 × mediana del mes); sin ET0 → no atípica\nmarcados AS (\n  SELECT\n    dp.dispositivo,\n    dp.dia,\n    dp.et0,\n    dp.pe,\n    coalesce(dp.et0 > 12 OR dp.et0 > greatest(4, 4 * mm.mediana), false) AS anom\n  FROM dias_periodo dp\n  JOIN mediana_mes mm\n    ON mm.dispositivo = dp.dispositivo\n    AND mm.mes = date_trunc('month', dp.dia)\n),\n-- [bloque siar_diario] Media mensual de ET0 sin atípicos, por estación\nmedia_mes AS (\n  SELECT\n    dispositivo,\n    date_trunc('month', dia) AS mes,\n    avg(et0) FILTER (WHERE NOT anom) AS media\n  FROM marcados\n  GROUP BY 1, 2\n),\n-- [bloque siar_diario] ET0 atípica sustituida por la media del mes de su estación\ncorregidos AS (\n  SELECT\n    m.dispositivo,\n    m.dia,\n    CASE WHEN m.anom THEN me.media ELSE m.et0 END AS et0,\n    m.pe,\n    m.anom\n  FROM marcados m\n  JOIN media_mes me\n    ON me.dispositivo = m.dispositivo\n    AND me.mes = date_trunc('month', m.dia)\n),\n-- Agregados -------------------------------------------------------------------\n-- [bloque siar_diario] Media diaria de todas las estaciones SIAR; anom si alguna estación lo era\ndiario AS (\n  SELECT\n    dia,\n    avg(et0) AS et0,\n    avg(pe) AS pe,\n    bool_or(anom) AS anom\n  FROM corregidos\n  GROUP BY 1\n),\nmeses AS (\n  -- Los 12 meses del año hidrológico, haya o no datos\n  SELECT\n    generate_series(p.inicio, p.fin - interval '1 month', interval '1 month')::date AS mes\n  FROM periodo p\n),\ntotales_mes AS (\n  SELECT\n    me.mes,\n    sum(d.et0) AS et0,\n    sum(d.pe) AS pe,\n    count(d.dia) AS dias\n  FROM meses me\n  LEFT JOIN diario d ON date_trunc('month', d.dia) = me.mes\n  GROUP BY 1\n),\netiqueta AS (\n  -- Año hidrológico como texto AAAA-AAAA, para mostrarlo en el contenido (no en el título)\n  SELECT\n    to_char(inicio, 'YYYY') || '-' || to_char(fin, 'YYYY') AS anio_hidrologico\n  FROM periodo\n)\n-- Salida ----------------------------------------------------------------------\nSELECT\n  (ARRAY['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'])\n    [extract(month FROM mes)::int] AS mes,\n  coalesce(replace(to_char(CASE WHEN dias > 0 THEN et0 END, 'FM99990.0'), '.', ','), '—') AS et0,\n  coalesce(replace(to_char(CASE WHEN dias > 0 THEN pe END, 'FM99990.0'), '.', ','), '—') AS pe,\n  dias,\n  false AS total,\n  mes AS orden,\n  (SELECT anio_hidrologico FROM etiqueta) AS anio_hidrologico\nFROM totales_mes\nUNION ALL\n-- Fila del total del año (sin GROUP BY: siempre una fila)\nSELECT\n  'Año',\n  coalesce(replace(to_char(sum(et0), 'FM99990.0'), '.', ','), '—'),\n  coalesce(replace(to_char(sum(pe), 'FM99990.0'), '.', ','), '—'),\n  sum(dias)::bigint,\n  true,\n  (SELECT fin FROM periodo),\n  (SELECT anio_hidrologico FROM etiqueta)\nFROM totales_mes\nORDER BY orden"
+                                    },
+                                    "labels": {
+                                        "grafana.app/export-label": "grafana-postgresql-datasource-1"
+                                    }
+                                    },
+                                    "refId": "A",
+                                    "hidden": false
+                                }
+                                }
+                            ],
+                            "transformations": [],
+                            "queryOptions": {}
+                            }
+                        },
+                        "vizConfig": {
+                            "kind": "VizConfig",
+                            "group": "marcusolsson-dynamictext-panel",
+                            "version": "",
+                            "spec": {
+                            "options": {
+                                "afterRender": "",
+                                "content": "{{!-- Campos de la consulta A (una fila por mes y la del año): mes, et0, pe, total, anio_hidrologico --}}<div class=\"mt\">{{#each data}}<div class=\"mt-c{{#if total}} mt-t{{/if}}\"><div class=\"mt-m\">{{mes}}</div><div class=\"mt-e\"><em>ET<sub>0</sub></em><b>{{et0}}</b></div><div class=\"mt-p\"><em>Pe</em><b>{{pe}}</b></div></div>{{/each}}</div><div class=\"mt-n\">{{#each data}}{{#if total}}Año hidrológico {{anio_hidrologico}} · {{/if}}{{/each}}mm · media de las estaciones SIAR · ET<sub>0</sub> atípica sustituida por la media del mes · Pe: precipitación efectiva</div>",
+                                "contentPartials": [],
+                                "defaultContent": "<div class=\"mt-n\">Sin datos SIAR en este año hidrológico.</div>",
+                                "editors": [
+                                "styles"
+                                ],
+                                "renderMode": "allRows",
+                                "styles": "/* =============================================================================\n   Panel 22 · totales mensuales (Business Text)\n   .mt = rejilla de 13 celdas (12 meses + año) · .mt-c celda · .mt-t celda del total\n   .mt-m mes · .mt-e fila ET0 · .mt-p fila Pe · .mt-n nota al pie\n   ============================================================================= */\n.mt{display:grid;grid-template-columns:repeat(13,minmax(0,1fr));gap:6px;font-family:Inter,Arial,sans-serif}\n.mt-c{background:#f4f7f5;border-radius:10px;padding:8px 6px;text-align:center;min-width:0}\n.mt-t{background:#e3eee8}\n.mt-m{font-size:11px;font-weight:700;color:#33475B;letter-spacing:.3px;margin-bottom:4px}\n.mt-e,.mt-p{display:flex;justify-content:space-between;gap:4px;font-size:12px;line-height:1.5}\n.mt-e em,.mt-p em{font-style:normal;font-size:10px;color:#8A9BB0}\n/* Subíndice del 0 de ET₀ sin alterar la altura de línea */\n.mt sub,.mt-n sub{font-size:.75em;vertical-align:-.2em;line-height:0}\n.mt-e b{color:#C2410C}\n.mt-p b{color:#1F77B4}\n.mt-n{margin-top:6px;font-size:10px;color:#8A9BB0;font-family:Inter,Arial,sans-serif}\n/* Pantallas estrechas: dos filas de 7 celdas */\n@media (max-width:900px){.mt{grid-template-columns:repeat(7,minmax(0,1fr))}}",
+                                "wrap": false
+                            },
+                            "fieldConfig": {
+                                "defaults": {},
+                                "overrides": []
+                            }
+                            }
+                        }
+                        }
+                    },
+                    "panel-23": {
+                        "kind": "Panel",
+                        "spec": {
+                        "id": 23,
+                        "title": "Temperaturas máxima y mínima",
+                        "links": [],
+                        "data": {
+                            "kind": "QueryGroup",
+                            "spec": {
+                            "queries": [
+                                {
+                                "kind": "PanelQuery",
+                                "spec": {
+                                    "query": {
+                                    "kind": "DataQuery",
+                                    "group": "grafana-postgresql-datasource",
+                                    "version": "v0",
+                                    "spec": {
+                                        "editorMode": "code",
+                                        "format": "table",
+                                        "rawQuery": true,
+                                        "rawSql": "-- =============================================================================\n-- Panel     : Temperaturas máxima y mínima · id 23 · ref A · table → Business Charts\n-- Propósito : temperaturas máxima y mínima diarias del año hidrológico en curso (SIAR).\n-- Entradas  : ninguna; año hidrológico en curso según la fecha actual (Europe/Madrid);\n--             no usa variables (el dashboard público no las sustituye) ni el rango de tiempo del panel\n-- Salida    : dia (texto AAAA-MM-DD), tmax (°C, 1 decimal), tmin (°C, 1 decimal)\n-- Notas     : estaciones SIAR = dispositivos activos cuyo telecontrol contiene «SIAR» en el nombre;\n--             sensores TempMax y TempMin por nombre; media de todas las estaciones.\n--             Se omiten los días sin máxima ni mínima. 0 filas si no hay estaciones SIAR o lecturas.\n-- =============================================================================\nWITH\n-- Parámetros ------------------------------------------------------------------\nperiodo AS (\n  -- [bloque periodo_hy] Año hidrológico en curso: del 1 de octubre al 30 de septiembre (fin exclusivo).\n  --   Año de inicio = año actual si el mes es octubre o posterior; si no, año anterior.\n  SELECT\n    make_date(a.hy, 10, 1) AS inicio,\n    make_date(a.hy + 1, 10, 1) AS fin\n  FROM (\n    SELECT\n      extract(year FROM h.hoy)::int - CASE WHEN extract(month FROM h.hoy) >= 10 THEN 0 ELSE 1 END AS hy\n    FROM (SELECT (now() AT TIME ZONE 'Europe/Madrid')::date AS hoy) h\n  ) a\n),\n-- Fuentes ---------------------------------------------------------------------\n-- [bloque estaciones_siar] Dispositivos activos cuyo telecontrol se llama «…SIAR…»\n--   (en Odoo el tipo de telecontrol es genérico, rest; el nombre es la única marca).\nestaciones AS (\n  SELECT\n    d.id AS dispositivo\n  FROM mdm_measurement_device d\n  JOIN remotecontrol t ON t.id = d.remotecontrol_id\n  WHERE d.active\n    AND t.name ILIKE '%siar%'\n),\n-- [bloque siar_temperatura] Sensores TempMax y TempMin de las estaciones SIAR, por nombre.\nsensores AS (\n  SELECT\n    s.id AS sensor,\n    s.device_id AS dispositivo,\n    lower(s.name) AS variable\n  FROM mdm_measurement_device_sensor s\n  JOIN estaciones e ON e.dispositivo = s.device_id\n  WHERE s.active\n    AND lower(s.name) IN ('tempmax', 'tempmin')\n),\n-- Valor diario por estación (día natural de Madrid), con un día de margen en la lectura UTC\nlecturas_dia AS (\n  SELECT\n    sn.dispositivo,\n    ((r.measurement_time AT TIME ZONE 'UTC') AT TIME ZONE 'Europe/Madrid')::date AS dia,\n    max(r.value) FILTER (WHERE sn.variable = 'tempmax') AS tmax,\n    max(r.value) FILTER (WHERE sn.variable = 'tempmin') AS tmin\n  FROM mdm_measurement_device_sensor_reading r\n  JOIN sensores sn ON sn.sensor = r.sensor_id\n  WHERE r.active\n    AND r.measurement_time >= (SELECT inicio - 1 FROM periodo)\n    AND r.measurement_time < (SELECT fin + 1 FROM periodo)\n  GROUP BY 1, 2\n),\n-- Agregados -------------------------------------------------------------------\ndiario AS (\n  -- Media diaria de todas las estaciones SIAR, dentro del año hidrológico\n  SELECT\n    l.dia,\n    avg(l.tmax) AS tmax,\n    avg(l.tmin) AS tmin\n  FROM lecturas_dia l\n  CROSS JOIN periodo p\n  WHERE l.dia >= p.inicio\n    AND l.dia < p.fin\n  GROUP BY 1\n)\n-- Salida ----------------------------------------------------------------------\nSELECT\n  to_char(dia, 'YYYY-MM-DD') AS dia,\n  round(tmax::numeric, 1) AS tmax,\n  round(tmin::numeric, 1) AS tmin\nFROM diario\nWHERE tmax IS NOT NULL\n  OR tmin IS NOT NULL\nORDER BY dia"
+                                    },
+                                    "labels": {
+                                        "grafana.app/export-label": "grafana-postgresql-datasource-1"
+                                    }
+                                    },
+                                    "refId": "A",
+                                    "hidden": false
+                                }
+                                }
+                            ],
+                            "transformations": [],
+                            "queryOptions": {}
+                            }
+                        },
+                        "vizConfig": {
+                            "kind": "VizConfig",
+                            "group": "volkovlabs-echarts-panel",
+                            "version": "",
+                            "spec": {
+                            "options": {
+                                "editor": {
+                                "format": "auto",
+                                "language": "javascript"
+                                },
+                                "editorMode": "code",
+                                "getOption": "// =============================================================================\n// Panel 23 · Temperaturas máxima y mínima (Business Charts)\n// Campos: dia, tmax, tmin (ver la cabecera de la consulta A)\n// Líneas de máxima y mínima con banda de amplitud, días de calor (≥ 35 °C) y de helada (≤ 0 °C),\n// en la misma ventana de 3 meses que el calendario (panel 21).\n// =============================================================================\n\n// --- Datos de la consulta (format table) -------------------------------------\nconst f = context.panel.data.series.find(s => s.fields.some(x => x.name === 'dia'));\nconst g = n => (f && f.fields.find(x => x.name === n) ? Array.from(f.fields.find(x => x.name === n).values) : []);\nconst dia = g('dia'),\n  mx0 = g('tmax').map(v => v == null ? null : Number(v)),\n  mn0 = g('tmin').map(v => v == null ? null : Number(v));\n// Año hidrológico de la variable oculta hy; si no se puede leer, el año hidrológico en curso\nlet hy = parseInt(\n  context.grafana && context.grafana.replaceVariables ? context.grafana.replaceVariables('${hy}') : '',\n  10\n);\nif (!Number.isFinite(hy)) {\n  const n = new Date();\n  hy = n.getMonth() >= 9 ? n.getFullYear() : n.getFullYear() - 1;\n}\n\n// --- Utilidades y estilo común -----------------------------------------------\n// [bloque ventana_3_meses] Igual en los paneles 21 y 23.\n// Ventana de 3 meses: termina hoy (o el 30 sep si el año ya terminó);\n// si desde el 1 oct aún no han pasado 3 meses, del 1 oct al 31 dic.\nconst pad = n => String(n).padStart(2, '0');\nconst iso = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());\nconst now = new Date();\nconst today = new Date(now.getFullYear(), now.getMonth(), now.getDate());\nconst hyStart = new Date(hy, 9, 1),\n  hyEnd = new Date(hy + 1, 8, 30);\nlet wEnd = today < hyEnd ? today : hyEnd;\nlet wStart = new Date(wEnd.getFullYear(), wEnd.getMonth() - 3, wEnd.getDate() + 1);\nif (wStart < hyStart) {\n  wStart = hyStart;\n  wEnd = new Date(hy, 12, 0);\n}\nconst a = iso(wStart),\n  b = iso(wEnd);\n\n// --- Preparación -------------------------------------------------------------\n// Índices de los días dentro de la ventana\nconst idx = dia.map((d, i) => i).filter(i => dia[i] >= a && dia[i] <= b);\nif (!idx.length) return {\n  title: {\n    text: 'Sin datos de temperatura SIAR',\n    left: 'center',\n    top: 'middle',\n    textStyle: { color: '#81968a', fontSize: 14, fontWeight: 500 }\n  }\n};\n// Cada día se dibuja a mediodía para que caiga en el centro de su fecha\nconst t = idx.map(i => dia[i] + 'T12:00:00'),\n  mx = idx.map(i => mx0[i]),\n  mn = idx.map(i => mn0[i]);\nconst fmt = x => x == null ? '—' : Number(x).toLocaleString('es-ES', { maximumFractionDigits: 1 });\n// Umbrales de calor y helada (°C)\nconst HOT = 35,\n  FROST = 0;\n// Eje Y: incluye siempre 0 °C y al menos 25 °C, con 2 °C de margen\nconst vmn = mn.filter(v => v != null),\n  vmx = mx.filter(v => v != null);\nconst lo = Math.floor(Math.min(FROST + 2, ...vmn) - 2),\n  hi = Math.ceil(Math.max(HOT - 10, ...vmx) + 2);\n\n// --- Opciones ECharts --------------------------------------------------------\nreturn {\n  backgroundColor: 'transparent',\n  textStyle: { fontFamily: 'Inter, Helvetica, Arial, sans-serif' },\n  legend: {\n    top: 0,\n    itemGap: 12,\n    itemWidth: 14,\n    data: ['Máxima', 'Mínima', 'Calor ≥ 35 °C', 'Helada ≤ 0 °C'],\n    textStyle: { color: '#33475B', fontWeight: 600, fontSize: 11 }\n  },\n  grid: { left: 44, right: 16, top: 40, bottom: 28 },\n  tooltip: {\n    trigger: 'axis',\n    backgroundColor: '#fff',\n    borderColor: '#C9D6E3',\n    textStyle: { color: '#1B2B3A' },\n    formatter: ps => {\n      const i = ps[0].dataIndex;\n      const d = new Date(t[i]).toLocaleDateString('es-ES',\n        { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' });\n      return '<b>' + d + '</b><br>Máxima: <b style=\"color:#C0392B\">' + fmt(mx[i])\n        + ' °C</b><br>Mínima: <b style=\"color:#1F77B4\">' + fmt(mn[i])\n        + ' °C</b><br>Amplitud: ' + (mx[i] == null || mn[i] == null ? '—' : fmt(mx[i] - mn[i])) + ' °C';\n    }\n  },\n  xAxis: {\n    type: 'time',\n    min: a + 'T00:00:00',\n    max: b + 'T23:59:59',\n    axisLine: { lineStyle: { color: '#9FB3C8' } },\n    axisLabel: {\n      color: '#33475B',\n      fontSize: 10,\n      hideOverlap: true,\n      // Meses en español: «Oct» el día 1, «15 Oct» el resto\n      formatter: v => {\n        const d = new Date(v);\n        const M = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'][d.getMonth()];\n        return d.getDate() === 1 ? M : d.getDate() + ' ' + M;\n      }\n    }\n  },\n  yAxis: {\n    type: 'value',\n    name: '°C',\n    min: lo,\n    max: hi,\n    nameTextStyle: { color: '#33475B', fontWeight: 600 },\n    axisLabel: { color: '#33475B', fontSize: 10 },\n    splitLine: { lineStyle: { color: '#EEF2F6' } }\n  },\n  dataZoom: [{ type: 'inside' }],\n  series: [\n    // Banda de amplitud: serie base invisible (mínima) + rango apilado (máxima − mínima)\n    {\n      name: 'base',\n      type: 'line',\n      stack: 'r',\n      data: t.map((x, i) => [x, mn[i]]),\n      symbol: 'none',\n      lineStyle: { opacity: 0 },\n      areaStyle: { opacity: 0 },\n      tooltip: { show: false },\n      silent: true\n    },\n    {\n      name: 'rango',\n      type: 'line',\n      stack: 'r',\n      data: t.map((x, i) => [x, mx[i] == null || mn[i] == null ? null : mx[i] - mn[i]]),\n      symbol: 'none',\n      smooth: 0.25,\n      lineStyle: { opacity: 0 },\n      areaStyle: {\n        color: {\n          type: 'linear',\n          x: 0,\n          y: 0,\n          x2: 0,\n          y2: 1,\n          colorStops: [{ offset: 0, color: 'rgba(231,76,60,0.30)' }, { offset: 1, color: 'rgba(52,152,219,0.30)' }]\n        }\n      },\n      silent: true\n    },\n    {\n      name: 'Máxima',\n      type: 'line',\n      data: t.map((x, i) => [x, mx[i]]),\n      smooth: 0.25,\n      symbol: 'none',\n      lineStyle: { width: 2, color: '#C0392B' },\n      itemStyle: { color: '#C0392B' }\n    },\n    {\n      name: 'Mínima',\n      type: 'line',\n      data: t.map((x, i) => [x, mn[i]]),\n      smooth: 0.25,\n      symbol: 'none',\n      lineStyle: { width: 2, color: '#1F77B4' },\n      itemStyle: { color: '#1F77B4' }\n    },\n    {\n      name: 'Calor ≥ 35 °C',\n      type: 'scatter',\n      symbolSize: 8,\n      data: t.map((x, i) => mx[i] != null && mx[i] >= HOT ? [x, mx[i]] : null).filter(Boolean),\n      itemStyle: { color: '#8E1B10', borderColor: '#fff', borderWidth: 1.5 }\n    },\n    {\n      name: 'Helada ≤ 0 °C',\n      type: 'scatter',\n      symbol: 'diamond',\n      symbolSize: 9,\n      data: t.map((x, i) => mn[i] != null && mn[i] <= FROST ? [x, mn[i]] : null).filter(Boolean),\n      itemStyle: { color: '#0B3C6E', borderColor: '#fff', borderWidth: 1.5 }\n    },\n    // Líneas de referencia de 35 °C y 0 °C (serie vacía que solo lleva markLine)\n    {\n      name: 'ref',\n      type: 'line',\n      data: [],\n      markLine: {\n        silent: true,\n        symbol: 'none',\n        data: [\n          { yAxis: HOT, name: '35 °C', lineStyle: { color: '#E8A39B', type: 'dashed' } },\n          { yAxis: FROST, name: '0 °C', lineStyle: { color: '#9CC3E6', type: 'dashed' } }\n        ],\n        label: { formatter: '{b}', position: 'insideEndTop', color: '#8A9BB0', fontSize: 10 }\n      }\n    }\n  ]\n};",
+                                "renderer": "svg"
+                            },
+                            "fieldConfig": {
+                                "defaults": {},
+                                "overrides": []
+                            }
+                            }
+                        }
+                        }
+                    }
+                    },
+                    "layout": {
+                    "kind": "GridLayout",
+                    "spec": {
+                        "items": [
+                        {
+                            "kind": "GridLayoutItem",
+                            "spec": {
+                            "x": 0,
+                            "y": 0,
+                            "width": 24,
+                            "height": 3,
+                            "element": {
+                                "kind": "ElementReference",
+                                "name": "panel-10"
+                            }
+                            }
+                        },
+                        {
+                            "kind": "GridLayoutItem",
+                            "spec": {
+                            "x": 0,
+                            "y": 3,
+                            "width": 24,
+                            "height": 15,
+                            "element": {
+                                "kind": "ElementReference",
+                                "name": "panel-1"
+                            }
+                            }
+                        },
+                        {
+                            "kind": "GridLayoutItem",
+                            "spec": {
+                            "x": 0,
+                            "y": 18,
+                            "width": 14,
+                            "height": 8,
+                            "element": {
+                                "kind": "ElementReference",
+                                "name": "panel-21"
+                            }
+                            }
+                        },
+                        {
+                            "kind": "GridLayoutItem",
+                            "spec": {
+                            "x": 14,
+                            "y": 18,
+                            "width": 10,
+                            "height": 8,
+                            "element": {
+                                "kind": "ElementReference",
+                                "name": "panel-23"
+                            }
+                            }
+                        },
+                        {
+                            "kind": "GridLayoutItem",
+                            "spec": {
+                            "x": 0,
+                            "y": 26,
+                            "width": 24,
+                            "height": 5,
+                            "element": {
+                                "kind": "ElementReference",
+                                "name": "panel-22"
+                            }
+                            }
+                        }
+                        ]
+                    }
+                    },
+                    "links": [],
+                    "liveNow": false,
+                    "preload": false,
+                    "tags": [
                     "sigpac",
                     "cultivos",
                     "estadisticas",
                     "siar"
-                ],
-                "links": [],
-                "panels": [
-                    {
-                    "id": 10,
-                    "title": "",
-                    "type": "marcusolsson-dynamictext-panel",
-                    "links": [],
-                    "gridPos": {
-                    "x": 0,
-                    "y": 0,
-                    "w": 24,
-                    "h": 3
-                    },
-                    "datasource": null,
-                    "targets": [
-                    {
-                    "editorMode": "code",
-                    "format": "table",
-                    "rawQuery": true,
-                    "rawSql": "-- =============================================================================\n-- Panel     : cabecera · id 10 · ref A · table → Business Text\n-- Propósito : nombre de la comunidad (compañía de Odoo) para la banda de cabecera.\n-- Entradas  : ninguna; no usa el rango de tiempo del panel\n-- Salida    : comunidad (texto en mayúsculas)\n-- Notas     : si hay varias compañías, la de id más bajo.\n-- =============================================================================\nSELECT\n  upper(name) AS comunidad\nFROM res_company\nORDER BY id\nLIMIT 1",
-                    "refId": "A",
-                    "hide": false,
-                    "datasource": null
-                    }
                     ],
-                    "options": {
-                    "afterRender": "",
-                    "content": "{{!-- Campos de la consulta A: comunidad --}}<div class=\"water-heading\"><div class=\"water-mark\">{{comunidad}} <span>·</span> SUPERFICIE CULTIVADA · SIGPAC</div><div class=\"water-bottom\"><h1>Estadísticas sobre el uso del agua</h1></div></div>",
-                    "contentPartials": [],
-                    "defaultContent": "<div class=\"water-heading\"><div class=\"water-mark\">SIN DATOS SIGPAC</div><h1>Estadísticas sobre el uso del agua</h1></div>",
-                    "editors": [
-                    "styles"
-                    ],
-                    "renderMode": "everyRow",
-                    "styles": "/* =============================================================================\n   Panel 10 · cabecera (Business Text) · plantilla: .water-heading > .water-mark + .water-bottom > h1\n   ============================================================================= */\n.water-heading{box-sizing:border-box;padding:14px 26px;background:linear-gradient(110deg,#173e31,#28634e);\n  border-radius:14px;color:#fff;font-family:Inter,Arial,sans-serif;min-height:0}\n.water-mark{font-size:10px;font-weight:600;letter-spacing:2px;color:#a6cfba}\n.water-mark span{margin:0 8px;color:#85ba9b}\n.water-heading h1{margin:7px 0 0;font-size:clamp(20px,2.5vw,28px);font-weight:600;letter-spacing:-.7px;line-height:1.2}\n.water-bottom{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}\n/* Reglas para un subtítulo <p> en .water-bottom: la plantilla actual no lo usa (se quitaron las cifras) */\n.water-bottom p{margin:0 0 4px;font-size:12px;color:#d4e7db}\n.water-bottom p span{margin:0 8px;color:#9bc6ad}",
-                    "wrap": false
-                    },
-                    "fieldConfig": {
-                    "defaults": {},
-                    "overrides": []
-                    },
-                    "transformations": []
-                    },
-                    {
-                    "id": 1,
-                    "title": "",
-                    "type": "volkovlabs-echarts-panel",
-                    "links": [],
-                    "gridPos": {
-                    "x": 0,
-                    "y": 3,
-                    "w": 24,
-                    "h": 15
-                    },
-                    "datasource": null,
-                    "targets": [
-                    {
-                    "editorMode": "code",
-                    "format": "table",
-                    "rawQuery": true,
-                    "rawSql": "-- =============================================================================\n-- Panel     : distribución de cultivos (sin título) · id 1 · ref A · table → Business Charts\n-- Propósito : porcentaje de la superficie cultivada de la zona regable que ocupa cada uso SIGPAC.\n-- Entradas  : ninguna; no usa el rango de tiempo del panel\n-- Salida    : Codigo (uso SIGPAC o RESTO; fija el color de la barra), Cultivo (nombre),\n--             Porcentaje (% sobre la superficie cultivada, 2 decimales),\n--             Incluye (solo en RESTO: «nombre=porcentaje» separados por «;»; NULL en el resto)\n-- Notas     : zona regable = parcelas de Odoo; superficie = intersección parcela ∩ recinto SIGPAC\n--             (vista materializada wua_parcel_sigpaclink, datos del último refresco).\n--             Usos cultivados según el catálogo cod_uso_sigpac; CO (contorno olivar) se suma a OV.\n--             Fuera: tierra arable, pastos, forestal, matorral, improductivo, urbano, viales, agua…\n--             Los usos con menos del 1 % se agrupan en RESTO, que sale siempre la última.\n-- =============================================================================\nWITH\n-- Fuentes ---------------------------------------------------------------------\nusos_cultivados AS (\n  -- Superficie (ha) por uso SIGPAC cultivado\n  SELECT\n    CASE WHEN uso_sigpac = 'CO' THEN 'OV' ELSE uso_sigpac END AS codigo,\n    sum(area_ha) AS ha\n  FROM wua_parcel_sigpaclink\n  WHERE uso_sigpac IN (\n    'VI', 'OV', 'CO', 'FS', 'FY', 'CI', 'CF', 'CS', 'CV', 'FF',\n    'FL', 'FV', 'OC', 'OF', 'VF', 'VO', 'OP', 'TH', 'IV'\n  )\n  GROUP BY 1\n),\n-- Transformaciones ------------------------------------------------------------\ncultivos AS (\n  -- Nombre de cada uso y su porcentaje sobre el total cultivado\n  SELECT\n    codigo,\n    CASE codigo\n      WHEN 'VI' THEN 'Viñedo'\n      WHEN 'OV' THEN 'Olivar'\n      WHEN 'FS' THEN 'Frutos secos'\n      WHEN 'FY' THEN 'Frutales'\n      WHEN 'CI' THEN 'Cítricos'\n      WHEN 'TH' THEN 'Huerta'\n      WHEN 'IV' THEN 'Invernaderos y cultivos bajo plástico'\n      WHEN 'OP' THEN 'Otros cultivos permanentes'\n      WHEN 'VO' THEN 'Viñedo y olivar'\n      WHEN 'VF' THEN 'Viñedo y frutales'\n      WHEN 'FF' THEN 'Frutales y frutales de cáscara'\n      WHEN 'FV' THEN 'Frutos secos y viñedo'\n      WHEN 'FL' THEN 'Frutos secos y olivar'\n      WHEN 'OF' THEN 'Olivar y frutales'\n      WHEN 'OC' THEN 'Olivar y cítricos'\n      WHEN 'CF' THEN 'Cítricos y frutales'\n      WHEN 'CS' THEN 'Cítricos y frutales de cáscara'\n      WHEN 'CV' THEN 'Cítricos y viñedo'\n      ELSE codigo\n    END AS cultivo,\n    ha,\n    100.0 * ha / sum(ha) OVER () AS pct\n  FROM usos_cultivados\n),\n-- Agregados -------------------------------------------------------------------\nagrupados AS (\n  -- Usos por debajo del 1 % reunidos en RESTO, con el detalle de lo agrupado\n  SELECT\n    CASE WHEN pct < 1 THEN 'RESTO' ELSE codigo END AS codigo,\n    CASE WHEN pct < 1 THEN 'Resto de cultivos' ELSE cultivo END AS cultivo,\n    sum(ha) AS ha,\n    sum(pct) AS pct,\n    string_agg(cultivo || '=' || round(pct::numeric, 2), ';' ORDER BY pct DESC)\n      FILTER (WHERE pct < 1) AS incluye\n  FROM cultivos\n  GROUP BY 1, 2\n)\n-- Salida ----------------------------------------------------------------------\nSELECT\n  codigo AS \"Codigo\",\n  cultivo AS \"Cultivo\",\n  round(pct::numeric, 2) AS \"Porcentaje\",\n  incluye AS \"Incluye\"\nFROM agrupados\nORDER BY\n  (codigo = 'RESTO'),\n  ha DESC",
-                    "refId": "A",
-                    "hide": false,
-                    "datasource": null
-                    }
-                    ],
-                    "options": {
-                    "editor": {
-                    "format": "auto",
-                    "language": "javascript"
-                    },
-                    "editorMode": "code",
-                    "getOption": "// =============================================================================\n// Panel 1 · Distribución de cultivos en la zona regable (Business Charts, sin título)\n// Campos: Codigo, Cultivo, Porcentaje, Incluye (ver la cabecera de la consulta A)\n// Barras con el % de cada uso SIGPAC cultivado, color fijo por uso y línea al pie\n// que explica qué agrupa «Resto de cultivos».\n// =============================================================================\n\n// --- Datos de la consulta (format table) -------------------------------------\nconst frame = context.panel.data.series.find(s => s.fields.some(f => f.name === 'Cultivo'));\nif (!frame || !frame.length) return {\n  title: {\n    text: 'Sin datos SIGPAC de la zona regable',\n    left: 'center',\n    top: 'middle',\n    textStyle: { color: '#81968a', fontSize: 14, fontWeight: 500 }\n  }\n};\nconst col = n => Array.from(frame.fields.find(f => f.name === n).values);\nconst names = col('Cultivo');\nconst pct = col('Porcentaje').map(Number);\n\n// --- Utilidades y estilo común -----------------------------------------------\n// Color fijo por uso SIGPAC (igual en todas las instancias).\n// Puros: color del cultivo; asociaciones: mezcla de sus dos cultivos.\nconst COLOR = {\n  VI: '#6B2D5C', OV: '#6B7F2A', FS: '#8B5A2B', FY: '#C0504D', CI: '#F2A743', TH: '#4E9F64', IV: '#8FA9B8',\n  OP: '#A68A64',\n  VO: '#6D5644', VF: '#963F55', FV: '#7B4440', FL: '#7B6D2B', FF: '#A6553C', OF: '#96683C', OC: '#AF9337',\n  CF: '#D97B48', CS: '#BE8137', CV: '#AE6A50', RESTO: '#A1B6AD'\n};\nconst codF = frame.fields.find(f => f.name === 'Codigo');\nconst cods = codF ? Array.from(codF.values) : [];\n// Código no previsto en COLOR: gris verdoso neutro\nconst colorOf = (n, i) => COLOR[cods[i]] || (n === 'Resto de cultivos' ? COLOR.RESTO : '#8CA99F');\n// Etiquetas del eje partidas en dos líneas para los nombres largos más habituales\nconst short = {\n  'Invernaderos y cultivos bajo plástico': 'Invernaderos',\n  'Otros cultivos permanentes': 'Otros cultivos\\npermanentes',\n  'Frutales y frutales de cáscara': 'Frutales y\\nfrutos de cáscara',\n  'Viñedo y olivar': 'Viñedo y\\nolivar',\n  'Viñedo y frutales': 'Viñedo y\\nfrutales',\n  'Frutos secos': 'Frutos\\nsecos',\n  'Resto de cultivos': 'Resto de\\ncultivos (<1 %)'\n};\nconst nf = d => new Intl.NumberFormat('es-ES', { minimumFractionDigits: d, maximumFractionDigits: d });\nconst fmtP = v => v > 0 && v < 0.01 ? '<0,01 %' : nf(2).format(v) + ' %';\n\n// --- Preparación -------------------------------------------------------------\n// Eje Y: máximo + 5 %, redondeado a la decena (mínimo 10 %)\nconst yMax = Math.max(10, Math.ceil((Math.max(...pct) + 5) / 10) * 10);\n// Línea explicativa de «Resto de cultivos», construida con los datos (nada fijo).\n// Incluye llega como «nombre=porcentaje» separados por «;».\nconst incF = frame.fields.find(f => f.name === 'Incluye');\nconst inc = incF ? Array.from(incF.values) : [];\nconst ri = names.indexOf('Resto de cultivos');\nconst restItems = ri >= 0 && inc[ri] ? String(inc[ri]).split(';').map(s => {\n  const [n, p] = s.split('=');\n  return { n, p: Number(p) };\n}) : [];\nconst joinY = a => a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' y ' + a[a.length - 1];\nconst restLine = restItems.length\n  ? '«Resto de cultivos» agrupa los usos SIGPAC con menos del 1 % de la superficie cultivada: '\n    + joinY(restItems.map(x => x.n + ' (' + fmtP(x.p) + ')')) + '.'\n  : '';\nconst chartW = (context.panel.chart && context.panel.chart.getWidth && context.panel.chart.getWidth()) || 900;\n\n// --- Opciones ECharts --------------------------------------------------------\nreturn {\n  graphic: restLine ? [{\n    type: 'text',\n    left: 20,\n    bottom: 6,\n    style: {\n      text: restLine,\n      width: chartW - 40,\n      overflow: 'break',\n      lineHeight: 16,\n      fill: '#6f8a7c',\n      fontSize: 11,\n      fontFamily: 'Inter, Arial, sans-serif'\n    }\n  }] : [],\n  backgroundColor: 'transparent',\n  animationDuration: 700,\n  textStyle: { fontFamily: 'Inter, Arial, sans-serif', color: '#35564a' },\n  grid: { left: 54, right: 26, top: 52, bottom: restLine ? 40 : 12, containLabel: true },\n  tooltip: {\n    trigger: 'axis',\n    axisPointer: { type: 'shadow', shadowStyle: { color: 'rgba(36,107,83,0.04)' } },\n    backgroundColor: '#ffffff',\n    borderColor: '#dde7e1',\n    padding: 14,\n    textStyle: { color: '#254e3d', fontSize: 13 },\n    formatter: p => {\n      const i = p[0].dataIndex;\n      let t = names[i] + '<br/><strong>' + fmtP(pct[i]) + '</strong> de la superficie cultivada';\n      if (i === ri && restItems.length) t += '<br/><span style=\"color:#6f8a7c;font-size:12px\">'\n        + restItems.map(x => x.n + ': ' + fmtP(x.p)).join('<br/>') + '</span>';\n      return t;\n    }\n  },\n  xAxis: {\n    type: 'category',\n    data: names,\n    axisLine: { lineStyle: { color: '#dce6df' } },\n    axisTick: { show: false },\n    axisLabel: {\n      interval: 0,\n      fontSize: 11,\n      lineHeight: 16,\n      margin: 16,\n      color: '#456454',\n      formatter: n => short[n] || (n.length > 14 ? n.replace(' y ', '\\ny ') : n)\n    }\n  },\n  yAxis: {\n    type: 'value',\n    min: 0,\n    max: yMax,\n    interval: 10,\n    name: 'Superficie cultivada · %',\n    nameTextStyle: { color: '#81968a', fontSize: 11, padding: [0, 0, 16, 0] },\n    axisLine: { show: false },\n    axisTick: { show: false },\n    axisLabel: { formatter: '{value} %', color: '#8a9e92', fontSize: 11 },\n    splitLine: { lineStyle: { color: '#edf2ee', type: 'dashed' } }\n  },\n  series: [{\n    name: 'Porcentaje de superficie cultivada',\n    type: 'bar',\n    barMaxWidth: 120,\n    barCategoryGap: '22%',\n    barMinHeight: 2,\n    data: pct.map((value, i) => {\n      const c = colorOf(names[i], i);\n      return {\n        value,\n        itemStyle: {\n          color: new context.echarts.graphic.LinearGradient(0, 0, 0, 1, [\n            { offset: 0, color: c },\n            { offset: 1, color: c + 'bb' }\n          ]),\n          borderRadius: [8, 8, 0, 0]\n        }\n      };\n    }),\n    label: {\n      show: true,\n      position: 'top',\n      distance: 12,\n      color: '#254e3d',\n      fontWeight: 600,\n      fontSize: 13,\n      formatter: p => fmtP(p.value)\n    },\n    emphasis: { itemStyle: { shadowBlur: 15, shadowColor: 'rgba(31,78,61,.12)' } }\n  }],\n  aria: {\n    enabled: true,\n    // Cadena literal larga: se deja en una línea (excepción al límite de 120 caracteres, guía §2.1)\n    description: 'Distribución de los cultivos de la zona regable (SIGPAC) como porcentaje de la superficie cultivada; sin tierra arable, pastos ni usos no agrícolas.'\n  }\n};",
-                    "renderer": "svg"
-                    },
-                    "fieldConfig": {
-                    "defaults": {},
-                    "overrides": []
-                    },
-                    "transformations": []
-                    },
-                    {
-                    "id": 21,
-                    "title": "Calendario de ET₀ y Precipitación Efectiva",
-                    "type": "volkovlabs-echarts-panel",
-                    "links": [],
-                    "gridPos": {
-                    "x": 0,
-                    "y": 18,
-                    "w": 14,
-                    "h": 8
-                    },
-                    "datasource": null,
-                    "targets": [
-                    {
-                    "editorMode": "code",
-                    "format": "table",
-                    "rawQuery": true,
-                    "rawSql": "-- =============================================================================\n-- Panel     : Calendario de ET₀ y Precipitación Efectiva · id 21 · ref A · table → Business Charts\n-- Propósito : ET0 y precipitación efectiva diarias del año hidrológico en curso (SIAR).\n-- Entradas  : variable hy (año de inicio del año hidrológico); no usa el rango de tiempo del panel\n-- Salida    : dia (texto AAAA-MM-DD), et0 (mm, 2 decimales, atípicas sustituidas),\n--             pe (mm, 2 decimales), anom (true si la ET0 del día era atípica)\n-- Notas     : estaciones SIAR = dispositivos activos cuyo telecontrol contiene «SIAR» en el nombre;\n--             sensores por nombre, sin ids fijos; media de todas las estaciones.\n--             ET0 atípica por estación (> 12 mm o > max(4, 4 × mediana del mes)) sustituida por la media\n--             del mes sin atípicos. 0 filas si no hay estaciones SIAR o lecturas en el año.\n-- =============================================================================\nWITH\n-- Parámetros ------------------------------------------------------------------\nperiodo AS (\n  -- Año hidrológico de la variable hy: del 1 de octubre al 30 de septiembre (fin exclusivo)\n  SELECT\n    make_date($hy, 10, 1) AS inicio,\n    make_date($hy + 1, 10, 1) AS fin\n),\n-- Fuentes ---------------------------------------------------------------------\n-- [bloque estaciones_siar] Dispositivos activos cuyo telecontrol se llama «…SIAR…»\n--   (en Odoo el tipo de telecontrol es genérico, rest; el nombre es la única marca).\nestaciones AS (\n  SELECT\n    d.id AS dispositivo\n  FROM mdm_measurement_device d\n  JOIN remotecontrol t ON t.id = d.remotecontrol_id\n  WHERE d.active\n    AND t.name ILIKE '%siar%'\n),\n-- [bloque siar_diario] Sensores Et0 y Pe de las estaciones SIAR, por nombre.\nsensores AS (\n  SELECT\n    s.id AS sensor,\n    s.device_id AS dispositivo,\n    lower(s.name) AS variable\n  FROM mdm_measurement_device_sensor s\n  JOIN estaciones e ON e.dispositivo = s.device_id\n  WHERE s.active\n    AND lower(s.name) IN ('et0', 'pe')\n),\n-- [bloque siar_diario] Valor diario por estación (día natural de Madrid); la lectura en UTC se pide\n--   con un día de margen a cada lado para no perder bordes por la conversión a hora local.\nlecturas_dia AS (\n  SELECT\n    sn.dispositivo,\n    ((r.measurement_time AT TIME ZONE 'UTC') AT TIME ZONE 'Europe/Madrid')::date AS dia,\n    max(r.value) FILTER (WHERE sn.variable = 'et0') AS et0,\n    max(r.value) FILTER (WHERE sn.variable = 'pe') AS pe\n  FROM mdm_measurement_device_sensor_reading r\n  JOIN sensores sn ON sn.sensor = r.sensor_id\n  WHERE r.active\n    AND r.measurement_time >= make_date($hy, 9, 30)\n    AND r.measurement_time < make_date($hy + 1, 10, 2)\n  GROUP BY 1, 2\n),\n-- Transformaciones ------------------------------------------------------------\n-- [bloque siar_diario] Días dentro del año hidrológico\ndias_periodo AS (\n  SELECT\n    l.dispositivo,\n    l.dia,\n    l.et0,\n    l.pe\n  FROM lecturas_dia l\n  CROSS JOIN periodo p\n  WHERE l.dia >= p.inicio\n    AND l.dia < p.fin\n),\n-- [bloque siar_diario] Mediana mensual de ET0 por estación, para detectar valores atípicos\nmediana_mes AS (\n  SELECT\n    dispositivo,\n    date_trunc('month', dia) AS mes,\n    percentile_cont(0.5) WITHIN GROUP (ORDER BY et0) AS mediana\n  FROM dias_periodo\n  GROUP BY 1, 2\n),\n-- [bloque siar_diario] ET0 atípica: > 12 mm o > max(4, 4 × mediana del mes); sin ET0 → no atípica\nmarcados AS (\n  SELECT\n    dp.dispositivo,\n    dp.dia,\n    dp.et0,\n    dp.pe,\n    coalesce(dp.et0 > 12 OR dp.et0 > greatest(4, 4 * mm.mediana), false) AS anom\n  FROM dias_periodo dp\n  JOIN mediana_mes mm\n    ON mm.dispositivo = dp.dispositivo\n    AND mm.mes = date_trunc('month', dp.dia)\n),\n-- [bloque siar_diario] Media mensual de ET0 sin atípicos, por estación\nmedia_mes AS (\n  SELECT\n    dispositivo,\n    date_trunc('month', dia) AS mes,\n    avg(et0) FILTER (WHERE NOT anom) AS media\n  FROM marcados\n  GROUP BY 1, 2\n),\n-- [bloque siar_diario] ET0 atípica sustituida por la media del mes de su estación\ncorregidos AS (\n  SELECT\n    m.dispositivo,\n    m.dia,\n    CASE WHEN m.anom THEN me.media ELSE m.et0 END AS et0,\n    m.pe,\n    m.anom\n  FROM marcados m\n  JOIN media_mes me\n    ON me.dispositivo = m.dispositivo\n    AND me.mes = date_trunc('month', m.dia)\n),\n-- Agregados -------------------------------------------------------------------\n-- [bloque siar_diario] Media diaria de todas las estaciones SIAR; anom si alguna estación lo era\ndiario AS (\n  SELECT\n    dia,\n    avg(et0) AS et0,\n    avg(pe) AS pe,\n    bool_or(anom) AS anom\n  FROM corregidos\n  GROUP BY 1\n)\n-- Salida ----------------------------------------------------------------------\nSELECT\n  to_char(dia, 'YYYY-MM-DD') AS dia,\n  round(et0::numeric, 2) AS et0,\n  round(pe::numeric, 2) AS pe,\n  anom\nFROM diario\nORDER BY dia",
-                    "refId": "A",
-                    "hide": false,
-                    "datasource": null
-                    }
-                    ],
-                    "options": {
-                    "editor": {
-                    "format": "auto",
-                    "language": "javascript"
-                    },
-                    "editorMode": "code",
-                    "getOption": "// =============================================================================\n// Panel 21 · Calendario de ET₀ y Precipitación Efectiva (Business Charts)\n// Campos: dia, et0, pe, anom (ver la cabecera de la consulta A)\n// Calendario de 3 meses: color = ET0 diaria; gris oscuro = ET0 atípica sustituida;\n// puntos azules = precipitación efectiva ≥ 1 mm.\n// =============================================================================\n\n// --- Datos de la consulta (format table) -------------------------------------\nconst f = context.panel.data.series.find(s => s.fields.some(x => x.name === 'dia'));\nconst g = n => (f && f.fields.find(x => x.name === n) ? Array.from(f.fields.find(x => x.name === n).values) : []);\nconst dia = g('dia'),\n  et0 = g('et0').map(v => v == null ? null : Number(v)),\n  pe = g('pe').map(v => v == null ? null : Number(v)),\n  anom = g('anom');\n// Año hidrológico de la variable oculta hy; si no se puede leer, el año hidrológico en curso\nlet hy = parseInt(\n  context.grafana && context.grafana.replaceVariables ? context.grafana.replaceVariables('${hy}') : '',\n  10\n);\nif (!Number.isFinite(hy)) {\n  const n = new Date();\n  hy = n.getMonth() >= 9 ? n.getFullYear() : n.getFullYear() - 1;\n}\nif (!dia.length) return {\n  title: {\n    text: 'Sin datos SIAR en el año hidrológico ' + hy + '-' + (hy + 1),\n    left: 'center',\n    top: 'middle',\n    textStyle: { color: '#81968a', fontSize: 14, fontWeight: 500 }\n  }\n};\n\n// --- Utilidades y estilo común -----------------------------------------------\nconst fmt = (x, d) => x == null\n  ? '—'\n  : Number(x).toLocaleString('es-ES', { minimumFractionDigits: d, maximumFractionDigits: d });\n// [bloque ventana_3_meses] Igual en los paneles 21 y 23.\n// Ventana de 3 meses: termina hoy (o el 30 sep si el año ya terminó);\n// si desde el 1 oct aún no han pasado 3 meses, del 1 oct al 31 dic.\nconst pad = n => String(n).padStart(2, '0');\nconst iso = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());\nconst now = new Date();\nconst today = new Date(now.getFullYear(), now.getMonth(), now.getDate());\nconst hyStart = new Date(hy, 9, 1),\n  hyEnd = new Date(hy + 1, 8, 30);\nlet wEnd = today < hyEnd ? today : hyEnd;\nlet wStart = new Date(wEnd.getFullYear(), wEnd.getMonth() - 3, wEnd.getDate() + 1);\nif (wStart < hyStart) {\n  wStart = hyStart;\n  wEnd = new Date(hy, 12, 0);\n}\nconst a = iso(wStart),\n  b = iso(wEnd);\nconst inW = k => k >= a && k <= b;\n\n// --- Preparación -------------------------------------------------------------\n// Días de la ventana con ET0: normales (escala de color) y atípicos (gris oscuro)\nconst ok = dia.map((d, i) => [d, et0[i]]).filter((p, i) => p[1] != null && !anom[i] && inW(p[0]));\nconst bad = dia.map((d, i) => [d, et0[i]]).filter((p, i) => p[1] != null && anom[i] && inW(p[0]));\nconst maxE = Math.ceil(Math.max(1, ...ok.map(p => p[1])));\n// Búsqueda por día para el tooltip\nconst peMap = {},\n  anMap = {};\ndia.forEach((d, i) => {\n  peMap[d] = pe[i];\n  anMap[d] = !!anom[i];\n});\nconst etMap = {};\ndia.forEach((d, i) => etMap[d] = et0[i]);\n\n// --- Opciones ECharts --------------------------------------------------------\nreturn {\n  backgroundColor: 'transparent',\n  textStyle: { fontFamily: 'Inter, Helvetica, Arial, sans-serif' },\n  tooltip: {\n    backgroundColor: '#fff',\n    borderColor: '#C9D6E3',\n    textStyle: { color: '#1B2B3A' },\n    formatter: p => {\n      const k = p.value[0];\n      const d = new Date(k + 'T12:00:00').toLocaleDateString('es-ES',\n        { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });\n      return '<b>' + d + '</b><br>ET₀: <b>' + fmt(etMap[k], 1) + ' mm</b>'\n        + (anMap[k] ? ' <span style=\"color:#4D4D4D\">(atípica: media del mes)</span>' : '')\n        + '<br>Precip. efectiva: <b>' + fmt(peMap[k], 1) + ' mm</b>';\n    }\n  },\n  visualMap: [\n    // ET0 normal: escala continua de 0 al máximo de la ventana\n    {\n      min: 0,\n      max: maxE,\n      calculable: true,\n      orient: 'horizontal',\n      left: 'center',\n      bottom: 4,\n      itemWidth: 12,\n      itemHeight: 220,\n      text: ['ET₀ alta (mm/día)', 'baja'],\n      textStyle: { color: '#5B7690' },\n      seriesIndex: 0,\n      inRange: { color: ['#FFF7E6', '#FDD49E', '#FC8D59', '#D7301F', '#7F0000'] }\n    },\n    // ET0 atípica: un solo color, sin leyenda de escala\n    { show: false, seriesIndex: 1, type: 'piecewise', pieces: [{ min: -1e9, max: 1e9, color: '#4D4D4D' }] }\n  ],\n  graphic: bad.length ? [{\n    type: 'text',\n    right: 20,\n    bottom: 8,\n    style: { text: '■ Gris oscuro: ET₀ atípica sustituida por la media del mes', fill: '#4D4D4D', fontSize: 11 }\n  }] : [],\n  calendar: {\n    top: 30,\n    left: 40,\n    right: 20,\n    bottom: 50,\n    cellSize: ['auto', 22],\n    range: [a, b],\n    firstDay: 1,\n    itemStyle: { color: '#ECEFF3', borderColor: '#fff', borderWidth: 2 },\n    splitLine: { lineStyle: { color: '#9FB3C8', width: 1.2 } },\n    yearLabel: { show: false },\n    dayLabel: { nameMap: ['D', 'L', 'M', 'X', 'J', 'V', 'S'], color: '#8A9BB0', fontSize: 10 },\n    monthLabel: {\n      nameMap: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],\n      color: '#33475B',\n      fontWeight: 600\n    }\n  },\n  series: [\n    { type: 'heatmap', coordinateSystem: 'calendar', data: ok },\n    { type: 'heatmap', coordinateSystem: 'calendar', data: bad },\n    {\n      type: 'scatter',\n      coordinateSystem: 'calendar',\n      name: 'Precipitación efectiva',\n      data: dia.map((d, i) => [d, pe[i]]).filter(p => p[1] != null && p[1] >= 1 && inW(p[0])),\n      symbolSize: v => Math.min(14, 4 + Math.sqrt(v[1]) * 2.2),\n      itemStyle: { color: '#1F77B4', borderColor: '#fff', borderWidth: 1 }\n    }\n  ]\n};",
-                    "renderer": "svg"
-                    },
-                    "fieldConfig": {
-                    "defaults": {},
-                    "overrides": []
-                    },
-                    "transformations": []
-                    },
-                    {
-                    "id": 23,
-                    "title": "Temperaturas máxima y mínima",
-                    "type": "volkovlabs-echarts-panel",
-                    "links": [],
-                    "gridPos": {
-                    "x": 14,
-                    "y": 18,
-                    "w": 10,
-                    "h": 8
-                    },
-                    "datasource": null,
-                    "targets": [
-                    {
-                    "editorMode": "code",
-                    "format": "table",
-                    "rawQuery": true,
-                    "rawSql": "-- =============================================================================\n-- Panel     : Temperaturas máxima y mínima · id 23 · ref A · table → Business Charts\n-- Propósito : temperaturas máxima y mínima diarias del año hidrológico en curso (SIAR).\n-- Entradas  : variable hy (año de inicio del año hidrológico); no usa el rango de tiempo del panel\n-- Salida    : dia (texto AAAA-MM-DD), tmax (°C, 1 decimal), tmin (°C, 1 decimal)\n-- Notas     : estaciones SIAR = dispositivos activos cuyo telecontrol contiene «SIAR» en el nombre;\n--             sensores TempMax y TempMin por nombre; media de todas las estaciones.\n--             Se omiten los días sin máxima ni mínima. 0 filas si no hay estaciones SIAR o lecturas.\n-- =============================================================================\nWITH\n-- Parámetros ------------------------------------------------------------------\nperiodo AS (\n  -- Año hidrológico de la variable hy: del 1 de octubre al 30 de septiembre (fin exclusivo)\n  SELECT\n    make_date($hy, 10, 1) AS inicio,\n    make_date($hy + 1, 10, 1) AS fin\n),\n-- Fuentes ---------------------------------------------------------------------\n-- [bloque estaciones_siar] Dispositivos activos cuyo telecontrol se llama «…SIAR…»\n--   (en Odoo el tipo de telecontrol es genérico, rest; el nombre es la única marca).\nestaciones AS (\n  SELECT\n    d.id AS dispositivo\n  FROM mdm_measurement_device d\n  JOIN remotecontrol t ON t.id = d.remotecontrol_id\n  WHERE d.active\n    AND t.name ILIKE '%siar%'\n),\n-- [bloque siar_temperatura] Sensores TempMax y TempMin de las estaciones SIAR, por nombre.\nsensores AS (\n  SELECT\n    s.id AS sensor,\n    s.device_id AS dispositivo,\n    lower(s.name) AS variable\n  FROM mdm_measurement_device_sensor s\n  JOIN estaciones e ON e.dispositivo = s.device_id\n  WHERE s.active\n    AND lower(s.name) IN ('tempmax', 'tempmin')\n),\n-- Valor diario por estación (día natural de Madrid), con un día de margen en la lectura UTC\nlecturas_dia AS (\n  SELECT\n    sn.dispositivo,\n    ((r.measurement_time AT TIME ZONE 'UTC') AT TIME ZONE 'Europe/Madrid')::date AS dia,\n    max(r.value) FILTER (WHERE sn.variable = 'tempmax') AS tmax,\n    max(r.value) FILTER (WHERE sn.variable = 'tempmin') AS tmin\n  FROM mdm_measurement_device_sensor_reading r\n  JOIN sensores sn ON sn.sensor = r.sensor_id\n  WHERE r.active\n    AND r.measurement_time >= make_date($hy, 9, 30)\n    AND r.measurement_time < make_date($hy + 1, 10, 2)\n  GROUP BY 1, 2\n),\n-- Agregados -------------------------------------------------------------------\ndiario AS (\n  -- Media diaria de todas las estaciones SIAR, dentro del año hidrológico\n  SELECT\n    l.dia,\n    avg(l.tmax) AS tmax,\n    avg(l.tmin) AS tmin\n  FROM lecturas_dia l\n  CROSS JOIN periodo p\n  WHERE l.dia >= p.inicio\n    AND l.dia < p.fin\n  GROUP BY 1\n)\n-- Salida ----------------------------------------------------------------------\nSELECT\n  to_char(dia, 'YYYY-MM-DD') AS dia,\n  round(tmax::numeric, 1) AS tmax,\n  round(tmin::numeric, 1) AS tmin\nFROM diario\nWHERE tmax IS NOT NULL\n  OR tmin IS NOT NULL\nORDER BY dia",
-                    "refId": "A",
-                    "hide": false,
-                    "datasource": null
-                    }
-                    ],
-                    "options": {
-                    "editor": {
-                    "format": "auto",
-                    "language": "javascript"
-                    },
-                    "editorMode": "code",
-                    "getOption": "// =============================================================================\n// Panel 23 · Temperaturas máxima y mínima (Business Charts)\n// Campos: dia, tmax, tmin (ver la cabecera de la consulta A)\n// Líneas de máxima y mínima con banda de amplitud, días de calor (≥ 35 °C) y de helada (≤ 0 °C),\n// en la misma ventana de 3 meses que el calendario (panel 21).\n// =============================================================================\n\n// --- Datos de la consulta (format table) -------------------------------------\nconst f = context.panel.data.series.find(s => s.fields.some(x => x.name === 'dia'));\nconst g = n => (f && f.fields.find(x => x.name === n) ? Array.from(f.fields.find(x => x.name === n).values) : []);\nconst dia = g('dia'),\n  mx0 = g('tmax').map(v => v == null ? null : Number(v)),\n  mn0 = g('tmin').map(v => v == null ? null : Number(v));\n// Año hidrológico de la variable oculta hy; si no se puede leer, el año hidrológico en curso\nlet hy = parseInt(\n  context.grafana && context.grafana.replaceVariables ? context.grafana.replaceVariables('${hy}') : '',\n  10\n);\nif (!Number.isFinite(hy)) {\n  const n = new Date();\n  hy = n.getMonth() >= 9 ? n.getFullYear() : n.getFullYear() - 1;\n}\n\n// --- Utilidades y estilo común -----------------------------------------------\n// [bloque ventana_3_meses] Igual en los paneles 21 y 23.\n// Ventana de 3 meses: termina hoy (o el 30 sep si el año ya terminó);\n// si desde el 1 oct aún no han pasado 3 meses, del 1 oct al 31 dic.\nconst pad = n => String(n).padStart(2, '0');\nconst iso = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());\nconst now = new Date();\nconst today = new Date(now.getFullYear(), now.getMonth(), now.getDate());\nconst hyStart = new Date(hy, 9, 1),\n  hyEnd = new Date(hy + 1, 8, 30);\nlet wEnd = today < hyEnd ? today : hyEnd;\nlet wStart = new Date(wEnd.getFullYear(), wEnd.getMonth() - 3, wEnd.getDate() + 1);\nif (wStart < hyStart) {\n  wStart = hyStart;\n  wEnd = new Date(hy, 12, 0);\n}\nconst a = iso(wStart),\n  b = iso(wEnd);\n\n// --- Preparación -------------------------------------------------------------\n// Índices de los días dentro de la ventana\nconst idx = dia.map((d, i) => i).filter(i => dia[i] >= a && dia[i] <= b);\nif (!idx.length) return {\n  title: {\n    text: 'Sin datos de temperatura SIAR',\n    left: 'center',\n    top: 'middle',\n    textStyle: { color: '#81968a', fontSize: 14, fontWeight: 500 }\n  }\n};\n// Cada día se dibuja a mediodía para que caiga en el centro de su fecha\nconst t = idx.map(i => dia[i] + 'T12:00:00'),\n  mx = idx.map(i => mx0[i]),\n  mn = idx.map(i => mn0[i]);\nconst fmt = x => x == null ? '—' : Number(x).toLocaleString('es-ES', { maximumFractionDigits: 1 });\n// Umbrales de calor y helada (°C)\nconst HOT = 35,\n  FROST = 0;\n// Eje Y: incluye siempre 0 °C y al menos 25 °C, con 2 °C de margen\nconst vmn = mn.filter(v => v != null),\n  vmx = mx.filter(v => v != null);\nconst lo = Math.floor(Math.min(FROST + 2, ...vmn) - 2),\n  hi = Math.ceil(Math.max(HOT - 10, ...vmx) + 2);\n\n// --- Opciones ECharts --------------------------------------------------------\nreturn {\n  backgroundColor: 'transparent',\n  textStyle: { fontFamily: 'Inter, Helvetica, Arial, sans-serif' },\n  legend: {\n    top: 0,\n    itemGap: 12,\n    itemWidth: 14,\n    data: ['Máxima', 'Mínima', 'Calor ≥ 35 °C', 'Helada ≤ 0 °C'],\n    textStyle: { color: '#33475B', fontWeight: 600, fontSize: 11 }\n  },\n  grid: { left: 44, right: 16, top: 40, bottom: 28 },\n  tooltip: {\n    trigger: 'axis',\n    backgroundColor: '#fff',\n    borderColor: '#C9D6E3',\n    textStyle: { color: '#1B2B3A' },\n    formatter: ps => {\n      const i = ps[0].dataIndex;\n      const d = new Date(t[i]).toLocaleDateString('es-ES',\n        { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' });\n      return '<b>' + d + '</b><br>Máxima: <b style=\"color:#C0392B\">' + fmt(mx[i])\n        + ' °C</b><br>Mínima: <b style=\"color:#1F77B4\">' + fmt(mn[i])\n        + ' °C</b><br>Amplitud: ' + (mx[i] == null || mn[i] == null ? '—' : fmt(mx[i] - mn[i])) + ' °C';\n    }\n  },\n  xAxis: {\n    type: 'time',\n    min: a + 'T00:00:00',\n    max: b + 'T23:59:59',\n    axisLine: { lineStyle: { color: '#9FB3C8' } },\n    axisLabel: {\n      color: '#33475B',\n      fontSize: 10,\n      hideOverlap: true,\n      // Meses en español: «Oct» el día 1, «15 Oct» el resto\n      formatter: v => {\n        const d = new Date(v);\n        const M = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'][d.getMonth()];\n        return d.getDate() === 1 ? M : d.getDate() + ' ' + M;\n      }\n    }\n  },\n  yAxis: {\n    type: 'value',\n    name: '°C',\n    min: lo,\n    max: hi,\n    nameTextStyle: { color: '#33475B', fontWeight: 600 },\n    axisLabel: { color: '#33475B', fontSize: 10 },\n    splitLine: { lineStyle: { color: '#EEF2F6' } }\n  },\n  dataZoom: [{ type: 'inside' }],\n  series: [\n    // Banda de amplitud: serie base invisible (mínima) + rango apilado (máxima − mínima)\n    {\n      name: 'base',\n      type: 'line',\n      stack: 'r',\n      data: t.map((x, i) => [x, mn[i]]),\n      symbol: 'none',\n      lineStyle: { opacity: 0 },\n      areaStyle: { opacity: 0 },\n      tooltip: { show: false },\n      silent: true\n    },\n    {\n      name: 'rango',\n      type: 'line',\n      stack: 'r',\n      data: t.map((x, i) => [x, mx[i] == null || mn[i] == null ? null : mx[i] - mn[i]]),\n      symbol: 'none',\n      smooth: 0.25,\n      lineStyle: { opacity: 0 },\n      areaStyle: {\n        color: {\n          type: 'linear',\n          x: 0,\n          y: 0,\n          x2: 0,\n          y2: 1,\n          colorStops: [{ offset: 0, color: 'rgba(231,76,60,0.30)' }, { offset: 1, color: 'rgba(52,152,219,0.30)' }]\n        }\n      },\n      silent: true\n    },\n    {\n      name: 'Máxima',\n      type: 'line',\n      data: t.map((x, i) => [x, mx[i]]),\n      smooth: 0.25,\n      symbol: 'none',\n      lineStyle: { width: 2, color: '#C0392B' },\n      itemStyle: { color: '#C0392B' }\n    },\n    {\n      name: 'Mínima',\n      type: 'line',\n      data: t.map((x, i) => [x, mn[i]]),\n      smooth: 0.25,\n      symbol: 'none',\n      lineStyle: { width: 2, color: '#1F77B4' },\n      itemStyle: { color: '#1F77B4' }\n    },\n    {\n      name: 'Calor ≥ 35 °C',\n      type: 'scatter',\n      symbolSize: 8,\n      data: t.map((x, i) => mx[i] != null && mx[i] >= HOT ? [x, mx[i]] : null).filter(Boolean),\n      itemStyle: { color: '#8E1B10', borderColor: '#fff', borderWidth: 1.5 }\n    },\n    {\n      name: 'Helada ≤ 0 °C',\n      type: 'scatter',\n      symbol: 'diamond',\n      symbolSize: 9,\n      data: t.map((x, i) => mn[i] != null && mn[i] <= FROST ? [x, mn[i]] : null).filter(Boolean),\n      itemStyle: { color: '#0B3C6E', borderColor: '#fff', borderWidth: 1.5 }\n    },\n    // Líneas de referencia de 35 °C y 0 °C (serie vacía que solo lleva markLine)\n    {\n      name: 'ref',\n      type: 'line',\n      data: [],\n      markLine: {\n        silent: true,\n        symbol: 'none',\n        data: [\n          { yAxis: HOT, name: '35 °C', lineStyle: { color: '#E8A39B', type: 'dashed' } },\n          { yAxis: FROST, name: '0 °C', lineStyle: { color: '#9CC3E6', type: 'dashed' } }\n        ],\n        label: { formatter: '{b}', position: 'insideEndTop', color: '#8A9BB0', fontSize: 10 }\n      }\n    }\n  ]\n};",
-                    "renderer": "svg"
-                    },
-                    "fieldConfig": {
-                    "defaults": {},
-                    "overrides": []
-                    },
-                    "transformations": []
-                    },
-                    {
-                    "id": 22,
-                    "title": "Totales mensuales · año hidrológico ${hy:text}",
-                    "type": "marcusolsson-dynamictext-panel",
-                    "links": [],
-                    "gridPos": {
-                    "x": 0,
-                    "y": 26,
-                    "w": 24,
-                    "h": 5
-                    },
-                    "datasource": null,
-                    "targets": [
-                    {
-                    "editorMode": "code",
-                    "format": "table",
-                    "rawQuery": true,
-                    "rawSql": "-- =============================================================================\n-- Panel     : Totales mensuales · id 22 · ref A · table → Business Text\n-- Propósito : ET0 y precipitación efectiva acumuladas por mes del año hidrológico en curso, y total del año.\n-- Entradas  : variable hy (año de inicio del año hidrológico); no usa el rango de tiempo del panel\n-- Salida    : mes (texto Ene…Dic, o «Año» en el total), et0 (mm, texto es-ES con 1 decimal o «—»),\n--             pe (ídem), dias (días con dato), total (true solo en la fila del año),\n--             orden (fecha del mes; ordena las filas, el total va al final)\n-- Notas     : estaciones SIAR = dispositivos activos cuyo telecontrol contiene «SIAR» en el nombre;\n--             sensores por nombre, sin ids fijos; media de todas las estaciones.\n--             ET0 atípica por estación (> 12 mm o > max(4, 4 × mediana del mes)) sustituida por la media\n--             del mes sin atípicos. 0 filas si no hay estaciones SIAR o lecturas en el año.\n--             Sumas de los valores diarios; un mes con días sin dato suma menos (no se rellenan huecos).\n-- =============================================================================\nWITH\n-- Parámetros ------------------------------------------------------------------\nperiodo AS (\n  -- Año hidrológico de la variable hy: del 1 de octubre al 30 de septiembre (fin exclusivo)\n  SELECT\n    make_date($hy, 10, 1) AS inicio,\n    make_date($hy + 1, 10, 1) AS fin\n),\n-- Fuentes ---------------------------------------------------------------------\n-- [bloque estaciones_siar] Dispositivos activos cuyo telecontrol se llama «…SIAR…»\n--   (en Odoo el tipo de telecontrol es genérico, rest; el nombre es la única marca).\nestaciones AS (\n  SELECT\n    d.id AS dispositivo\n  FROM mdm_measurement_device d\n  JOIN remotecontrol t ON t.id = d.remotecontrol_id\n  WHERE d.active\n    AND t.name ILIKE '%siar%'\n),\n-- [bloque siar_diario] Sensores Et0 y Pe de las estaciones SIAR, por nombre.\nsensores AS (\n  SELECT\n    s.id AS sensor,\n    s.device_id AS dispositivo,\n    lower(s.name) AS variable\n  FROM mdm_measurement_device_sensor s\n  JOIN estaciones e ON e.dispositivo = s.device_id\n  WHERE s.active\n    AND lower(s.name) IN ('et0', 'pe')\n),\n-- [bloque siar_diario] Valor diario por estación (día natural de Madrid); la lectura en UTC se pide\n--   con un día de margen a cada lado para no perder bordes por la conversión a hora local.\nlecturas_dia AS (\n  SELECT\n    sn.dispositivo,\n    ((r.measurement_time AT TIME ZONE 'UTC') AT TIME ZONE 'Europe/Madrid')::date AS dia,\n    max(r.value) FILTER (WHERE sn.variable = 'et0') AS et0,\n    max(r.value) FILTER (WHERE sn.variable = 'pe') AS pe\n  FROM mdm_measurement_device_sensor_reading r\n  JOIN sensores sn ON sn.sensor = r.sensor_id\n  WHERE r.active\n    AND r.measurement_time >= make_date($hy, 9, 30)\n    AND r.measurement_time < make_date($hy + 1, 10, 2)\n  GROUP BY 1, 2\n),\n-- Transformaciones ------------------------------------------------------------\n-- [bloque siar_diario] Días dentro del año hidrológico\ndias_periodo AS (\n  SELECT\n    l.dispositivo,\n    l.dia,\n    l.et0,\n    l.pe\n  FROM lecturas_dia l\n  CROSS JOIN periodo p\n  WHERE l.dia >= p.inicio\n    AND l.dia < p.fin\n),\n-- [bloque siar_diario] Mediana mensual de ET0 por estación, para detectar valores atípicos\nmediana_mes AS (\n  SELECT\n    dispositivo,\n    date_trunc('month', dia) AS mes,\n    percentile_cont(0.5) WITHIN GROUP (ORDER BY et0) AS mediana\n  FROM dias_periodo\n  GROUP BY 1, 2\n),\n-- [bloque siar_diario] ET0 atípica: > 12 mm o > max(4, 4 × mediana del mes); sin ET0 → no atípica\nmarcados AS (\n  SELECT\n    dp.dispositivo,\n    dp.dia,\n    dp.et0,\n    dp.pe,\n    coalesce(dp.et0 > 12 OR dp.et0 > greatest(4, 4 * mm.mediana), false) AS anom\n  FROM dias_periodo dp\n  JOIN mediana_mes mm\n    ON mm.dispositivo = dp.dispositivo\n    AND mm.mes = date_trunc('month', dp.dia)\n),\n-- [bloque siar_diario] Media mensual de ET0 sin atípicos, por estación\nmedia_mes AS (\n  SELECT\n    dispositivo,\n    date_trunc('month', dia) AS mes,\n    avg(et0) FILTER (WHERE NOT anom) AS media\n  FROM marcados\n  GROUP BY 1, 2\n),\n-- [bloque siar_diario] ET0 atípica sustituida por la media del mes de su estación\ncorregidos AS (\n  SELECT\n    m.dispositivo,\n    m.dia,\n    CASE WHEN m.anom THEN me.media ELSE m.et0 END AS et0,\n    m.pe,\n    m.anom\n  FROM marcados m\n  JOIN media_mes me\n    ON me.dispositivo = m.dispositivo\n    AND me.mes = date_trunc('month', m.dia)\n),\n-- Agregados -------------------------------------------------------------------\n-- [bloque siar_diario] Media diaria de todas las estaciones SIAR; anom si alguna estación lo era\ndiario AS (\n  SELECT\n    dia,\n    avg(et0) AS et0,\n    avg(pe) AS pe,\n    bool_or(anom) AS anom\n  FROM corregidos\n  GROUP BY 1\n),\nmeses AS (\n  -- Los 12 meses del año hidrológico, haya o no datos\n  SELECT\n    generate_series(p.inicio, p.fin - interval '1 month', interval '1 month')::date AS mes\n  FROM periodo p\n),\ntotales_mes AS (\n  SELECT\n    me.mes,\n    sum(d.et0) AS et0,\n    sum(d.pe) AS pe,\n    count(d.dia) AS dias\n  FROM meses me\n  LEFT JOIN diario d ON date_trunc('month', d.dia) = me.mes\n  GROUP BY 1\n)\n-- Salida ----------------------------------------------------------------------\nSELECT\n  (ARRAY['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'])\n    [extract(month FROM mes)::int] AS mes,\n  coalesce(replace(to_char(CASE WHEN dias > 0 THEN et0 END, 'FM99990.0'), '.', ','), '—') AS et0,\n  coalesce(replace(to_char(CASE WHEN dias > 0 THEN pe END, 'FM99990.0'), '.', ','), '—') AS pe,\n  dias,\n  false AS total,\n  mes AS orden\nFROM totales_mes\nUNION ALL\n-- Fila del total del año (sin GROUP BY: siempre una fila)\nSELECT\n  'Año',\n  coalesce(replace(to_char(sum(et0), 'FM99990.0'), '.', ','), '—'),\n  coalesce(replace(to_char(sum(pe), 'FM99990.0'), '.', ','), '—'),\n  sum(dias)::bigint,\n  true,\n  (SELECT fin FROM periodo)\nFROM totales_mes\nORDER BY orden",
-                    "refId": "A",
-                    "hide": false,
-                    "datasource": null
-                    }
-                    ],
-                    "options": {
-                    "afterRender": "",
-                    "content": "{{!-- Campos de la consulta A (una fila por mes y la del año): mes, et0, pe, total --}}<div class=\"mt\">{{#each data}}<div class=\"mt-c{{#if total}} mt-t{{/if}}\"><div class=\"mt-m\">{{mes}}</div><div class=\"mt-e\"><em>ET<sub>0</sub></em><b>{{et0}}</b></div><div class=\"mt-p\"><em>Pe</em><b>{{pe}}</b></div></div>{{/each}}</div><div class=\"mt-n\">mm · media de las estaciones SIAR · ET<sub>0</sub> atípica sustituida por la media del mes · Pe: precipitación efectiva</div>",
-                    "contentPartials": [],
-                    "defaultContent": "<div class=\"mt-n\">Sin datos SIAR en este año hidrológico.</div>",
-                    "editors": [
-                    "styles"
-                    ],
-                    "renderMode": "allRows",
-                    "styles": "/* =============================================================================\n   Panel 22 · totales mensuales (Business Text)\n   .mt = rejilla de 13 celdas (12 meses + año) · .mt-c celda · .mt-t celda del total\n   .mt-m mes · .mt-e fila ET0 · .mt-p fila Pe · .mt-n nota al pie\n   ============================================================================= */\n.mt{display:grid;grid-template-columns:repeat(13,minmax(0,1fr));gap:6px;font-family:Inter,Arial,sans-serif}\n.mt-c{background:#f4f7f5;border-radius:10px;padding:8px 6px;text-align:center;min-width:0}\n.mt-t{background:#e3eee8}\n.mt-m{font-size:11px;font-weight:700;color:#33475B;letter-spacing:.3px;margin-bottom:4px}\n.mt-e,.mt-p{display:flex;justify-content:space-between;gap:4px;font-size:12px;line-height:1.5}\n.mt-e em,.mt-p em{font-style:normal;font-size:10px;color:#8A9BB0}\n/* Subíndice del 0 de ET₀ sin alterar la altura de línea */\n.mt sub,.mt-n sub{font-size:.75em;vertical-align:-.2em;line-height:0}\n.mt-e b{color:#C2410C}\n.mt-p b{color:#1F77B4}\n.mt-n{margin-top:6px;font-size:10px;color:#8A9BB0;font-family:Inter,Arial,sans-serif}\n/* Pantallas estrechas: dos filas de 7 celdas */\n@media (max-width:900px){.mt{grid-template-columns:repeat(7,minmax(0,1fr))}}",
-                    "wrap": false
-                    },
-                    "fieldConfig": {
-                    "defaults": {},
-                    "overrides": []
-                    },
-                    "transformations": []
-                    }
-                ],
-                "templating": {
-                    "list": [
-                    {
-                    "name": "hy",
-                    "current": {},
-                    "label": "Año hidrológico",
-                    "hide": 2,
-                    "refresh": 1,
-                    "skipUrlSync": false,
-                    "query": "-- Variable hy (oculta): año hidrológico en curso; __value = año de inicio, __text = «AAAA-AAAA»\nSELECT\n  y AS __value,\n  y || '-' || (y + 1) AS __text\nFROM (\n  SELECT extract(year FROM (now() AT TIME ZONE 'Europe/Madrid') - interval '9 month')::int AS y\n) AS anio",
-                    "regex": "",
-                    "sort": 0,
-                    "definition": "-- Variable hy (oculta): año hidrológico en curso; __value = año de inicio, __text = «AAAA-AAAA»\nSELECT\n  y AS __value,\n  y || '-' || (y + 1) AS __text\nFROM (\n  SELECT extract(year FROM (now() AT TIME ZONE 'Europe/Madrid') - interval '9 month')::int AS y\n) AS anio",
-                    "options": [],
-                    "multi": false,
-                    "includeAll": false,
-                    "allowCustomValue": true,
-                    "type": "query",
-                    "datasource": null
-                    }
-                    ]
-                },
-                "annotations": {
-                    "list": [
-                    {
-                    "enable": true,
-                    "hide": true,
-                    "iconColor": "rgba(0, 211, 255, 1)",
-                    "name": "Annotations & Alerts",
-                    "builtIn": true,
-                    "legacyOptions": {
-                    "type": "dashboard"
-                    },
-                    "datasource": {
-                    "type": "grafana",
-                    "uid": "-- Grafana --"
-                    },
-                    "type": "dashboard"
-                    }
-                    ]
-                },
-                "time": {
+                    "timeSettings": {
+                    "timezone": "Europe/Madrid",
                     "from": "now-6h",
-                    "to": "now"
-                },
-                "refresh": "",
-                "timepicker": {
-                    "hidden": true,
-                    "refresh_intervals": [
-                    "5s",
-                    "10s",
-                    "30s",
-                    "1m",
-                    "5m",
-                    "15m",
-                    "30m",
-                    "1h",
-                    "2h",
-                    "1d"
-                    ]
-                },
-                "fiscalYearStartMonth": 0,
-                "liveNow": false,
-                "preload": false,
-                "graphTooltip": 0,
-                "__requires": [
-                    {
-                    "type": "grafana",
-                    "id": "grafana",
-                    "name": "Grafana",
-                    "version": "13.3.0"
+                    "to": "now",
+                    "autoRefresh": "",
+                    "autoRefreshIntervals": [
+                        "5s",
+                        "10s",
+                        "30s",
+                        "1m",
+                        "5m",
+                        "15m",
+                        "30m",
+                        "1h",
+                        "2h",
+                        "1d"
+                    ],
+                    "hideTimepicker": true,
+                    "fiscalYearStartMonth": 0
                     },
-                    {
-                    "type": "datasource",
-                    "id": "grafana-postgresql-datasource",
-                    "name": "PostgreSQL",
-                    "version": "1.0.0"
-                    },
-                    {
-                    "type": "panel",
-                    "id": "volkovlabs-echarts-panel",
-                    "name": "Business Charts",
-                    "version": "7.2.5"
-                    },
-                    {
-                    "type": "panel",
-                    "id": "marcusolsson-dynamictext-panel",
-                    "name": "Business Text",
-                    "version": "6.3.0"
+                    "title": "Estadísticas sobre el uso del agua",
+                    "variables": [],
+                    "preferences": {
+                    "layout": {
+                        "kind": "GridLayout",
+                        "spec": {
+                        "items": []
+                        }
                     }
-                ]
+                    }
+                }
                 }
         ]]></field>
         </record>
